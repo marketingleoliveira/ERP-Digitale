@@ -9,11 +9,10 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
 import { toggleTheme, getTheme } from "@/lib/theme";
-import { notificacoes } from "@/lib/mock-data";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+
 
 export function AppTopbar() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -52,38 +51,19 @@ export function AppTopbar() {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="relative">
+          <Button variant="ghost" size="icon" className="relative" aria-label="Notificações">
             <Bell className="h-4 w-4" />
-            <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 rounded-full bg-destructive px-1 text-[10px] font-bold leading-4 text-destructive-foreground">
-              {notificacoes.length}
-            </span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-80">
           <DropdownMenuLabel>Notificações</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {notificacoes.map((n) => (
-            <DropdownMenuItem key={n.id} className="flex-col items-start gap-1 py-2">
-              <div className="flex w-full items-center gap-2">
-                <Badge
-                  variant="secondary"
-                  className={
-                    n.tipo === "error" ? "bg-destructive/15 text-destructive"
-                    : n.tipo === "warning" ? "bg-warning/20 text-warning-foreground"
-                    : n.tipo === "success" ? "bg-success/15 text-success"
-                    : "bg-info/15 text-info"
-                  }
-                >
-                  {n.tipo}
-                </Badge>
-                <span className="text-sm font-medium">{n.titulo}</span>
-                <span className="ml-auto text-[11px] text-muted-foreground">{n.tempo}</span>
-              </div>
-              <span className="text-xs text-muted-foreground">{n.desc}</span>
-            </DropdownMenuItem>
-          ))}
+          <div className="px-3 py-6 text-center text-xs text-muted-foreground">
+            Nenhuma notificação no momento.
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
+
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
