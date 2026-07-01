@@ -8,7 +8,7 @@ import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
 } from "@/components/ui/sidebar";
-import logoAsset from "@/assets/digitale-logo.png.asset.json";
+import logoAsset from "@/assets/digitale-logo-white.png.asset.json";
 
 
 const groups = [
