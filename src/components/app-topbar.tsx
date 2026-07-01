@@ -12,11 +12,23 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toggleTheme, getTheme } from "@/lib/theme";
 import { notificacoes } from "@/lib/mock-data";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export function AppTopbar() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const navigate = useNavigate();
+  const { user } = useAuth();
   useEffect(() => setTheme(getTheme()), []);
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth" });
+  };
+
+  const initials = (user?.user_metadata?.nome ?? user?.email ?? "DT")
+    .toString().split(/\s+|@/).filter(Boolean).slice(0, 2).map((s: string) => s[0]?.toUpperCase()).join("");
+
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/80 px-3 backdrop-blur">
@@ -77,9 +89,9 @@ export function AppTopbar() {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="gap-2 pl-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">
-              AD
+              {initials || "DT"}
             </div>
-            <span className="hidden text-sm md:inline">Admin Digitale</span>
+            <span className="hidden text-sm md:inline max-w-[160px] truncate">{user?.user_metadata?.nome ?? user?.email ?? "Usuário"}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
@@ -88,7 +100,7 @@ export function AppTopbar() {
           <DropdownMenuItem asChild>
             <Link to="/configuracoes"><User className="mr-2 h-4 w-4" />Perfil</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigate({ to: "/login" })}>
+          <DropdownMenuItem onClick={signOut}>
             <LogOut className="mr-2 h-4 w-4" />Sair
           </DropdownMenuItem>
         </DropdownMenuContent>
