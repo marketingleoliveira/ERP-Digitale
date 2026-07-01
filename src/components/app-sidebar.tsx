@@ -3,12 +3,13 @@ import {
   LayoutDashboard, Users, Truck, UserCheck, Package, Warehouse,
   ShoppingCart, Receipt, Handshake, Wallet, Factory, Scissors,
   BadgeCheck, PackageCheck, FileText, ShieldCheck, Settings,
-  Sparkles,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
 } from "@/components/ui/sidebar";
+import logoAsset from "@/assets/digitale-logo.png.asset.json";
+
 
 const groups = [
   {
@@ -69,17 +70,20 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
         <Link to="/dashboard" className="flex items-center gap-2 px-2 py-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
-            <Sparkles className="h-5 w-5" />
-          </div>
+          <img
+            src={logoAsset.url}
+            alt="Digitale Têxtil"
+            className={collapsed ? "h-8 w-8 object-contain" : "h-12 w-auto object-contain"}
+          />
           {!collapsed && (
-            <div className="flex flex-col leading-tight">
-              <span className="text-sm font-bold text-sidebar-foreground">Digitale Têxtil</span>
-              <span className="text-[10px] uppercase tracking-wider text-sidebar-foreground/60">Sistema ERP</span>
-            </div>
+            <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 text-[10px] font-semibold text-accent-foreground ring-1 ring-accent/30">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+              #Sustentabilidade
+            </span>
           )}
         </Link>
       </SidebarHeader>
+
       <SidebarContent>
         {groups.map((g) => (
           <SidebarGroup key={g.label}>
