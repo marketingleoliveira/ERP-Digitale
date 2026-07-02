@@ -243,6 +243,135 @@ export type Database = {
         }
         Relationships: []
       }
+      faccao_ordens: {
+        Row: {
+          created_at: string
+          custo_total: number
+          data_envio: string | null
+          data_prevista: string | null
+          data_retorno: string | null
+          descricao: string
+          faccao_id: string
+          id: string
+          numero: number
+          observacoes: string | null
+          perdas: number
+          production_order_id: string | null
+          quantidade_enviada: number
+          quantidade_retornada: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          custo_total?: number
+          data_envio?: string | null
+          data_prevista?: string | null
+          data_retorno?: string | null
+          descricao: string
+          faccao_id: string
+          id?: string
+          numero?: number
+          observacoes?: string | null
+          perdas?: number
+          production_order_id?: string | null
+          quantidade_enviada?: number
+          quantidade_retornada?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          custo_total?: number
+          data_envio?: string | null
+          data_prevista?: string | null
+          data_retorno?: string | null
+          descricao?: string
+          faccao_id?: string
+          id?: string
+          numero?: number
+          observacoes?: string | null
+          perdas?: number
+          production_order_id?: string | null
+          quantidade_enviada?: number
+          quantidade_retornada?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faccao_ordens_faccao_id_fkey"
+            columns: ["faccao_id"]
+            isOneToOne: false
+            referencedRelation: "faccoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "faccao_ordens_production_order_id_fkey"
+            columns: ["production_order_id"]
+            isOneToOne: false
+            referencedRelation: "production_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faccoes: {
+        Row: {
+          ativo: boolean
+          capacidade_mensal: number | null
+          cidade: string | null
+          cnpj: string | null
+          created_at: string
+          custo_peca: number | null
+          email: string | null
+          especialidade: string | null
+          id: string
+          nome: string
+          observacoes: string | null
+          prazo_medio_dias: number | null
+          responsavel: string | null
+          telefone: string | null
+          uf: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          capacidade_mensal?: number | null
+          cidade?: string | null
+          cnpj?: string | null
+          created_at?: string
+          custo_peca?: number | null
+          email?: string | null
+          especialidade?: string | null
+          id?: string
+          nome: string
+          observacoes?: string | null
+          prazo_medio_dias?: number | null
+          responsavel?: string | null
+          telefone?: string | null
+          uf?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          capacidade_mensal?: number | null
+          cidade?: string | null
+          cnpj?: string | null
+          created_at?: string
+          custo_peca?: number | null
+          email?: string | null
+          especialidade?: string | null
+          id?: string
+          nome?: string
+          observacoes?: string | null
+          prazo_medio_dias?: number | null
+          responsavel?: string | null
+          telefone?: string | null
+          uf?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_variants: {
         Row: {
           cor: string | null
@@ -498,6 +627,81 @@ export type Database = {
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quality_inspections: {
+        Row: {
+          acao_corretiva: string | null
+          created_at: string
+          data_inspecao: string
+          defeito: string | null
+          id: string
+          inspetor_id: string | null
+          lote: string | null
+          numero: number
+          observacoes: string | null
+          product_id: string | null
+          production_order_id: string | null
+          quantidade_aprovada: number
+          quantidade_inspecionada: number
+          quantidade_rejeitada: number
+          resultado: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          acao_corretiva?: string | null
+          created_at?: string
+          data_inspecao?: string
+          defeito?: string | null
+          id?: string
+          inspetor_id?: string | null
+          lote?: string | null
+          numero?: number
+          observacoes?: string | null
+          product_id?: string | null
+          production_order_id?: string | null
+          quantidade_aprovada?: number
+          quantidade_inspecionada?: number
+          quantidade_rejeitada?: number
+          resultado?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Update: {
+          acao_corretiva?: string | null
+          created_at?: string
+          data_inspecao?: string
+          defeito?: string | null
+          id?: string
+          inspetor_id?: string | null
+          lote?: string | null
+          numero?: number
+          observacoes?: string | null
+          product_id?: string | null
+          production_order_id?: string | null
+          quantidade_aprovada?: number
+          quantidade_inspecionada?: number
+          quantidade_rejeitada?: number
+          resultado?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quality_inspections_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quality_inspections_production_order_id_fkey"
+            columns: ["production_order_id"]
+            isOneToOne: false
+            referencedRelation: "production_orders"
             referencedColumns: ["id"]
           },
         ]
