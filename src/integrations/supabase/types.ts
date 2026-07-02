@@ -124,6 +124,95 @@ export type Database = {
           },
         ]
       }
+      bank_accounts: {
+        Row: {
+          agencia: string | null
+          ativo: boolean
+          banco: string | null
+          conta: string | null
+          created_at: string
+          id: string
+          nome: string
+          saldo_inicial: number
+          tipo: string | null
+          updated_at: string
+        }
+        Insert: {
+          agencia?: string | null
+          ativo?: boolean
+          banco?: string | null
+          conta?: string | null
+          created_at?: string
+          id?: string
+          nome: string
+          saldo_inicial?: number
+          tipo?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agencia?: string | null
+          ativo?: boolean
+          banco?: string | null
+          conta?: string | null
+          created_at?: string
+          id?: string
+          nome?: string
+          saldo_inicial?: number
+          tipo?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      cash_movements: {
+        Row: {
+          bank_account_id: string | null
+          categoria: string | null
+          conciliado: boolean
+          created_at: string
+          data: string
+          descricao: string
+          documento: string | null
+          id: string
+          tipo: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          bank_account_id?: string | null
+          categoria?: string | null
+          conciliado?: boolean
+          created_at?: string
+          data?: string
+          descricao: string
+          documento?: string | null
+          id?: string
+          tipo: string
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          bank_account_id?: string | null
+          categoria?: string | null
+          conciliado?: boolean
+          created_at?: string
+          data?: string
+          descricao?: string
+          documento?: string | null
+          id?: string
+          tipo?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_movements_bank_account_id_fkey"
+            columns: ["bank_account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_leads: {
         Row: {
           created_at: string
@@ -869,6 +958,85 @@ export type Database = {
         }
         Relationships: []
       }
+      shipments: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          data_entrega: string | null
+          data_saida: string | null
+          frete_valor: number | null
+          id: string
+          numero: string
+          observacoes: string | null
+          peso_kg: number | null
+          previsao_entrega: string | null
+          rastreio: string | null
+          sales_order_id: string | null
+          status: string
+          transportadora_id: string | null
+          updated_at: string
+          volumes: number | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          data_entrega?: string | null
+          data_saida?: string | null
+          frete_valor?: number | null
+          id?: string
+          numero: string
+          observacoes?: string | null
+          peso_kg?: number | null
+          previsao_entrega?: string | null
+          rastreio?: string | null
+          sales_order_id?: string | null
+          status?: string
+          transportadora_id?: string | null
+          updated_at?: string
+          volumes?: number | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          data_entrega?: string | null
+          data_saida?: string | null
+          frete_valor?: number | null
+          id?: string
+          numero?: string
+          observacoes?: string | null
+          peso_kg?: number | null
+          previsao_entrega?: string | null
+          rastreio?: string | null
+          sales_order_id?: string | null
+          status?: string
+          transportadora_id?: string | null
+          updated_at?: string
+          volumes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipments_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_sales_order_id_fkey"
+            columns: ["sales_order_id"]
+            isOneToOne: false
+            referencedRelation: "sales_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_transportadora_id_fkey"
+            columns: ["transportadora_id"]
+            isOneToOne: false
+            referencedRelation: "transportadoras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stock_movements: {
         Row: {
           created_at: string
@@ -976,6 +1144,51 @@ export type Database = {
           status?: string
           telefone?: string | null
           uf?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transportadoras: {
+        Row: {
+          ativo: boolean
+          cnpj: string | null
+          contato: string | null
+          created_at: string
+          email: string | null
+          id: string
+          modal: string | null
+          nome: string
+          observacoes: string | null
+          prazo_medio_dias: number | null
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          cnpj?: string | null
+          contato?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          modal?: string | null
+          nome: string
+          observacoes?: string | null
+          prazo_medio_dias?: number | null
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          cnpj?: string | null
+          contato?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          modal?: string | null
+          nome?: string
+          observacoes?: string | null
+          prazo_medio_dias?: number | null
+          telefone?: string | null
           updated_at?: string
         }
         Relationships: []
