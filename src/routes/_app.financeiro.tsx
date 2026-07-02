@@ -102,10 +102,10 @@ function FinanceiroPage() {
       <PageHeader title="Financeiro" description="Contas a pagar/receber, fluxo de caixa, bancos e conciliação." />
 
       <div className="grid gap-4 md:grid-cols-4">
-        <StatCard title="A Receber" value={fmt(totals.receber)} icon={<TrendingUp className="h-4 w-4" />} />
-        <StatCard title="A Pagar" value={fmt(totals.pagar)} icon={<TrendingDown className="h-4 w-4" />} />
-        <StatCard title="Saldo em Contas" value={fmt(totals.saldo)} icon={<Wallet className="h-4 w-4" />} />
-        <StatCard title="Títulos Atrasados" value={String(totals.atrasadas)} icon={<CircleDollarSign className="h-4 w-4" />} />
+        <StatCard label="A Receber" value={fmt(totals.receber)} icon={<TrendingUp className="h-4 w-4" />} />
+        <StatCard label="A Pagar" value={fmt(totals.pagar)} icon={<TrendingDown className="h-4 w-4" />} />
+        <StatCard label="Saldo em Contas" value={fmt(totals.saldo)} icon={<Wallet className="h-4 w-4" />} />
+        <StatCard label="Títulos Atrasados" value={String(totals.atrasadas)} icon={<CircleDollarSign className="h-4 w-4" />} />
       </div>
 
       <Tabs defaultValue="receber">

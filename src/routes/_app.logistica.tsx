@@ -96,10 +96,10 @@ function LogisticaPage() {
       <PageHeader title="Logística" description="Separação, expedição, transportadoras, romaneios e rastreamento." />
 
       <div className="grid gap-4 md:grid-cols-4">
-        <StatCard title="Expedições" value={String(kpis.total)} icon={<PackageCheck className="h-4 w-4" />} />
-        <StatCard title="Em trânsito" value={String(kpis.em_transito)} icon={<Truck className="h-4 w-4" />} />
-        <StatCard title="Entregues" value={String(kpis.entregues)} icon={<ClipboardCheck className="h-4 w-4" />} />
-        <StatCard title="Transportadoras ativas" value={String(kpis.transportadoras)} icon={<MapPin className="h-4 w-4" />} />
+        <StatCard label="Expedições" value={String(kpis.total)} icon={<PackageCheck className="h-4 w-4" />} />
+        <StatCard label="Em trânsito" value={String(kpis.em_transito)} icon={<Truck className="h-4 w-4" />} />
+        <StatCard label="Entregues" value={String(kpis.entregues)} icon={<ClipboardCheck className="h-4 w-4" />} />
+        <StatCard label="Transportadoras ativas" value={String(kpis.transportadoras)} icon={<MapPin className="h-4 w-4" />} />
       </div>
 
       <Tabs defaultValue="expedicoes">
