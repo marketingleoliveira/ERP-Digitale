@@ -161,10 +161,10 @@ function QualidadePage() {
       {loading ? <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div> : (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard title="Inspecionado" value={kpis.total.toLocaleString("pt-BR")} icon={<BadgeCheck className="h-4 w-4" />} />
-            <StatCard title="Aprovado" value={kpis.apr.toLocaleString("pt-BR")} icon={<CheckCircle2 className="h-4 w-4" />} />
-            <StatCard title="Rejeitado" value={kpis.rej.toLocaleString("pt-BR")} icon={<XCircle className="h-4 w-4" />} />
-            <StatCard title="FTQ / PPM" value={`${kpis.ftq.toFixed(1)}%`} description={`${Math.round(kpis.ppm).toLocaleString("pt-BR")} PPM`} icon={<AlertTriangle className="h-4 w-4" />} />
+            <StatCard label="Inspecionado" value={kpis.total.toLocaleString("pt-BR")} icon={<BadgeCheck className="h-4 w-4" />} />
+            <StatCard label="Aprovado" value={kpis.apr.toLocaleString("pt-BR")} icon={<CheckCircle2 className="h-4 w-4" />} accent="success" />
+            <StatCard label="Rejeitado" value={kpis.rej.toLocaleString("pt-BR")} icon={<XCircle className="h-4 w-4" />} accent="destructive" />
+            <StatCard label="FTQ / PPM" value={`${kpis.ftq.toFixed(1)}%`} hint={`${Math.round(kpis.ppm).toLocaleString("pt-BR")} PPM`} icon={<AlertTriangle className="h-4 w-4" />} accent="warning" />
           </div>
           {rows.length === 0
             ? <EmptyState icon={<BadgeCheck className="h-5 w-5" />} title="Nenhuma inspeção registrada" description="Clique em “Nova inspeção” para começar." />
