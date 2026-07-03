@@ -1,5 +1,4 @@
-import { Bell, Moon, Search, Sun, LogOut, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Bell, Search, LogOut, User } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
@@ -9,16 +8,14 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toggleTheme, getTheme } from "@/lib/theme";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 
 
 export function AppTopbar() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const navigate = useNavigate();
   const { user } = useAuth();
-  useEffect(() => setTheme(getTheme()), []);
+
 
   const signOut = async () => {
     await supabase.auth.signOut();
