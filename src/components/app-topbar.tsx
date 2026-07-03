@@ -38,13 +38,6 @@ export function AppTopbar() {
         />
       </div>
       <div className="flex-1" />
-      <Button
-        variant="ghost" size="icon"
-        onClick={() => { toggleTheme(); setTheme(getTheme()); }}
-        aria-label="Alternar tema"
-      >
-        {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-      </Button>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
