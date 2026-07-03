@@ -274,63 +274,135 @@ export type Database = {
       }
       customers: {
         Row: {
+          bairro: string | null
+          celular: string | null
           cep: string | null
           cidade: string | null
+          cidade_codigo: string | null
           cnpj: string | null
+          comissao: number | null
+          contato: string | null
+          cpf: string | null
           created_at: string
+          crt: string | null
           email: string | null
           endereco: string | null
+          icms: number | null
           id: string
           inscricao_estadual: string | null
+          intervalo: number | null
           limite_credito: number | null
+          matriz: string | null
           nome_fantasia: string | null
+          observacao: string | null
           owner_id: string | null
+          parcelas: number | null
+          prazo: number | null
           razao_social: string
+          rg: string | null
+          sales_rep_id: string | null
           segmento: string | null
           status: string
+          tabela_prazo: string | null
           telefone: string | null
+          tipo_cliente: string | null
+          tipo_pagamento: string | null
+          transportadora_id: string | null
           uf: string | null
           updated_at: string
         }
         Insert: {
+          bairro?: string | null
+          celular?: string | null
           cep?: string | null
           cidade?: string | null
+          cidade_codigo?: string | null
           cnpj?: string | null
+          comissao?: number | null
+          contato?: string | null
+          cpf?: string | null
           created_at?: string
+          crt?: string | null
           email?: string | null
           endereco?: string | null
+          icms?: number | null
           id?: string
           inscricao_estadual?: string | null
+          intervalo?: number | null
           limite_credito?: number | null
+          matriz?: string | null
           nome_fantasia?: string | null
+          observacao?: string | null
           owner_id?: string | null
+          parcelas?: number | null
+          prazo?: number | null
           razao_social: string
+          rg?: string | null
+          sales_rep_id?: string | null
           segmento?: string | null
           status?: string
+          tabela_prazo?: string | null
           telefone?: string | null
+          tipo_cliente?: string | null
+          tipo_pagamento?: string | null
+          transportadora_id?: string | null
           uf?: string | null
           updated_at?: string
         }
         Update: {
+          bairro?: string | null
+          celular?: string | null
           cep?: string | null
           cidade?: string | null
+          cidade_codigo?: string | null
           cnpj?: string | null
+          comissao?: number | null
+          contato?: string | null
+          cpf?: string | null
           created_at?: string
+          crt?: string | null
           email?: string | null
           endereco?: string | null
+          icms?: number | null
           id?: string
           inscricao_estadual?: string | null
+          intervalo?: number | null
           limite_credito?: number | null
+          matriz?: string | null
           nome_fantasia?: string | null
+          observacao?: string | null
           owner_id?: string | null
+          parcelas?: number | null
+          prazo?: number | null
           razao_social?: string
+          rg?: string | null
+          sales_rep_id?: string | null
           segmento?: string | null
           status?: string
+          tabela_prazo?: string | null
           telefone?: string | null
+          tipo_cliente?: string | null
+          tipo_pagamento?: string | null
+          transportadora_id?: string | null
           uf?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customers_sales_rep_id_fkey"
+            columns: ["sales_rep_id"]
+            isOneToOne: false
+            referencedRelation: "sales_reps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customers_transportadora_id_fkey"
+            columns: ["transportadora_id"]
+            isOneToOne: false
+            referencedRelation: "transportadoras"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       faccao_ordens: {
         Row: {

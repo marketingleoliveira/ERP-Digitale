@@ -1,0 +1,21 @@
+
+ALTER TABLE public.customers
+  ADD COLUMN IF NOT EXISTS matriz text,
+  ADD COLUMN IF NOT EXISTS cpf text,
+  ADD COLUMN IF NOT EXISTS rg text,
+  ADD COLUMN IF NOT EXISTS bairro text,
+  ADD COLUMN IF NOT EXISTS cidade_codigo text,
+  ADD COLUMN IF NOT EXISTS celular text,
+  ADD COLUMN IF NOT EXISTS contato text,
+  ADD COLUMN IF NOT EXISTS sales_rep_id uuid REFERENCES public.sales_reps(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS comissao numeric(6,2) DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS transportadora_id uuid REFERENCES public.transportadoras(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS observacao text,
+  ADD COLUMN IF NOT EXISTS tipo_cliente text,
+  ADD COLUMN IF NOT EXISTS crt text,
+  ADD COLUMN IF NOT EXISTS icms numeric(6,2) DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS tipo_pagamento text,
+  ADD COLUMN IF NOT EXISTS tabela_prazo text,
+  ADD COLUMN IF NOT EXISTS prazo integer DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS parcelas integer DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS intervalo integer DEFAULT 0;
