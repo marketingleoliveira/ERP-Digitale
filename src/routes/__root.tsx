@@ -61,8 +61,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Sistema ERP Digitale Têxtil" },
       { name: "twitter:description", content: "Sistema ERP Desevolvido exclusivamente por Digitale Têxtil" },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/70f73cd3-fb92-46ff-a9a5-5af8a2870827" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/70f73cd3-fb92-46ff-a9a5-5af8a2870827" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/e517abfc-2126-4e9b-a93c-cd473d2e4bdf" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/e517abfc-2126-4e9b-a93c-cd473d2e4bdf" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
