@@ -1,14 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Sparkles, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Zap, Loader2, ChevronRight } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
+import logoAsset from "@/assets/digitale-logo.png.asset.json";
 
 export const Route = createFileRoute("/auth")({ component: AuthPage });
 
@@ -25,6 +23,20 @@ function AuthPage() {
       if (data.session) navigate({ to: "/dashboard" });
     });
   }, [navigate]);
+
+  const saudacao = useMemo(() => {
+    const h = new Date().getHours();
+    if (h < 12) return "Bom dia";
+    if (h < 18) return "Boa tarde";
+    return "Boa noite";
+  }, []);
+
+  const dataFormatada = useMemo(() => {
+    const d = new Date();
+    const dias = ["Domingo","Segunda-Feira","Terça-Feira","Quarta-Feira","Quinta-Feira","Sexta-Feira","Sábado"];
+    const meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+    return `${dias[d.getDay()]} dia ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,105 +56,104 @@ function AuthPage() {
     });
     setLoading(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Cadastro criado! Verifique seu e-mail se a confirmação estiver ativa.");
+    toast.success("Conta criada com sucesso!");
     navigate({ to: "/dashboard" });
   };
 
-  const handleGoogle = async () => {
-    setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (result.error) { toast.error("Falha no Google"); setLoading(false); return; }
-    if (!result.redirected) navigate({ to: "/dashboard" });
-  };
-
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[oklch(0.22_0.06_258)] via-[oklch(0.28_0.08_258)] to-[oklch(0.34_0.11_258)] p-12 text-white">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-accent text-accent-foreground">
-            <Sparkles className="h-6 w-6" />
-          </div>
-          <div>
-            <div className="text-lg font-bold leading-none">Digitale Têxtil</div>
-            <div className="text-xs uppercase tracking-widest text-white/60">Sistema ERP</div>
-          </div>
-        </div>
-        <div className="space-y-6">
-          <h1 className="text-5xl font-bold leading-tight">Gestão completa da<br /><span className="text-accent">indústria têxtil</span></h1>
-          <p className="max-w-md text-white/70">Comercial, produção (PCP), estoque, financeiro, logística e qualidade — em uma única plataforma corporativa.</p>
-          <div className="grid grid-cols-3 gap-4 pt-4">
-            {["Estamparia Digital","Confecção","Private Label","Distribuição","Facções","PCP + Kanban"].map((t) => (
-              <div key={t} className="rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80">{t}</div>
-            ))}
-          </div>
-        </div>
-        <div className="text-xs text-white/50">© {new Date().getFullYear()} Digitale Têxtil.</div>
-        <div aria-hidden className="pointer-events-none absolute -right-20 -bottom-20 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
-      </div>
-
-      <div className="flex items-center justify-center p-6 lg:p-12 bg-background">
-        <Card className="w-full max-w-md border-none shadow-none">
-          <CardContent className="p-0">
-            <h2 className="text-2xl font-bold">Acesso ao sistema</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Entre ou crie sua conta para acessar o ERP Digitale Têxtil.</p>
-
-            <Tabs value={tab} onValueChange={(v) => setTab(v as "login" | "signup")} className="mt-6">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Entrar</TabsTrigger>
-                <TabsTrigger value="signup">Criar conta</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="login">
-                <form onSubmit={handleLogin} className="mt-4 space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">E-mail</Label>
-                    <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="senha">Senha</Label>
-                    <Input id="senha" type="password" required value={senha} onChange={(e) => setSenha(e.target.value)} />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Entrar
-                  </Button>
-                </form>
-              </TabsContent>
-
-              <TabsContent value="signup">
-                <form onSubmit={handleSignup} className="mt-4 space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="nome">Nome completo</Label>
-                    <Input id="nome" required value={nome} onChange={(e) => setNome(e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email2">E-mail</Label>
-                    <Input id="email2" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="senha2">Senha</Label>
-                    <Input id="senha2" type="password" minLength={6} required value={senha} onChange={(e) => setSenha(e.target.value)} />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Criar conta
-                  </Button>
-                  <p className="text-center text-[11px] text-muted-foreground">
-                    O primeiro usuário criado recebe automaticamente o papel de <b>Administrador</b>.
-                  </p>
-                </form>
-              </TabsContent>
-            </Tabs>
-
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
-              <div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">ou</span></div>
+    <div className="min-h-screen bg-[#e9e9e9] flex flex-col font-sans">
+      {/* Header cinza com logo + data */}
+      <header className="bg-gradient-to-b from-[#4a4a4a] via-[#2f2f2f] to-[#5a5a5a] border-b border-black/40">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            <img src={logoAsset.url} alt="Digitale Têxtil" className="h-12 w-auto bg-white/95 rounded px-3 py-1" />
+            <div className="hidden sm:block text-white/90">
+              <div className="text-[10px] uppercase tracking-[0.25em] text-white/60">Sistema ERP</div>
+              <div className="text-sm font-semibold">Digitale Têxtil</div>
             </div>
-            <Button type="button" variant="outline" className="w-full" onClick={handleGoogle} disabled={loading}>
-              <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.83z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-              Continuar com Google
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+          <div className="text-white text-xs sm:text-sm">
+            <span className="mr-1 opacity-70">©</span>
+            {dataFormatada}, {saudacao}!
+          </div>
+        </div>
+        <div className="h-3 bg-gradient-to-b from-[#8a8a8a] to-[#6a6a6a] border-t border-white/10" />
+      </header>
+
+      {/* Barra "Acesso ao Sistema" preta com form inline */}
+      <section className="bg-black text-white">
+        <div className="mx-auto max-w-6xl px-6 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h1 className="text-sm font-semibold tracking-wide">Acesso ao Sistema</h1>
+
+          <Tabs value={tab} onValueChange={(v) => setTab(v as "login" | "signup")} className="w-full sm:w-auto">
+            <TabsList className="h-8 bg-white/10">
+              <TabsTrigger value="login" className="text-xs data-[state=active]:bg-white data-[state=active]:text-black">Entrar</TabsTrigger>
+              <TabsTrigger value="signup" className="text-xs data-[state=active]:bg-white data-[state=active]:text-black">Criar conta</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="login" className="mt-2 sm:mt-0 sm:absolute">
+              <form onSubmit={handleLogin} className="flex flex-wrap items-center gap-2">
+                <label className="text-xs text-white/80">Usuário</label>
+                <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                  className="h-8 w-56 rounded-none bg-white text-black text-xs" />
+                <label className="text-xs text-white/80">Senha</label>
+                <Input type="password" required value={senha} onChange={(e) => setSenha(e.target.value)}
+                  className="h-8 w-40 rounded-none bg-white text-black text-xs" />
+                <Button type="submit" size="icon" disabled={loading}
+                  className="h-8 w-8 rounded-none bg-[#4a7d3a] hover:bg-[#3d6a2f]">
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />}
+                </Button>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="signup" className="mt-2 sm:mt-0 sm:absolute">
+              <form onSubmit={handleSignup} className="flex flex-wrap items-center gap-2">
+                <Input placeholder="Nome" required value={nome} onChange={(e) => setNome(e.target.value)}
+                  className="h-8 w-40 rounded-none bg-white text-black text-xs" />
+                <Input type="email" placeholder="E-mail" required value={email} onChange={(e) => setEmail(e.target.value)}
+                  className="h-8 w-52 rounded-none bg-white text-black text-xs" />
+                <Input type="password" placeholder="Senha" minLength={6} required value={senha} onChange={(e) => setSenha(e.target.value)}
+                  className="h-8 w-36 rounded-none bg-white text-black text-xs" />
+                <Button type="submit" size="icon" disabled={loading}
+                  className="h-8 w-8 rounded-none bg-[#4a7d3a] hover:bg-[#3d6a2f]">
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Faixa "Área Restrita (login)" */}
+        <div className="bg-[#e9e9e9]">
+          <div className="mx-auto max-w-6xl px-6 flex justify-end">
+            <div className="flex items-center gap-2 bg-gradient-to-b from-[#3a3a3a] to-[#1a1a1a] text-white text-xs font-semibold px-4 py-2 shadow">
+              <Zap className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+              Área Restrita (login)
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Painel "Bem Vindo!" */}
+      <main className="flex-1">
+        <div className="mx-auto max-w-6xl px-6 pb-10">
+          <div className="border border-[#c9c9c9] bg-white shadow-sm">
+            <div className="bg-gradient-to-b from-[#e0e0e0] to-[#bdbdbd] border-b border-[#a9a9a9] px-4 py-2">
+              <h2 className="text-sm font-semibold text-[#333]">Bem Vindo!</h2>
+            </div>
+            <div className="flex flex-col items-center justify-center gap-6 px-6 py-16 bg-[repeating-linear-gradient(0deg,#ffffff_0px,#ffffff_2px,#f6f6f6_2px,#f6f6f6_4px)]">
+              <img src={logoAsset.url} alt="Digitale Têxtil - Tecidos de Alta Tecnologia" className="h-56 w-auto" />
+              <div className="text-2xl font-light tracking-[0.35em] text-[#1e2a44]">TECIDOS DE ALTA TECNOLOGIA</div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer className="bg-gradient-to-b from-[#4a4a4a] to-[#2a2a2a] text-white/80 text-xs">
+        <div className="mx-auto max-w-6xl px-6 py-3">
+          Digitale Têxtil © {new Date().getFullYear()} Todos os Direitos Reservados
+        </div>
+      </footer>
     </div>
   );
 }
