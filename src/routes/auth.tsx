@@ -82,16 +82,19 @@ function AuthPage() {
 
       {/* Barra "Acesso ao Sistema" preta com form inline */}
       <section className="bg-black text-white">
-        <div className="mx-auto max-w-6xl px-6 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-sm font-semibold tracking-wide">Acesso ao Sistema</h1>
+        <div className="mx-auto max-w-6xl px-6 py-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-sm font-semibold tracking-wide whitespace-nowrap">Acesso ao Sistema</h1>
+            <Tabs value={tab} onValueChange={(v) => setTab(v as "login" | "signup")}>
+              <TabsList className="h-8 bg-white/10">
+                <TabsTrigger value="login" className="text-xs data-[state=active]:bg-white data-[state=active]:text-black">Entrar</TabsTrigger>
+                <TabsTrigger value="signup" className="text-xs data-[state=active]:bg-white data-[state=active]:text-black">Criar conta</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
 
-          <Tabs value={tab} onValueChange={(v) => setTab(v as "login" | "signup")} className="w-full sm:w-auto">
-            <TabsList className="h-8 bg-white/10">
-              <TabsTrigger value="login" className="text-xs data-[state=active]:bg-white data-[state=active]:text-black">Entrar</TabsTrigger>
-              <TabsTrigger value="signup" className="text-xs data-[state=active]:bg-white data-[state=active]:text-black">Criar conta</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="login" className="mt-2 sm:mt-0 sm:absolute">
+          <div className="flex-1 lg:flex lg:justify-end">
+            {tab === "login" ? (
               <form onSubmit={handleLogin} className="flex flex-wrap items-center gap-2">
                 <label className="text-xs text-white/80">Usuário</label>
                 <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
@@ -104,9 +107,7 @@ function AuthPage() {
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />}
                 </Button>
               </form>
-            </TabsContent>
-
-            <TabsContent value="signup" className="mt-2 sm:mt-0 sm:absolute">
+            ) : (
               <form onSubmit={handleSignup} className="flex flex-wrap items-center gap-2">
                 <Input placeholder="Nome" required value={nome} onChange={(e) => setNome(e.target.value)}
                   className="h-8 w-40 rounded-none bg-white text-black text-xs" />
@@ -119,20 +120,21 @@ function AuthPage() {
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />}
                 </Button>
               </form>
-            </TabsContent>
-          </Tabs>
-        </div>
-
-        {/* Faixa "Área Restrita (login)" */}
-        <div className="bg-[#e9e9e9]">
-          <div className="mx-auto max-w-6xl px-6 flex justify-end">
-            <div className="flex items-center gap-2 bg-gradient-to-b from-[#3a3a3a] to-[#1a1a1a] text-white text-xs font-semibold px-4 py-2 shadow">
-              <Zap className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-              Área Restrita (login)
-            </div>
+            )}
           </div>
         </div>
       </section>
+
+      {/* Faixa "Área Restrita (login)" */}
+      <div className="bg-[#e9e9e9] border-b border-[#c9c9c9]">
+        <div className="mx-auto max-w-6xl px-6 flex justify-end">
+          <div className="flex items-center gap-2 bg-gradient-to-b from-[#3a3a3a] to-[#1a1a1a] text-white text-xs font-semibold px-4 py-2 shadow">
+            <Zap className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+            Área Restrita (login)
+          </div>
+        </div>
+      </div>
+
 
       {/* Painel "Bem Vindo!" */}
       <main className="flex-1">
