@@ -68,6 +68,7 @@ function ArtigosPage() {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [toDelete, setToDelete] = useState<Article | null>(null);
+  const [selected, setSelected] = useState<Record<string, unknown> | null>(null);
 
   const load = async () => {
     setLoading(true);
