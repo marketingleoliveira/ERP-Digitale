@@ -43,7 +43,7 @@ type Product = {
 const fmtBRL = (v: number | null) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v ?? 0);
 
-const columns: Column<Product>[] = [
+const baseColumns: Column<Product>[] = [
   { key: "codigo", header: "Código", className: "font-mono text-xs" },
   {
     key: "nome", header: "Produto", sortable: true, render: (r) => (
@@ -81,11 +81,44 @@ const emptyForm = {
 };
 
 function ProdutosPage() {
+  const { user } = useAuth();
+  const roles = useUserRoles(user?.id);
+  const canDelete = roles.includes("desenvolvedor");
+
   const [rows, setRows] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(emptyForm);
+  const [toDelete, setToDelete] = useState<Product | null>(null);
+
+  const columns = useMemo<Column<Product>[]>(() => {
+    if (!canDelete) return baseColumns;
+    return [
+      ...baseColumns,
+      {
+        key: "actions", header: "", className: "text-right w-16",
+        render: (r) => (
+          <Button
+            variant="ghost" size="sm"
+            className="text-destructive hover:text-destructive"
+            onClick={() => setToDelete(r)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        ),
+      },
+    ];
+  }, [canDelete]);
+
+  const handleDelete = async () => {
+    if (!toDelete) return;
+    const { error } = await supabase.from("products").delete().eq("id", toDelete.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Produto "${toDelete.nome}" excluído`);
+    setToDelete(null);
+    load();
+  };
 
   const load = async () => {
     setLoading(true);
