@@ -119,8 +119,8 @@ function ProdutosPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Produtos"
-        description="Tecidos, estampas, produtos acabados, matérias-primas e aviamentos."
+        title="Produtos (Insumos)"
+        description="Insumos para confecção e dia a dia da empresa — matérias-primas, aviamentos, embalagens e serviços. Para tecidos prontos, use o menu Artigos."
         actions={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -157,10 +157,12 @@ function ProdutosPage() {
                   <Select value={form.categoria} onValueChange={(v) => setForm({ ...form, categoria: v })}>
                     <SelectTrigger><SelectValue placeholder="Selecione…" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Tecido">Tecido</SelectItem>
-                      <SelectItem value="Produto Acabado">Produto Acabado</SelectItem>
                       <SelectItem value="Matéria-prima">Matéria-prima</SelectItem>
                       <SelectItem value="Aviamento">Aviamento</SelectItem>
+                      <SelectItem value="Embalagem">Embalagem</SelectItem>
+                      <SelectItem value="Linha / Fio">Linha / Fio</SelectItem>
+                      <SelectItem value="Etiqueta">Etiqueta</SelectItem>
+                      <SelectItem value="Uso e Consumo">Uso e Consumo</SelectItem>
                       <SelectItem value="Serviço">Serviço</SelectItem>
                     </SelectContent>
                   </Select>
