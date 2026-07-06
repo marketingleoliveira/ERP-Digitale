@@ -115,6 +115,7 @@ function ClientesPage() {
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ ...emptyForm });
+  const [selected, setSelected] = useState<Record<string, unknown> | null>(null);
   const [reps, setReps] = useState<Option[]>([]);
   const [trans, setTrans] = useState<Option[]>([]);
 
