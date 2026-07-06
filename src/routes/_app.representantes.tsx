@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/empty-state";
+import { RecordDetailDialog } from "@/components/record-detail-dialog";
 
 export const Route = createFileRoute("/_app/representantes")({ component: RepresentantesPage });
 
@@ -67,6 +68,7 @@ function RepresentantesPage() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [selected, setSelected] = useState<Record<string, unknown> | null>(null);
   const [form, setForm] = useState(emptyForm);
 
   const load = async () => {
@@ -163,8 +165,17 @@ function RepresentantesPage() {
           description="Clique em “Novo representante” para começar."
         />
       ) : (
-        <DataTable data={rows} columns={columns} searchKeys={["nome", "email", "regiao"]} />
+        <DataTable data={rows} columns={columns} searchKeys={["nome", "email", "regiao"]}
+          onRowClick={(r) => setSelected(r as unknown as Record<string, unknown>)} />
       )}
+      <RecordDetailDialog
+        open={!!selected}
+        onOpenChange={(v) => !v && setSelected(null)}
+        title={(selected?.nome as string) ?? "Representante"}
+        tableName="sales_reps"
+        record={selected}
+        onSaved={load}
+      />
     </div>
   );
 }
