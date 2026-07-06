@@ -12,6 +12,7 @@ import { Plus, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { RecordDetailDialog } from "@/components/record-detail-dialog";
 
 export const Route = createFileRoute("/_app/clientes")({ component: ClientesPage });
 
@@ -114,6 +115,7 @@ function ClientesPage() {
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ ...emptyForm });
+  const [selected, setSelected] = useState<Record<string, unknown> | null>(null);
   const [reps, setReps] = useState<Option[]>([]);
   const [trans, setTrans] = useState<Option[]>([]);
 
@@ -388,8 +390,24 @@ function ClientesPage() {
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       ) : (
-        <DataTable data={rows} columns={columns} searchKeys={["razao_social", "nome_fantasia", "cnpj", "cidade", "segmento"]} />
+        <DataTable
+          data={rows}
+          columns={columns}
+          searchKeys={["razao_social", "nome_fantasia", "cnpj", "cidade", "segmento"]}
+          onRowClick={(r) => setSelected(r as unknown as Record<string, unknown>)}
+        />
       )}
+
+      <RecordDetailDialog
+        open={!!selected}
+        onOpenChange={(v) => !v && setSelected(null)}
+        title={(selected?.razao_social as string) ?? "Cliente"}
+        tableName="customers"
+        record={selected}
+        hidden={["sales_rep_id", "transportadora_id"]}
+        textareas={["observacao", "endereco"]}
+        onSaved={load}
+      />
     </div>
   );
 }

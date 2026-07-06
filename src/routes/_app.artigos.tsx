@@ -22,6 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/empty-state";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
+import { RecordDetailDialog } from "@/components/record-detail-dialog";
 
 export const Route = createFileRoute("/_app/artigos")({ component: ArtigosPage });
 
@@ -67,6 +68,7 @@ function ArtigosPage() {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [toDelete, setToDelete] = useState<Article | null>(null);
+  const [selected, setSelected] = useState<Record<string, unknown> | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -279,8 +281,19 @@ function ArtigosPage() {
           data={rows}
           columns={columns}
           searchKeys={["codigo", "nome", "categoria", "composicao", "descricao_curta"]}
+          onRowClick={(r) => setSelected(r as unknown as Record<string, unknown>)}
         />
       )}
+
+      <RecordDetailDialog
+        open={!!selected}
+        onOpenChange={(v) => !v && setSelected(null)}
+        title={(selected?.nome as string) ?? "Artigo"}
+        tableName="articles"
+        record={selected}
+        textareas={["descricao"]}
+        onSaved={load}
+      />
 
       <AlertDialog open={!!toDelete} onOpenChange={(v) => !v && setToDelete(null)}>
         <AlertDialogContent>

@@ -10,6 +10,7 @@ import { Plus, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { RecordDetailDialog } from "@/components/record-detail-dialog";
 
 export const Route = createFileRoute("/_app/fornecedores")({ component: FornecedoresPage });
 
@@ -44,6 +45,7 @@ function FornecedoresPage() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [selected, setSelected] = useState<Record<string, unknown> | null>(null);
   const [form, setForm] = useState({ razao_social: "", nome_fantasia: "", cnpj: "", categoria: "", contato_principal: "", telefone: "", cidade: "", uf: "" });
 
   const load = async () => {
@@ -96,8 +98,17 @@ function FornecedoresPage() {
       />
       {loading
         ? <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
-        : <DataTable data={rows} columns={columns} searchKeys={["razao_social","nome_fantasia","cnpj","categoria","cidade"]} />
+        : <DataTable data={rows} columns={columns} searchKeys={["razao_social","nome_fantasia","cnpj","categoria","cidade"]}
+            onRowClick={(r) => setSelected(r as unknown as Record<string, unknown>)} />
       }
+      <RecordDetailDialog
+        open={!!selected}
+        onOpenChange={(v) => !v && setSelected(null)}
+        title={(selected?.razao_social as string) ?? "Fornecedor"}
+        tableName="suppliers"
+        record={selected}
+        onSaved={load}
+      />
     </div>
   );
 }
