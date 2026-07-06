@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, Users, Truck, UserCheck, Package, Warehouse,
   ShoppingCart, Receipt, Handshake, Wallet, Factory, Scissors,
-  BadgeCheck, PackageCheck, FileText, ShieldCheck, Settings,
+  BadgeCheck, PackageCheck, FileText, ShieldCheck, Settings, Shirt,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -24,7 +24,8 @@ const groups = [
       { title: "Clientes", url: "/clientes", icon: Users },
       { title: "Fornecedores", url: "/fornecedores", icon: Truck },
       { title: "Representantes", url: "/representantes", icon: UserCheck },
-      { title: "Produtos", url: "/produtos", icon: Package },
+      { title: "Artigos", url: "/artigos", icon: Shirt },
+      { title: "Produtos (Insumos)", url: "/produtos", icon: Package },
     ],
   },
   {
