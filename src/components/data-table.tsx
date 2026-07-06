@@ -99,7 +99,16 @@ export function DataTable<T extends Record<string, any>>({
                 </TableCell>
               </TableRow>
             ) : paged.map((row, i) => (
-              <TableRow key={i}>
+              <TableRow
+                key={i}
+                onClick={onRowClick ? (e) => {
+                  // Ignore clicks on interactive elements inside the row.
+                  const target = e.target as HTMLElement;
+                  if (target.closest("button,a,input,select,textarea,[role=checkbox],[role=switch]")) return;
+                  onRowClick(row);
+                } : undefined}
+                className={onRowClick ? "cursor-pointer hover:bg-muted/50" : undefined}
+              >
                 {columns.map((c) => (
                   <TableCell key={String(c.key)} className={c.className}>
                     {c.render ? c.render(row) : String(row[c.key as keyof T] ?? "")}
