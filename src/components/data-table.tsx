@@ -19,10 +19,11 @@ interface DataTableProps<T> {
   searchKeys?: (keyof T)[];
   pageSize?: number;
   toolbar?: ReactNode;
+  onRowClick?: (row: T) => void;
 }
 
 export function DataTable<T extends Record<string, any>>({
-  data, columns, searchKeys, pageSize = 10, toolbar,
+  data, columns, searchKeys, pageSize = 10, toolbar, onRowClick,
 }: DataTableProps<T>) {
   const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
