@@ -9,13 +9,18 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Plus, Loader2, Package } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Plus, Loader2, Package, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/empty-state";
+import { useAuth, useUserRoles } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_app/produtos")({ component: ProdutosPage });
 
@@ -38,7 +43,7 @@ type Product = {
 const fmtBRL = (v: number | null) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v ?? 0);
 
-const columns: Column<Product>[] = [
+const baseColumns: Column<Product>[] = [
   { key: "codigo", header: "Código", className: "font-mono text-xs" },
   {
     key: "nome", header: "Produto", sortable: true, render: (r) => (
@@ -76,11 +81,44 @@ const emptyForm = {
 };
 
 function ProdutosPage() {
+  const { user } = useAuth();
+  const roles = useUserRoles(user?.id);
+  const canDelete = roles.includes("desenvolvedor");
+
   const [rows, setRows] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(emptyForm);
+  const [toDelete, setToDelete] = useState<Product | null>(null);
+
+  const columns = useMemo<Column<Product>[]>(() => {
+    if (!canDelete) return baseColumns;
+    return [
+      ...baseColumns,
+      {
+        key: "actions", header: "", className: "text-right w-16",
+        render: (r) => (
+          <Button
+            variant="ghost" size="sm"
+            className="text-destructive hover:text-destructive"
+            onClick={() => setToDelete(r)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        ),
+      },
+    ];
+  }, [canDelete]);
+
+  const handleDelete = async () => {
+    if (!toDelete) return;
+    const { error } = await supabase.from("products").delete().eq("id", toDelete.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Produto "${toDelete.nome}" excluído`);
+    setToDelete(null);
+    load();
+  };
 
   const load = async () => {
     setLoading(true);
@@ -119,8 +157,8 @@ function ProdutosPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Produtos"
-        description="Tecidos, estampas, produtos acabados, matérias-primas e aviamentos."
+        title="Produtos (Insumos)"
+        description="Insumos para confecção e dia a dia da empresa — matérias-primas, aviamentos, embalagens e serviços. Para tecidos prontos, use o menu Artigos."
         actions={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -157,10 +195,12 @@ function ProdutosPage() {
                   <Select value={form.categoria} onValueChange={(v) => setForm({ ...form, categoria: v })}>
                     <SelectTrigger><SelectValue placeholder="Selecione…" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Tecido">Tecido</SelectItem>
-                      <SelectItem value="Produto Acabado">Produto Acabado</SelectItem>
                       <SelectItem value="Matéria-prima">Matéria-prima</SelectItem>
                       <SelectItem value="Aviamento">Aviamento</SelectItem>
+                      <SelectItem value="Embalagem">Embalagem</SelectItem>
+                      <SelectItem value="Linha / Fio">Linha / Fio</SelectItem>
+                      <SelectItem value="Etiqueta">Etiqueta</SelectItem>
+                      <SelectItem value="Uso e Consumo">Uso e Consumo</SelectItem>
                       <SelectItem value="Serviço">Serviço</SelectItem>
                     </SelectContent>
                   </Select>
@@ -228,6 +268,26 @@ function ProdutosPage() {
           searchKeys={["codigo", "nome", "categoria", "tipo", "composicao"]}
         />
       )}
+
+      <AlertDialog open={!!toDelete} onOpenChange={(v) => !v && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir produto?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação é permanente. O produto <b>{toDelete?.nome}</b> será removido do sistema.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleDelete}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -30,6 +30,7 @@ import { Route as AppCrmRouteImport } from './routes/_app.crm'
 import { Route as AppConfiguracoesRouteImport } from './routes/_app.configuracoes'
 import { Route as AppComprasRouteImport } from './routes/_app.compras'
 import { Route as AppClientesRouteImport } from './routes/_app.clientes'
+import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -135,11 +136,17 @@ const AppClientesRoute = AppClientesRouteImport.update({
   path: '/clientes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppArtigosRoute = AppArtigosRouteImport.update({
+  id: '/artigos',
+  path: '/artigos',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
+  '/artigos': typeof AppArtigosRoute
   '/clientes': typeof AppClientesRoute
   '/compras': typeof AppComprasRoute
   '/configuracoes': typeof AppConfiguracoesRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
+  '/artigos': typeof AppArtigosRoute
   '/clientes': typeof AppClientesRoute
   '/compras': typeof AppComprasRoute
   '/configuracoes': typeof AppConfiguracoesRoute
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
+  '/_app/artigos': typeof AppArtigosRoute
   '/_app/clientes': typeof AppClientesRoute
   '/_app/compras': typeof AppComprasRoute
   '/_app/configuracoes': typeof AppConfiguracoesRoute
@@ -210,6 +219,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/login'
+    | '/artigos'
     | '/clientes'
     | '/compras'
     | '/configuracoes'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/login'
+    | '/artigos'
     | '/clientes'
     | '/compras'
     | '/configuracoes'
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/auth'
     | '/login'
+    | '/_app/artigos'
     | '/_app/clientes'
     | '/_app/compras'
     | '/_app/configuracoes'
@@ -430,10 +442,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppClientesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/artigos': {
+      id: '/_app/artigos'
+      path: '/artigos'
+      fullPath: '/artigos'
+      preLoaderRoute: typeof AppArtigosRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppArtigosRoute: typeof AppArtigosRoute
   AppClientesRoute: typeof AppClientesRoute
   AppComprasRoute: typeof AppComprasRoute
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
@@ -454,6 +474,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppArtigosRoute: AppArtigosRoute,
   AppClientesRoute: AppClientesRoute,
   AppComprasRoute: AppComprasRoute,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
@@ -484,13 +505,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -124,6 +124,63 @@ export type Database = {
           },
         ]
       }
+      articles: {
+        Row: {
+          ativo: boolean
+          categoria: string | null
+          codigo: string | null
+          composicao: string | null
+          created_at: string
+          descricao: string | null
+          descricao_curta: string | null
+          gramatura: number | null
+          id: string
+          imagem_url: string | null
+          largura: number | null
+          nome: string
+          preco_venda: number | null
+          slug: string | null
+          tecnologias: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          categoria?: string | null
+          codigo?: string | null
+          composicao?: string | null
+          created_at?: string
+          descricao?: string | null
+          descricao_curta?: string | null
+          gramatura?: number | null
+          id?: string
+          imagem_url?: string | null
+          largura?: number | null
+          nome: string
+          preco_venda?: number | null
+          slug?: string | null
+          tecnologias?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          categoria?: string | null
+          codigo?: string | null
+          composicao?: string | null
+          created_at?: string
+          descricao?: string | null
+          descricao_curta?: string | null
+          gramatura?: number | null
+          id?: string
+          imagem_url?: string | null
+          largura?: number | null
+          nome?: string
+          preco_venda?: number | null
+          slug?: string | null
+          tecnologias?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bank_accounts: {
         Row: {
           agencia: string | null
