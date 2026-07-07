@@ -5,7 +5,7 @@ export const Route = createFileRoute("/_app/variante")({
   ssr: false,
   component: () => (
     <ModulePlaceholder
-      title="__TITLE__"
+      title="Variante"
       description="Cadastro em construção — em breve disponível."
       features={["Listagem", "Cadastro", "Edição", "Exclusão (Desenvolvedor)"]}
     />

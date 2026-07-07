@@ -5,7 +5,7 @@ export const Route = createFileRoute("/_app/rep-meta")({
   ssr: false,
   component: () => (
     <ModulePlaceholder
-      title="__TITLE__"
+      title="Rep. Meta R$"
       description="Cadastro em construção — em breve disponível."
       features={["Listagem", "Cadastro", "Edição", "Exclusão (Desenvolvedor)"]}
     />

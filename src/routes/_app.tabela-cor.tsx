@@ -5,7 +5,7 @@ export const Route = createFileRoute("/_app/tabela-cor")({
   ssr: false,
   component: () => (
     <ModulePlaceholder
-      title="__TITLE__"
+      title="Tabela Cor"
       description="Cadastro em construção — em breve disponível."
       features={["Listagem", "Cadastro", "Edição", "Exclusão (Desenvolvedor)"]}
     />
