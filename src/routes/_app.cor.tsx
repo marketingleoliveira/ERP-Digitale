@@ -3,8 +3,13 @@ import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Download, Printer } from "lucide-react";
+import { Download, Plus, Printer } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/cor")({
   ssr: false,
@@ -68,6 +73,7 @@ function CorPage() {
       <div className="flex items-center gap-2">
         <h1 className="text-xl font-semibold text-primary">🎨 Listagem Tinturarias</h1>
         <div className="ml-auto flex gap-2">
+          <CadastroCorDialog />
           <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1.5" />Excel</Button>
           <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1.5" />PDF</Button>
           <Button variant="outline" size="sm" onClick={() => window.print()}><Printer className="h-4 w-4 mr-1.5" />Imprimir</Button>
@@ -144,5 +150,114 @@ function CorPage() {
         </div>
       </Card>
     </div>
+  );
+}
+
+const TIPOS = ["Clara", "Média", "Escura", "Especial"];
+const TINTURARIAS = DATA.map((d) => d.nome);
+
+function CadastroCorDialog() {
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({
+    codigo: "",
+    tipo: "",
+    cor: "",
+    tinturaria: "",
+    valor: "",
+    valorComplementar: "",
+    observacao: "",
+  });
+  const [tintSuggestOpen, setTintSuggestOpen] = useState(false);
+
+  const suggestions = useMemo(() => {
+    const q = form.tinturaria.trim().toLowerCase();
+    if (q.length < 3) return [];
+    return TINTURARIAS.filter((t) => t.toLowerCase().includes(q)).slice(0, 8);
+  }, [form.tinturaria]);
+
+  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
+    setForm((p) => ({ ...p, [k]: v }));
+
+  const submit = () => {
+    if (!form.codigo.trim() || !form.tipo || !form.cor.trim()) {
+      toast.error("Preencha Código, Tipo e Cor.");
+      return;
+    }
+    toast.success(`Cor "${form.cor}" cadastrada.`);
+    setOpen(false);
+    setForm({ codigo: "", tipo: "", cor: "", tinturaria: "", valor: "", valorComplementar: "", observacao: "" });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm"><Plus className="h-4 w-4 mr-1.5" />Nova Cor</Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle className="text-primary">🎨 Cadastro Cor</DialogTitle>
+        </DialogHeader>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="codigo"><span className="text-destructive">*</span> Código:</Label>
+            <Input id="codigo" value={form.codigo} onChange={(e) => set("codigo", e.target.value)} maxLength={20} />
+          </div>
+          <div className="space-y-1.5">
+            <Label><span className="text-destructive">*</span> Tipo:</Label>
+            <Select value={form.tipo} onValueChange={(v) => set("tipo", v)}>
+              <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>
+                {TIPOS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5 md:col-span-2">
+            <Label htmlFor="cor"><span className="text-destructive">*</span> Cor:</Label>
+            <Input id="cor" value={form.cor} onChange={(e) => set("cor", e.target.value)} maxLength={100} />
+          </div>
+          <div className="space-y-1.5 md:col-span-2 relative">
+            <Label htmlFor="tinturaria">Tinturaria:</Label>
+            <Input
+              id="tinturaria"
+              placeholder="Digite no mínimo as três primeiras letras da Tinturaria"
+              value={form.tinturaria}
+              onChange={(e) => { set("tinturaria", e.target.value); setTintSuggestOpen(true); }}
+              onBlur={() => setTimeout(() => setTintSuggestOpen(false), 150)}
+              onFocus={() => setTintSuggestOpen(true)}
+            />
+            {tintSuggestOpen && suggestions.length > 0 && (
+              <div className="absolute z-10 mt-1 w-full rounded-md border border-border bg-popover shadow-md max-h-56 overflow-auto">
+                {suggestions.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    className="w-full text-left px-3 py-1.5 text-sm hover:bg-accent"
+                    onClick={() => { set("tinturaria", s); setTintSuggestOpen(false); }}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="valor">Valor:</Label>
+            <Input id="valor" inputMode="decimal" value={form.valor} onChange={(e) => set("valor", e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="valorc">Valor Complementar:</Label>
+            <Input id="valorc" inputMode="decimal" value={form.valorComplementar} onChange={(e) => set("valorComplementar", e.target.value)} />
+          </div>
+          <div className="space-y-1.5 md:col-span-2">
+            <Label htmlFor="obs">Observação:</Label>
+            <Textarea id="obs" rows={4} value={form.observacao} onChange={(e) => set("observacao", e.target.value)} maxLength={500} />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+          <Button onClick={submit}>Salvar</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
