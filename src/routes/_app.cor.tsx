@@ -108,7 +108,9 @@ function CorPage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-primary hover:bg-primary">
-                <TableHead className="w-10"></TableHead>
+                <TableHead className="w-10 text-center">
+                  <Checkbox checked={sel.allSelected} onCheckedChange={(v) => sel.toggleAll(!!v)} aria-label="Selecionar todas" />
+                </TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Código</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Tipo</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Cor</TableHead>
