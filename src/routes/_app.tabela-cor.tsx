@@ -44,7 +44,7 @@ async function fetchTinturarias(): Promise<Tinturaria[]> {
   };
   const { data, error } = await client
     .from("tinturarias")
-    .select("id,codigo,nome_fantasia,razao_social,cnpj,telefone,contato,habilitado")
+    .select("id,codigo,nome_fantasia,razao_social,cnpj,telefone,contato,habilitado,categoria")
     .order("nome_fantasia", { ascending: true });
   if (error) throw error;
   return data ?? [];
