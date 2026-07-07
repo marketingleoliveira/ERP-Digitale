@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FilePlus2, Loader2, Pencil, Printer, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useMultiSelection } from "@/hooks/use-multi-selection";
 
 export const Route = createFileRoute("/_app/cor")({
   ssr: false,
