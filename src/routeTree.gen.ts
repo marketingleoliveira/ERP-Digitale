@@ -25,6 +25,7 @@ import { Route as AppProducaoRouteImport } from './routes/_app.producao'
 import { Route as AppMenusRouteImport } from './routes/_app.menus'
 import { Route as AppMaquinaRouteImport } from './routes/_app.maquina'
 import { Route as AppLogisticaRouteImport } from './routes/_app.logistica'
+import { Route as AppInicioRouteImport } from './routes/_app.inicio'
 import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
 import { Route as AppFiscalRouteImport } from './routes/_app.fiscal'
 import { Route as AppFioRouteImport } from './routes/_app.fio'
@@ -121,6 +122,11 @@ const AppMaquinaRoute = AppMaquinaRouteImport.update({
 const AppLogisticaRoute = AppLogisticaRouteImport.update({
   id: '/logistica',
   path: '/logistica',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInicioRoute = AppInicioRouteImport.update({
+  id: '/inicio',
+  path: '/inicio',
   getParentRoute: () => AppRoute,
 } as any)
 const AppFornecedoresRoute = AppFornecedoresRouteImport.update({
@@ -236,6 +242,7 @@ export interface FileRoutesByFullPath {
   '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
   '/fornecedores': typeof AppFornecedoresRoute
+  '/inicio': typeof AppInicioRoute
   '/logistica': typeof AppLogisticaRoute
   '/maquina': typeof AppMaquinaRoute
   '/menus': typeof AppMenusRoute
@@ -271,6 +278,7 @@ export interface FileRoutesByTo {
   '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
   '/fornecedores': typeof AppFornecedoresRoute
+  '/inicio': typeof AppInicioRoute
   '/logistica': typeof AppLogisticaRoute
   '/maquina': typeof AppMaquinaRoute
   '/menus': typeof AppMenusRoute
@@ -308,6 +316,7 @@ export interface FileRoutesById {
   '/_app/fio': typeof AppFioRoute
   '/_app/fiscal': typeof AppFiscalRoute
   '/_app/fornecedores': typeof AppFornecedoresRoute
+  '/_app/inicio': typeof AppInicioRoute
   '/_app/logistica': typeof AppLogisticaRoute
   '/_app/maquina': typeof AppMaquinaRoute
   '/_app/menus': typeof AppMenusRoute
@@ -345,6 +354,7 @@ export interface FileRouteTypes {
     | '/fio'
     | '/fiscal'
     | '/fornecedores'
+    | '/inicio'
     | '/logistica'
     | '/maquina'
     | '/menus'
@@ -380,6 +390,7 @@ export interface FileRouteTypes {
     | '/fio'
     | '/fiscal'
     | '/fornecedores'
+    | '/inicio'
     | '/logistica'
     | '/maquina'
     | '/menus'
@@ -416,6 +427,7 @@ export interface FileRouteTypes {
     | '/_app/fio'
     | '/_app/fiscal'
     | '/_app/fornecedores'
+    | '/_app/inicio'
     | '/_app/logistica'
     | '/_app/maquina'
     | '/_app/menus'
@@ -549,6 +561,13 @@ declare module '@tanstack/react-router' {
       path: '/logistica'
       fullPath: '/logistica'
       preLoaderRoute: typeof AppLogisticaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inicio': {
+      id: '/_app/inicio'
+      path: '/inicio'
+      fullPath: '/inicio'
+      preLoaderRoute: typeof AppInicioRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/fornecedores': {
@@ -699,6 +718,7 @@ interface AppRouteChildren {
   AppFioRoute: typeof AppFioRoute
   AppFiscalRoute: typeof AppFiscalRoute
   AppFornecedoresRoute: typeof AppFornecedoresRoute
+  AppInicioRoute: typeof AppInicioRoute
   AppLogisticaRoute: typeof AppLogisticaRoute
   AppMaquinaRoute: typeof AppMaquinaRoute
   AppMenusRoute: typeof AppMenusRoute
@@ -732,6 +752,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFioRoute: AppFioRoute,
   AppFiscalRoute: AppFiscalRoute,
   AppFornecedoresRoute: AppFornecedoresRoute,
+  AppInicioRoute: AppInicioRoute,
   AppLogisticaRoute: AppLogisticaRoute,
   AppMaquinaRoute: AppMaquinaRoute,
   AppMenusRoute: AppMenusRoute,
