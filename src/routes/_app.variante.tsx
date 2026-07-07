@@ -182,24 +182,37 @@ function VarianteDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-primary">🌸 {editing ? "Alterar" : "Cadastro"} Variante</DialogTitle>
         </DialogHeader>
-        <div className="space-y-3">
-          <div className="space-y-1.5">
-            <Label htmlFor="nome"><span className="text-destructive">*</span> Variante:</Label>
-            <Input id="nome" value={nome} onChange={(e) => setNome(e.target.value)} maxLength={100} autoFocus />
+        <div className="rounded bg-muted/50 p-6">
+          <div className="flex items-center gap-3">
+            <Label htmlFor="nome" className="whitespace-nowrap">
+              <span className="text-destructive">*</span> Variante:
+            </Label>
+            <Input
+              id="nome"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              maxLength={100}
+              autoFocus
+              className="flex-1 max-w-sm bg-background"
+            />
           </div>
-          <label className="flex items-center gap-2">
-            <Checkbox checked={habilitado} onCheckedChange={(v) => setHabilitado(!!v)} />
-            <span className="text-sm">Habilitado</span>
-          </label>
+          {editing && (
+            <label className="mt-4 flex items-center gap-2">
+              <Checkbox checked={habilitado} onCheckedChange={(v) => setHabilitado(!!v)} />
+              <span className="text-sm">Habilitado</span>
+            </label>
+          )}
         </div>
-        <DialogFooter>
+        <p className="text-center text-sm text-destructive">* Campo Obrigatório</p>
+        <DialogFooter className="sm:justify-center">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={mut.isPending}>Cancelar</Button>
           <Button onClick={submit} disabled={mut.isPending}>
-            {mut.isPending && <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />}Salvar
+            {mut.isPending && <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />}
+            {editing ? "SALVAR" : "CADASTRAR"}
           </Button>
         </DialogFooter>
       </DialogContent>
