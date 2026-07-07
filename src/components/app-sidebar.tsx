@@ -9,10 +9,11 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import logoAsset from "@/assets/digitale-logo-white.png.asset.json";
 import { ALL_MENU_ITEMS, GROUP_ORDER, useMenuVisibility } from "@/lib/menu-config";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
-import { LayoutDashboard, Users, ShoppingCart, Factory, Wallet, ShieldCheck, Code2, type LucideIcon } from "lucide-react";
+import { LayoutDashboard, Users, ShoppingCart, Factory, Wallet, ShieldCheck, Code2, Server, type LucideIcon } from "lucide-react";
 
 const GROUP_ICONS: Record<string, LucideIcon> = {
   "Visão Geral": LayoutDashboard,
+  "Sistema": Server,
   "Cadastros": Users,
   "Operacional": ShoppingCart,
   "Produção (PCP)": Factory,
@@ -20,6 +21,7 @@ const GROUP_ICONS: Record<string, LucideIcon> = {
   "Administração": ShieldCheck,
   "DEV": Code2,
 };
+
 
 
 export function AppSidebar() {
