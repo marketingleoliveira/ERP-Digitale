@@ -39,6 +39,7 @@ import { Route as AppClienteArtigoRouteImport } from './routes/_app.cliente-arti
 import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
 import { Route as AppAgulhaRouteImport } from './routes/_app.agulha'
 import { Route as AppProducaoIndexRouteImport } from './routes/_app.producao.index'
+import { Route as AppLogisticaIndexRouteImport } from './routes/_app.logistica.index'
 import { Route as AppFinanceiroIndexRouteImport } from './routes/_app.financeiro.index'
 import { Route as AppComprasIndexRouteImport } from './routes/_app.compras.index'
 import { Route as AppProducaoQualidadeRouteImport } from './routes/_app.producao.qualidade'
@@ -227,6 +228,11 @@ const AppAgulhaRoute = AppAgulhaRouteImport.update({
 const AppProducaoIndexRoute = AppProducaoIndexRouteImport.update({
   id: '/producao/',
   path: '/producao/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLogisticaIndexRoute = AppLogisticaIndexRouteImport.update({
+  id: '/logistica/',
+  path: '/logistica/',
   getParentRoute: () => AppRoute,
 } as any)
 const AppFinanceiroIndexRoute = AppFinanceiroIndexRouteImport.update({
@@ -501,6 +507,7 @@ export interface FileRoutesByFullPath {
   '/producao/qualidade': typeof AppProducaoQualidadeRoute
   '/compras/': typeof AppComprasIndexRoute
   '/financeiro/': typeof AppFinanceiroIndexRoute
+  '/logistica/': typeof AppLogisticaIndexRoute
   '/producao/': typeof AppProducaoIndexRoute
   '/compras/cotacoes/$id': typeof AppComprasCotacoesIdRoute
   '/compras/pedidos/$id': typeof AppComprasPedidosIdRoute
@@ -572,6 +579,7 @@ export interface FileRoutesByTo {
   '/producao/qualidade': typeof AppProducaoQualidadeRoute
   '/compras': typeof AppComprasIndexRoute
   '/financeiro': typeof AppFinanceiroIndexRoute
+  '/logistica': typeof AppLogisticaIndexRoute
   '/producao': typeof AppProducaoIndexRoute
   '/compras/cotacoes/$id': typeof AppComprasCotacoesIdRoute
   '/compras/pedidos/$id': typeof AppComprasPedidosIdRoute
@@ -645,6 +653,7 @@ export interface FileRoutesById {
   '/_app/producao/qualidade': typeof AppProducaoQualidadeRoute
   '/_app/compras/': typeof AppComprasIndexRoute
   '/_app/financeiro/': typeof AppFinanceiroIndexRoute
+  '/_app/logistica/': typeof AppLogisticaIndexRoute
   '/_app/producao/': typeof AppProducaoIndexRoute
   '/_app/compras/cotacoes/$id': typeof AppComprasCotacoesIdRoute
   '/_app/compras/pedidos/$id': typeof AppComprasPedidosIdRoute
@@ -718,6 +727,7 @@ export interface FileRouteTypes {
     | '/producao/qualidade'
     | '/compras/'
     | '/financeiro/'
+    | '/logistica/'
     | '/producao/'
     | '/compras/cotacoes/$id'
     | '/compras/pedidos/$id'
@@ -789,6 +799,7 @@ export interface FileRouteTypes {
     | '/producao/qualidade'
     | '/compras'
     | '/financeiro'
+    | '/logistica'
     | '/producao'
     | '/compras/cotacoes/$id'
     | '/compras/pedidos/$id'
@@ -861,6 +872,7 @@ export interface FileRouteTypes {
     | '/_app/producao/qualidade'
     | '/_app/compras/'
     | '/_app/financeiro/'
+    | '/_app/logistica/'
     | '/_app/producao/'
     | '/_app/compras/cotacoes/$id'
     | '/_app/compras/pedidos/$id'
@@ -1088,6 +1100,13 @@ declare module '@tanstack/react-router' {
       path: '/producao'
       fullPath: '/producao/'
       preLoaderRoute: typeof AppProducaoIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/logistica/': {
+      id: '/_app/logistica/'
+      path: '/logistica'
+      fullPath: '/logistica/'
+      preLoaderRoute: typeof AppLogisticaIndexRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/financeiro/': {
@@ -1498,6 +1517,7 @@ interface AppRouteChildren {
   AppProducaoQualidadeRoute: typeof AppProducaoQualidadeRoute
   AppComprasIndexRoute: typeof AppComprasIndexRoute
   AppFinanceiroIndexRoute: typeof AppFinanceiroIndexRoute
+  AppLogisticaIndexRoute: typeof AppLogisticaIndexRoute
   AppProducaoIndexRoute: typeof AppProducaoIndexRoute
 }
 
@@ -1560,6 +1580,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProducaoQualidadeRoute: AppProducaoQualidadeRoute,
   AppComprasIndexRoute: AppComprasIndexRoute,
   AppFinanceiroIndexRoute: AppFinanceiroIndexRoute,
+  AppLogisticaIndexRoute: AppLogisticaIndexRoute,
   AppProducaoIndexRoute: AppProducaoIndexRoute,
 }
 
