@@ -17,7 +17,6 @@ export const Route = createFileRoute("/_app/maquina")({
   component: MaquinaPage,
 });
 
-type CargaAgulha = { agulha: string; quantidade: number };
 type Maquina = {
   id: string;
   numero: number;
@@ -30,8 +29,8 @@ type Maquina = {
   finura?: number | null;
   disposicao_agulhas?: string | null;
   producao_media?: number | null;
-  carga_agulhas?: CargaAgulha[] | null;
-  fio_id?: string | null;
+  data_fabricacao?: string | null;
+  correias?: string[] | null;
 };
 
 const PAGE_SIZE = 20;
@@ -107,7 +106,7 @@ function MaquinaPage() {
             <TableHeader>
               <TableRow className="bg-primary hover:bg-primary">
                 <TableHead className="w-10"></TableHead>
-                <TableHead className="text-primary-foreground font-semibold">Número</TableHead>
+                <TableHead className="text-primary-foreground font-semibold">Código</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Tipo</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Máquina</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Modelo</TableHead>
@@ -156,7 +155,7 @@ function MaquinaPage() {
           </div>
           <div className="mt-3 flex flex-wrap items-end gap-3">
             <div className="min-w-[140px]">
-              <Label className="text-xs text-muted-foreground">Número:</Label>
+              <Label className="text-xs text-muted-foreground">Código:</Label>
               <Input value={filterNumero} onChange={(e) => setFilterNumero(e.target.value)} className="h-9" maxLength={10} />
             </div>
             <div className="flex-1 min-w-[240px]">
@@ -193,35 +192,8 @@ function MaquinaDialog({
   const [disposicao, setDisposicao] = useState("");
   const [prodMedia, setProdMedia] = useState("");
   const [habilitado, setHabilitado] = useState(true);
-  const [fioId, setFioId] = useState<string>("");
-  const [carga, setCarga] = useState<CargaAgulha[]>([]);
-  const [agulha, setAgulha] = useState("");
-  const [qtd, setQtd] = useState("");
-
-  const { data: fiosOptions = [] } = useQuery({
-    queryKey: ["composicoes", "fios"],
-    queryFn: async () => {
-      const { data, error } = await (supabase.from("composicoes" as never) as never as {
-        select: (c: string) => { eq: (a: string, b: unknown) => { order: (o: string) => Promise<{ data: Array<{ id: string; codigo: string; composicao: string | null; tipo: string; habilitado: boolean }> | null; error: Error | null }> } }
-      }).select("id,codigo,composicao,tipo,habilitado").eq("tipo", "Fio").order("codigo");
-      if (error) throw error;
-      return (data ?? []).filter((f) => f.habilitado);
-    },
-  });
-
-  const { data: agulhasOptions = [] } = useQuery({
-    queryKey: ["agulhas", "enabled"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("agulhas" as never)
-        .select("agulha,habilitado")
-        .order("agulha", { ascending: true });
-      if (error) throw error;
-      return ((data ?? []) as unknown as { agulha: string; habilitado: boolean }[])
-        .filter((a) => a.habilitado)
-        .map((a) => a.agulha);
-    },
-  });
+  const [dataFab, setDataFab] = useState("");
+  const [correias, setCorreias] = useState<string[]>([""]);
 
   useEffect(() => {
     if (!open) return;
@@ -235,9 +207,12 @@ function MaquinaDialog({
     setDisposicao(editing?.disposicao_agulhas ?? "");
     setProdMedia(editing?.producao_media?.toString() ?? "");
     setHabilitado(editing?.habilitado ?? true);
-    setFioId(editing?.fio_id ?? "");
-    setCarga(Array.isArray(editing?.carga_agulhas) ? editing!.carga_agulhas! : []);
-    setAgulha(""); setQtd("");
+    setDataFab(editing?.data_fabricacao ?? "");
+    setCorreias(
+      Array.isArray(editing?.correias) && editing!.correias!.length > 0
+        ? [...(editing!.correias as string[])]
+        : [""],
+    );
   }, [open, editing]);
 
   const numOrNull = (v: string): number | null => {
@@ -246,18 +221,16 @@ function MaquinaDialog({
     return Number.isFinite(n) ? n : null;
   };
 
-  const addCarga = () => {
-    const q = numOrNull(qtd);
-    if (!agulha.trim()) return toast.error("Informe a agulha.");
-    if (q == null || q <= 0) return toast.error("Informe a quantidade.");
-    setCarga((p) => [...p, { agulha: agulha.trim(), quantidade: q }]);
-    setAgulha(""); setQtd("");
-  };
+  const addCorreiaRow = () => setCorreias((p) => [...p, ""]);
+  const updateCorreia = (i: number, v: string) =>
+    setCorreias((p) => p.map((c, k) => (k === i ? v : c)));
+  const removeCorreia = (i: number) =>
+    setCorreias((p) => (p.length === 1 ? [""] : p.filter((_, k) => k !== i)));
 
   const mut = useMutation({
     mutationFn: async () => {
       const n = Number(numero);
-      if (!Number.isInteger(n) || n <= 0) throw new Error("Número inválido.");
+      if (!Number.isInteger(n) || n <= 0) throw new Error("Código inválido.");
       const nAlimN = numOrNull(nAlim);
       const payload = {
         numero: n, tipo, maquina: maquina.trim(), modelo: modelo.trim() || null,
@@ -266,8 +239,8 @@ function MaquinaDialog({
         finura: numOrNull(finura),
         disposicao_agulhas: disposicao.trim() || null,
         producao_media: numOrNull(prodMedia),
-        carga_agulhas: carga,
-        fio_id: fioId || null,
+        data_fabricacao: dataFab || null,
+        correias: correias.map((c) => c.trim()).filter(Boolean),
         habilitado,
       };
       const client = supabase as unknown as { from: (t: string) => { update: (p: unknown) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> }; insert: (p: unknown) => Promise<{ error: Error | null }> } };
@@ -304,7 +277,7 @@ function MaquinaDialog({
         </DialogHeader>
         <div className="rounded bg-muted/50 p-5 space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-            <Row label="Número" required>
+            <Row label="Código" required>
               <Input value={numero} onChange={(e) => setNumero(e.target.value)} className="max-w-[160px]" />
             </Row>
             <Row label="Tipo" required>
@@ -320,7 +293,9 @@ function MaquinaDialog({
             <Row label="Máquina" required>
               <Input value={maquina} onChange={(e) => setMaquina(e.target.value)} maxLength={100} />
             </Row>
-            <div />
+            <Row label="Data Fabricação">
+              <Input type="date" value={dataFab} onChange={(e) => setDataFab(e.target.value)} className="max-w-[200px]" />
+            </Row>
             <Row label="Modelo">
               <Input value={modelo} onChange={(e) => setModelo(e.target.value)} maxLength={100} />
             </Row>
@@ -339,68 +314,36 @@ function MaquinaDialog({
             <Row label="Produção Média">
               <Input value={prodMedia} onChange={(e) => setProdMedia(e.target.value)} className="max-w-[160px]" />
             </Row>
-            <Row label="Fio">
-              <select
-                value={fioId}
-                onChange={(e) => setFioId(e.target.value)}
-                className="h-9 w-full max-w-[320px] rounded border border-input bg-background px-2 text-sm"
-              >
-                <option value="">[SELECIONE]</option>
-                {fiosOptions.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.codigo}{f.composicao ? ` — ${f.composicao}` : ""}
-                  </option>
-                ))}
-              </select>
-            </Row>
           </div>
 
 
           <div className="pt-3">
-            <h3 className="text-center text-destructive font-semibold mb-3">CARGA AGULHAS</h3>
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_180px_auto] gap-3 items-end">
-              <div>
-                <Label className="text-sm"><span className="text-destructive mr-1">*</span>Agulha:</Label>
-                <select
-                  value={agulha}
-                  onChange={(e) => setAgulha(e.target.value)}
-                  className="h-9 w-full rounded border border-input bg-background px-2 text-sm"
-                >
-                  <option value="">[SELECIONE]</option>
-                  {agulhasOptions.map((a) => <option key={a} value={a}>{a}</option>)}
-                </select>
-              </div>
-              <div>
-                <Label className="text-sm"><span className="text-destructive mr-1">*</span>Quantidade:</Label>
-                <Input value={qtd} onChange={(e) => setQtd(e.target.value)} />
-              </div>
-              <Button type="button" variant="secondary" onClick={addCarga}>INSERIR</Button>
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <h3 className="text-center text-destructive font-semibold">CORREIAS</h3>
+              <Button type="button" size="sm" variant="secondary" onClick={addCorreiaRow}>
+                + ADICIONAR CORREIA
+              </Button>
             </div>
-            <div className="mt-3 overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted-foreground/70 hover:bg-muted-foreground/70">
-                    <TableHead className="text-white">Agulha</TableHead>
-                    <TableHead className="text-white text-right w-32">Quantidade</TableHead>
-                    <TableHead className="text-white text-center w-24">Remover</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {carga.length === 0 ? (
-                    <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-4">Nenhum item.</TableCell></TableRow>
-                  ) : carga.map((c, i) => (
-                    <TableRow key={i}>
-                      <TableCell>{c.agulha}</TableCell>
-                      <TableCell className="text-right">{c.quantidade}</TableCell>
-                      <TableCell className="text-center">
-                        <Button size="icon" variant="ghost" onClick={() => setCarga((p) => p.filter((_, k) => k !== i))}>
-                          <X className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            <div className="space-y-2">
+              {correias.map((c, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <Input
+                    value={c}
+                    onChange={(e) => updateCorreia(i, e.target.value)}
+                    placeholder={`Correia ${i + 1}`}
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => removeCorreia(i)}
+                    disabled={correias.length === 1 && !c}
+                  >
+                    <X className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+              ))}
             </div>
           </div>
 
