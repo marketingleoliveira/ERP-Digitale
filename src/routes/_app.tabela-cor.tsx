@@ -247,6 +247,13 @@ function TinturariaDialog({
   const [contato, setContato] = useState("");
   const [habilitado, setHabilitado] = useState(true);
   const [categoria, setCategoria] = useState<Categoria>("Tinturaria");
+  // insumo fields
+  const [ncm, setNcm] = useState("");
+  const [unidade, setUnidade] = useState("UN");
+  const [precoCusto, setPrecoCusto] = useState("");
+  const [precoVenda, setPrecoVenda] = useState("");
+  const [estoqueMin, setEstoqueMin] = useState("");
+  const [observacao, setObservacao] = useState("");
 
   useEffect(() => {
     if (!open) return;
@@ -258,21 +265,60 @@ function TinturariaDialog({
     setContato(editing?.contato ?? "");
     setHabilitado(editing?.habilitado ?? true);
     setCategoria(editing?.categoria ?? "Tinturaria");
+    setNcm(editing?.ncm ?? "");
+    setUnidade(editing?.unidade ?? "UN");
+    setPrecoCusto(editing?.preco_custo?.toString() ?? "");
+    setPrecoVenda(editing?.preco_venda?.toString() ?? "");
+    setEstoqueMin(editing?.estoque_minimo?.toString() ?? "");
+    setObservacao(editing?.observacao ?? "");
   }, [open, editing]);
+
+  const num = (v: string): number | null => {
+    if (!v.trim()) return null;
+    const n = Number(v.replace(",", "."));
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const isInsumo = categoria === "Insumos";
 
   const mut = useMutation({
     mutationFn: async () => {
-      if (!codigo.trim() || !nomeFantasia.trim()) throw new Error("Preencha Código e Nome Fantasia.");
-      const payload = {
-        codigo: codigo.trim(),
-        nome_fantasia: nomeFantasia.trim(),
-        razao_social: razaoSocial.trim() || null,
-        cnpj: cnpj.trim() || null,
-        telefone: telefone.trim() || null,
-        contato: contato.trim() || null,
-        habilitado,
-        categoria,
-      };
+      if (!codigo.trim() || !nomeFantasia.trim()) throw new Error("Preencha Código e Nome.");
+      const payload = isInsumo
+        ? {
+            codigo: codigo.trim(),
+            nome_fantasia: nomeFantasia.trim(),
+            categoria,
+            habilitado,
+            ncm: ncm.trim() || null,
+            unidade: unidade || null,
+            preco_custo: num(precoCusto),
+            preco_venda: num(precoVenda),
+            estoque_minimo: num(estoqueMin),
+            observacao: observacao.trim() || null,
+            // limpa campos de empresa quando vira insumo
+            razao_social: null,
+            cnpj: null,
+            telefone: null,
+            contato: null,
+          }
+        : {
+            codigo: codigo.trim(),
+            nome_fantasia: nomeFantasia.trim(),
+            razao_social: razaoSocial.trim() || null,
+            cnpj: cnpj.trim() || null,
+            telefone: telefone.trim() || null,
+            contato: contato.trim() || null,
+            habilitado,
+            categoria,
+            // limpa campos de produto quando vira empresa
+            ncm: null,
+            unidade: null,
+            preco_custo: null,
+            preco_venda: null,
+            estoque_minimo: null,
+            observacao: null,
+          };
       const client = supabase as unknown as { from: (t: string) => { update: (p: unknown) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> }; insert: (p: unknown) => Promise<{ error: Error | null }> } };
       if (editing) {
         const { error } = await client.from("tinturarias").update(payload).eq("id", editing.id);
@@ -292,10 +338,13 @@ function TinturariaDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-primary">🏭 {editing ? "Alterar" : "Cadastro"} Fornecedor</DialogTitle>
+          <DialogTitle className="text-primary">
+            {isInsumo ? "📦" : "🏭"} {editing ? "Alterar" : "Cadastro"} {isInsumo ? "Insumo" : "Fornecedor"}
+          </DialogTitle>
         </DialogHeader>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded bg-muted/50 p-5">
           <div className="space-y-1.5">
             <Label><span className="text-destructive">*</span> Código:</Label>
@@ -312,26 +361,65 @@ function TinturariaDialog({
               </SelectContent>
             </Select>
           </div>
+
           <div className="space-y-1.5 md:col-span-2">
-            <Label>CNPJ/CPF:</Label>
-            <Input value={cnpj} onChange={(e) => setCnpj(e.target.value)} maxLength={20} />
+            <Label><span className="text-destructive">*</span> {isInsumo ? "Nome do Insumo" : "Nome Fantasia"}:</Label>
+            <Input value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} maxLength={200} />
           </div>
-          <div className="space-y-1.5 md:col-span-2">
-            <Label><span className="text-destructive">*</span> Nome Fantasia:</Label>
-            <Input value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} maxLength={120} />
-          </div>
-          <div className="space-y-1.5 md:col-span-2">
-            <Label>Razão Social:</Label>
-            <Input value={razaoSocial} onChange={(e) => setRazaoSocial(e.target.value)} maxLength={160} />
-          </div>
-          <div className="space-y-1.5">
-            <Label>Telefone:</Label>
-            <Input value={telefone} onChange={(e) => setTelefone(e.target.value)} maxLength={30} />
-          </div>
-          <div className="space-y-1.5">
-            <Label>Contato:</Label>
-            <Input value={contato} onChange={(e) => setContato(e.target.value)} maxLength={80} />
-          </div>
+
+          {isInsumo ? (
+            <>
+              <div className="space-y-1.5">
+                <Label>NCM:</Label>
+                <Input value={ncm} onChange={(e) => setNcm(e.target.value)} maxLength={20} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Unidade:</Label>
+                <Select value={unidade} onValueChange={setUnidade}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {UNIDADES.map((u) => <SelectItem key={u} value={u}>{u}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Valor Compra R$:</Label>
+                <Input value={precoCusto} onChange={(e) => setPrecoCusto(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Valor Venda R$:</Label>
+                <Input value={precoVenda} onChange={(e) => setPrecoVenda(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Estoque Mínimo:</Label>
+                <Input value={estoqueMin} onChange={(e) => setEstoqueMin(e.target.value)} />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <Label>Observação:</Label>
+                <Input value={observacao} onChange={(e) => setObservacao(e.target.value)} maxLength={500} />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5 md:col-span-2">
+                <Label>CNPJ/CPF:</Label>
+                <Input value={cnpj} onChange={(e) => setCnpj(e.target.value)} maxLength={20} />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <Label>Razão Social:</Label>
+                <Input value={razaoSocial} onChange={(e) => setRazaoSocial(e.target.value)} maxLength={160} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Telefone:</Label>
+                <Input value={telefone} onChange={(e) => setTelefone(e.target.value)} maxLength={30} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Contato:</Label>
+                <Input value={contato} onChange={(e) => setContato(e.target.value)} maxLength={80} />
+              </div>
+            </>
+          )}
+
           {editing && (
             <label className="flex items-center gap-2 md:col-span-2">
               <Checkbox checked={habilitado} onCheckedChange={(v) => setHabilitado(!!v)} />
