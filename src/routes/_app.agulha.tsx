@@ -65,7 +65,7 @@ function AgulhaPage() {
 
   const deleteMut = useMutation({
     mutationFn: async (ids: string[]) => {
-      const { error } = await sb.from("agulhas").delete().in("id", ids as any);
+      const { error } = await (supabase.from("agulhas") as any).delete().in("id", ids);
       if (error) throw error;
       return ids.length;
     },
