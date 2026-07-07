@@ -162,6 +162,15 @@ function EmpresaPage() {
     onError: (e: any) => toast.error(e.message ?? "Erro ao excluir"),
   });
 
+  const toggleFlagMut = useMutation({
+    mutationFn: async ({ id, key, value }: { id: string; key: string; value: boolean }) => {
+      const { error } = await supabase.from("customers").update({ [key]: value }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["empresas"] }),
+    onError: (e: any) => toast.error(e.message ?? "Erro ao atualizar"),
+  });
+
   const openNew = () => { setEditing(null); setDialogOpen(true); };
   const openEdit = () => {
     if (!selected) return toast.info("Selecione exatamente uma empresa para alterar");
