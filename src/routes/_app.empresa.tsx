@@ -164,7 +164,7 @@ function EmpresaPage() {
 
   const toggleFlagMut = useMutation({
     mutationFn: async ({ id, key, value }: { id: string; key: string; value: boolean }) => {
-      const { error } = await supabase.from("customers").update({ [key]: value }).eq("id", id);
+      const { error } = await (supabase.from("customers") as any).update({ [key]: value }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["empresas"] }),
