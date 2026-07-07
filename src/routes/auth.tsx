@@ -18,7 +18,7 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard" });
+      if (data.session) navigate({ to: "/inicio" });
     });
   }, [navigate]);
 
@@ -42,7 +42,7 @@ function AuthPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
     setLoading(false);
     if (error) { toast.error(error.message); return; }
-    navigate({ to: "/dashboard" });
+    navigate({ to: "/inicio" });
   };
 
   return (

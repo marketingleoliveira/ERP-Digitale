@@ -33,7 +33,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
-        <Link to="/dashboard" className="flex items-center gap-2 px-2 py-3">
+        <Link to="/inicio" className="flex items-center gap-2 px-2 py-3">
           <img
             src={logoAsset.url}
             alt="Digitale Têxtil"
