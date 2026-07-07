@@ -429,17 +429,16 @@ function EmpresaDialog({
 
   const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
 
-  const TIPO_EMPRESA: Array<{ key: keyof Empresa; label: string }> = [
-    { key: "flag_cliente", label: "Cliente" },
-    { key: "flag_malha", label: "Fiação" },
-    { key: "flag_malha", label: "Malharia" },
-    { key: "flag_acabamento", label: "Acabamento" },
-    { key: "flag_confeccao", label: "Confecção" },
-    { key: "flag_importador", label: "Importador" },
-    { key: "flag_fornecedor", label: "Fornecedor" },
-    { key: "flag_transportadora", label: "Transportadora" },
-    { key: "flag_representante", label: "Representante" },
-  ];
+  const tipoAtual =
+    (TIPO_FLAGS.find((t) => form[t.key])?.key as string | undefined) ?? "";
+  const setTipo = (k: string) => {
+    setForm((f) => {
+      const next = { ...f };
+      for (const t of TIPO_FLAGS) next[t.key as string] = false;
+      next[k] = true;
+      return next;
+    });
+  };
 
   const handleSubmit = () => {
     onSave({ ...form, artigos_venda: artigos });
