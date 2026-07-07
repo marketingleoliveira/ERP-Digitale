@@ -351,3 +351,14 @@ function FuncionarioDialog({
     </Dialog>
   );
 }
+
+function Field({ label, required, children, className }: { label: string; required?: boolean; children: React.ReactNode; className?: string }) {
+  return (
+    <div className={className}>
+      <Label className="text-xs font-semibold">
+        {required && <span className="text-destructive mr-1">*</span>}{label}:
+      </Label>
+      <div className="mt-1">{children}</div>
+    </div>
+  );
+}

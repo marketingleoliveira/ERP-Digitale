@@ -799,3 +799,12 @@ function EmpresaViewDialog({ id, onClose }: { id: string | null; onClose: () => 
     </Dialog>
   );
 }
+
+function Row({ label, value, wide }: { label: string; value: any; wide?: boolean }) {
+  return (
+    <div className={`grid grid-cols-[130px_1fr] items-center gap-2 border-b border-border/60 py-1.5 ${wide ? "col-span-2" : ""}`}>
+      <div className="bg-muted/60 px-2 py-1 text-xs font-semibold text-foreground">{label}:</div>
+      <div className="px-2 text-sm text-foreground/90">{value ?? ""}</div>
+    </div>
+  );
+}

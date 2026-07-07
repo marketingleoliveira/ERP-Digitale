@@ -992,3 +992,7 @@ function ArtigoDetailDialog({ id, onOpenChange }: { id: string | null; onOpenCha
     </Dialog>
   );
 }
+
+function Section({ title }: { title: string }) {
+  return <h3 className="col-span-full mt-2 border-t pt-2 text-center text-sm font-semibold text-destructive">{title}</h3>;
+}
