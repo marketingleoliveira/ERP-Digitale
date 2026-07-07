@@ -348,6 +348,8 @@ function EmpresaPage() {
         saving={saveMut.isPending}
       />
 
+      <EmpresaViewDialog id={viewingId} onClose={() => setViewingId(null)} />
+
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
