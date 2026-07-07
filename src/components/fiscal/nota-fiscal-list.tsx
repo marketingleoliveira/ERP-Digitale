@@ -9,11 +9,12 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { FilePlus2, Loader2, Pencil, Trash2, Plus, X, Send, Printer } from "lucide-react";
+import { FilePlus2, Loader2, Pencil, Trash2, Plus, X, Send, Printer, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { emitirNFe } from "@/lib/nfe.functions";
+import { enviarNFePorEmail } from "@/lib/nfe-email.functions";
 import { openDanfe, type DanfeData } from "@/lib/danfe";
 import { NfeEventosDrawer } from "@/components/fiscal/nfe-eventos-drawer";
 
@@ -168,6 +169,23 @@ function NFActions({ nf }: { nf: NF }) {
     openDanfe(danfe);
   }
 
+  const sendEmail = useServerFn(enviarNFePorEmail);
+  async function doEmail() {
+    const { data: nota } = await supabase.from("notas_fiscais" as never).select("cliente_id").eq("id", nf.id).maybeSingle();
+    const cid = (nota as { cliente_id?: string } | null)?.cliente_id;
+    let defaultTo = "";
+    if (cid) {
+      const { data: cli } = await supabase.from("customers" as never).select("email").eq("id", cid).maybeSingle();
+      defaultTo = (cli as { email?: string } | null)?.email ?? "";
+    }
+    const to = window.prompt("Enviar DANFE/XML para o e-mail:", defaultTo);
+    if (!to) return;
+    try {
+      await sendEmail({ data: { notaId: nf.id, para: to } });
+      toast.success("E-mail enviado.");
+    } catch (e) { toast.error((e as Error).message); }
+  }
+
   return (
     <>
       <Button size="sm" variant="ghost" title="Emitir na SEFAZ" onClick={doEmit} disabled={loading}>
@@ -175,6 +193,9 @@ function NFActions({ nf }: { nf: NF }) {
       </Button>
       <Button size="sm" variant="ghost" title="Imprimir DANFE" onClick={doDanfe}>
         <Printer className="h-4 w-4" />
+      </Button>
+      <Button size="sm" variant="ghost" title="Enviar por e-mail" onClick={doEmail}>
+        <Mail className="h-4 w-4" />
       </Button>
     </>
   );
