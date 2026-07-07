@@ -39,6 +39,12 @@ type Fio = {
   n_filamentos: number | null;
   n_cabos: number | null;
   composicao: string | null;
+  composicao_id: string | null;
+  cest: string | null;
+  origem: string | null;
+  quebra_percent: number | null;
+  custo: number | null;
+  cor: string | null;
   habilitado: boolean;
 };
 
