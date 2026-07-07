@@ -145,12 +145,11 @@ function ArtigosPage() {
 
     autoTable(doc, {
       startY: 80,
-      head: [["Código", "NCM", "Artigo", "Composição", "Rendimento", "Hab"]],
+      head: [["Código", "NCM", "Descrição", "Rendimento", "Hab"]],
       body: filtered.map((i) => [
         i.codigo ?? "-",
         i.ncm ?? "-",
         i.nome,
-        i.composicao ?? "-",
         i.rendimento != null ? Number(i.rendimento).toFixed(2) : "-",
         i.ativo ? "Sim" : "Não",
       ]),
