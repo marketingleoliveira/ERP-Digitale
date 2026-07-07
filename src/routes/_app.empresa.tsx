@@ -50,18 +50,22 @@ type Empresa = {
   flag_habilitado: boolean;
 };
 
-const FLAG_COLS: Array<{ key: keyof Empresa; label: string; title: string }> = [
-  { key: "flag_cliente", label: "Cli", title: "Cliente" },
-  { key: "flag_fiador", label: "Fia", title: "Fiador" },
-  { key: "flag_malha", label: "Mal", title: "Malharia" },
-  { key: "flag_acabamento", label: "Aca", title: "Acabamento" },
-  { key: "flag_confeccao", label: "Con", title: "Confecção" },
-  { key: "flag_importador", label: "Imp", title: "Importador" },
-  { key: "flag_fornecedor", label: "For", title: "Fornecedor" },
-  { key: "flag_transportadora", label: "Tra", title: "Transportadora" },
-  { key: "flag_representante", label: "Rep", title: "Representante" },
-  { key: "flag_habilitado", label: "Hab", title: "Habilitado" },
+const TIPO_FLAGS: Array<{ key: keyof Empresa; label: string }> = [
+  { key: "flag_cliente", label: "Cliente" },
+  { key: "flag_fiador", label: "Fiação" },
+  { key: "flag_malha", label: "Malharia" },
+  { key: "flag_acabamento", label: "Acabamento" },
+  { key: "flag_confeccao", label: "Confecção" },
+  { key: "flag_importador", label: "Importador" },
+  { key: "flag_fornecedor", label: "Fornecedor" },
+  { key: "flag_transportadora", label: "Transportadora" },
+  { key: "flag_representante", label: "Representante" },
 ];
+
+function getTipoLabel(e: Empresa): string {
+  const found = TIPO_FLAGS.find((t) => e[t.key]);
+  return found?.label ?? "—";
+}
 
 const SELECT_COLS =
   "id, razao_social, nome_fantasia, cnpj, cpf, telefone, contato, tipo_cliente, flag_cliente, flag_fiador, flag_malha, flag_acabamento, flag_confeccao, flag_importador, flag_fornecedor, flag_transportadora, flag_representante, flag_habilitado";
@@ -210,12 +214,13 @@ function EmpresaPage() {
       e.cnpj ?? e.cpf ?? "-",
       e.telefone ?? "-",
       e.contato ?? "-",
-      ...FLAG_COLS.map((c) => ((e[c.key] as boolean) ? "●" : "○")),
+      getTipoLabel(e),
+      e.flag_habilitado ? "Sim" : "Não",
     ]);
 
     autoTable(doc, {
       startY: 80,
-      head: [["Nome Fantasia", "CNPJ/CPF", "Telefone", "Contato", ...FLAG_COLS.map((c) => c.label)]],
+      head: [["Nome Fantasia", "CNPJ/CPF", "Telefone", "Contato", "Tipo", "Hab"]],
       body,
       styles: { fontSize: 8, cellPadding: 3 },
       headStyles: { fillColor: [30, 58, 138], textColor: 255 },
@@ -275,16 +280,15 @@ function EmpresaPage() {
                 <th className="p-2 text-left">CNPJ/CPF</th>
                 <th className="p-2 text-left">Telefone</th>
                 <th className="p-2 text-left">Contato</th>
-                {FLAG_COLS.map((c) => (
-                  <th key={c.key} title={c.title} className="p-2 text-center text-xs w-10">{c.label}</th>
-                ))}
+                <th className="p-2 text-left">Tipo</th>
+                <th className="p-2 text-center w-14">Hab</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={5 + FLAG_COLS.length} className="p-6 text-center text-muted-foreground">Carregando…</td></tr>
+                <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Carregando…</td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={5 + FLAG_COLS.length} className="p-6 text-center text-muted-foreground">Nenhuma empresa encontrada</td></tr>
+                <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Nenhuma empresa encontrada</td></tr>
               ) : filtered.map((e) => {
                 const isSel = selectedIds.has(e.id);
                 return (
@@ -302,14 +306,17 @@ function EmpresaPage() {
                     <td className="p-2 font-mono text-xs" onClick={() => toggleOne(e.id, !isSel)}>{e.cnpj || e.cpf || "—"}</td>
                     <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.telefone || "—"}</td>
                     <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.contato || "—"}</td>
-                    {FLAG_COLS.map((c) => (
-                      <td key={c.key} className="p-2 text-center">
-                        <StatusDot
-                          checked={!!e[c.key]}
-                          onToggle={(v: boolean) => toggleFlagMut.mutate({ id: e.id, key: c.key as string, value: v })}
-                        />
-                      </td>
-                    ))}
+                    <td className="p-2 text-sm" onClick={() => toggleOne(e.id, !isSel)}>
+                      <span className="inline-flex rounded bg-muted px-2 py-0.5 text-xs font-medium">
+                        {getTipoLabel(e)}
+                      </span>
+                    </td>
+                    <td className="p-2 text-center">
+                      <StatusDot
+                        checked={!!e.flag_habilitado}
+                        onToggle={(v: boolean) => toggleFlagMut.mutate({ id: e.id, key: "flag_habilitado", value: v })}
+                      />
+                    </td>
                   </tr>
                 );
               })}
@@ -422,17 +429,16 @@ function EmpresaDialog({
 
   const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
 
-  const TIPO_EMPRESA: Array<{ key: keyof Empresa; label: string }> = [
-    { key: "flag_cliente", label: "Cliente" },
-    { key: "flag_malha", label: "Fiação" },
-    { key: "flag_malha", label: "Malharia" },
-    { key: "flag_acabamento", label: "Acabamento" },
-    { key: "flag_confeccao", label: "Confecção" },
-    { key: "flag_importador", label: "Importador" },
-    { key: "flag_fornecedor", label: "Fornecedor" },
-    { key: "flag_transportadora", label: "Transportadora" },
-    { key: "flag_representante", label: "Representante" },
-  ];
+  const tipoAtual =
+    (TIPO_FLAGS.find((t) => form[t.key])?.key as string | undefined) ?? "";
+  const setTipo = (k: string) => {
+    setForm((f) => {
+      const next = { ...f };
+      for (const t of TIPO_FLAGS) next[t.key as string] = false;
+      next[k] = true;
+      return next;
+    });
+  };
 
   const handleSubmit = () => {
     onSave({ ...form, artigos_venda: artigos });
@@ -620,13 +626,15 @@ function EmpresaDialog({
         {/* Tipo Empresa */}
         <div className="mt-2">
           <h3 className="mb-2 text-center text-sm font-semibold text-primary">TIPO EMPRESA</h3>
-          <div className="flex flex-wrap justify-center gap-4 rounded-md border p-3">
-            {TIPO_EMPRESA.map((t, i) => (
-              <label key={i} className="flex items-center gap-2 text-sm">
-                <Checkbox checked={Boolean(form[t.key])} onCheckedChange={(v) => set(t.key as string, Boolean(v))} />
-                {t.label}
-              </label>
-            ))}
+          <div className="mx-auto max-w-sm">
+            <Select value={tipoAtual} onValueChange={setTipo}>
+              <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>
+                {TIPO_FLAGS.map((t) => (
+                  <SelectItem key={t.key as string} value={t.key as string}>{t.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
