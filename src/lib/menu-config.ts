@@ -52,6 +52,8 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Ordens de Produção", url: "/producao/op", icon: Scissors, group: "Produção (PCP)" },
   { title: "Qualidade", url: "/producao/qualidade", icon: BadgeCheck, group: "Produção (PCP)" },
   { title: "Expedição", url: "/producao/expedicao", icon: Truck, group: "Produção (PCP)" },
+  { title: "Dashboard Industrial", url: "/dashboard/industrial", icon: LayoutDashboard, group: "" },
+  { title: "Contas a Receber", url: "/financeiro", icon: Wallet, group: "Financeiro & Logística" },
     { title: "Dashboard Fiscal", url: "/fiscal/dashboard", icon: LayoutDashboard, group: "Fiscal" },
     { title: "Nota Fiscal", url: "/fiscal/nota-fiscal", icon: FileText, group: "Fiscal" },
   { title: "Nota Fiscal Importação", url: "/fiscal/nota-fiscal-importacao", icon: FileText, group: "Fiscal" },

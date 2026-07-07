@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft } from "lucide-react";
 import { OpFaturarDialog } from "@/components/producao/op-faturar-dialog";
+import { OpRastreabilidade } from "@/components/producao/op-rastreabilidade";
 
 export const Route = createFileRoute("/_app/producao/op/$id")({
   head: () => ({ meta: [{ title: "Detalhe da OP" }] }),
@@ -82,10 +83,8 @@ function OpDetail() {
 
       <Card>
         <CardHeader><CardTitle>Rastreabilidade</CardTitle></CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          Timeline, apontamentos, consumos, qualidade e entradas em estoque desta OP
-          estão disponíveis via API (op_eventos / op_apontamentos / op_consumos /
-          op_qualidade / op_entradas_estoque) — visualização em construção (Etapa 3c).
+        <CardContent>
+          <OpRastreabilidade opId={op.id} />
         </CardContent>
       </Card>
     </div>
