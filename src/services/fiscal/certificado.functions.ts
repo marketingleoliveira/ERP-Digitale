@@ -51,7 +51,7 @@ export const uploadCertificado = createServerFn({ method: "POST" })
     const { cifrada, iv } = await encryptSenha(data.senha);
 
     // 4. Persiste
-    const { data: row, error } = await supabase
+    const { error } = await supabase
       .from("certificados_digitais" as never)
       .insert({
         id: certId,
@@ -65,12 +65,9 @@ export const uploadCertificado = createServerFn({ method: "POST" })
         valido_ate: info.validoAte.toISOString(),
         ativo: false,
         created_by: userId,
-      } as never)
-      .select()
-      .single();
+      } as never);
 
     if (error) {
-      // rollback do arquivo
       await supabaseAdmin.storage.from(STORAGE_BUCKET).remove([path]);
       throw new Error(error.message);
     }
