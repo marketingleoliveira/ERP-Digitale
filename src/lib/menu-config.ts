@@ -6,7 +6,7 @@ import {
   SlidersHorizontal,
   Building2, FlaskConical, Spool, UserSquare2, Palette, Droplet,
   Sparkles, Layers, Wrench, Syringe, Target, Code2, Briefcase,
-  Server, IdCard, KeyRound, Clock,
+  Server, IdCard, KeyRound, Clock, Network,
   type LucideIcon,
 } from "lucide-react";
 
@@ -65,6 +65,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Romaneios", url: "/logistica/romaneios", icon: PackageCheck, group: "Financeiro & Logística" },
   { title: "Entregas / Rastreio", url: "/logistica/entregas", icon: Truck, group: "Financeiro & Logística" },
   { title: "Transportadoras", url: "/logistica/transportadoras", icon: Truck, group: "Financeiro & Logística" },
+  { title: "Rastreabilidade", url: "/rastreabilidade/pedido/00000000-0000-0000-0000-000000000000", icon: Network, group: "Financeiro & Logística" },
     { title: "Dashboard Fiscal", url: "/fiscal/dashboard", icon: LayoutDashboard, group: "Fiscal" },
     { title: "Nota Fiscal", url: "/fiscal/nota-fiscal", icon: FileText, group: "Fiscal" },
   { title: "Nota Fiscal Importação", url: "/fiscal/nota-fiscal-importacao", icon: FileText, group: "Fiscal" },
