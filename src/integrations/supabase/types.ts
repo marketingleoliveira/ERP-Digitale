@@ -909,6 +909,59 @@ export type Database = {
           },
         ]
       }
+      lotes: {
+        Row: {
+          created_at: string
+          data_entrada: string
+          fornecedor_id: string | null
+          habilitado: boolean
+          id: string
+          item_id: string
+          numero_lote: string
+          observacao: string | null
+          quantidade: number
+          quantidade_disponivel: number
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_entrada?: string
+          fornecedor_id?: string | null
+          habilitado?: boolean
+          id?: string
+          item_id: string
+          numero_lote: string
+          observacao?: string | null
+          quantidade?: number
+          quantidade_disponivel?: number
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_entrada?: string
+          fornecedor_id?: string | null
+          habilitado?: boolean
+          id?: string
+          item_id?: string
+          numero_lote?: string
+          observacao?: string | null
+          quantidade?: number
+          quantidade_disponivel?: number
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lotes_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "tinturarias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       maquinas: {
         Row: {
           carga_agulhas: Json
