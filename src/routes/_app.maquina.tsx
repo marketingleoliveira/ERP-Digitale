@@ -196,6 +196,20 @@ function MaquinaDialog({
   const [agulha, setAgulha] = useState("");
   const [qtd, setQtd] = useState("");
 
+  const { data: agulhasOptions = [] } = useQuery({
+    queryKey: ["agulhas", "enabled"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("agulhas" as never)
+        .select("agulha,habilitado")
+        .order("agulha", { ascending: true });
+      if (error) throw error;
+      return ((data ?? []) as unknown as { agulha: string; habilitado: boolean }[])
+        .filter((a) => a.habilitado)
+        .map((a) => a.agulha);
+    },
+  });
+
   useEffect(() => {
     if (!open) return;
     setNumero(editing?.numero?.toString() ?? "");
