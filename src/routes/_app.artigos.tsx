@@ -111,6 +111,15 @@ function ArtigosPage() {
     onError: (e: any) => toast.error(e.message ?? "Erro ao excluir"),
   });
 
+  const toggleAtivoMut = useMutation({
+    mutationFn: async ({ id, ativo }: { id: string; ativo: boolean }) => {
+      const { error } = await supabase.from("articles").update({ ativo }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["articles"] }),
+    onError: (e: any) => toast.error(e.message ?? "Erro ao atualizar"),
+  });
+
   const openNew = () => { setEditing(null); setDialogOpen(true); };
   const openEdit = () => {
     if (!selected) return toast.info("Selecione um artigo");
