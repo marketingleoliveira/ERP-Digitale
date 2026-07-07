@@ -39,6 +39,7 @@ import { Route as AppClienteArtigoRouteImport } from './routes/_app.cliente-arti
 import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
 import { Route as AppAgulhaRouteImport } from './routes/_app.agulha'
 import { Route as AppProducaoIndexRouteImport } from './routes/_app.producao.index'
+import { Route as AppFinanceiroIndexRouteImport } from './routes/_app.financeiro.index'
 import { Route as AppProducaoQualidadeRouteImport } from './routes/_app.producao.qualidade'
 import { Route as AppProducaoPedidosRouteImport } from './routes/_app.producao.pedidos'
 import { Route as AppProducaoOpRouteImport } from './routes/_app.producao.op'
@@ -52,6 +53,7 @@ import { Route as AppFiscalImpostosRouteImport } from './routes/_app.fiscal.impo
 import { Route as AppFiscalDashboardRouteImport } from './routes/_app.fiscal.dashboard'
 import { Route as AppFiscalCfopRouteImport } from './routes/_app.fiscal.cfop'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
+import { Route as AppDashboardIndustrialRouteImport } from './routes/_app.dashboard.industrial'
 import { Route as AppProducaoOpIdRouteImport } from './routes/_app.producao.op.$id'
 
 const LoginRoute = LoginRouteImport.update({
@@ -203,6 +205,11 @@ const AppProducaoIndexRoute = AppProducaoIndexRouteImport.update({
   path: '/producao/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFinanceiroIndexRoute = AppFinanceiroIndexRouteImport.update({
+  id: '/financeiro/',
+  path: '/financeiro/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProducaoQualidadeRoute = AppProducaoQualidadeRouteImport.update({
   id: '/producao/qualidade',
   path: '/producao/qualidade',
@@ -270,6 +277,11 @@ const AppDevCargosRoute = AppDevCargosRouteImport.update({
   path: '/dev/cargos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDashboardIndustrialRoute = AppDashboardIndustrialRouteImport.update({
+  id: '/dashboard/industrial',
+  path: '/dashboard/industrial',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProducaoOpIdRoute = AppProducaoOpIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -305,6 +317,7 @@ export interface FileRoutesByFullPath {
   '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
+  '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/fiscal/cfop': typeof AppFiscalCfopRoute
   '/fiscal/dashboard': typeof AppFiscalDashboardRoute
@@ -318,6 +331,7 @@ export interface FileRoutesByFullPath {
   '/producao/op': typeof AppProducaoOpRouteWithChildren
   '/producao/pedidos': typeof AppProducaoPedidosRoute
   '/producao/qualidade': typeof AppProducaoQualidadeRoute
+  '/financeiro/': typeof AppFinanceiroIndexRoute
   '/producao/': typeof AppProducaoIndexRoute
   '/producao/op/$id': typeof AppProducaoOpIdRoute
 }
@@ -350,6 +364,7 @@ export interface FileRoutesByTo {
   '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
+  '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/fiscal/cfop': typeof AppFiscalCfopRoute
   '/fiscal/dashboard': typeof AppFiscalDashboardRoute
@@ -363,6 +378,7 @@ export interface FileRoutesByTo {
   '/producao/op': typeof AppProducaoOpRouteWithChildren
   '/producao/pedidos': typeof AppProducaoPedidosRoute
   '/producao/qualidade': typeof AppProducaoQualidadeRoute
+  '/financeiro': typeof AppFinanceiroIndexRoute
   '/producao': typeof AppProducaoIndexRoute
   '/producao/op/$id': typeof AppProducaoOpIdRoute
 }
@@ -397,6 +413,7 @@ export interface FileRoutesById {
   '/_app/time-log': typeof AppTimeLogRoute
   '/_app/usuarios': typeof AppUsuariosRoute
   '/_app/variante': typeof AppVarianteRoute
+  '/_app/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
   '/_app/fiscal/cfop': typeof AppFiscalCfopRoute
   '/_app/fiscal/dashboard': typeof AppFiscalDashboardRoute
@@ -410,6 +427,7 @@ export interface FileRoutesById {
   '/_app/producao/op': typeof AppProducaoOpRouteWithChildren
   '/_app/producao/pedidos': typeof AppProducaoPedidosRoute
   '/_app/producao/qualidade': typeof AppProducaoQualidadeRoute
+  '/_app/financeiro/': typeof AppFinanceiroIndexRoute
   '/_app/producao/': typeof AppProducaoIndexRoute
   '/_app/producao/op/$id': typeof AppProducaoOpIdRoute
 }
@@ -444,6 +462,7 @@ export interface FileRouteTypes {
     | '/time-log'
     | '/usuarios'
     | '/variante'
+    | '/dashboard/industrial'
     | '/dev/cargos'
     | '/fiscal/cfop'
     | '/fiscal/dashboard'
@@ -457,6 +476,7 @@ export interface FileRouteTypes {
     | '/producao/op'
     | '/producao/pedidos'
     | '/producao/qualidade'
+    | '/financeiro/'
     | '/producao/'
     | '/producao/op/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -489,6 +509,7 @@ export interface FileRouteTypes {
     | '/time-log'
     | '/usuarios'
     | '/variante'
+    | '/dashboard/industrial'
     | '/dev/cargos'
     | '/fiscal/cfop'
     | '/fiscal/dashboard'
@@ -502,6 +523,7 @@ export interface FileRouteTypes {
     | '/producao/op'
     | '/producao/pedidos'
     | '/producao/qualidade'
+    | '/financeiro'
     | '/producao'
     | '/producao/op/$id'
   id:
@@ -535,6 +557,7 @@ export interface FileRouteTypes {
     | '/_app/time-log'
     | '/_app/usuarios'
     | '/_app/variante'
+    | '/_app/dashboard/industrial'
     | '/_app/dev/cargos'
     | '/_app/fiscal/cfop'
     | '/_app/fiscal/dashboard'
@@ -548,6 +571,7 @@ export interface FileRouteTypes {
     | '/_app/producao/op'
     | '/_app/producao/pedidos'
     | '/_app/producao/qualidade'
+    | '/_app/financeiro/'
     | '/_app/producao/'
     | '/_app/producao/op/$id'
   fileRoutesById: FileRoutesById
@@ -771,6 +795,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProducaoIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/financeiro/': {
+      id: '/_app/financeiro/'
+      path: '/financeiro'
+      fullPath: '/financeiro/'
+      preLoaderRoute: typeof AppFinanceiroIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/producao/qualidade': {
       id: '/_app/producao/qualidade'
       path: '/producao/qualidade'
@@ -862,6 +893,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDevCargosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/dashboard/industrial': {
+      id: '/_app/dashboard/industrial'
+      path: '/dashboard/industrial'
+      fullPath: '/dashboard/industrial'
+      preLoaderRoute: typeof AppDashboardIndustrialRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/producao/op/$id': {
       id: '/_app/producao/op/$id'
       path: '/$id'
@@ -910,6 +948,7 @@ interface AppRouteChildren {
   AppTimeLogRoute: typeof AppTimeLogRoute
   AppUsuariosRoute: typeof AppUsuariosRoute
   AppVarianteRoute: typeof AppVarianteRoute
+  AppDashboardIndustrialRoute: typeof AppDashboardIndustrialRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
   AppFiscalCfopRoute: typeof AppFiscalCfopRoute
   AppFiscalDashboardRoute: typeof AppFiscalDashboardRoute
@@ -923,6 +962,7 @@ interface AppRouteChildren {
   AppProducaoOpRoute: typeof AppProducaoOpRouteWithChildren
   AppProducaoPedidosRoute: typeof AppProducaoPedidosRoute
   AppProducaoQualidadeRoute: typeof AppProducaoQualidadeRoute
+  AppFinanceiroIndexRoute: typeof AppFinanceiroIndexRoute
   AppProducaoIndexRoute: typeof AppProducaoIndexRoute
 }
 
@@ -952,6 +992,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppTimeLogRoute: AppTimeLogRoute,
   AppUsuariosRoute: AppUsuariosRoute,
   AppVarianteRoute: AppVarianteRoute,
+  AppDashboardIndustrialRoute: AppDashboardIndustrialRoute,
   AppDevCargosRoute: AppDevCargosRoute,
   AppFiscalCfopRoute: AppFiscalCfopRoute,
   AppFiscalDashboardRoute: AppFiscalDashboardRoute,
@@ -965,6 +1006,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProducaoOpRoute: AppProducaoOpRouteWithChildren,
   AppProducaoPedidosRoute: AppProducaoPedidosRoute,
   AppProducaoQualidadeRoute: AppProducaoQualidadeRoute,
+  AppFinanceiroIndexRoute: AppFinanceiroIndexRoute,
   AppProducaoIndexRoute: AppProducaoIndexRoute,
 }
 
