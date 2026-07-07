@@ -64,17 +64,24 @@ export const emitirNFe = createServerFn({ method: "POST" })
       throw new Error(`SEFAZ rejeitou: ${body.mensagem ?? JSON.stringify(body.erros ?? {})}`);
     }
 
+    const chave = body.chave_nfe as string | null | undefined;
+    const protocolo = body.protocolo as string | null | undefined;
+    const caminhoXml = body.caminho_xml_nota_fiscal as string | null | undefined;
+    const caminhoDanfe = body.caminho_danfe as string | null | undefined;
+    const dataEmissao = body.data_emissao as string | null | undefined;
+    const statusStr = String(body.status ?? "processando");
+
     await supabase.from("notas_fiscais").update({
-      status_sefaz: body.status === "autorizado" ? "autorizada" : "processando",
-      chave_acesso: body.chave_nfe ?? null,
-      protocolo_autorizacao: body.protocolo ?? null,
-      xml_url: body.caminho_xml_nota_fiscal ? `${focusAdapter.baseUrl(cfg)}${body.caminho_xml_nota_fiscal}` : null,
-      danfe_url: body.caminho_danfe ? `${focusAdapter.baseUrl(cfg)}${body.caminho_danfe}` : null,
+      status_sefaz: statusStr === "autorizado" ? "autorizada" : "processando",
+      chave_acesso: chave ?? null,
+      protocolo_autorizacao: protocolo ?? null,
+      xml_url: caminhoXml ? `${focusAdapter.baseUrl(cfg)}${caminhoXml}` : null,
+      danfe_url: caminhoDanfe ? `${focusAdapter.baseUrl(cfg)}${caminhoDanfe}` : null,
       provedor_ref: ref,
-      data_autorizacao: body.data_emissao ?? null,
+      data_autorizacao: dataEmissao ?? null,
     }).eq("id", data.notaId);
 
-    return { ok: true, status: body.status, chave: body.chave_nfe, ref };
+    return { ok: true as const, status: statusStr, chave: chave ?? "", ref };
   });
 
 /* ==================== CANCELAR ==================== */
