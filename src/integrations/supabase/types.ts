@@ -802,6 +802,42 @@ export type Database = {
           },
         ]
       }
+      funcionarios: {
+        Row: {
+          celular: string | null
+          cpf: string | null
+          created_at: string
+          habilitado: boolean
+          id: string
+          nome: string
+          telefone: string | null
+          tipo: string | null
+          updated_at: string
+        }
+        Insert: {
+          celular?: string | null
+          cpf?: string | null
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          nome: string
+          telefone?: string | null
+          tipo?: string | null
+          updated_at?: string
+        }
+        Update: {
+          celular?: string | null
+          cpf?: string | null
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          nome?: string
+          telefone?: string | null
+          tipo?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       maquinas: {
         Row: {
           carga_agulhas: Json
