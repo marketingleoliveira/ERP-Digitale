@@ -446,9 +446,6 @@ function ArtigoDialog({
 
   const inp = "h-8 text-sm";
   const lbl = "text-xs font-medium";
-  const Section = ({ title }: { title: string }) => (
-    <h3 className="col-span-full mt-2 border-t pt-2 text-center text-sm font-semibold text-destructive">{title}</h3>
-  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -994,4 +991,8 @@ function ArtigoDetailDialog({ id, onOpenChange }: { id: string | null; onOpenCha
       </DialogContent>
     </Dialog>
   );
+}
+
+function Section({ title }: { title: string }) {
+  return <h3 className="col-span-full mt-2 border-t pt-2 text-center text-sm font-semibold text-destructive">{title}</h3>;
 }

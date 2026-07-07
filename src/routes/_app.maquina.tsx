@@ -295,14 +295,6 @@ function MaquinaDialog({
     mut.mutate();
   };
 
-  const Row = ({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
-    <div className="grid grid-cols-[150px_1fr] items-center gap-3">
-      <Label className="justify-self-end text-sm">
-        {required && <span className="text-destructive mr-1">*</span>}{label}:
-      </Label>
-      <div>{children}</div>
-    </div>
-  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -428,5 +420,16 @@ function MaquinaDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function Row({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+  return (
+    <div className="grid grid-cols-[150px_1fr] items-center gap-3">
+      <Label className="justify-self-end text-sm">
+        {required && <span className="text-destructive mr-1">*</span>}{label}:
+      </Label>
+      <div>{children}</div>
+    </div>
   );
 }
