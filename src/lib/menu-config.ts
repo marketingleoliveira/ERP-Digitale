@@ -42,16 +42,18 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Usuários", url: "/usuarios", icon: ShieldCheck, group: "Administração", defaultHidden: true },
   { title: "Configurações", url: "/configuracoes", icon: Settings, group: "Administração", defaultHidden: true },
   { title: "Gerenciar Menus", url: "/menus", icon: SlidersHorizontal, group: "Administração", locked: true },
+  { title: "Cargos", url: "/dev/cargos", icon: Briefcase, group: "DEV", locked: true },
 ];
 
 export const GROUP_ORDER = [
-  
   "Cadastros",
   "Operacional",
   "Produção (PCP)",
   "Financeiro & Logística",
   "Administração",
+  "DEV",
 ];
+
 
 const STORAGE_KEY = "digitale.menu.visibility.v9";
 
