@@ -344,6 +344,16 @@ export type Database = {
           crt: string | null
           email: string | null
           endereco: string | null
+          flag_acabamento: boolean
+          flag_cliente: boolean
+          flag_confeccao: boolean
+          flag_fiador: boolean
+          flag_fornecedor: boolean
+          flag_habilitado: boolean
+          flag_importador: boolean
+          flag_malha: boolean
+          flag_representante: boolean
+          flag_transportadora: boolean
           icms: number | null
           id: string
           inscricao_estadual: string | null
@@ -382,6 +392,16 @@ export type Database = {
           crt?: string | null
           email?: string | null
           endereco?: string | null
+          flag_acabamento?: boolean
+          flag_cliente?: boolean
+          flag_confeccao?: boolean
+          flag_fiador?: boolean
+          flag_fornecedor?: boolean
+          flag_habilitado?: boolean
+          flag_importador?: boolean
+          flag_malha?: boolean
+          flag_representante?: boolean
+          flag_transportadora?: boolean
           icms?: number | null
           id?: string
           inscricao_estadual?: string | null
@@ -420,6 +440,16 @@ export type Database = {
           crt?: string | null
           email?: string | null
           endereco?: string | null
+          flag_acabamento?: boolean
+          flag_cliente?: boolean
+          flag_confeccao?: boolean
+          flag_fiador?: boolean
+          flag_fornecedor?: boolean
+          flag_habilitado?: boolean
+          flag_importador?: boolean
+          flag_malha?: boolean
+          flag_representante?: boolean
+          flag_transportadora?: boolean
           icms?: number | null
           id?: string
           inscricao_estadual?: string | null
