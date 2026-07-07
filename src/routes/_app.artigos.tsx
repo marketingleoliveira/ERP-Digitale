@@ -751,34 +751,6 @@ function ArtigoDialog({
           </table>
         </div>
 
-        {/* VALORES */}
-        <h3 className="mt-3 text-center text-sm font-semibold text-destructive">VALORES</h3>
-        <div className="grid gap-3 md:grid-cols-4">
-          <div>
-            <Label className={lbl}>R$ Malharia</Label>
-            <Input className={inp} type="number" step="0.01" value={form.r_malharia ?? ""} onChange={(e) => set("r_malharia", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>R$ Malharia Comp.</Label>
-            <Input className={inp} type="number" step="0.01" value={form.r_malharia_compl ?? ""} onChange={(e) => set("r_malharia_compl", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>R$ Custo</Label>
-            <Input className={inp} type="number" step="0.01" value={form.r_custo ?? ""} onChange={(e) => set("r_custo", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>% Lucro</Label>
-            <Input className={inp} type="number" step="0.01" value={form.r_lucro ?? ""} onChange={(e) => set("r_lucro", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>R$ Venda Kg</Label>
-            <Input className={inp} type="number" step="0.01" value={form.r_venda ?? ""} onChange={(e) => set("r_venda", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>R$ Venda Metros</Label>
-            <Input className={inp} type="number" step="0.01" value={form.r_venda_metros ?? ""} onChange={(e) => set("r_venda_metros", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-        </div>
 
         {/* INSTRUÇÕES DE LAVAGEM */}
         <h3 className="mt-3 text-center text-sm font-semibold text-destructive">INSTRUÇÕES DE LAVAGEM</h3>
