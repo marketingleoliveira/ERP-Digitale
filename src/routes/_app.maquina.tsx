@@ -106,7 +106,7 @@ function MaquinaPage() {
             <TableHeader>
               <TableRow className="bg-primary hover:bg-primary">
                 <TableHead className="w-10"></TableHead>
-                <TableHead className="text-primary-foreground font-semibold">Número</TableHead>
+                <TableHead className="text-primary-foreground font-semibold">Código</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Tipo</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Máquina</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Modelo</TableHead>
