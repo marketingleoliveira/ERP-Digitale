@@ -27,7 +27,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Composição", url: "/composicao", icon: FlaskConical, group: "Cadastros" },
   { title: "Fio", url: "/fio", icon: Spool, group: "Cadastros" },
   { title: "Artigo", url: "/artigos", icon: Shirt, group: "Cadastros" },
-  { title: "Cliente Artigo", url: "/cliente-artigo", icon: UserSquare2, group: "Cadastros" },
+  { title: "Cliente Artigo", url: "/cliente-artigo", icon: UserSquare2, group: "Cadastros", defaultHidden: true },
   { title: "Tabela Cor", url: "/tabela-cor", icon: Palette, group: "Cadastros" },
   { title: "Cor", url: "/cor", icon: Droplet, group: "Cadastros" },
   { title: "Estampa", url: "/estampa", icon: Sparkles, group: "Cadastros" },
@@ -63,7 +63,7 @@ export const GROUP_ORDER = [
   "Administração",
 ];
 
-const STORAGE_KEY = "digitale.menu.visibility.v2";
+const STORAGE_KEY = "digitale.menu.visibility.v3";
 
 /** New/current items default visible; legacy items marked defaultHidden stay off. */
 function getDefaults(): Record<string, boolean> {
