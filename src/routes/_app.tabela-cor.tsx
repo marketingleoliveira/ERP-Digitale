@@ -119,6 +119,7 @@ function TinturariasPage() {
                 </TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Código</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Nome Fantasia</TableHead>
+                <TableHead className="text-primary-foreground font-semibold">Categoria</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">CNPJ/CPF</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Telefone</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Contato</TableHead>
