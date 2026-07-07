@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
@@ -204,7 +205,28 @@ function ComposicaoPage() {
                   >
                     <td className="p-2"><Checkbox checked={isSel} onCheckedChange={() => setSelectedId(i.id)} /></td>
                     <td className="p-2">{i.tipo}</td>
-                    <td className="p-2 font-medium text-primary">{i.codigo}</td>
+                    <td className="p-2">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); setSelectedId(i.id); }}
+                            className="font-medium text-primary underline-offset-2 hover:underline"
+                          >
+                            {i.codigo}
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className="w-72 p-0">
+                          <table className="w-full text-sm">
+                            <tbody>
+                              <tr className="border-b"><td className="w-28 bg-muted/50 p-2 font-medium">Código:</td><td className="p-2">{i.codigo}</td></tr>
+                              <tr className="border-b"><td className="bg-muted/50 p-2 font-medium">NCM:</td><td className="p-2 font-mono">{i.ncm || "—"}</td></tr>
+                              <tr><td className="bg-muted/50 p-2 font-medium">Composição:</td><td className="p-2">{i.composicao}</td></tr>
+                            </tbody>
+                          </table>
+                        </PopoverContent>
+                      </Popover>
+                    </td>
                     <td className="p-2 font-mono text-xs">{i.ncm || "—"}</td>
                     <td className="p-2">{i.composicao}</td>
                     <td className="p-2 text-center">
