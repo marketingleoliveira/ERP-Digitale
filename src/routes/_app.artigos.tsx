@@ -490,18 +490,6 @@ function ArtigoDialog({
             <Input className={inp} value={form.fci ?? ""} onChange={(e) => set("fci", e.target.value)} />
           </div>
 
-          <div className="md:col-span-4">
-            <Label className={lbl}>Cliente</Label>
-            <Input className={inp} value={form.cliente ?? ""} onChange={(e) => set("cliente", e.target.value)} placeholder="Digite no mínimo as três primeiras letras do cliente" />
-          </div>
-
-          <div>
-            <Label className={lbl}><span className="text-destructive">*</span> P. Acabamento</Label>
-            <Select value={form.p_acabamento ?? ""} onValueChange={(v) => set("p_acabamento", v)}>
-              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-              <SelectContent>{P_ACABAMENTO_OPTS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
           <div>
             <Label className={lbl}><span className="text-destructive">*</span> Largura</Label>
             <Input className={inp} type="number" step="0.01" value={form.largura ?? ""} onChange={(e) => set("largura", e.target.value === "" ? null : Number(e.target.value))} />
@@ -522,10 +510,6 @@ function ArtigoDialog({
           <div>
             <Label className={lbl}>Peça Tara Kg</Label>
             <Input className={inp} type="number" step="0.01" value={form.peca_tara_kg ?? ""} onChange={(e) => set("peca_tara_kg", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>LFA</Label>
-            <Input className={inp} type="number" step="0.01" value={form.lfa ?? ""} onChange={(e) => set("lfa", e.target.value === "" ? null : Number(e.target.value))} />
           </div>
           <div>
             <Label className={lbl}>Falha Agulhas</Label>
