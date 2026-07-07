@@ -25,6 +25,8 @@ type Funcionario = {
   id: string;
   nome: string;
   tipo: string | null;
+  cargo_id: string | null;
+  cargo?: { id: string; nome: string } | null;
   cpf: string | null;
   rg: string | null;
   cep: string | null;
@@ -52,10 +54,14 @@ const PAGE_SIZE = 20;
 const sb = supabase as unknown as { from: (t: string) => any };
 
 async function fetchFuncionarios(): Promise<Funcionario[]> {
-  const { data, error } = await sb.from("funcionarios").select("*").order("nome", { ascending: true });
+  const { data, error } = await sb
+    .from("funcionarios")
+    .select("*, cargo:cargos(id,nome)")
+    .order("nome", { ascending: true });
   if (error) throw error;
   return (data ?? []) as Funcionario[];
 }
+
 
 function FuncionarioPage() {
   const qc = useQueryClient();
