@@ -583,6 +583,7 @@ function ArtigoDialog({
                 <tr>
                   <th className="p-2 text-left w-8"></th>
                   <th className="p-2 text-left">Alimentador</th>
+                  <th className="p-2 text-left">Fio</th>
                   <th className="p-2 text-left">LFA</th>
                   <th className="p-2 text-left">Tensão</th>
                 </tr>
@@ -598,7 +599,25 @@ function ArtigoDialog({
                           onCheckedChange={(v) => set(`alim_fio_${n}_ativo`, !!v)}
                         />
                       </td>
-                      <td className="p-2">Fio alimentador {n}</td>
+                      <td className="p-2 whitespace-nowrap">Fio alimentador {n}</td>
+                      <td className="p-2 min-w-[220px]">
+                        <Select
+                          disabled={!ativo}
+                          value={form[`alim_fio_${n}_fio_id`] ?? ""}
+                          onValueChange={(v) => set(`alim_fio_${n}_fio_id`, v || null)}
+                        >
+                          <SelectTrigger className={inp}>
+                            <SelectValue placeholder="[SELECIONE]" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {fioOpts.map((f) => (
+                              <SelectItem key={f.id} value={f.id}>
+                                {f.codigo}{f.composicao ? ` — ${f.composicao}` : ""}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </td>
                       <td className="p-2">
                         <Input
                           className={inp}
@@ -625,6 +644,7 @@ function ArtigoDialog({
               </tbody>
             </table>
           </div>
+
 
 
           <div>
