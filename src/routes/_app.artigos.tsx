@@ -267,9 +267,9 @@ function ArtigosPage() {
       <ArtigoDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        item={editing}
-        onSave={(p) => saveMut.mutate(p)}
-        saving={saveMut.isPending}
+        articleId={editing?.id ?? null}
+        ownerId={user?.id ?? null}
+        onSaved={() => qc.invalidateQueries({ queryKey: ["articles"] })}
       />
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
@@ -292,78 +292,542 @@ function ArtigosPage() {
   );
 }
 
+type FioRow = { id?: string; fio_id?: string | null; fio_descricao: string; qtd_cones: number; porcentagem: number };
+type LavRow = { id?: string; lavagem: string; simbolo: string | null };
+type CorRow = { id?: string; cor_id: string | null; cor_descricao: string };
+
+const TIPO_OPTS = ["Tecido", "Malha", "Fio", "Aviamento"];
+const ORIGEM_OPTS = [
+  "0 - Nacional", "1 - Estrangeira - Importação direta",
+  "2 - Estrangeira - Adquirida no mercado interno",
+  "3 - Nacional > 40% importado", "4 - Nacional produzida por processos básicos",
+  "5 - Nacional < 40% importado", "6 - Estrangeira sem similar nacional",
+  "7 - Estrangeira adquirida no mercado interno sem similar",
+];
+const P_ACABAMENTO_OPTS = ["Ramado", "Tinto", "Estampado", "Sanforizado", "Cru"];
+const TIPO_MAQUINA_OPTS = ["Circular", "Retilínea", "Máquina Plana", "Interlock", "Jacquard"];
+const PONTO_OPTS = ["Alto", "Médio", "Baixo"];
+const LAVAGEM_OPTS = ["Lavar à mão", "Lavar à máquina", "Não passar", "Não usar alvejante", "Secar à sombra", "Não torcer", "Passar em temperatura baixa"];
+
 function ArtigoDialog({
-  open, onOpenChange, item, onSave, saving,
+  open, onOpenChange, articleId, ownerId, onSaved,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
-  item: Article | null;
-  onSave: (p: Partial<Article>) => void;
-  saving: boolean;
+  articleId: string | null;
+  ownerId: string | null;
+  onSaved: () => void;
 }) {
-  const [form, setForm] = useState<Partial<Article>>({});
+  const [form, setForm] = useState<Record<string, any>>({});
+  const [fios, setFios] = useState<FioRow[]>([]);
+  const [lavs, setLavs] = useState<LavRow[]>([]);
+  const [cores, setCores] = useState<CorRow[]>([]);
+  const [novoFio, setNovoFio] = useState<FioRow>({ fio_id: null, fio_descricao: "", qtd_cones: 0, porcentagem: 0 });
+  const [novaLav, setNovaLav] = useState<string>("");
+  const [novaCor, setNovaCor] = useState<{ id: string; label: string }>({ id: "", label: "" });
+  const [saving, setSaving] = useState(false);
+
+  const { data: composicoes = [] } = useQuery({
+    enabled: open,
+    queryKey: ["composicoes-lookup"],
+    queryFn: async () => {
+      const { data, error } = await (supabase.from("composicoes" as any) as any)
+        .select("id, codigo, tipo, composicao").eq("habilitado", true).order("codigo");
+      if (error) throw error;
+      return (data ?? []) as Array<{ id: string; codigo: string; tipo: string; composicao: string }>;
+    },
+  });
+  const composicaoOpts = composicoes.filter((c) => c.tipo === "Artigo");
+  const fioOpts = composicoes.filter((c) => c.tipo === "Fio");
+
+  const { data: coresLookup = [] } = useQuery({
+    enabled: open,
+    queryKey: ["cores-lookup"],
+    queryFn: async () => {
+      const { data, error } = await (supabase.from("cores" as any) as any)
+        .select("id, codigo, descricao").order("codigo");
+      if (error) throw error;
+      return (data ?? []) as Array<{ id: string; codigo: string; descricao: string }>;
+    },
+  });
 
   useEffect(() => {
     if (!open) return;
-    setForm(item ?? { ativo: true });
-  }, [open, item]);
+    (async () => {
+      if (!articleId) {
+        setForm({ ativo: true, origem: "0 - Nacional", p_acabamento: "Ramado", falha_agulha: false });
+        setFios([]); setLavs([]); setCores([]);
+        return;
+      }
+      const [{ data: art }, { data: f }, { data: l }, { data: c }] = await Promise.all([
+        supabase.from("articles").select("*").eq("id", articleId).maybeSingle(),
+        (supabase.from("article_fios" as any) as any).select("*").eq("article_id", articleId),
+        (supabase.from("article_lavagens" as any) as any).select("*").eq("article_id", articleId),
+        (supabase.from("article_cores" as any) as any).select("*").eq("article_id", articleId),
+      ]);
+      setForm(art ?? {});
+      setFios((f ?? []) as FioRow[]);
+      setLavs((l ?? []) as LavRow[]);
+      setCores((c ?? []) as CorRow[]);
+    })();
+  }, [open, articleId]);
 
-  const set = <K extends keyof Article>(k: K, v: Article[K]) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
+  const porcTotal = fios.reduce((s, f) => s + Number(f.porcentagem || 0), 0);
 
-  const submit = () => {
-    if (!form.codigo || !form.nome) {
-      toast.error("Preencha Código e Artigo");
-      return;
-    }
-    onSave(form);
+  const addFio = () => {
+    if (!novoFio.fio_descricao) return toast.info("Selecione um fio");
+    setFios((a) => [...a, novoFio]);
+    setNovoFio({ fio_id: null, fio_descricao: "", qtd_cones: 0, porcentagem: 0 });
   };
+  const addLav = () => {
+    if (!novaLav) return;
+    setLavs((a) => [...a, { lavagem: novaLav, simbolo: null }]);
+    setNovaLav("");
+  };
+  const addCor = () => {
+    if (!novaCor.label) return;
+    setCores((a) => [...a, { cor_id: novaCor.id || null, cor_descricao: novaCor.label }]);
+    setNovaCor({ id: "", label: "" });
+  };
+
+  const submit = async () => {
+    if (!form.codigo || !form.nome) return toast.error("Preencha Código e Artigo");
+    setSaving(true);
+    try {
+      const payload = { ...form };
+      delete payload.id; delete payload.created_at; delete payload.updated_at;
+      let id = articleId;
+      if (id) {
+        const { error } = await (supabase.from("articles") as any).update(payload).eq("id", id);
+        if (error) throw error;
+      } else {
+        const { data, error } = await supabase.from("articles")
+          .insert({ ...payload, owner_id: ownerId } as any).select("id").single();
+        if (error) throw error;
+        id = (data as any).id;
+      }
+      // Replace children
+      await Promise.all([
+        (supabase.from("article_fios" as any) as any).delete().eq("article_id", id),
+        (supabase.from("article_lavagens" as any) as any).delete().eq("article_id", id),
+        (supabase.from("article_cores" as any) as any).delete().eq("article_id", id),
+      ]);
+      if (fios.length) {
+        const { error } = await (supabase.from("article_fios" as any) as any)
+          .insert(fios.map((f) => ({ article_id: id, fio_id: f.fio_id ?? null, fio_descricao: f.fio_descricao, qtd_cones: f.qtd_cones, porcentagem: f.porcentagem })));
+        if (error) throw error;
+      }
+      if (lavs.length) {
+        const { error } = await (supabase.from("article_lavagens" as any) as any)
+          .insert(lavs.map((l) => ({ article_id: id, lavagem: l.lavagem, simbolo: l.simbolo })));
+        if (error) throw error;
+      }
+      if (cores.length) {
+        const { error } = await (supabase.from("article_cores" as any) as any)
+          .insert(cores.map((c) => ({ article_id: id, cor_id: c.cor_id, cor_descricao: c.cor_descricao })));
+        if (error) throw error;
+      }
+      toast.success("Artigo salvo");
+      onSaved();
+      onOpenChange(false);
+    } catch (e: any) {
+      toast.error(e.message ?? "Erro ao salvar");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const inp = "h-8 text-sm";
+  const lbl = "text-xs font-medium";
+  const Section = ({ title }: { title: string }) => (
+    <h3 className="col-span-full mt-2 border-t pt-2 text-center text-sm font-semibold text-destructive">{title}</h3>
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-primary">
-            <Shirt className="h-4 w-4" />
-            {item ? "Alterar Artigo" : "Cadastrar Artigo"}
+            <Shirt className="h-4 w-4" /> {articleId ? "Alterar Artigo" : "Cadastrar Artigo"}
           </DialogTitle>
         </DialogHeader>
-        <div className="rounded-md bg-muted/40 p-6">
-          <div className="mx-auto grid max-w-md gap-3">
-            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
-              <Label className="text-right text-sm"><span className="text-destructive">*</span> Código:</Label>
-              <Input className="h-8 w-40" value={form.codigo ?? ""} onChange={(e) => set("codigo", e.target.value)} />
+
+        {/* Cabeçalho */}
+        <div className="grid gap-3 md:grid-cols-4">
+          <div>
+            <Label className={lbl}><span className="text-destructive">*</span> Código</Label>
+            <Input className={inp} value={form.codigo ?? ""} onChange={(e) => set("codigo", e.target.value)} />
+          </div>
+          <div>
+            <Label className={lbl}><span className="text-destructive">*</span> Tipo</Label>
+            <Select value={form.tipo ?? ""} onValueChange={(v) => set("tipo", v)}>
+              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>{TIPO_OPTS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="md:col-span-2">
+            <Label className={lbl}><span className="text-destructive">*</span> Composição</Label>
+            <Select value={form.composicao ?? ""} onValueChange={(v) => set("composicao", v)}>
+              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>
+                {composicaoOpts.map((c) => <SelectItem key={c.id} value={c.composicao}>{c.codigo} — {c.composicao}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="md:col-span-4">
+            <Label className={lbl}><span className="text-destructive">*</span> Artigo</Label>
+            <Input className={inp} value={form.nome ?? ""} onChange={(e) => set("nome", e.target.value)} />
+          </div>
+
+          <div>
+            <Label className={lbl}><span className="text-destructive">*</span> NCM</Label>
+            <Input className={inp} value={form.ncm ?? ""} onChange={(e) => set("ncm", e.target.value)} />
+          </div>
+          <div>
+            <Label className={lbl}>CEST</Label>
+            <Input className={inp} value={form.cest ?? ""} onChange={(e) => set("cest", e.target.value)} />
+          </div>
+          <div>
+            <Label className={lbl}><span className="text-destructive">*</span> Origem</Label>
+            <Select value={form.origem ?? ""} onValueChange={(v) => set("origem", v)}>
+              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>{ORIGEM_OPTS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className={lbl}>FCI</Label>
+            <Input className={inp} value={form.fci ?? ""} onChange={(e) => set("fci", e.target.value)} />
+          </div>
+
+          <div className="md:col-span-4">
+            <Label className={lbl}>Cliente</Label>
+            <Input className={inp} value={form.cliente ?? ""} onChange={(e) => set("cliente", e.target.value)} placeholder="Digite no mínimo as três primeiras letras do cliente" />
+          </div>
+
+          <div>
+            <Label className={lbl}><span className="text-destructive">*</span> P. Acabamento</Label>
+            <Select value={form.p_acabamento ?? ""} onValueChange={(v) => set("p_acabamento", v)}>
+              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>{P_ACABAMENTO_OPTS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className={lbl}><span className="text-destructive">*</span> Largura</Label>
+            <Input className={inp} type="number" step="0.01" value={form.largura ?? ""} onChange={(e) => set("largura", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}><span className="text-destructive">*</span> Gramatura</Label>
+            <Input className={inp} type="number" step="0.01" value={form.gramatura ?? ""} onChange={(e) => set("gramatura", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>Rendimento</Label>
+            <Input className={inp} type="number" step="0.01" value={form.rendimento ?? ""} onChange={(e) => set("rendimento", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+
+          <div>
+            <Label className={lbl}>Peso Peça Kg</Label>
+            <Input className={inp} type="number" step="0.01" value={form.peso_peca_kg ?? ""} onChange={(e) => set("peso_peca_kg", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>Peça Tara Kg</Label>
+            <Input className={inp} type="number" step="0.01" value={form.peca_tara_kg ?? ""} onChange={(e) => set("peca_tara_kg", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>LFA</Label>
+            <Input className={inp} type="number" step="0.01" value={form.lfa ?? ""} onChange={(e) => set("lfa", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>Falha Agulhas</Label>
+            <Select value={form.falha_agulha ? "sim" : "nao"} onValueChange={(v) => set("falha_agulha", v === "sim")}>
+              <SelectTrigger className={inp}><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="nao">Não</SelectItem>
+                <SelectItem value="sim">Sim</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Section title="CONFIGURAÇÃO MÁQUINA" />
+
+          <div>
+            <Label className={lbl}>Tipo Máquina</Label>
+            <Select value={form.tipo_maquina ?? ""} onValueChange={(v) => set("tipo_maquina", v)}>
+              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>{TIPO_MAQUINA_OPTS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className={lbl}>Diâmetro</Label>
+            <Input className={inp} type="number" step="0.01" value={form.diametro ?? ""} onChange={(e) => set("diametro", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>Finura</Label>
+            <Input className={inp} type="number" step="0.01" value={form.finura ?? ""} onChange={(e) => set("finura", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>Nº Alimentadores</Label>
+            <Input className={inp} type="number" value={form.n_alimentadores ?? ""} onChange={(e) => set("n_alimentadores", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+
+          <div className="md:col-span-2">
+            <Label className={lbl}>Disposição Agulhas</Label>
+            <Input className={inp} value={form.disposicao_agulhas ?? ""} onChange={(e) => set("disposicao_agulhas", e.target.value)} />
+          </div>
+          <div>
+            <Label className={lbl}>Qtd Agulhas Cilindro</Label>
+            <Input className={inp} type="number" value={form.qtd_agulhas_cilindro ?? ""} onChange={(e) => set("qtd_agulhas_cilindro", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>Qtd Agulhas Disco</Label>
+            <Input className={inp} type="number" value={form.qtd_agulhas_disco ?? ""} onChange={(e) => set("qtd_agulhas_disco", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+
+          <div>
+            <Label className={lbl}>RPM</Label>
+            <Input className={inp} type="number" step="0.01" value={form.rpm ?? ""} onChange={(e) => set("rpm", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>Nº Voltas</Label>
+            <Input className={inp} type="number" value={form.n_voltas ?? ""} onChange={(e) => set("n_voltas", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          {[1, 2, 3].map((n) => (
+            <div key={n} className={n === 3 ? "" : ""}>
+              <Label className={lbl}>Alimentador Fio {n}</Label>
+              <Select value={form[`alimentador_fio_${n}`] ?? ""} onValueChange={(v) => set(`alimentador_fio_${n}`, v)}>
+                <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+                <SelectContent>
+                  {fioOpts.map((f) => <SelectItem key={f.id} value={f.composicao}>{f.codigo} — {f.composicao}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
-            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
-              <Label className="text-right text-sm">NCM:</Label>
-              <Input className="h-8 w-40" value={form.ncm ?? ""} onChange={(e) => set("ncm", e.target.value)} />
-            </div>
-            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
-              <Label className="text-right text-sm"><span className="text-destructive">*</span> Artigo:</Label>
-              <Input className="h-8" value={form.nome ?? ""} onChange={(e) => set("nome", e.target.value)} placeholder="Ex: TECIDO CORSEGA" />
-            </div>
-            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
-              <Label className="text-right text-sm">Composição:</Label>
-              <Input className="h-8" value={form.composicao ?? ""} onChange={(e) => set("composicao", e.target.value)} placeholder="Ex: 78%PES 22%PUE" />
-            </div>
-            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
-              <Label className="text-right text-sm">Rendimento:</Label>
-              <Input
-                type="number"
-                step="0.01"
-                className="h-8 w-32"
-                value={form.rendimento ?? ""}
-                onChange={(e) => set("rendimento", e.target.value === "" ? null : Number(e.target.value))}
-              />
-            </div>
-            <label className="ml-[122px] flex items-center gap-2 text-sm">
-              <Checkbox checked={Boolean(form.ativo)} onCheckedChange={(v) => set("ativo", Boolean(v))} />
-              Habilitado
-            </label>
+          ))}
+
+          <Section title="REGULAGEM MÁQUINA" />
+
+          <div>
+            <Label className={lbl}>Ponto Disco</Label>
+            <Select value={form.ponto_disco ?? ""} onValueChange={(v) => set("ponto_disco", v)}>
+              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>{PONTO_OPTS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className={lbl}>Ponto Cilindro</Label>
+            <Select value={form.ponto_cilindro ?? ""} onValueChange={(v) => set("ponto_cilindro", v)}>
+              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>{PONTO_OPTS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className={lbl}>Roda 1</Label>
+            <Input className={inp} type="number" step="0.01" value={form.roda_1 ?? ""} onChange={(e) => set("roda_1", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>Roda 2</Label>
+            <Input className={inp} type="number" step="0.01" value={form.roda_2 ?? ""} onChange={(e) => set("roda_2", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>Roda Lycra</Label>
+            <Input className={inp} type="number" step="0.01" value={form.roda_lycra ?? ""} onChange={(e) => set("roda_lycra", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>Altura Disco</Label>
+            <Input className={inp} type="number" step="0.01" value={form.altura_disco ?? ""} onChange={(e) => set("altura_disco", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>Tensão Lycra</Label>
+            <Input className={inp} type="number" step="0.01" value={form.tensao_lycra ?? ""} onChange={(e) => set("tensao_lycra", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>Tensão Fio</Label>
+            <Input className={inp} type="number" step="0.01" value={form.tensao_fio ?? ""} onChange={(e) => set("tensao_fio", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+
+          <div className="md:col-span-4">
+            <Label className={lbl}>Imagem (URL)</Label>
+            <Input className={inp} value={form.imagem_url ?? ""} onChange={(e) => set("imagem_url", e.target.value)} placeholder="https://…" />
+          </div>
+          <div className="md:col-span-4">
+            <Label className={lbl}>Observação</Label>
+            <textarea className="min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={form.observacao ?? ""} onChange={(e) => set("observacao", e.target.value)} />
           </div>
         </div>
+
+        {/* COMPOSIÇÃO FIO */}
+        <h3 className="mt-3 text-center text-sm font-semibold text-destructive">COMPOSIÇÃO FIO</h3>
+        <div className="grid gap-3 md:grid-cols-6 rounded border p-3">
+          <div className="md:col-span-2">
+            <Label className={lbl}><span className="text-destructive">*</span> Fio</Label>
+            <Select
+              value={novoFio.fio_id ?? ""}
+              onValueChange={(v) => {
+                const f = fioOpts.find((x) => x.id === v);
+                setNovoFio({ ...novoFio, fio_id: v, fio_descricao: f ? `${f.codigo} — ${f.composicao}` : "" });
+              }}
+            >
+              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>
+                {fioOpts.map((f) => <SelectItem key={f.id} value={f.id}>{f.codigo} — {f.composicao}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className={lbl}>Qtd. Cones</Label>
+            <Input className={inp} type="number" value={novoFio.qtd_cones || ""} onChange={(e) => setNovoFio({ ...novoFio, qtd_cones: Number(e.target.value) })} />
+          </div>
+          <div>
+            <Label className={lbl}><span className="text-destructive">*</span> Porcentagem</Label>
+            <Input className={inp} type="number" step="0.01" value={novoFio.porcentagem || ""} onChange={(e) => setNovoFio({ ...novoFio, porcentagem: Number(e.target.value) })} />
+          </div>
+          <div>
+            <Label className={lbl}>Porcentagem Total</Label>
+            <Input className={inp} value={porcTotal.toFixed(2)} readOnly />
+          </div>
+          <div className="flex items-end">
+            <Button type="button" size="sm" variant="secondary" className="w-full" onClick={addFio}>INSERIR</Button>
+          </div>
+          <table className="md:col-span-6 mt-2 w-full border-collapse text-sm">
+            <thead className="bg-muted"><tr>
+              <th className="p-2 text-left">Fio</th>
+              <th className="p-2 text-right w-24">Qtd. Cones</th>
+              <th className="p-2 text-right w-24">Porcentagem</th>
+              <th className="p-2 text-center w-16">Remover</th>
+            </tr></thead>
+            <tbody>
+              {fios.length === 0 ? (
+                <tr><td colSpan={4} className="p-3 text-center text-muted-foreground">Nenhum fio</td></tr>
+              ) : fios.map((f, i) => (
+                <tr key={i} className="border-b">
+                  <td className="p-2">{f.fio_descricao}</td>
+                  <td className="p-2 text-right">{Number(f.qtd_cones).toFixed(0)}</td>
+                  <td className="p-2 text-right">{Number(f.porcentagem).toFixed(2)}</td>
+                  <td className="p-2 text-center">
+                    <button type="button" onClick={() => setFios(fios.filter((_, j) => j !== i))} className="text-destructive">
+                      <Trash2 className="inline h-4 w-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* VALORES */}
+        <h3 className="mt-3 text-center text-sm font-semibold text-destructive">VALORES</h3>
+        <div className="grid gap-3 md:grid-cols-4">
+          <div>
+            <Label className={lbl}>R$ Malharia</Label>
+            <Input className={inp} type="number" step="0.01" value={form.r_malharia ?? ""} onChange={(e) => set("r_malharia", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>R$ Malharia Comp.</Label>
+            <Input className={inp} type="number" step="0.01" value={form.r_malharia_compl ?? ""} onChange={(e) => set("r_malharia_compl", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>R$ Custo</Label>
+            <Input className={inp} type="number" step="0.01" value={form.r_custo ?? ""} onChange={(e) => set("r_custo", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>% Lucro</Label>
+            <Input className={inp} type="number" step="0.01" value={form.r_lucro ?? ""} onChange={(e) => set("r_lucro", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>R$ Venda Kg</Label>
+            <Input className={inp} type="number" step="0.01" value={form.r_venda ?? ""} onChange={(e) => set("r_venda", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+          <div>
+            <Label className={lbl}>R$ Venda Metros</Label>
+            <Input className={inp} type="number" step="0.01" value={form.r_venda_metros ?? ""} onChange={(e) => set("r_venda_metros", e.target.value === "" ? null : Number(e.target.value))} />
+          </div>
+        </div>
+
+        {/* INSTRUÇÕES DE LAVAGEM */}
+        <h3 className="mt-3 text-center text-sm font-semibold text-destructive">INSTRUÇÕES DE LAVAGEM</h3>
+        <div className="grid gap-3 md:grid-cols-6 rounded border p-3">
+          <div className="md:col-span-4">
+            <Label className={lbl}><span className="text-destructive">*</span> Lavagem</Label>
+            <Select value={novaLav} onValueChange={setNovaLav}>
+              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>{LAVAGEM_OPTS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="md:col-span-2 flex items-end">
+            <Button type="button" size="sm" variant="secondary" className="w-full" onClick={addLav}>INSERIR</Button>
+          </div>
+          <table className="md:col-span-6 mt-2 w-full border-collapse text-sm">
+            <thead className="bg-muted"><tr>
+              <th className="p-2 text-left">Lavagem</th>
+              <th className="p-2 text-center w-24">Símbolo</th>
+              <th className="p-2 text-center w-16">Remover</th>
+            </tr></thead>
+            <tbody>
+              {lavs.length === 0 ? (
+                <tr><td colSpan={3} className="p-3 text-center text-muted-foreground">Nenhuma lavagem</td></tr>
+              ) : lavs.map((l, i) => (
+                <tr key={i} className="border-b">
+                  <td className="p-2">{l.lavagem}</td>
+                  <td className="p-2 text-center">{l.simbolo ?? "—"}</td>
+                  <td className="p-2 text-center">
+                    <button type="button" onClick={() => setLavs(lavs.filter((_, j) => j !== i))} className="text-destructive">
+                      <Trash2 className="inline h-4 w-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* COR */}
+        <h3 className="mt-3 text-center text-sm font-semibold text-destructive">COR</h3>
+        <div className="grid gap-3 md:grid-cols-6 rounded border p-3">
+          <div className="md:col-span-4">
+            <Label className={lbl}><span className="text-destructive">*</span> Cor</Label>
+            <Select
+              value={novaCor.id}
+              onValueChange={(v) => {
+                const c = coresLookup.find((x) => x.id === v);
+                setNovaCor({ id: v, label: c ? `${c.codigo} — ${c.descricao}` : "" });
+              }}
+            >
+              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>
+                {coresLookup.map((c) => <SelectItem key={c.id} value={c.id}>{c.codigo} — {c.descricao}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="md:col-span-2 flex items-end">
+            <Button type="button" size="sm" variant="secondary" className="w-full" onClick={addCor}>INSERIR</Button>
+          </div>
+          <table className="md:col-span-6 mt-2 w-full border-collapse text-sm">
+            <thead className="bg-muted"><tr>
+              <th className="p-2 text-left">Cor</th>
+              <th className="p-2 text-center w-16">Remover</th>
+            </tr></thead>
+            <tbody>
+              {cores.length === 0 ? (
+                <tr><td colSpan={2} className="p-3 text-center text-muted-foreground">Nenhuma cor</td></tr>
+              ) : cores.map((c, i) => (
+                <tr key={i} className="border-b">
+                  <td className="p-2">{c.cor_descricao}</td>
+                  <td className="p-2 text-center">
+                    <button type="button" onClick={() => setCores(cores.filter((_, j) => j !== i))} className="text-destructive">
+                      <Trash2 className="inline h-4 w-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p className="mt-2 text-center text-xs text-destructive">* Campo Obrigatório</p>
+
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button onClick={submit} disabled={saving}>{saving ? "Salvando…" : (item ? "Salvar" : "Cadastrar")}</Button>
+          <Button onClick={submit} disabled={saving}>{saving ? "Salvando…" : (articleId ? "Salvar" : "Cadastrar")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

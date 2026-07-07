@@ -47,6 +47,45 @@ export type Database = {
         }
         Relationships: []
       }
+      article_cores: {
+        Row: {
+          article_id: string
+          cor_descricao: string
+          cor_id: string | null
+          created_at: string
+          id: string
+        }
+        Insert: {
+          article_id: string
+          cor_descricao: string
+          cor_id?: string | null
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          article_id?: string
+          cor_descricao?: string
+          cor_id?: string | null
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_cores_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_cores_cor_id_fkey"
+            columns: ["cor_id"]
+            isOneToOne: false
+            referencedRelation: "cores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       article_fios: {
         Row: {
           article_id: string
@@ -95,8 +134,44 @@ export type Database = {
           },
         ]
       }
+      article_lavagens: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          lavagem: string
+          simbolo: string | null
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          lavagem: string
+          simbolo?: string | null
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          lavagem?: string
+          simbolo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_lavagens_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       articles: {
         Row: {
+          alimentador_fio_1: string | null
+          alimentador_fio_2: string | null
+          alimentador_fio_3: string | null
+          altura_disco: number | null
           ativo: boolean
           categoria: string | null
           cest: string | null
@@ -122,22 +197,39 @@ export type Database = {
           nome: string
           observacao: string | null
           origem: string | null
+          owner_id: string | null
           p_acabamento: string | null
+          peca_tara_kg: number | null
+          peso_peca_kg: number | null
+          ponto_cilindro: string | null
+          ponto_disco: string | null
           preco_venda: number | null
+          qtd_agulhas_cilindro: number | null
+          qtd_agulhas_disco: number | null
           r_custo: number | null
+          r_lucro: number | null
           r_malharia: number | null
           r_malharia_compl: number | null
           r_venda: number | null
           r_venda_metros: number | null
           rendimento: number | null
+          roda_1: number | null
+          roda_2: number | null
+          roda_lycra: number | null
           rpm: number | null
           slug: string | null
           tecnologias: string[] | null
+          tensao_fio: number | null
+          tensao_lycra: number | null
           tipo: string | null
           tipo_maquina: string | null
           updated_at: string
         }
         Insert: {
+          alimentador_fio_1?: string | null
+          alimentador_fio_2?: string | null
+          alimentador_fio_3?: string | null
+          altura_disco?: number | null
           ativo?: boolean
           categoria?: string | null
           cest?: string | null
@@ -163,22 +255,39 @@ export type Database = {
           nome: string
           observacao?: string | null
           origem?: string | null
+          owner_id?: string | null
           p_acabamento?: string | null
+          peca_tara_kg?: number | null
+          peso_peca_kg?: number | null
+          ponto_cilindro?: string | null
+          ponto_disco?: string | null
           preco_venda?: number | null
+          qtd_agulhas_cilindro?: number | null
+          qtd_agulhas_disco?: number | null
           r_custo?: number | null
+          r_lucro?: number | null
           r_malharia?: number | null
           r_malharia_compl?: number | null
           r_venda?: number | null
           r_venda_metros?: number | null
           rendimento?: number | null
+          roda_1?: number | null
+          roda_2?: number | null
+          roda_lycra?: number | null
           rpm?: number | null
           slug?: string | null
           tecnologias?: string[] | null
+          tensao_fio?: number | null
+          tensao_lycra?: number | null
           tipo?: string | null
           tipo_maquina?: string | null
           updated_at?: string
         }
         Update: {
+          alimentador_fio_1?: string | null
+          alimentador_fio_2?: string | null
+          alimentador_fio_3?: string | null
+          altura_disco?: number | null
           ativo?: boolean
           categoria?: string | null
           cest?: string | null
@@ -204,17 +313,30 @@ export type Database = {
           nome?: string
           observacao?: string | null
           origem?: string | null
+          owner_id?: string | null
           p_acabamento?: string | null
+          peca_tara_kg?: number | null
+          peso_peca_kg?: number | null
+          ponto_cilindro?: string | null
+          ponto_disco?: string | null
           preco_venda?: number | null
+          qtd_agulhas_cilindro?: number | null
+          qtd_agulhas_disco?: number | null
           r_custo?: number | null
+          r_lucro?: number | null
           r_malharia?: number | null
           r_malharia_compl?: number | null
           r_venda?: number | null
           r_venda_metros?: number | null
           rendimento?: number | null
+          roda_1?: number | null
+          roda_2?: number | null
+          roda_lycra?: number | null
           rpm?: number | null
           slug?: string | null
           tecnologias?: string[] | null
+          tensao_fio?: number | null
+          tensao_lycra?: number | null
           tipo?: string | null
           tipo_maquina?: string | null
           updated_at?: string
