@@ -52,6 +52,7 @@ import { Route as AppFiscalNotaFiscalRouteImport } from './routes/_app.fiscal.no
 import { Route as AppFiscalImpostosRouteImport } from './routes/_app.fiscal.impostos'
 import { Route as AppFiscalDashboardRouteImport } from './routes/_app.fiscal.dashboard'
 import { Route as AppFiscalCfopRouteImport } from './routes/_app.fiscal.cfop'
+import { Route as AppFiscalCertificadosRouteImport } from './routes/_app.fiscal.certificados'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 import { Route as AppDashboardIndustrialRouteImport } from './routes/_app.dashboard.industrial'
 import { Route as AppProducaoOpIdRouteImport } from './routes/_app.producao.op.$id'
@@ -272,6 +273,11 @@ const AppFiscalCfopRoute = AppFiscalCfopRouteImport.update({
   path: '/fiscal/cfop',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFiscalCertificadosRoute = AppFiscalCertificadosRouteImport.update({
+  id: '/fiscal/certificados',
+  path: '/fiscal/certificados',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDevCargosRoute = AppDevCargosRouteImport.update({
   id: '/dev/cargos',
   path: '/dev/cargos',
@@ -319,6 +325,7 @@ export interface FileRoutesByFullPath {
   '/variante': typeof AppVarianteRoute
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
+  '/fiscal/certificados': typeof AppFiscalCertificadosRoute
   '/fiscal/cfop': typeof AppFiscalCfopRoute
   '/fiscal/dashboard': typeof AppFiscalDashboardRoute
   '/fiscal/impostos': typeof AppFiscalImpostosRoute
@@ -366,6 +373,7 @@ export interface FileRoutesByTo {
   '/variante': typeof AppVarianteRoute
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
+  '/fiscal/certificados': typeof AppFiscalCertificadosRoute
   '/fiscal/cfop': typeof AppFiscalCfopRoute
   '/fiscal/dashboard': typeof AppFiscalDashboardRoute
   '/fiscal/impostos': typeof AppFiscalImpostosRoute
@@ -415,6 +423,7 @@ export interface FileRoutesById {
   '/_app/variante': typeof AppVarianteRoute
   '/_app/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
+  '/_app/fiscal/certificados': typeof AppFiscalCertificadosRoute
   '/_app/fiscal/cfop': typeof AppFiscalCfopRoute
   '/_app/fiscal/dashboard': typeof AppFiscalDashboardRoute
   '/_app/fiscal/impostos': typeof AppFiscalImpostosRoute
@@ -464,6 +473,7 @@ export interface FileRouteTypes {
     | '/variante'
     | '/dashboard/industrial'
     | '/dev/cargos'
+    | '/fiscal/certificados'
     | '/fiscal/cfop'
     | '/fiscal/dashboard'
     | '/fiscal/impostos'
@@ -511,6 +521,7 @@ export interface FileRouteTypes {
     | '/variante'
     | '/dashboard/industrial'
     | '/dev/cargos'
+    | '/fiscal/certificados'
     | '/fiscal/cfop'
     | '/fiscal/dashboard'
     | '/fiscal/impostos'
@@ -559,6 +570,7 @@ export interface FileRouteTypes {
     | '/_app/variante'
     | '/_app/dashboard/industrial'
     | '/_app/dev/cargos'
+    | '/_app/fiscal/certificados'
     | '/_app/fiscal/cfop'
     | '/_app/fiscal/dashboard'
     | '/_app/fiscal/impostos'
@@ -886,6 +898,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFiscalCfopRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/fiscal/certificados': {
+      id: '/_app/fiscal/certificados'
+      path: '/fiscal/certificados'
+      fullPath: '/fiscal/certificados'
+      preLoaderRoute: typeof AppFiscalCertificadosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dev/cargos': {
       id: '/_app/dev/cargos'
       path: '/dev/cargos'
@@ -950,6 +969,7 @@ interface AppRouteChildren {
   AppVarianteRoute: typeof AppVarianteRoute
   AppDashboardIndustrialRoute: typeof AppDashboardIndustrialRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
+  AppFiscalCertificadosRoute: typeof AppFiscalCertificadosRoute
   AppFiscalCfopRoute: typeof AppFiscalCfopRoute
   AppFiscalDashboardRoute: typeof AppFiscalDashboardRoute
   AppFiscalImpostosRoute: typeof AppFiscalImpostosRoute
@@ -994,6 +1014,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppVarianteRoute: AppVarianteRoute,
   AppDashboardIndustrialRoute: AppDashboardIndustrialRoute,
   AppDevCargosRoute: AppDevCargosRoute,
+  AppFiscalCertificadosRoute: AppFiscalCertificadosRoute,
   AppFiscalCfopRoute: AppFiscalCfopRoute,
   AppFiscalDashboardRoute: AppFiscalDashboardRoute,
   AppFiscalImpostosRoute: AppFiscalImpostosRoute,
@@ -1021,13 +1042,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
