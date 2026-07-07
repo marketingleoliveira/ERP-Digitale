@@ -75,6 +75,7 @@ function EmpresaPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Empresa | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [viewingId, setViewingId] = useState<string | null>(null);
 
   const { data: empresas = [], isLoading } = useQuery({
     queryKey: ["empresas"],
@@ -278,13 +279,15 @@ function EmpresaPage() {
                 return (
                   <tr
                     key={e.id}
-                    onDoubleClick={() => { setEditing(e); setDialogOpen(true); }}
+                    onDoubleClick={() => setViewingId(e.id)}
                     className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""}`}
                   >
                     <td className="p-2" onClick={(ev) => ev.stopPropagation()}>
                       <Checkbox checked={isSel} onCheckedChange={(v) => toggleOne(e.id, !!v)} />
                     </td>
-                    <td className="p-2 font-medium text-primary" onClick={() => toggleOne(e.id, !isSel)}>{e.nome_fantasia || e.razao_social || "—"}</td>
+                    <td className="p-2 font-medium text-primary underline-offset-2 hover:underline" onClick={() => setViewingId(e.id)}>
+                      {e.nome_fantasia || e.razao_social || "—"}
+                    </td>
                     <td className="p-2 font-mono text-xs" onClick={() => toggleOne(e.id, !isSel)}>{e.cnpj || e.cpf || "—"}</td>
                     <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.telefone || "—"}</td>
                     <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.contato || "—"}</td>
@@ -344,6 +347,8 @@ function EmpresaPage() {
         onSave={(p) => saveMut.mutate(p)}
         saving={saveMut.isPending}
       />
+
+      <EmpresaViewDialog id={viewingId} onClose={() => setViewingId(null)} />
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
@@ -707,6 +712,81 @@ function EmpresaDialog({
           <Button onClick={handleSubmit} disabled={saving}>
             {saving ? "Salvando…" : (empresa ? "Salvar" : "Cadastrar")}
           </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function EmpresaViewDialog({ id, onClose }: { id: string | null; onClose: () => void }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["empresa-view", id],
+    enabled: !!id,
+    queryFn: async () => {
+      const { data, error } = await (supabase.from("customers") as any)
+        .select("*").eq("id", id).maybeSingle();
+      if (error) throw error;
+      return data as Record<string, any> | null;
+    },
+  });
+
+  const Row = ({ label, value, wide }: { label: string; value: any; wide?: boolean }) => (
+    <div className={`grid grid-cols-[130px_1fr] items-center gap-2 border-b border-border/60 py-1.5 ${wide ? "col-span-2" : ""}`}>
+      <div className="bg-muted/60 px-2 py-1 text-xs font-semibold text-foreground">{label}:</div>
+      <div className="px-2 text-sm text-foreground/90">{value ?? ""}</div>
+    </div>
+  );
+
+  return (
+    <Dialog open={!!id} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-primary">
+            <Building2 className="h-4 w-4" />
+            Detalhes da Empresa
+          </DialogTitle>
+        </DialogHeader>
+
+        {isLoading || !data ? (
+          <div className="p-6 text-center text-sm text-muted-foreground">Carregando…</div>
+        ) : (
+          <div className="grid grid-cols-2 gap-x-4 rounded border border-border bg-background p-2">
+            <Row label="Nome Fantasia" value={data.nome_fantasia} wide />
+            <Row label="Razão Social" value={data.razao_social} wide />
+            <Row label="Matriz" value={data.matriz} wide />
+            <Row label="CNPJ" value={data.cnpj} />
+            <Row label="IE" value={data.inscricao_estadual} />
+            <Row label="CPF" value={data.cpf} />
+            <Row label="RG" value={data.rg} />
+            <Row label="Endereço" value={data.endereco} wide />
+            <Row label="Bairro" value={data.bairro} wide />
+            <Row label="Cidade" value={data.cidade} />
+            <Row label="Cidade Código" value={data.cidade_codigo} />
+            <Row label="CEP" value={data.cep} />
+            <Row label="UF" value={data.uf} />
+            <Row label="Telefone" value={data.telefone} />
+            <Row label="Celular" value={data.celular} />
+            <Row label="Contato" value={data.contato} wide />
+            <Row label="Email" value={data.email} wide />
+            <Row label="Representante" value={data.sales_rep_id} />
+            <Row label="Comissao (%)" value={data.comissao != null ? Number(data.comissao).toFixed(2) : ""} />
+            <Row label="Transportadora" value={data.transportadora_id} wide />
+            <Row label="Observação" value={data.observacao} wide />
+            <Row label="Tipo Cliente" value={data.tipo_cliente} />
+            <Row label="Segmento Cliente" value={data.segmento_cliente} />
+            <Row label="CRT" value={data.crt} />
+            <Row label="ICMS (%)" value={data.icms != null ? Number(data.icms).toFixed(2) : ""} />
+            <Row label="Tipo Pagamento" value={data.tipo_pagamento} />
+            <Row label="Limite" value={data.limite_credito != null ? Number(data.limite_credito).toLocaleString("pt-BR", { minimumFractionDigits: 2 }) : ""} />
+            <Row label="Tabela Prazo" value={data.tabela_prazo} />
+            <Row label="Prazo" value={data.prazo ?? 0} />
+            <Row label="Intervalo" value={data.intervalo ?? 0} />
+            <Row label="Parcelas" value={data.parcelas ?? 0} />
+          </div>
+        )}
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>Fechar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
