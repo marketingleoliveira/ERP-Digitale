@@ -683,9 +683,40 @@ function ArtigoDialog({
           </div>
 
           <div className="md:col-span-4">
-            <Label className={lbl}>Imagem (URL)</Label>
-            <Input className={inp} value={form.imagem_url ?? ""} onChange={(e) => set("imagem_url", e.target.value)} placeholder="https://…" />
+            <Label className={lbl}>Imagem</Label>
+            <div className="flex items-center gap-3">
+              <Input
+                className={inp}
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  try {
+                    const ext = file.name.split(".").pop() || "png";
+                    const path = `${crypto.randomUUID()}.${ext}`;
+                    const { error: upErr } = await supabase.storage.from("artigos").upload(path, file, { upsert: false, contentType: file.type });
+                    if (upErr) throw upErr;
+                    const { data: signed, error: sErr } = await supabase.storage.from("artigos").createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+                    if (sErr) throw sErr;
+                    set("imagem_url", signed.signedUrl);
+                    toast.success("Imagem enviada.");
+                  } catch (err) {
+                    toast.error(err instanceof Error ? err.message : "Falha no upload");
+                  } finally {
+                    e.target.value = "";
+                  }
+                }}
+              />
+              {form.imagem_url && (
+                <>
+                  <a href={form.imagem_url} target="_blank" rel="noreferrer" className="text-xs text-primary underline whitespace-nowrap">Ver atual</a>
+                  <Button type="button" size="sm" variant="ghost" onClick={() => set("imagem_url", null)}>Remover</Button>
+                </>
+              )}
+            </div>
           </div>
+
           <div className="md:col-span-4">
             <Label className={lbl}>Observação</Label>
             <textarea className="min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={form.observacao ?? ""} onChange={(e) => set("observacao", e.target.value)} />
