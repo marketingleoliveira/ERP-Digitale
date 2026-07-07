@@ -805,6 +805,7 @@ export type Database = {
       funcionarios: {
         Row: {
           bairro: string | null
+          cargo_id: string | null
           celular: string | null
           cep: string | null
           cidade: string | null
@@ -826,6 +827,7 @@ export type Database = {
         }
         Insert: {
           bairro?: string | null
+          cargo_id?: string | null
           celular?: string | null
           cep?: string | null
           cidade?: string | null
@@ -847,6 +849,7 @@ export type Database = {
         }
         Update: {
           bairro?: string | null
+          cargo_id?: string | null
           celular?: string | null
           cep?: string | null
           cidade?: string | null
@@ -866,7 +869,15 @@ export type Database = {
           uf?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "funcionarios_cargo_id_fkey"
+            columns: ["cargo_id"]
+            isOneToOne: false
+            referencedRelation: "cargos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       maquinas: {
         Row: {
