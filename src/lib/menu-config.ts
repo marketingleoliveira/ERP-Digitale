@@ -5,9 +5,10 @@ import {
   BadgeCheck, PackageCheck, FileText, ShieldCheck, Settings, Shirt,
   SlidersHorizontal,
   Building2, FlaskConical, Spool, UserSquare2, Palette, Droplet,
-  Sparkles, Layers, Wrench, Syringe, Target,
+  Sparkles, Layers, Wrench, Syringe, Target, Code2, Briefcase,
   type LucideIcon,
 } from "lucide-react";
+
 
 export type MenuItem = {
   title: string;
