@@ -192,35 +192,8 @@ function MaquinaDialog({
   const [disposicao, setDisposicao] = useState("");
   const [prodMedia, setProdMedia] = useState("");
   const [habilitado, setHabilitado] = useState(true);
-  const [fioId, setFioId] = useState<string>("");
-  const [carga, setCarga] = useState<CargaAgulha[]>([]);
-  const [agulha, setAgulha] = useState("");
-  const [qtd, setQtd] = useState("");
-
-  const { data: fiosOptions = [] } = useQuery({
-    queryKey: ["composicoes", "fios"],
-    queryFn: async () => {
-      const { data, error } = await (supabase.from("composicoes" as never) as never as {
-        select: (c: string) => { eq: (a: string, b: unknown) => { order: (o: string) => Promise<{ data: Array<{ id: string; codigo: string; composicao: string | null; tipo: string; habilitado: boolean }> | null; error: Error | null }> } }
-      }).select("id,codigo,composicao,tipo,habilitado").eq("tipo", "Fio").order("codigo");
-      if (error) throw error;
-      return (data ?? []).filter((f) => f.habilitado);
-    },
-  });
-
-  const { data: agulhasOptions = [] } = useQuery({
-    queryKey: ["agulhas", "enabled"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("agulhas" as never)
-        .select("agulha,habilitado")
-        .order("agulha", { ascending: true });
-      if (error) throw error;
-      return ((data ?? []) as unknown as { agulha: string; habilitado: boolean }[])
-        .filter((a) => a.habilitado)
-        .map((a) => a.agulha);
-    },
-  });
+  const [dataFab, setDataFab] = useState("");
+  const [correias, setCorreias] = useState<string[]>([""]);
 
   useEffect(() => {
     if (!open) return;
@@ -234,9 +207,12 @@ function MaquinaDialog({
     setDisposicao(editing?.disposicao_agulhas ?? "");
     setProdMedia(editing?.producao_media?.toString() ?? "");
     setHabilitado(editing?.habilitado ?? true);
-    setFioId(editing?.fio_id ?? "");
-    setCarga(Array.isArray(editing?.carga_agulhas) ? editing!.carga_agulhas! : []);
-    setAgulha(""); setQtd("");
+    setDataFab(editing?.data_fabricacao ?? "");
+    setCorreias(
+      Array.isArray(editing?.correias) && editing!.correias!.length > 0
+        ? [...(editing!.correias as string[])]
+        : [""],
+    );
   }, [open, editing]);
 
   const numOrNull = (v: string): number | null => {
@@ -245,18 +221,16 @@ function MaquinaDialog({
     return Number.isFinite(n) ? n : null;
   };
 
-  const addCarga = () => {
-    const q = numOrNull(qtd);
-    if (!agulha.trim()) return toast.error("Informe a agulha.");
-    if (q == null || q <= 0) return toast.error("Informe a quantidade.");
-    setCarga((p) => [...p, { agulha: agulha.trim(), quantidade: q }]);
-    setAgulha(""); setQtd("");
-  };
+  const addCorreiaRow = () => setCorreias((p) => [...p, ""]);
+  const updateCorreia = (i: number, v: string) =>
+    setCorreias((p) => p.map((c, k) => (k === i ? v : c)));
+  const removeCorreia = (i: number) =>
+    setCorreias((p) => (p.length === 1 ? [""] : p.filter((_, k) => k !== i)));
 
   const mut = useMutation({
     mutationFn: async () => {
       const n = Number(numero);
-      if (!Number.isInteger(n) || n <= 0) throw new Error("Número inválido.");
+      if (!Number.isInteger(n) || n <= 0) throw new Error("Código inválido.");
       const nAlimN = numOrNull(nAlim);
       const payload = {
         numero: n, tipo, maquina: maquina.trim(), modelo: modelo.trim() || null,
@@ -265,8 +239,8 @@ function MaquinaDialog({
         finura: numOrNull(finura),
         disposicao_agulhas: disposicao.trim() || null,
         producao_media: numOrNull(prodMedia),
-        carga_agulhas: carga,
-        fio_id: fioId || null,
+        data_fabricacao: dataFab || null,
+        correias: correias.map((c) => c.trim()).filter(Boolean),
         habilitado,
       };
       const client = supabase as unknown as { from: (t: string) => { update: (p: unknown) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> }; insert: (p: unknown) => Promise<{ error: Error | null }> } };
