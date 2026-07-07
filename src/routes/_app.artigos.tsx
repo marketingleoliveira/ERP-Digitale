@@ -254,7 +254,7 @@ function ArtigosPage() {
 
         <div className="flex flex-wrap items-end gap-2 border-t bg-muted/20 p-3">
           <div className="flex-1 min-w-[200px]">
-            <Label className="text-xs">Artigo</Label>
+            <Label className="text-xs">Descrição</Label>
             <Input value={filter} onChange={(e) => setFilter(e.target.value)} />
           </div>
           <Button variant="secondary" onClick={() => setPage(1)}>Filtrar</Button>
