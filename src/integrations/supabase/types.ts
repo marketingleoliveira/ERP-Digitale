@@ -379,6 +379,33 @@ export type Database = {
         }
         Relationships: []
       }
+      cargos: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+          permissoes: string[]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          permissoes?: string[]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          permissoes?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       composicoes: {
         Row: {
           codigo: string
@@ -1080,6 +1107,35 @@ export type Database = {
         }
         Relationships: []
       }
+      user_cargos: {
+        Row: {
+          cargo_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          cargo_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          cargo_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_cargos_cargo_id_fkey"
+            columns: ["cargo_id"]
+            isOneToOne: false
+            referencedRelation: "cargos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1138,6 +1194,10 @@ export type Database = {
         Returns: boolean
       }
       is_admin_or_gerente: { Args: { _user_id: string }; Returns: boolean }
+      user_has_menu_permission: {
+        Args: { _url: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role:

@@ -8,7 +8,8 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import logoAsset from "@/assets/digitale-logo-white.png.asset.json";
 import { ALL_MENU_ITEMS, GROUP_ORDER, useMenuVisibility } from "@/lib/menu-config";
-import { LayoutDashboard, Users, ShoppingCart, Factory, Wallet, ShieldCheck, type LucideIcon } from "lucide-react";
+import { useAuth, useUserRoles } from "@/hooks/use-auth";
+import { LayoutDashboard, Users, ShoppingCart, Factory, Wallet, ShieldCheck, Code2, type LucideIcon } from "lucide-react";
 
 const GROUP_ICONS: Record<string, LucideIcon> = {
   "Visão Geral": LayoutDashboard,
@@ -17,19 +18,26 @@ const GROUP_ICONS: Record<string, LucideIcon> = {
   "Produção (PCP)": Factory,
   "Financeiro & Logística": Wallet,
   "Administração": ShieldCheck,
+  "DEV": Code2,
 };
+
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { visibility } = useMenuVisibility();
+  const { user } = useAuth();
+  const roles = useUserRoles(user?.id);
+  const isDev = roles.includes("desenvolvedor");
 
   const visibleItems = ALL_MENU_ITEMS.filter((i) => visibility[i.url]);
   const standalone = visibleItems.filter((i) => !i.group);
   const groups = GROUP_ORDER
+    .filter((label) => label !== "DEV" || isDev)
     .map((label) => ({ label, items: visibleItems.filter((i) => i.group === label) }))
     .filter((g) => g.items.length > 0);
+
 
   return (
     <Sidebar collapsible="icon">
