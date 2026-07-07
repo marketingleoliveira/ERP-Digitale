@@ -331,6 +331,7 @@ export type Database = {
       }
       customers: {
         Row: {
+          artigos_venda: Json
           bairro: string | null
           celular: string | null
           cep: string | null
@@ -338,12 +339,21 @@ export type Database = {
           cidade_codigo: string | null
           cnpj: string | null
           comissao: number | null
+          complemento: string | null
           contato: string | null
           cpf: string | null
           created_at: string
           crt: string | null
           email: string | null
           endereco: string | null
+          entrega_bairro: string | null
+          entrega_cep: string | null
+          entrega_cidade: string | null
+          entrega_cidade_codigo: string | null
+          entrega_complemento: string | null
+          entrega_endereco: string | null
+          entrega_numero: string | null
+          entrega_uf: string | null
           flag_acabamento: boolean
           flag_cliente: boolean
           flag_confeccao: boolean
@@ -361,15 +371,21 @@ export type Database = {
           limite_credito: number | null
           matriz: string | null
           nome_fantasia: string | null
+          numero: string | null
           observacao: string | null
+          observacao_financeiro: string | null
           owner_id: string | null
+          pais: string | null
           parcelas: number | null
+          peca_tara_kg: number | null
           prazo: number | null
           razao_social: string
           rg: string | null
           sales_rep_id: string | null
           segmento: string | null
+          segmento_cliente: string | null
           status: string
+          suframa: string | null
           tabela_prazo: string | null
           telefone: string | null
           tipo_cliente: string | null
@@ -379,6 +395,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          artigos_venda?: Json
           bairro?: string | null
           celular?: string | null
           cep?: string | null
@@ -386,12 +403,21 @@ export type Database = {
           cidade_codigo?: string | null
           cnpj?: string | null
           comissao?: number | null
+          complemento?: string | null
           contato?: string | null
           cpf?: string | null
           created_at?: string
           crt?: string | null
           email?: string | null
           endereco?: string | null
+          entrega_bairro?: string | null
+          entrega_cep?: string | null
+          entrega_cidade?: string | null
+          entrega_cidade_codigo?: string | null
+          entrega_complemento?: string | null
+          entrega_endereco?: string | null
+          entrega_numero?: string | null
+          entrega_uf?: string | null
           flag_acabamento?: boolean
           flag_cliente?: boolean
           flag_confeccao?: boolean
@@ -409,15 +435,21 @@ export type Database = {
           limite_credito?: number | null
           matriz?: string | null
           nome_fantasia?: string | null
+          numero?: string | null
           observacao?: string | null
+          observacao_financeiro?: string | null
           owner_id?: string | null
+          pais?: string | null
           parcelas?: number | null
+          peca_tara_kg?: number | null
           prazo?: number | null
           razao_social: string
           rg?: string | null
           sales_rep_id?: string | null
           segmento?: string | null
+          segmento_cliente?: string | null
           status?: string
+          suframa?: string | null
           tabela_prazo?: string | null
           telefone?: string | null
           tipo_cliente?: string | null
@@ -427,6 +459,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          artigos_venda?: Json
           bairro?: string | null
           celular?: string | null
           cep?: string | null
@@ -434,12 +467,21 @@ export type Database = {
           cidade_codigo?: string | null
           cnpj?: string | null
           comissao?: number | null
+          complemento?: string | null
           contato?: string | null
           cpf?: string | null
           created_at?: string
           crt?: string | null
           email?: string | null
           endereco?: string | null
+          entrega_bairro?: string | null
+          entrega_cep?: string | null
+          entrega_cidade?: string | null
+          entrega_cidade_codigo?: string | null
+          entrega_complemento?: string | null
+          entrega_endereco?: string | null
+          entrega_numero?: string | null
+          entrega_uf?: string | null
           flag_acabamento?: boolean
           flag_cliente?: boolean
           flag_confeccao?: boolean
@@ -457,15 +499,21 @@ export type Database = {
           limite_credito?: number | null
           matriz?: string | null
           nome_fantasia?: string | null
+          numero?: string | null
           observacao?: string | null
+          observacao_financeiro?: string | null
           owner_id?: string | null
+          pais?: string | null
           parcelas?: number | null
+          peca_tara_kg?: number | null
           prazo?: number | null
           razao_social?: string
           rg?: string | null
           sales_rep_id?: string | null
           segmento?: string | null
+          segmento_cliente?: string | null
           status?: string
+          suframa?: string | null
           tabela_prazo?: string | null
           telefone?: string | null
           tipo_cliente?: string | null
