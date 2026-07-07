@@ -114,6 +114,9 @@ function RepMetaPage() {
 
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center justify-end gap-2 border-b border-border bg-muted/30 p-2">
+          <Button size="sm" variant="outline" onClick={() => setDialogOpen(true)}>
+            <FilePlus2 className="h-4 w-4 mr-1.5" />CADASTRAR
+          </Button>
           <Button size="sm" onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
             {saveMut.isPending ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Save className="h-4 w-4 mr-1.5" />}
             SALVAR METAS
