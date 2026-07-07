@@ -1,129 +1,194 @@
-# Auditoria Fiscal — Sistema Digitale Têxtil
 
-## 1. O que JÁ existe (reutilizável)
+# Reestruturação Industrial — Ordem de Produção como núcleo
 
-**Banco (29 tabelas relevantes)**
-- `empresa` — Emissor NF-e completo (CNPJ/IE/IM, regime, endereço, ambiente, provedor, série, próximo nº, certificado A1 nome/validade). ✅ Reaproveitar.
-- `customers` — Clientes com **campos fiscais já presentes**: CRT, IE, SUFRAMA, endereço de entrega, tipo_cliente, flags (importador, transportadora, fornecedor), tabela de prazo/parcelas/intervalo. ✅ Reaproveitar; faltam poucos campos (indicador_ie, consumidor_final, indicador_presenca, contribuinte_icms).
-- `products` — NCM, CEST, origem, unidade, preços já existem. Faltam: CFOP padrão, EAN, EAN trib., peso, IPI/ICMS/PIS/COFINS/CST/CSOSN, código benefício, unidade tributável.
-- `notas_fiscais` (37 col) + `notas_fiscais_itens` (21 col) + `notas_fiscais_faturas` — Estrutura core NF já criada, incl. chave_acesso, protocolo, status_sefaz, xml_url, danfe_url, provedor_ref (migração 20260707185847).
-- `cfop`, `impostos`, `uf_icms` — Tabelas fiscais auxiliares já criadas.
-- `tinturarias` (categoria=Transportadora), `sales_reps`, `funcionarios`, `lotes`, `estoque` (fios/tecidos), `product_variants`.
-- `user_roles` + `has_role()` + `is_admin_or_gerente()` — Permissões prontas.
-
-**Backend**
-- `src/lib/nfe.functions.ts` — Server function `emitirNFe` (adapter Focus NFe/PlugNotas) ✅.
-- `src/lib/danfe.ts` — DANFE PDF via jsPDF ✅ (versão simples).
-- `requireSupabaseAuth` middleware + `attachSupabaseAuth` bearer ✅.
-- Storage buckets `estampas`, `artigos` (privados).
-
-**Frontend**
-- 8 rotas fiscais + `NotaFiscalList` component (CRUD + emissão + DANFE).
-- Configurações → Empresa (form completo com abas).
-- Padrão UI: shadcn, tokens semânticos, sidebar, TanStack Query.
-
-## 2. O que FALTA (a criar)
-
-**Camada de serviço (não existe)** — obrigatório para desacoplar regras fiscais dos componentes:
-```text
-src/services/fiscal/
-├── fiscal.service.ts       fachada (emitir, cancelar, inutilizar, CC-e, consultar)
-├── nfe.adapter.ts          Focus NFe (já parcial)
-├── nfce.adapter.ts         NFC-e
-├── nfse.adapter.ts         NFS-e (interface — municipal)
-├── xml.repository.ts       storage supabase (bucket "nfe-xml")
-├── danfe.generator.ts      DANFE completo (upgrade do atual)
-└── events.repository.ts    log de eventos
-```
-
-**Tabelas ausentes** (5 novas + extensões):
-- `nfe_eventos` — cancelamento, CC-e, inutilização, manifestação (nfe_id, tipo, protocolo, xml, motivo, data, user_id).
-- `nfe_logs` — auditoria (nfe_id, acao, request, response, user_id, timestamp).
-- `nfe_sequencias` — controle de numeração por série/modelo/ambiente (evita race condition).
-- `empresa_filiais` — multi-CNPJ/filial (referencia empresa matriz).
-- Extensão de `products`: CFOP padrão, EAN, EAN trib., peso_bruto, peso_liq, cst_icms, csosn, cst_ipi, aliq_ipi, cst_pis, aliq_pis, cst_cofins, aliq_cofins, cod_beneficio, unidade_tributavel.
-- Extensão de `customers`: consumidor_final (bool), contribuinte_icms (int 1/2/9), indicador_ie (int 1/2/9), indicador_presenca (int 0-9), transportadora_preferencial_id (uuid).
-- Extensão de `empresa`: crt (int), csc_id, csc_token (NFC-e), certificado_a1_path (storage).
-
-**Storage bucket novo**: `fiscal` (privado) — XMLs, DANFEs, certificados A1.
-
-**Eventos SEFAZ** (server functions em `nfe.functions.ts`):
-- `cancelarNFe`, `emitirCCe`, `inutilizarFaixa`, `consultarStatus`, `manifestarDestinatario`, `baixarXml`.
-
-**Integrações internas ausentes**:
-- Baixa automática de estoque ao autorizar NF (usar tabela `lotes` / estoque).
-- Geração de contas a receber/pagar no financeiro (⚠️ módulo financeiro **não existe** ainda — planejar).
-- Conversão Pedido→NF-e (⚠️ módulo pedidos **não existe** — planejar).
-- Envio de e-mail (Resend/Lovable Cloud) do XML+DANFE ao cliente.
-
-**Dashboard Fiscal**: rota `/fiscal/dashboard` com cards (emitidas, canceladas, rejeitadas, faturamento, impostos), gráficos (recharts) e export CSV/PDF.
-
-**Segurança/permissões**: reutilizar `user_cargos` + `cargos.permissoes`. Adicionar entries: `nfe.emitir`, `nfe.cancelar`, `nfe.inutilizar`, `nfe.dashboard`.
-
-## 3. Conflitos identificados
-
-1. **`notas_fiscais.emissor`** existe como `text` mas dados devem vir de `empresa`. Manter coluna como snapshot (razão social no momento da emissão) — evita alteração retroativa se empresa mudar dados.
-2. **Numeração** — hoje `empresa.proximo_numero_nfe` é editável manualmente. Substituir por função SQL `proximo_numero_nfe(serie, modelo)` atômica com `FOR UPDATE`.
-3. **`products.ncm`** já existe — reutilizar; NÃO criar `products_fiscal` separado. Apenas ALTER TABLE.
-
-## 4. Plano de implementação (incremental — 6 etapas)
-
-**Etapa 1 — Dados & Segurança** _(1 migração)_
-- Extend `products`, `customers`, `empresa` com campos fiscais faltantes.
-- Cria `nfe_eventos`, `nfe_logs`, `nfe_sequencias`, `empresa_filiais`.
-- Função `proximo_numero_nfe()` atômica.
-- Bucket `fiscal` + policies (admin/gerente only).
-- Permissões novas em `cargos.permissoes`.
-
-**Etapa 2 — Fiscal Service Layer**
-- Refatora `nfe.functions.ts` em `src/services/fiscal/` (fachada + adapters).
-- Zod schemas para input/output SEFAZ.
-- Logs estruturados gravando em `nfe_logs`.
-
-**Etapa 3 — Eventos SEFAZ**
-- Server functions: cancelar, CC-e, inutilizar, consultar, manifestar.
-- UI de eventos no `NotaFiscalList` (drawer por nota com histórico).
-
-**Etapa 4 — Automações internas**
-- Trigger: NF autorizada → baixa estoque em `lotes`.
-- Enviar e-mail (Lovable AI Gateway → Resend) com XML+PDF.
-- Preparar hooks p/ futuro módulo Financeiro (interface `IFinanceiroAdapter`).
-
-**Etapa 5 — Cadastros fiscais nos formulários existentes**
-- Aba "Fiscal" no form de Produtos (`/produtos`).
-- Aba "Fiscal" no form de Clientes (`/empresa`).
-- Aba "Certificado + CSC" em Configurações → Empresa.
-
-**Etapa 6 — Dashboard Fiscal + NFC-e + export**
-- `/fiscal/dashboard` com KPIs, gráficos, filtros.
-- Export CSV/PDF (jsPDF + papaparse).
-- NFC-e adapter (venda ao consumidor).
-- NFS-e: apenas interface + placeholder.
-
-## 5. Impacto no banco
-
-| Ação | Tabelas | Risco |
-|---|---|---|
-| ALTER (add col nullable) | products, customers, empresa | Baixo — não quebra queries existentes |
-| CREATE | nfe_eventos, nfe_logs, nfe_sequencias, empresa_filiais | Nulo — tabelas novas |
-| Função + trigger | proximo_numero_nfe, baixa_estoque_nf | Médio — testar em homologação |
-
-Zero DROP. Zero renomeação. Zero perda de dados.
-
-## 6. Requisitos externos do usuário
-
-Antes das etapas 2+ precisamos que você:
-1. Escolha o provedor SEFAZ (Focus NFe recomendado).
-2. Crie conta no provedor + envie certificado A1 no painel deles.
-3. Autorize eu adicionar o secret `FOCUS_NFE_TOKEN`.
-4. (NFC-e) Solicite CSC no portal SEFAZ do seu estado.
-
-## 7. Fora de escopo neste plano
-
-- Módulo **Financeiro** (contas a receber/pagar) — não existe no ERP; será feature separada.
-- Módulo **Pedidos de venda** — não existe; será feature separada.
-- CT-e e MDF-e — arquitetura preparada mas implementação futura.
+## Princípios
+1. **OP é o único caminho** para movimentar produção, estoque, faturamento e expedição.
+2. **Não duplicar dados**: cada domínio (Clientes, Produtos, Estoque, Fiscal, Financeiro) permanece dono das suas tabelas; a OP apenas **referencia** por FK.
+3. **Máquina de estados única** com transições validadas por trigger.
+4. **Rastreabilidade completa**: cada evento gera linha imutável em `op_eventos`.
 
 ---
 
-**Aprove este plano para eu executar a Etapa 1** (migração de extensão do schema + service layer inicial), ou peça ajustes.
+## Etapa 1 — Fundação de dados (1 migração)
+
+Novas tabelas (todas com RLS via `has_role`):
+
+```text
+pedidos                      # Pedido de venda (cabeçalho)
+  id, numero, cliente_id → customers, vendedor_id → sales_reps,
+  data_pedido, prazo_entrega, status (rascunho/confirmado/cancelado),
+  valor_total, condicao_pagamento, observacao
+
+pedido_itens                 # Itens do pedido
+  id, pedido_id → pedidos, product_id → products, variante_id → variantes,
+  cor_id → cores, estampa_id → estampas, quantidade, valor_unitario
+
+ordens_producao              # OP — núcleo do sistema
+  id, numero (sequência atômica), pedido_id → pedidos (nullable p/ OP interna),
+  status (enum abaixo), prioridade, data_abertura, data_prevista,
+  data_conclusao, maquina_id → maquinas, funcionario_id → funcionarios,
+  responsavel_id → auth.users, observacao
+
+op_itens                     # O que a OP deve produzir
+  id, op_id → ordens_producao, product_id → products, variante_id,
+  cor_id, estampa_id, quantidade_planejada, quantidade_produzida,
+  quantidade_aprovada, quantidade_reprovada, unidade
+
+op_consumos                  # Insumos consumidos (fios/tecidos) — baixa estoque
+  id, op_id, lote_id → lotes, quantidade, momento, user_id
+
+op_apontamentos              # Tempo/produção reportada por operador
+  id, op_id, funcionario_id, maquina_id, inicio, fim,
+  quantidade_produzida, quantidade_refugo, observacao
+
+op_qualidade                 # Controle de qualidade
+  id, op_id, inspetor_id, resultado (aprovado/reprovado/parcial),
+  quantidade_aprovada, quantidade_reprovada, motivo, data
+
+op_entradas_estoque          # Vincula OP → lote produzido
+  id, op_id, product_id, variante_id, lote_id → lotes,
+  quantidade, data_entrada
+
+op_eventos                   # Audit trail imutável (append-only)
+  id, op_id, tipo, de_status, para_status, payload jsonb,
+  user_id, created_at
+
+op_faturamento               # Vínculo OP ↔ NF-e
+  id, op_id, nota_fiscal_id → notas_fiscais, quantidade_faturada,
+  status (pendente/pre_faturado/faturado/expedido)
+
+op_expedicoes                # Expedição/entrega
+  id, op_id, nota_fiscal_id, transportadora_id, data_saida,
+  data_entrega, rastreio, status
+```
+
+**Estados da OP (enum `op_status`):**
+`planejada · programada · em_producao · parcial · aguardando_qualidade · reprovada · aprovada · pronta_estoque · pronta_faturamento · faturada · expedida · encerrada`
+
+**Funções SQL:**
+- `proximo_numero_op()` — sequência atômica (padrão `nfe_sequencias`).
+- `op_transicionar(_op_id, _novo_status, _payload)` — valida transição permitida e grava `op_eventos`.
+- Trigger `on_op_status_change` — dispara efeitos colaterais:
+  - `pronta_estoque` → cria `lotes` + `op_entradas_estoque`.
+  - `faturada` → registra `op_faturamento` (NF-e vinculada).
+  - `expedida` → cria `op_expedicoes`.
+
+**Extensões em tabelas existentes:**
+- `notas_fiscais.op_id uuid` (opcional) — permite faturar por OP.
+- `lotes.op_id uuid` (opcional) — rastreia origem do lote.
+
+---
+
+## Etapa 2 — Backend / Server Functions
+
+`src/services/producao/`:
+- `pedido.functions.ts` — criar/confirmar pedido, converter em OP.
+- `op.functions.ts` — criar, programar, iniciar, apontar, transicionar, encerrar.
+- `qualidade.functions.ts` — inspecionar, aprovar, reprovar (parcial).
+- `estoque.functions.ts` — dar entrada via OP, consumir insumo, ajustes.
+- `expedicao.functions.ts` — registrar saída, rastreio, entrega.
+
+Regras:
+- Nenhuma NF-e de saída pode ser autorizada sem OP no status `pronta_faturamento` (validação server-side).
+- Nenhum lote é criado manualmente para produto acabado — só via OP.
+- Fiscal (já existente) passa a consumir `op_faturamento`.
+
+---
+
+## Etapa 3 — UI
+
+Novas rotas:
+```
+/producao                    → Kanban de OPs por status
+/producao/pedidos            → Lista + form de Pedido
+/producao/op                 → Lista + drill-down por OP
+/producao/op/$id             → Detalhe: itens, consumos, apontamentos,
+                               qualidade, timeline de eventos, ações de
+                               transição contextual
+/producao/qualidade          → Fila de OPs aguardando_qualidade
+/producao/expedicao          → Fila de OPs faturadas
+```
+
+Componentes:
+- `OpKanban` — colunas por status, drag opcional.
+- `OpTimeline` — linha do tempo de `op_eventos`.
+- `OpActionsBar` — botões contextuais por status (Iniciar, Apontar, Enviar p/ QC, Aprovar, Faturar, Expedir).
+- `OpFaturarDialog` — cria NF-e pré-preenchida a partir da OP + itens.
+
+Menu: novo grupo **Produção** (Pedidos, OPs, Qualidade, Expedição) — Fiscal e Estoque permanecem como estão mas com badges "via OP".
+
+---
+
+## Etapa 4 — Integrações
+
+| Módulo | Papel | Como consulta OP |
+|---|---|---|
+| Clientes | Dono do cadastro | `pedidos.cliente_id → customers` |
+| Produtos | Dono do cadastro | `op_itens.product_id → products` |
+| Estoque | Dono dos lotes | `lotes ← op_entradas_estoque` (entrada) e `op_consumos` (saída) |
+| Fiscal | Emissor NF-e | `notas_fiscais.op_id → ordens_producao`; UI de emissão exige OP em `pronta_faturamento` |
+| Financeiro (futuro) | Contas a receber | trigger `notas_fiscais autorizada` cria conta a receber com `op_id` |
+
+---
+
+## Etapa 5 — Migração de dados existentes
+- Notas fiscais atuais recebem `op_id = null` (legado).
+- Nenhum backfill destrutivo; sistema atual continua funcionando em paralelo.
+- Um flag em `empresa.exige_op_para_nfe boolean default false` permite ativação gradual (produção pilota antes do bloqueio total).
+
+---
+
+## Diagrama do fluxo
+
+```text
+Pedido (rascunho)
+  └─ confirmar → gera OP(s) automaticamente
+       ↓
+   ┌───────── OP ─────────┐
+   │ planejada            │
+   │  └ programar         │
+   │ programada           │
+   │  └ iniciar produção  │
+   │ em_producao          │
+   │  ├ apontamentos      │  op_apontamentos
+   │  ├ consumo insumos   │  op_consumos → baixa lote
+   │  └ enviar p/ QC      │
+   │ aguardando_qualidade │
+   │  ├ reprovar → reprovada (fim ou retrabalho)
+   │  └ aprovar (total/parcial)
+   │ aprovada / parcial   │
+   │  └ dar entrada       │  op_entradas_estoque → cria lote
+   │ pronta_estoque       │
+   │  └ liberar p/ fatur. │
+   │ pronta_faturamento   │
+   │  └ emitir NF-e       │  op_faturamento ← notas_fiscais
+   │ faturada             │
+   │  └ expedir           │  op_expedicoes
+   │ expedida             │
+   │  └ confirmar entrega │
+   │ encerrada            │
+   └──────────────────────┘
+```
+
+---
+
+## Ordem de execução (incremental — cada etapa é entregável)
+
+1. **Etapa 1**: migração de dados (10 tabelas + enum + funções + trigger).
+2. **Etapa 2**: server functions de Pedido e OP (fluxo básico).
+3. **Etapa 3a**: UI Pedidos + Lista OP + Detalhe OP + Kanban.
+4. **Etapa 3b**: Qualidade + Expedição.
+5. **Etapa 2b/4**: integração fiscal (bloqueio de NF-e sem OP + `OpFaturarDialog`).
+6. **Etapa 5**: flag de ativação gradual + documentação.
+
+---
+
+## Confirmações antes de iniciar
+
+Preciso do seu OK em 3 pontos para começar pela Etapa 1:
+
+1. **Uma OP por item ou uma OP por pedido?** (recomendo: 1 pedido → N OPs, uma por artigo/cor).
+2. **Bloqueio duro de NF-e sem OP** já na Etapa 1, ou via flag `exige_op_para_nfe` para migração gradual? (recomendo: flag).
+3. **Kanban ou lista tradicional** como visão default de `/producao/op`? (recomendo: Kanban, com toggle para lista).
+
+Após sua confirmação inicio a Etapa 1 (migração das 10 tabelas).
