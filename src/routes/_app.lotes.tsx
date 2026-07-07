@@ -59,7 +59,8 @@ async function fetchFios(): Promise<ItemRef[]> {
 async function fetchFornecedores(): Promise<Fornecedor[]> {
   const { data, error } = await supabase
     .from("tinturarias")
-    .select("id, nome_fantasia")
+    .select("id, nome_fantasia, categoria")
+    .neq("categoria", "Insumos")
     .order("nome_fantasia");
   if (error) throw error;
   return (data ?? []) as unknown as Fornecedor[];
