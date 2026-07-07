@@ -492,6 +492,36 @@ export type Database = {
           },
         ]
       }
+      correias: {
+        Row: {
+          correia: string
+          created_at: string
+          habilitado: boolean
+          id: string
+          marca: string | null
+          modelo: string | null
+          updated_at: string
+        }
+        Insert: {
+          correia: string
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          marca?: string | null
+          modelo?: string | null
+          updated_at?: string
+        }
+        Update: {
+          correia?: string
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          marca?: string | null
+          modelo?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           artigos_venda: Json
