@@ -190,32 +190,57 @@ function FuncionarioPage() {
 function FuncionarioDialog({
   open, onOpenChange, editing, onSaved,
 }: { open: boolean; onOpenChange: (v: boolean) => void; editing: Funcionario | null; onSaved: () => void }) {
-  const [nome, setNome] = useState("");
-  const [tipo, setTipo] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [celular, setCelular] = useState("");
-  const [habilitado, setHabilitado] = useState(true);
+  const [f, setF] = useState({
+    tipo: "", nome: "", cpf: "", rg: "", cep: "", uf: "",
+    endereco: "", numero: "", complemento: "", bairro: "", cidade: "",
+    telefone: "", celular: "", email: "", observacao: "",
+    habilitado: true,
+  });
 
   useEffect(() => {
     if (!open) return;
-    setNome(editing?.nome ?? "");
-    setTipo(editing?.tipo ?? "");
-    setCpf(editing?.cpf ?? "");
-    setTelefone(editing?.telefone ?? "");
-    setCelular(editing?.celular ?? "");
-    setHabilitado(editing?.habilitado ?? true);
+    setF({
+      tipo: editing?.tipo ?? "",
+      nome: editing?.nome ?? "",
+      cpf: editing?.cpf ?? "",
+      rg: editing?.rg ?? "",
+      cep: editing?.cep ?? "",
+      uf: editing?.uf ?? "",
+      endereco: editing?.endereco ?? "",
+      numero: editing?.numero ?? "",
+      complemento: editing?.complemento ?? "",
+      bairro: editing?.bairro ?? "",
+      cidade: editing?.cidade ?? "",
+      telefone: editing?.telefone ?? "",
+      celular: editing?.celular ?? "",
+      email: editing?.email ?? "",
+      observacao: editing?.observacao ?? "",
+      habilitado: editing?.habilitado ?? true,
+    });
   }, [open, editing]);
+
+  const upd = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((p) => ({ ...p, [k]: v }));
 
   const mut = useMutation({
     mutationFn: async () => {
+      const clean = (s: string) => s.trim() || null;
       const payload = {
-        nome: nome.trim(),
-        tipo: tipo.trim() || null,
-        cpf: cpf.trim() || null,
-        telefone: telefone.trim() || null,
-        celular: celular.trim() || null,
-        habilitado,
+        tipo: clean(f.tipo),
+        nome: f.nome.trim(),
+        cpf: clean(f.cpf),
+        rg: clean(f.rg),
+        cep: clean(f.cep),
+        uf: clean(f.uf),
+        endereco: clean(f.endereco),
+        numero: clean(f.numero),
+        complemento: clean(f.complemento),
+        bairro: clean(f.bairro),
+        cidade: clean(f.cidade),
+        telefone: clean(f.telefone),
+        celular: clean(f.celular),
+        email: clean(f.email),
+        observacao: clean(f.observacao),
+        habilitado: f.habilitado,
       };
       if (editing) {
         const { error } = await sb.from("funcionarios").update(payload).eq("id", editing.id);
@@ -234,33 +259,85 @@ function FuncionarioDialog({
   });
 
   const submit = () => {
-    if (!nome.trim()) { toast.error("Informe o nome."); return; }
+    if (!f.tipo.trim()) { toast.error("Selecione o tipo."); return; }
+    if (!f.nome.trim()) { toast.error("Informe o nome."); return; }
     mut.mutate();
   };
 
-  const Row = ({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
-    <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-      <Label className="justify-self-end text-sm">
+  const Field = ({ label, required, children, className }: { label: string; required?: boolean; children: React.ReactNode; className?: string }) => (
+    <div className={className}>
+      <Label className="text-xs font-semibold">
         {required && <span className="text-destructive mr-1">*</span>}{label}:
       </Label>
-      <div>{children}</div>
+      <div className="mt-1">{children}</div>
     </div>
   );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-primary">👥 {editing ? "Alterar" : "Cadastro"} Funcionário</DialogTitle>
         </DialogHeader>
-        <div className="rounded bg-muted/50 p-5 space-y-3">
-          <Row label="Nome" required><Input value={nome} onChange={(e) => setNome(e.target.value)} maxLength={150} /></Row>
-          <Row label="Tipo"><Input value={tipo} onChange={(e) => setTipo(e.target.value)} maxLength={80} placeholder="Ex: Vendedor, Tecelão…" /></Row>
-          <Row label="CPF"><Input value={cpf} onChange={(e) => setCpf(e.target.value)} maxLength={20} className="max-w-[220px]" /></Row>
-          <Row label="Telefone"><Input value={telefone} onChange={(e) => setTelefone(e.target.value)} maxLength={20} className="max-w-[220px]" /></Row>
-          <Row label="Celular"><Input value={celular} onChange={(e) => setCelular(e.target.value)} maxLength={20} className="max-w-[220px]" /></Row>
-          <Row label="Habilitado"><Checkbox checked={habilitado} onCheckedChange={(v) => setHabilitado(!!v)} /></Row>
+
+        <div className="rounded bg-muted/40 p-5 space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Field label="Tipo" required>
+              <Select value={f.tipo} onValueChange={(v) => upd("tipo", v)}>
+                <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+                <SelectContent>{TIPOS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+              </Select>
+            </Field>
+            <Field label="Habilitado">
+              <div className="h-9 flex items-center">
+                <Checkbox checked={f.habilitado} onCheckedChange={(v) => upd("habilitado", !!v)} />
+              </div>
+            </Field>
+          </div>
+
+          <Field label="Nome" required>
+            <Input value={f.nome} onChange={(e) => upd("nome", e.target.value)} maxLength={150} />
+          </Field>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Field label="CPF"><Input value={f.cpf} onChange={(e) => upd("cpf", e.target.value)} maxLength={20} /></Field>
+            <Field label="RG"><Input value={f.rg} onChange={(e) => upd("rg", e.target.value)} maxLength={20} /></Field>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Field label="CEP"><Input value={f.cep} onChange={(e) => upd("cep", e.target.value)} maxLength={10} /></Field>
+            <Field label="UF">
+              <Select value={f.uf} onValueChange={(v) => upd("uf", v)}>
+                <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+                <SelectContent>{UFS.map((u) => <SelectItem key={u} value={u}>{u}</SelectItem>)}</SelectContent>
+              </Select>
+            </Field>
+          </div>
+
+          <Field label="Endereço"><Input value={f.endereco} onChange={(e) => upd("endereco", e.target.value)} maxLength={200} /></Field>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Field label="Número"><Input value={f.numero} onChange={(e) => upd("numero", e.target.value)} maxLength={20} /></Field>
+            <Field label="Complemento"><Input value={f.complemento} onChange={(e) => upd("complemento", e.target.value)} maxLength={80} /></Field>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Field label="Bairro"><Input value={f.bairro} onChange={(e) => upd("bairro", e.target.value)} maxLength={100} /></Field>
+            <Field label="Cidade"><Input value={f.cidade} onChange={(e) => upd("cidade", e.target.value)} maxLength={100} /></Field>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Field label="Telefone"><Input value={f.telefone} onChange={(e) => upd("telefone", e.target.value)} maxLength={20} /></Field>
+            <Field label="Celular"><Input value={f.celular} onChange={(e) => upd("celular", e.target.value)} maxLength={20} /></Field>
+          </div>
+
+          <Field label="Email"><Input type="email" value={f.email} onChange={(e) => upd("email", e.target.value)} maxLength={150} /></Field>
+
+          <Field label="Observação">
+            <Textarea value={f.observacao} onChange={(e) => upd("observacao", e.target.value)} rows={4} maxLength={1000} />
+          </Field>
         </div>
+
         <p className="text-center text-sm text-destructive">* Campo Obrigatório</p>
         <DialogFooter className="sm:justify-center">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={mut.isPending}>Cancelar</Button>
@@ -272,4 +349,6 @@ function FuncionarioDialog({
       </DialogContent>
     </Dialog>
   );
+}
+
 }
