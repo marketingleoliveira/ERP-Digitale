@@ -22,6 +22,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import logoAsset from "@/assets/digitale-logo.png.asset.json";
 import { StatusDot } from "@/components/status-dot";
+import { maskCPF, maskCNPJ, maskRG, maskCEP, maskPhone } from "@/lib/masks";
 
 export const Route = createFileRoute("/_app/empresa")({
   ssr: false,
@@ -324,11 +325,11 @@ function EmpresaPage() {
           </div>
           <div>
             <Label className="text-xs">CNPJ</Label>
-            <Input value={filters.cnpj} onChange={(e) => setFilters({ ...filters, cnpj: e.target.value })} />
+            <Input value={filters.cnpj} onChange={(e) => setFilters({ ...filters, cnpj: maskCNPJ(e.target.value) })} maxLength={18} inputMode="numeric" />
           </div>
           <div>
             <Label className="text-xs">CPF</Label>
-            <Input value={filters.cpf} onChange={(e) => setFilters({ ...filters, cpf: e.target.value })} />
+            <Input value={filters.cpf} onChange={(e) => setFilters({ ...filters, cpf: maskCPF(e.target.value) })} maxLength={14} inputMode="numeric" />
           </div>
           <div>
             <Label className="text-xs">Tipo</Label>
@@ -473,7 +474,7 @@ function EmpresaDialog({
 
           <div className="md:col-span-2">
             <Label className={lbl}>CNPJ</Label>
-            <Input className={inp} value={form.cnpj ?? ""} onChange={(e) => set("cnpj", e.target.value)} />
+            <Input className={inp} value={form.cnpj ?? ""} onChange={(e) => set("cnpj", maskCNPJ(e.target.value))} maxLength={18} inputMode="numeric" placeholder="00.000.000/0000-00" />
           </div>
           <div className="md:col-span-2">
             <Label className={lbl}>IE</Label>
@@ -481,11 +482,11 @@ function EmpresaDialog({
           </div>
           <div className="md:col-span-1">
             <Label className={lbl}>CPF</Label>
-            <Input className={inp} value={form.cpf ?? ""} onChange={(e) => set("cpf", e.target.value)} />
+            <Input className={inp} value={form.cpf ?? ""} onChange={(e) => set("cpf", maskCPF(e.target.value))} maxLength={14} inputMode="numeric" placeholder="000.000.000-00" />
           </div>
           <div className="md:col-span-1">
             <Label className={lbl}>RG</Label>
-            <Input className={inp} value={form.rg ?? ""} onChange={(e) => set("rg", e.target.value)} />
+            <Input className={inp} value={form.rg ?? ""} onChange={(e) => set("rg", maskRG(e.target.value))} maxLength={12} placeholder="00.000.000-0" />
           </div>
 
           <div className="md:col-span-2">
@@ -494,7 +495,7 @@ function EmpresaDialog({
           </div>
           <div className="md:col-span-2">
             <Label className={lbl}>* CEP</Label>
-            <Input className={inp} value={form.cep ?? ""} onChange={(e) => set("cep", e.target.value)} />
+            <Input className={inp} value={form.cep ?? ""} onChange={(e) => set("cep", maskCEP(e.target.value))} maxLength={9} inputMode="numeric" placeholder="00000-000" />
           </div>
           <div className="md:col-span-2">
             <Label className={lbl}>Bairro</Label>
@@ -533,11 +534,11 @@ function EmpresaDialog({
 
           <div className="md:col-span-2">
             <Label className={lbl}>** Telefone</Label>
-            <Input className={inp} value={form.telefone ?? ""} onChange={(e) => set("telefone", e.target.value)} />
+            <Input className={inp} value={form.telefone ?? ""} onChange={(e) => set("telefone", maskPhone(e.target.value))} maxLength={15} inputMode="tel" placeholder="(00) 0000-0000" />
           </div>
           <div className="md:col-span-2">
             <Label className={lbl}>Celular</Label>
-            <Input className={inp} value={form.celular ?? ""} onChange={(e) => set("celular", e.target.value)} />
+            <Input className={inp} value={form.celular ?? ""} onChange={(e) => set("celular", maskPhone(e.target.value))} maxLength={15} inputMode="tel" placeholder="(00) 00000-0000" />
           </div>
           <div className="md:col-span-2">
             <Label className={lbl}>Email</Label>

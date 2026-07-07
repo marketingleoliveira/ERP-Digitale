@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/empty-state";
+import { maskPhone } from "@/lib/masks";
 import { RecordDetailDialog } from "@/components/record-detail-dialog";
 
 export const Route = createFileRoute("/_app/representantes")({ component: RepresentantesPage });
@@ -125,8 +126,8 @@ function RepresentantesPage() {
                 </div>
                 <div className="space-y-2">
                   <Label>Telefone</Label>
-                  <Input value={form.telefone}
-                    onChange={(e) => setForm({ ...form, telefone: e.target.value })} />
+                  <Input value={form.telefone} maxLength={15} inputMode="tel" placeholder="(00) 00000-0000"
+                    onChange={(e) => setForm({ ...form, telefone: maskPhone(e.target.value) })} />
                 </div>
                 <div className="col-span-2 space-y-2">
                   <Label>Região</Label>

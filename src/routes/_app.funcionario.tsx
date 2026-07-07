@@ -14,6 +14,7 @@ import { FilePlus2, Loader2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMultiSelection } from "@/hooks/use-multi-selection";
+import { maskCPF, maskRG, maskCEP, maskPhone } from "@/lib/masks";
 
 
 export const Route = createFileRoute("/_app/funcionario")({
@@ -301,12 +302,12 @@ function FuncionarioDialog({
           </Field>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Field label="CPF"><Input value={f.cpf} onChange={(e) => upd("cpf", e.target.value)} maxLength={20} /></Field>
-            <Field label="RG"><Input value={f.rg} onChange={(e) => upd("rg", e.target.value)} maxLength={20} /></Field>
+            <Field label="CPF"><Input value={f.cpf} onChange={(e) => upd("cpf", maskCPF(e.target.value))} maxLength={14} inputMode="numeric" placeholder="000.000.000-00" /></Field>
+            <Field label="RG"><Input value={f.rg} onChange={(e) => upd("rg", maskRG(e.target.value))} maxLength={12} placeholder="00.000.000-0" /></Field>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Field label="CEP"><Input value={f.cep} onChange={(e) => upd("cep", e.target.value)} maxLength={10} /></Field>
+            <Field label="CEP"><Input value={f.cep} onChange={(e) => upd("cep", maskCEP(e.target.value))} maxLength={9} inputMode="numeric" placeholder="00000-000" /></Field>
             <Field label="UF">
               <Select value={f.uf} onValueChange={(v) => upd("uf", v)}>
                 <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
@@ -328,8 +329,8 @@ function FuncionarioDialog({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Field label="Telefone"><Input value={f.telefone} onChange={(e) => upd("telefone", e.target.value)} maxLength={20} /></Field>
-            <Field label="Celular"><Input value={f.celular} onChange={(e) => upd("celular", e.target.value)} maxLength={20} /></Field>
+            <Field label="Telefone"><Input value={f.telefone} onChange={(e) => upd("telefone", maskPhone(e.target.value))} maxLength={15} inputMode="tel" placeholder="(00) 0000-0000" /></Field>
+            <Field label="Celular"><Input value={f.celular} onChange={(e) => upd("celular", maskPhone(e.target.value))} maxLength={15} inputMode="tel" placeholder="(00) 00000-0000" /></Field>
           </div>
 
           <Field label="Email"><Input type="email" value={f.email} onChange={(e) => upd("email", e.target.value)} maxLength={150} /></Field>
