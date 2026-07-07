@@ -192,8 +192,7 @@ function ArtigosPage() {
                 <th className="w-8 p-2"></th>
                 <th className="p-2 text-left">Código</th>
                 <th className="p-2 text-left">NCM</th>
-                <th className="p-2 text-left">Artigo</th>
-                <th className="p-2 text-left">Composição</th>
+                <th className="p-2 text-left">Descrição</th>
                 <th className="p-2 text-right w-24">Rendimento</th>
                 <th className="p-2 text-center w-16">Hab</th>
               </tr>
