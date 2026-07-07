@@ -782,6 +782,7 @@ export type Database = {
           diametro: number | null
           disposicao_agulhas: string | null
           finura: number | null
+          fio_id: string | null
           habilitado: boolean
           id: string
           maquina: string
@@ -798,6 +799,7 @@ export type Database = {
           diametro?: number | null
           disposicao_agulhas?: string | null
           finura?: number | null
+          fio_id?: string | null
           habilitado?: boolean
           id?: string
           maquina: string
@@ -814,6 +816,7 @@ export type Database = {
           diametro?: number | null
           disposicao_agulhas?: string | null
           finura?: number | null
+          fio_id?: string | null
           habilitado?: boolean
           id?: string
           maquina?: string

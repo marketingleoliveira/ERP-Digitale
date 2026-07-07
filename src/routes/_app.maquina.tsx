@@ -31,6 +31,7 @@ type Maquina = {
   disposicao_agulhas?: string | null;
   producao_media?: number | null;
   carga_agulhas?: CargaAgulha[] | null;
+  fio_id?: string | null;
 };
 
 const PAGE_SIZE = 20;
@@ -192,9 +193,21 @@ function MaquinaDialog({
   const [disposicao, setDisposicao] = useState("");
   const [prodMedia, setProdMedia] = useState("");
   const [habilitado, setHabilitado] = useState(true);
+  const [fioId, setFioId] = useState<string>("");
   const [carga, setCarga] = useState<CargaAgulha[]>([]);
   const [agulha, setAgulha] = useState("");
   const [qtd, setQtd] = useState("");
+
+  const { data: fiosOptions = [] } = useQuery({
+    queryKey: ["composicoes", "fios"],
+    queryFn: async () => {
+      const { data, error } = await (supabase.from("composicoes" as never) as never as {
+        select: (c: string) => { eq: (a: string, b: unknown) => { order: (o: string) => Promise<{ data: Array<{ id: string; codigo: string; composicao: string | null; tipo: string; habilitado: boolean }> | null; error: Error | null }> } }
+      }).select("id,codigo,composicao,tipo,habilitado").eq("tipo", "Fio").order("codigo");
+      if (error) throw error;
+      return (data ?? []).filter((f) => f.habilitado);
+    },
+  });
 
   const { data: agulhasOptions = [] } = useQuery({
     queryKey: ["agulhas", "enabled"],
@@ -222,6 +235,7 @@ function MaquinaDialog({
     setDisposicao(editing?.disposicao_agulhas ?? "");
     setProdMedia(editing?.producao_media?.toString() ?? "");
     setHabilitado(editing?.habilitado ?? true);
+    setFioId(editing?.fio_id ?? "");
     setCarga(Array.isArray(editing?.carga_agulhas) ? editing!.carga_agulhas! : []);
     setAgulha(""); setQtd("");
   }, [open, editing]);
@@ -253,6 +267,7 @@ function MaquinaDialog({
         disposicao_agulhas: disposicao.trim() || null,
         producao_media: numOrNull(prodMedia),
         carga_agulhas: carga,
+        fio_id: fioId || null,
         habilitado,
       };
       const client = supabase as unknown as { from: (t: string) => { update: (p: unknown) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> }; insert: (p: unknown) => Promise<{ error: Error | null }> } };
@@ -332,7 +347,22 @@ function MaquinaDialog({
             <Row label="Produção Média">
               <Input value={prodMedia} onChange={(e) => setProdMedia(e.target.value)} className="max-w-[160px]" />
             </Row>
+            <Row label="Fio">
+              <select
+                value={fioId}
+                onChange={(e) => setFioId(e.target.value)}
+                className="h-9 w-full max-w-[320px] rounded border border-input bg-background px-2 text-sm"
+              >
+                <option value="">[SELECIONE]</option>
+                {fiosOptions.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.codigo}{f.composicao ? ` — ${f.composicao}` : ""}
+                  </option>
+                ))}
+              </select>
+            </Row>
           </div>
+
 
           <div className="pt-3">
             <h3 className="text-center text-destructive font-semibold mb-3">CARGA AGULHAS</h3>
