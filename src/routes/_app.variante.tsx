@@ -53,6 +53,19 @@ function VariantePage() {
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const selectedRow = data.find((v) => v.id === selected) ?? null;
 
+  const deleteMut = useMutation({
+    mutationFn: async (row: Variante) => {
+      const { error } = await supabase.from("variantes").delete().eq("id", row.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Variante excluída.");
+      setSelected(null);
+      qc.invalidateQueries({ queryKey: ["variantes"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold text-primary">🌸 Listagem Variante</h1>
