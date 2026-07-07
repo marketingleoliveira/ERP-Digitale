@@ -145,12 +145,11 @@ function ArtigosPage() {
 
     autoTable(doc, {
       startY: 80,
-      head: [["Código", "NCM", "Artigo", "Composição", "Rendimento", "Hab"]],
+      head: [["Código", "NCM", "Descrição", "Rendimento", "Hab"]],
       body: filtered.map((i) => [
         i.codigo ?? "-",
         i.ncm ?? "-",
         i.nome,
-        i.composicao ?? "-",
         i.rendimento != null ? Number(i.rendimento).toFixed(2) : "-",
         i.ativo ? "Sim" : "Não",
       ]),
@@ -193,17 +192,16 @@ function ArtigosPage() {
                 <th className="w-8 p-2"></th>
                 <th className="p-2 text-left">Código</th>
                 <th className="p-2 text-left">NCM</th>
-                <th className="p-2 text-left">Artigo</th>
-                <th className="p-2 text-left">Composição</th>
+                <th className="p-2 text-left">Descrição</th>
                 <th className="p-2 text-right w-24">Rendimento</th>
                 <th className="p-2 text-center w-16">Hab</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Carregando…</td></tr>
+                <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">Carregando…</td></tr>
               ) : pageItems.length === 0 ? (
-                <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Nenhum artigo encontrado</td></tr>
+                <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">Nenhum artigo encontrado</td></tr>
               ) : pageItems.map((i) => {
                 const isSel = i.id === selectedId;
                 return (
@@ -225,7 +223,6 @@ function ArtigosPage() {
                     </td>
                     <td className="p-2 font-mono text-xs">{i.ncm || "—"}</td>
                     <td className="p-2 uppercase">{i.nome}</td>
-                    <td className="p-2">{i.composicao || "—"}</td>
                     <td className="p-2 text-right">{i.rendimento != null ? Number(i.rendimento).toFixed(2) : "—"}</td>
                     <td className="p-2 text-center">
                       <span className={`inline-block h-3 w-3 rounded-full ${i.ativo ? "bg-emerald-500" : "bg-rose-400"}`} />
@@ -257,7 +254,7 @@ function ArtigosPage() {
 
         <div className="flex flex-wrap items-end gap-2 border-t bg-muted/20 p-3">
           <div className="flex-1 min-w-[200px]">
-            <Label className="text-xs">Artigo</Label>
+            <Label className="text-xs">Descrição</Label>
             <Input value={filter} onChange={(e) => setFilter(e.target.value)} />
           </div>
           <Button variant="secondary" onClick={() => setPage(1)}>Filtrar</Button>
@@ -337,7 +334,6 @@ function ArtigoDialog({
       return (data ?? []) as Array<{ id: string; codigo: string; tipo: string; composicao: string }>;
     },
   });
-  const composicaoOpts = composicoes.filter((c) => c.tipo === "Artigo");
   const fioOpts = composicoes.filter((c) => c.tipo === "Fio");
 
   const { data: coresLookup = [] } = useQuery({
@@ -466,18 +462,10 @@ function ArtigoDialog({
               <SelectContent>{TIPO_OPTS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
             </Select>
           </div>
-          <div className="md:col-span-2">
-            <Label className={lbl}><span className="text-destructive">*</span> Composição</Label>
-            <Select value={form.composicao ?? ""} onValueChange={(v) => set("composicao", v)}>
-              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-              <SelectContent>
-                {composicaoOpts.map((c) => <SelectItem key={c.id} value={c.composicao}>{c.codigo} — {c.composicao}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
+          <div className="md:col-span-2"></div>
 
           <div className="md:col-span-4">
-            <Label className={lbl}><span className="text-destructive">*</span> Artigo</Label>
+            <Label className={lbl}><span className="text-destructive">*</span> Descrição</Label>
             <Input className={inp} value={form.nome ?? ""} onChange={(e) => set("nome", e.target.value)} />
           </div>
 
@@ -501,18 +489,6 @@ function ArtigoDialog({
             <Input className={inp} value={form.fci ?? ""} onChange={(e) => set("fci", e.target.value)} />
           </div>
 
-          <div className="md:col-span-4">
-            <Label className={lbl}>Cliente</Label>
-            <Input className={inp} value={form.cliente ?? ""} onChange={(e) => set("cliente", e.target.value)} placeholder="Digite no mínimo as três primeiras letras do cliente" />
-          </div>
-
-          <div>
-            <Label className={lbl}><span className="text-destructive">*</span> P. Acabamento</Label>
-            <Select value={form.p_acabamento ?? ""} onValueChange={(v) => set("p_acabamento", v)}>
-              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-              <SelectContent>{P_ACABAMENTO_OPTS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
           <div>
             <Label className={lbl}><span className="text-destructive">*</span> Largura</Label>
             <Input className={inp} type="number" step="0.01" value={form.largura ?? ""} onChange={(e) => set("largura", e.target.value === "" ? null : Number(e.target.value))} />
@@ -533,10 +509,6 @@ function ArtigoDialog({
           <div>
             <Label className={lbl}>Peça Tara Kg</Label>
             <Input className={inp} type="number" step="0.01" value={form.peca_tara_kg ?? ""} onChange={(e) => set("peca_tara_kg", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>LFA</Label>
-            <Input className={inp} type="number" step="0.01" value={form.lfa ?? ""} onChange={(e) => set("lfa", e.target.value === "" ? null : Number(e.target.value))} />
           </div>
           <div>
             <Label className={lbl}>Falha Agulhas</Label>
@@ -592,17 +564,6 @@ function ArtigoDialog({
             <Label className={lbl}>Nº Voltas</Label>
             <Input className={inp} type="number" value={form.n_voltas ?? ""} onChange={(e) => set("n_voltas", e.target.value === "" ? null : Number(e.target.value))} />
           </div>
-          {[1, 2, 3].map((n) => (
-            <div key={n} className={n === 3 ? "" : ""}>
-              <Label className={lbl}>Alimentador Fio {n}</Label>
-              <Select value={form[`alimentador_fio_${n}`] ?? ""} onValueChange={(v) => set(`alimentador_fio_${n}`, v)}>
-                <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-                <SelectContent>
-                  {fioOpts.map((f) => <SelectItem key={f.id} value={f.composicao}>{f.codigo} — {f.composicao}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          ))}
 
           <Section title="REGULAGEM MÁQUINA" />
 
@@ -639,10 +600,6 @@ function ArtigoDialog({
           <div>
             <Label className={lbl}>Tensão Lycra</Label>
             <Input className={inp} type="number" step="0.01" value={form.tensao_lycra ?? ""} onChange={(e) => set("tensao_lycra", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>Tensão Fio</Label>
-            <Input className={inp} type="number" step="0.01" value={form.tensao_fio ?? ""} onChange={(e) => set("tensao_fio", e.target.value === "" ? null : Number(e.target.value))} />
           </div>
 
           <div className="md:col-span-4">
@@ -891,15 +848,11 @@ function ArtigoDetailDialog({ id, onOpenChange }: { id: string | null; onOpenCha
             <div className="grid grid-cols-2 gap-x-4 p-3">
               <div>
                 <Row label="Código:" value={art.codigo} />
-                <Row label="Composicao:" value={art.composicao} />
-                <Row label="Artigo:" value={art.nome} />
+                <Row label="Descrição:" value={art.nome} />
                 <Row label="NCM:" value={art.ncm} />
                 <Row label="Origem:" value={art.origem} />
                 <Row label="FCI:" value={art.fci} />
-                <Row label="Cliente:" value={art.cliente} />
-                <Row label="P. Acabamento:" value={art.p_acabamento} />
                 <Row label="Gramatura:" value={fmt(art.gramatura, 0)} />
-                <Row label="LFA:" value={fmt(art.lfa, 0)} />
                 <Row label="Tipo Máquina:" value={art.tipo_maquina} />
                 <Row label="Finura:" value={fmt(art.finura, 0)} />
                 <Row label="Disposição Agulhas:" value={art.disposicao_agulhas} />
@@ -911,9 +864,7 @@ function ArtigoDetailDialog({ id, onOpenChange }: { id: string | null; onOpenCha
               <div>
                 <Row label="Tipo:" value={art.tipo} />
                 <Row label="" value="" />
-                <Row label="" value="" />
                 <Row label="CEST:" value={art.cest} />
-                <Row label="" value="" />
                 <Row label="" value="" />
                 <Row label="" value="" />
                 <Row label="Largura:" value={fmt(art.largura)} />
@@ -922,9 +873,7 @@ function ArtigoDetailDialog({ id, onOpenChange }: { id: string | null; onOpenCha
                 <Row label="Diametro:" value={fmt(art.diametro, 0)} />
                 <Row label="Nº Alimentadores:" value={fmt(art.n_alimentadores, 0)} />
                 <Row label="RPM:" value={fmt(art.rpm, 0)} />
-                <Row label="" value="" />
                 <Row label="R$ Malharia Compl.:" value={fmt(art.r_malharia_compl)} />
-                <Row label="" value="" />
                 <Row label="R$ Venda Metros:" value={fmt(art.r_venda_metros)} />
               </div>
             </div>
