@@ -38,6 +38,7 @@ import { Route as AppComposicaoRouteImport } from './routes/_app.composicao'
 import { Route as AppClienteArtigoRouteImport } from './routes/_app.cliente-artigo'
 import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
 import { Route as AppAgulhaRouteImport } from './routes/_app.agulha'
+import { Route as AppFiscalCfopRouteImport } from './routes/_app.fiscal.cfop'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 
 const LoginRoute = LoginRouteImport.update({
@@ -184,6 +185,11 @@ const AppAgulhaRoute = AppAgulhaRouteImport.update({
   path: '/agulha',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFiscalCfopRoute = AppFiscalCfopRouteImport.update({
+  id: '/fiscal/cfop',
+  path: '/fiscal/cfop',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDevCargosRoute = AppDevCargosRouteImport.update({
   id: '/dev/cargos',
   path: '/dev/cargos',
@@ -220,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
   '/dev/cargos': typeof AppDevCargosRoute
+  '/fiscal/cfop': typeof AppFiscalCfopRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -251,6 +258,7 @@ export interface FileRoutesByTo {
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
   '/dev/cargos': typeof AppDevCargosRoute
+  '/fiscal/cfop': typeof AppFiscalCfopRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -284,6 +292,7 @@ export interface FileRoutesById {
   '/_app/usuarios': typeof AppUsuariosRoute
   '/_app/variante': typeof AppVarianteRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
+  '/_app/fiscal/cfop': typeof AppFiscalCfopRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -317,6 +326,7 @@ export interface FileRouteTypes {
     | '/usuarios'
     | '/variante'
     | '/dev/cargos'
+    | '/fiscal/cfop'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
     | '/usuarios'
     | '/variante'
     | '/dev/cargos'
+    | '/fiscal/cfop'
   id:
     | '__root__'
     | '/'
@@ -380,6 +391,7 @@ export interface FileRouteTypes {
     | '/_app/usuarios'
     | '/_app/variante'
     | '/_app/dev/cargos'
+    | '/_app/fiscal/cfop'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -594,6 +606,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAgulhaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/fiscal/cfop': {
+      id: '/_app/fiscal/cfop'
+      path: '/fiscal/cfop'
+      fullPath: '/fiscal/cfop'
+      preLoaderRoute: typeof AppFiscalCfopRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dev/cargos': {
       id: '/_app/dev/cargos'
       path: '/dev/cargos'
@@ -631,6 +650,7 @@ interface AppRouteChildren {
   AppUsuariosRoute: typeof AppUsuariosRoute
   AppVarianteRoute: typeof AppVarianteRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
+  AppFiscalCfopRoute: typeof AppFiscalCfopRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -660,6 +680,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppUsuariosRoute: AppUsuariosRoute,
   AppVarianteRoute: AppVarianteRoute,
   AppDevCargosRoute: AppDevCargosRoute,
+  AppFiscalCfopRoute: AppFiscalCfopRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
