@@ -8,7 +8,8 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import logoAsset from "@/assets/digitale-logo-white.png.asset.json";
 import { ALL_MENU_ITEMS, GROUP_ORDER, useMenuVisibility } from "@/lib/menu-config";
-import { LayoutDashboard, Users, ShoppingCart, Factory, Wallet, ShieldCheck, type LucideIcon } from "lucide-react";
+import { useAuth, useUserRoles } from "@/hooks/use-auth";
+import { LayoutDashboard, Users, ShoppingCart, Factory, Wallet, ShieldCheck, Code2, type LucideIcon } from "lucide-react";
 
 const GROUP_ICONS: Record<string, LucideIcon> = {
   "Visão Geral": LayoutDashboard,
@@ -17,7 +18,9 @@ const GROUP_ICONS: Record<string, LucideIcon> = {
   "Produção (PCP)": Factory,
   "Financeiro & Logística": Wallet,
   "Administração": ShieldCheck,
+  "DEV": Code2,
 };
+
 
 export function AppSidebar() {
   const { state } = useSidebar();
