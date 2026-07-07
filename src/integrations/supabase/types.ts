@@ -1147,6 +1147,7 @@ export type Database = {
       }
       tinturarias: {
         Row: {
+          categoria: string
           cnpj: string | null
           codigo: string
           contato: string | null
@@ -1159,6 +1160,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          categoria?: string
           cnpj?: string | null
           codigo: string
           contato?: string | null
@@ -1171,6 +1173,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          categoria?: string
           cnpj?: string | null
           codigo?: string
           contato?: string | null

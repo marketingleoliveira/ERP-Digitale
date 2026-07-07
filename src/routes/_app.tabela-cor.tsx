@@ -7,11 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FilePlus2, Loader2, Pencil, Printer, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMultiSelection } from "@/hooks/use-multi-selection";
+
+const CATEGORIAS = ["Tinturaria", "Insumos", "Manutenção", "Transportadora"] as const;
+type Categoria = (typeof CATEGORIAS)[number];
 
 export const Route = createFileRoute("/_app/tabela-cor")({
   ssr: false,
@@ -27,6 +31,7 @@ type Tinturaria = {
   telefone: string | null;
   contato: string | null;
   habilitado: boolean;
+  categoria: Categoria;
 };
 
 const PAGE_SIZE = 20;
@@ -39,7 +44,7 @@ async function fetchTinturarias(): Promise<Tinturaria[]> {
   };
   const { data, error } = await client
     .from("tinturarias")
-    .select("id,codigo,nome_fantasia,razao_social,cnpj,telefone,contato,habilitado")
+    .select("id,codigo,nome_fantasia,razao_social,cnpj,telefone,contato,habilitado,categoria")
     .order("nome_fantasia", { ascending: true });
   if (error) throw error;
   return data ?? [];
@@ -114,6 +119,7 @@ function TinturariasPage() {
                 </TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Código</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Nome Fantasia</TableHead>
+                <TableHead className="text-primary-foreground font-semibold">Categoria</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">CNPJ/CPF</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Telefone</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Contato</TableHead>
@@ -122,9 +128,9 @@ function TinturariasPage() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-10"><Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" /></TableCell></TableRow>
+                <TableRow><TableCell colSpan={8} className="text-center py-10"><Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" /></TableCell></TableRow>
               ) : paged.length === 0 ? (
-                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-10">Nenhum registro encontrado.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-10">Nenhum registro encontrado.</TableCell></TableRow>
               ) : paged.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell>
@@ -132,6 +138,7 @@ function TinturariasPage() {
                   </TableCell>
                   <TableCell><span className="text-primary font-medium">{r.codigo}</span></TableCell>
                   <TableCell>{r.nome_fantasia}</TableCell>
+                  <TableCell><span className="inline-flex rounded bg-muted px-2 py-0.5 text-xs">{r.categoria}</span></TableCell>
                   <TableCell>{r.cnpj ?? "—"}</TableCell>
                   <TableCell>{r.telefone ?? "—"}</TableCell>
                   <TableCell>{r.contato ?? "—"}</TableCell>
@@ -187,6 +194,7 @@ function TinturariaDialog({
   const [telefone, setTelefone] = useState("");
   const [contato, setContato] = useState("");
   const [habilitado, setHabilitado] = useState(true);
+  const [categoria, setCategoria] = useState<Categoria>("Tinturaria");
 
   useEffect(() => {
     if (!open) return;
@@ -197,6 +205,7 @@ function TinturariaDialog({
     setTelefone(editing?.telefone ?? "");
     setContato(editing?.contato ?? "");
     setHabilitado(editing?.habilitado ?? true);
+    setCategoria(editing?.categoria ?? "Tinturaria");
   }, [open, editing]);
 
   const mut = useMutation({
@@ -210,6 +219,7 @@ function TinturariaDialog({
         telefone: telefone.trim() || null,
         contato: contato.trim() || null,
         habilitado,
+        categoria,
       };
       const client = supabase as unknown as { from: (t: string) => { update: (p: unknown) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> }; insert: (p: unknown) => Promise<{ error: Error | null }> } };
       if (editing) {
@@ -221,7 +231,7 @@ function TinturariaDialog({
       }
     },
     onSuccess: () => {
-      toast.success(editing ? "Tinturaria atualizada." : "Tinturaria cadastrada.");
+      toast.success(editing ? "Fornecedor atualizado." : "Fornecedor cadastrado.");
       onSaved();
       onOpenChange(false);
     },
@@ -232,7 +242,7 @@ function TinturariaDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle className="text-primary">🎨 {editing ? "Alterar" : "Cadastro"} Tinturaria</DialogTitle>
+          <DialogTitle className="text-primary">🏭 {editing ? "Alterar" : "Cadastro"} Fornecedor</DialogTitle>
         </DialogHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded bg-muted/50 p-5">
           <div className="space-y-1.5">
@@ -240,6 +250,17 @@ function TinturariaDialog({
             <Input value={codigo} onChange={(e) => setCodigo(e.target.value)} maxLength={20} />
           </div>
           <div className="space-y-1.5">
+            <Label><span className="text-destructive">*</span> Categoria:</Label>
+            <Select value={categoria} onValueChange={(v) => setCategoria(v as Categoria)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {CATEGORIAS.map((c) => (
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5 md:col-span-2">
             <Label>CNPJ/CPF:</Label>
             <Input value={cnpj} onChange={(e) => setCnpj(e.target.value)} maxLength={20} />
           </div>

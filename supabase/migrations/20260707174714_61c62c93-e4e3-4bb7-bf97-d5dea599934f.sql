@@ -1,0 +1,1 @@
+ALTER TABLE public.tinturarias ADD COLUMN IF NOT EXISTS categoria text NOT NULL DEFAULT 'Tinturaria' CHECK (categoria IN ('Tinturaria','Insumos','Manutenção','Transportadora'));
