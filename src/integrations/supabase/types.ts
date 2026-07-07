@@ -484,6 +484,39 @@ export type Database = {
         }
         Relationships: []
       }
+      centros_custo: {
+        Row: {
+          ativo: boolean
+          codigo: string
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          codigo: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          tipo?: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          codigo?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       certificados_digitais: {
         Row: {
           ativo: boolean
@@ -693,12 +726,60 @@ export type Database = {
         }
         Relationships: []
       }
+      contas_bancarias: {
+        Row: {
+          agencia: string | null
+          ativa: boolean
+          banco: string | null
+          conta: string | null
+          created_at: string
+          id: string
+          nome: string
+          observacao: string | null
+          saldo_inicial: number
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          agencia?: string | null
+          ativa?: boolean
+          banco?: string | null
+          conta?: string | null
+          created_at?: string
+          id?: string
+          nome: string
+          observacao?: string | null
+          saldo_inicial?: number
+          tipo?: string
+          updated_at?: string
+        }
+        Update: {
+          agencia?: string | null
+          ativa?: boolean
+          banco?: string | null
+          conta?: string | null
+          created_at?: string
+          id?: string
+          nome?: string
+          observacao?: string | null
+          saldo_inicial?: number
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contas_pagar: {
         Row: {
+          centro_custo_id: string | null
+          conta_bancaria_id: string | null
           created_at: string
+          desconto: number
           descricao: string
+          documento: string | null
+          forma_pagamento: string | null
           fornecedor_id: string
           id: string
+          juros: number
           observacao: string | null
           pago_em: string | null
           parcela: number
@@ -712,10 +793,16 @@ export type Database = {
           vencimento: string
         }
         Insert: {
+          centro_custo_id?: string | null
+          conta_bancaria_id?: string | null
           created_at?: string
+          desconto?: number
           descricao: string
+          documento?: string | null
+          forma_pagamento?: string | null
           fornecedor_id: string
           id?: string
+          juros?: number
           observacao?: string | null
           pago_em?: string | null
           parcela?: number
@@ -729,10 +816,16 @@ export type Database = {
           vencimento: string
         }
         Update: {
+          centro_custo_id?: string | null
+          conta_bancaria_id?: string | null
           created_at?: string
+          desconto?: number
           descricao?: string
+          documento?: string | null
+          forma_pagamento?: string | null
           fornecedor_id?: string
           id?: string
+          juros?: number
           observacao?: string | null
           pago_em?: string | null
           parcela?: number
@@ -746,6 +839,20 @@ export type Database = {
           vencimento?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "contas_pagar_centro_custo_id_fkey"
+            columns: ["centro_custo_id"]
+            isOneToOne: false
+            referencedRelation: "centros_custo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contas_pagar_conta_bancaria_id_fkey"
+            columns: ["conta_bancaria_id"]
+            isOneToOne: false
+            referencedRelation: "contas_bancarias"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "contas_pagar_fornecedor_id_fkey"
             columns: ["fornecedor_id"]
@@ -771,12 +878,19 @@ export type Database = {
       }
       contas_receber: {
         Row: {
+          centro_custo_id: string | null
           cliente_id: string | null
+          conta_bancaria_id: string | null
           created_at: string
+          desconto: number
           descricao: string | null
+          documento: string | null
+          forma_pagamento: string | null
           id: string
+          juros: number
           nota_fiscal_id: string | null
           op_id: string | null
+          pago_em: string | null
           parcela: number
           status: string
           total_parcelas: number
@@ -786,12 +900,19 @@ export type Database = {
           vencimento: string | null
         }
         Insert: {
+          centro_custo_id?: string | null
           cliente_id?: string | null
+          conta_bancaria_id?: string | null
           created_at?: string
+          desconto?: number
           descricao?: string | null
+          documento?: string | null
+          forma_pagamento?: string | null
           id?: string
+          juros?: number
           nota_fiscal_id?: string | null
           op_id?: string | null
+          pago_em?: string | null
           parcela?: number
           status?: string
           total_parcelas?: number
@@ -801,12 +922,19 @@ export type Database = {
           vencimento?: string | null
         }
         Update: {
+          centro_custo_id?: string | null
           cliente_id?: string | null
+          conta_bancaria_id?: string | null
           created_at?: string
+          desconto?: number
           descricao?: string | null
+          documento?: string | null
+          forma_pagamento?: string | null
           id?: string
+          juros?: number
           nota_fiscal_id?: string | null
           op_id?: string | null
+          pago_em?: string | null
           parcela?: number
           status?: string
           total_parcelas?: number
@@ -817,10 +945,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "contas_receber_centro_custo_id_fkey"
+            columns: ["centro_custo_id"]
+            isOneToOne: false
+            referencedRelation: "centros_custo"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "contas_receber_cliente_id_fkey"
             columns: ["cliente_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contas_receber_conta_bancaria_id_fkey"
+            columns: ["conta_bancaria_id"]
+            isOneToOne: false
+            referencedRelation: "contas_bancarias"
             referencedColumns: ["id"]
           },
           {
@@ -1982,6 +2124,105 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      movimentos_financeiros: {
+        Row: {
+          centro_custo_id: string | null
+          conciliado: boolean
+          conciliado_em: string | null
+          conta_bancaria_id: string | null
+          conta_pagar_id: string | null
+          conta_receber_id: string | null
+          created_at: string
+          data: string
+          descricao: string | null
+          documento: string | null
+          forma_pagamento: string | null
+          id: string
+          op_id: string | null
+          origem: string
+          tipo: string
+          updated_at: string
+          user_id: string | null
+          valor: number
+        }
+        Insert: {
+          centro_custo_id?: string | null
+          conciliado?: boolean
+          conciliado_em?: string | null
+          conta_bancaria_id?: string | null
+          conta_pagar_id?: string | null
+          conta_receber_id?: string | null
+          created_at?: string
+          data?: string
+          descricao?: string | null
+          documento?: string | null
+          forma_pagamento?: string | null
+          id?: string
+          op_id?: string | null
+          origem: string
+          tipo: string
+          updated_at?: string
+          user_id?: string | null
+          valor: number
+        }
+        Update: {
+          centro_custo_id?: string | null
+          conciliado?: boolean
+          conciliado_em?: string | null
+          conta_bancaria_id?: string | null
+          conta_pagar_id?: string | null
+          conta_receber_id?: string | null
+          created_at?: string
+          data?: string
+          descricao?: string | null
+          documento?: string | null
+          forma_pagamento?: string | null
+          id?: string
+          op_id?: string | null
+          origem?: string
+          tipo?: string
+          updated_at?: string
+          user_id?: string | null
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "movimentos_financeiros_centro_custo_id_fkey"
+            columns: ["centro_custo_id"]
+            isOneToOne: false
+            referencedRelation: "centros_custo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentos_financeiros_conta_bancaria_id_fkey"
+            columns: ["conta_bancaria_id"]
+            isOneToOne: false
+            referencedRelation: "contas_bancarias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentos_financeiros_conta_pagar_id_fkey"
+            columns: ["conta_pagar_id"]
+            isOneToOne: false
+            referencedRelation: "contas_pagar"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentos_financeiros_conta_receber_id_fkey"
+            columns: ["conta_receber_id"]
+            isOneToOne: false
+            referencedRelation: "contas_receber"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentos_financeiros_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ncm_catalogo: {
         Row: {
@@ -4133,7 +4374,19 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      vw_fluxo_caixa: {
+        Row: {
+          centro_custo_id: string | null
+          classe: string | null
+          conta_bancaria_id: string | null
+          data: string | null
+          descricao: string | null
+          origem: string | null
+          tipo: string | null
+          valor: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       baixar_estoque_nf: { Args: { _nota_id: string }; Returns: number }
@@ -4153,6 +4406,32 @@ export type Database = {
           _operacao?: string
           _quantidade: number
           _tipo: string
+        }
+        Returns: string
+      }
+      liquidar_conta_pagar: {
+        Args: {
+          _conta_bancaria_id?: string
+          _conta_id: string
+          _data?: string
+          _desconto?: number
+          _forma_pagamento?: string
+          _juros?: number
+          _observacao?: string
+          _valor_pago: number
+        }
+        Returns: string
+      }
+      liquidar_conta_receber: {
+        Args: {
+          _conta_bancaria_id?: string
+          _conta_id: string
+          _data?: string
+          _desconto?: number
+          _forma_pagamento?: string
+          _juros?: number
+          _observacao?: string
+          _valor_pago: number
         }
         Returns: string
       }
