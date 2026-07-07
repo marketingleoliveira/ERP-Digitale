@@ -58,6 +58,7 @@ import { Route as AppFiscalDashboardRouteImport } from './routes/_app.fiscal.das
 import { Route as AppFiscalCfopRouteImport } from './routes/_app.fiscal.cfop'
 import { Route as AppFiscalCertificadosRouteImport } from './routes/_app.fiscal.certificados'
 import { Route as AppFiscalBeneficiosRouteImport } from './routes/_app.fiscal.beneficios'
+import { Route as AppEstoqueKardexRouteImport } from './routes/_app.estoque.kardex'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 import { Route as AppDashboardIndustrialRouteImport } from './routes/_app.dashboard.industrial'
 import { Route as AppComprasSolicitacoesRouteImport } from './routes/_app.compras.solicitacoes'
@@ -321,6 +322,11 @@ const AppFiscalBeneficiosRoute = AppFiscalBeneficiosRouteImport.update({
   path: '/fiscal/beneficios',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEstoqueKardexRoute = AppEstoqueKardexRouteImport.update({
+  id: '/estoque/kardex',
+  path: '/estoque/kardex',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDevCargosRoute = AppDevCargosRouteImport.update({
   id: '/dev/cargos',
   path: '/dev/cargos',
@@ -438,6 +444,7 @@ export interface FileRoutesByFullPath {
   '/compras/solicitacoes': typeof AppComprasSolicitacoesRouteWithChildren
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
+  '/estoque/kardex': typeof AppEstoqueKardexRoute
   '/fiscal/beneficios': typeof AppFiscalBeneficiosRoute
   '/fiscal/certificados': typeof AppFiscalCertificadosRoute
   '/fiscal/cfop': typeof AppFiscalCfopRoute
@@ -503,6 +510,7 @@ export interface FileRoutesByTo {
   '/compras/solicitacoes': typeof AppComprasSolicitacoesRouteWithChildren
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
+  '/estoque/kardex': typeof AppEstoqueKardexRoute
   '/fiscal/beneficios': typeof AppFiscalBeneficiosRoute
   '/fiscal/certificados': typeof AppFiscalCertificadosRoute
   '/fiscal/cfop': typeof AppFiscalCfopRoute
@@ -570,6 +578,7 @@ export interface FileRoutesById {
   '/_app/compras/solicitacoes': typeof AppComprasSolicitacoesRouteWithChildren
   '/_app/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
+  '/_app/estoque/kardex': typeof AppEstoqueKardexRoute
   '/_app/fiscal/beneficios': typeof AppFiscalBeneficiosRoute
   '/_app/fiscal/certificados': typeof AppFiscalCertificadosRoute
   '/_app/fiscal/cfop': typeof AppFiscalCfopRoute
@@ -637,6 +646,7 @@ export interface FileRouteTypes {
     | '/compras/solicitacoes'
     | '/dashboard/industrial'
     | '/dev/cargos'
+    | '/estoque/kardex'
     | '/fiscal/beneficios'
     | '/fiscal/certificados'
     | '/fiscal/cfop'
@@ -702,6 +712,7 @@ export interface FileRouteTypes {
     | '/compras/solicitacoes'
     | '/dashboard/industrial'
     | '/dev/cargos'
+    | '/estoque/kardex'
     | '/fiscal/beneficios'
     | '/fiscal/certificados'
     | '/fiscal/cfop'
@@ -768,6 +779,7 @@ export interface FileRouteTypes {
     | '/_app/compras/solicitacoes'
     | '/_app/dashboard/industrial'
     | '/_app/dev/cargos'
+    | '/_app/estoque/kardex'
     | '/_app/fiscal/beneficios'
     | '/_app/fiscal/certificados'
     | '/_app/fiscal/cfop'
@@ -1149,6 +1161,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFiscalBeneficiosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/estoque/kardex': {
+      id: '/_app/estoque/kardex'
+      path: '/estoque/kardex'
+      fullPath: '/estoque/kardex'
+      preLoaderRoute: typeof AppEstoqueKardexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dev/cargos': {
       id: '/_app/dev/cargos'
       path: '/dev/cargos'
@@ -1357,6 +1376,7 @@ interface AppRouteChildren {
   AppComprasSolicitacoesRoute: typeof AppComprasSolicitacoesRouteWithChildren
   AppDashboardIndustrialRoute: typeof AppDashboardIndustrialRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
+  AppEstoqueKardexRoute: typeof AppEstoqueKardexRoute
   AppFiscalBeneficiosRoute: typeof AppFiscalBeneficiosRoute
   AppFiscalCertificadosRoute: typeof AppFiscalCertificadosRoute
   AppFiscalCfopRoute: typeof AppFiscalCfopRoute
@@ -1413,6 +1433,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppComprasSolicitacoesRoute: AppComprasSolicitacoesRouteWithChildren,
   AppDashboardIndustrialRoute: AppDashboardIndustrialRoute,
   AppDevCargosRoute: AppDevCargosRoute,
+  AppEstoqueKardexRoute: AppEstoqueKardexRoute,
   AppFiscalBeneficiosRoute: AppFiscalBeneficiosRoute,
   AppFiscalCertificadosRoute: AppFiscalCertificadosRoute,
   AppFiscalCfopRoute: AppFiscalCfopRoute,
