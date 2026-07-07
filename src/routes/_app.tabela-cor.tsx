@@ -153,104 +153,73 @@ function TabelaCorPage() {
   );
 }
 
-const TIPOS = ["Clara", "Média", "Escura", "Especial"];
-const TINTURARIAS = DATA.map((d) => d.nome);
-
 function CadastroCorDialog() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
-    codigo: "",
-    tipo: "",
-    cor: "",
-    tinturaria: "",
-    valor: "",
-    valorComplementar: "",
-    observacao: "",
+    nome: "",
+    cnpj: "",
+    telefone: "",
+    contato: "",
+    clara: "",
+    media: "",
+    escura: "",
+    especial: "",
   });
-  const [tintSuggestOpen, setTintSuggestOpen] = useState(false);
-
-  const suggestions = useMemo(() => {
-    const q = form.tinturaria.trim().toLowerCase();
-    if (q.length < 3) return [];
-    return TINTURARIAS.filter((t) => t.toLowerCase().includes(q)).slice(0, 8);
-  }, [form.tinturaria]);
 
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
     setForm((p) => ({ ...p, [k]: v }));
 
   const submit = () => {
-    if (!form.codigo.trim() || !form.tipo || !form.cor.trim()) {
-      toast.error("Preencha Código, Tipo e Cor.");
+    if (!form.nome.trim() || !form.cnpj.trim()) {
+      toast.error("Preencha Nome Fantasia e CNPJ/CPF.");
       return;
     }
-    toast.success(`Cor "${form.cor}" cadastrada.`);
+    toast.success(`Tinturaria "${form.nome}" cadastrada.`);
     setOpen(false);
-    setForm({ codigo: "", tipo: "", cor: "", tinturaria: "", valor: "", valorComplementar: "", observacao: "" });
+    setForm({ nome: "", cnpj: "", telefone: "", contato: "", clara: "", media: "", escura: "", especial: "" });
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm"><Plus className="h-4 w-4 mr-1.5" />Nova Cor</Button>
+        <Button size="sm"><Plus className="h-4 w-4 mr-1.5" />Nova Tinturaria</Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle className="text-primary">🎨 Cadastro Cor</DialogTitle>
+          <DialogTitle className="text-primary">🎨 Cadastro Tinturaria</DialogTitle>
         </DialogHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="codigo"><span className="text-destructive">*</span> Código:</Label>
-            <Input id="codigo" value={form.codigo} onChange={(e) => set("codigo", e.target.value)} maxLength={20} />
+          <div className="space-y-1.5 md:col-span-2">
+            <Label htmlFor="nome"><span className="text-destructive">*</span> Nome Fantasia:</Label>
+            <Input id="nome" value={form.nome} onChange={(e) => set("nome", e.target.value)} maxLength={120} />
           </div>
           <div className="space-y-1.5">
-            <Label><span className="text-destructive">*</span> Tipo:</Label>
-            <Select value={form.tipo} onValueChange={(v) => set("tipo", v)}>
-              <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-              <SelectContent>
-                {TIPOS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="cnpj"><span className="text-destructive">*</span> CNPJ/CPF:</Label>
+            <Input id="cnpj" value={form.cnpj} onChange={(e) => set("cnpj", e.target.value)} maxLength={20} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="telefone">Telefone:</Label>
+            <Input id="telefone" value={form.telefone} onChange={(e) => set("telefone", e.target.value)} maxLength={20} />
           </div>
           <div className="space-y-1.5 md:col-span-2">
-            <Label htmlFor="cor"><span className="text-destructive">*</span> Cor:</Label>
-            <Input id="cor" value={form.cor} onChange={(e) => set("cor", e.target.value)} maxLength={100} />
-          </div>
-          <div className="space-y-1.5 md:col-span-2 relative">
-            <Label htmlFor="tinturaria">Tinturaria:</Label>
-            <Input
-              id="tinturaria"
-              placeholder="Digite no mínimo as três primeiras letras da Tinturaria"
-              value={form.tinturaria}
-              onChange={(e) => { set("tinturaria", e.target.value); setTintSuggestOpen(true); }}
-              onBlur={() => setTimeout(() => setTintSuggestOpen(false), 150)}
-              onFocus={() => setTintSuggestOpen(true)}
-            />
-            {tintSuggestOpen && suggestions.length > 0 && (
-              <div className="absolute z-10 mt-1 w-full rounded-md border border-border bg-popover shadow-md max-h-56 overflow-auto">
-                {suggestions.map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    className="w-full text-left px-3 py-1.5 text-sm hover:bg-accent"
-                    onClick={() => { set("tinturaria", s); setTintSuggestOpen(false); }}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            )}
+            <Label htmlFor="contato">Contato:</Label>
+            <Input id="contato" value={form.contato} onChange={(e) => set("contato", e.target.value)} maxLength={80} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="valor">Valor:</Label>
-            <Input id="valor" inputMode="decimal" value={form.valor} onChange={(e) => set("valor", e.target.value)} />
+            <Label htmlFor="clara">Clara R$:</Label>
+            <Input id="clara" inputMode="decimal" value={form.clara} onChange={(e) => set("clara", e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="valorc">Valor Complementar:</Label>
-            <Input id="valorc" inputMode="decimal" value={form.valorComplementar} onChange={(e) => set("valorComplementar", e.target.value)} />
+            <Label htmlFor="media">Média R$:</Label>
+            <Input id="media" inputMode="decimal" value={form.media} onChange={(e) => set("media", e.target.value)} />
           </div>
-          <div className="space-y-1.5 md:col-span-2">
-            <Label htmlFor="obs">Observação:</Label>
-            <Textarea id="obs" rows={4} value={form.observacao} onChange={(e) => set("observacao", e.target.value)} maxLength={500} />
+          <div className="space-y-1.5">
+            <Label htmlFor="escura">Escura R$:</Label>
+            <Input id="escura" inputMode="decimal" value={form.escura} onChange={(e) => set("escura", e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="especial">Especial R$:</Label>
+            <Input id="especial" inputMode="decimal" value={form.especial} onChange={(e) => set("especial", e.target.value)} />
           </div>
         </div>
         <DialogFooter>
