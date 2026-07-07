@@ -1,71 +1,21 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, Users, Truck, UserCheck, Package, Warehouse,
-  ShoppingCart, Receipt, Handshake, Wallet, Factory, Scissors,
-  BadgeCheck, PackageCheck, FileText, ShieldCheck, Settings, Shirt,
-} from "lucide-react";
-import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
 } from "@/components/ui/sidebar";
 import logoAsset from "@/assets/digitale-logo-white.png.asset.json";
-
-
-const groups = [
-  {
-    label: "Visão Geral",
-    items: [
-      { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-    ],
-  },
-  {
-    label: "Cadastros",
-    items: [
-      { title: "Clientes", url: "/clientes", icon: Users },
-      { title: "Fornecedores", url: "/fornecedores", icon: Truck },
-      { title: "Representantes", url: "/representantes", icon: UserCheck },
-      { title: "Artigos", url: "/artigos", icon: Shirt },
-      { title: "Produtos (Insumos)", url: "/produtos", icon: Package },
-    ],
-  },
-  {
-    label: "Operacional",
-    items: [
-      { title: "Estoque", url: "/estoque", icon: Warehouse },
-      { title: "Compras", url: "/compras", icon: ShoppingCart },
-      { title: "Vendas", url: "/vendas", icon: Receipt },
-      { title: "CRM", url: "/crm", icon: Handshake },
-    ],
-  },
-  {
-    label: "Produção (PCP)",
-    items: [
-      { title: "Ordens de Produção", url: "/producao", icon: Factory },
-      { title: "Facções", url: "/faccoes", icon: Scissors },
-      { title: "Qualidade", url: "/qualidade", icon: BadgeCheck },
-    ],
-  },
-  {
-    label: "Financeiro & Logística",
-    items: [
-      { title: "Financeiro", url: "/financeiro", icon: Wallet },
-      { title: "Logística", url: "/logistica", icon: PackageCheck },
-      { title: "Fiscal", url: "/fiscal", icon: FileText },
-    ],
-  },
-  {
-    label: "Administração",
-    items: [
-      { title: "Usuários", url: "/usuarios", icon: ShieldCheck },
-      { title: "Configurações", url: "/configuracoes", icon: Settings },
-    ],
-  },
-];
+import { ALL_MENU_ITEMS, GROUP_ORDER, useMenuVisibility } from "@/lib/menu-config";
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { visibility } = useMenuVisibility();
+
+  const visibleItems = ALL_MENU_ITEMS.filter((i) => visibility[i.url]);
+  const groups = GROUP_ORDER
+    .map((label) => ({ label, items: visibleItems.filter((i) => i.group === label) }))
+    .filter((g) => g.items.length > 0);
 
   return (
     <Sidebar collapsible="icon">
