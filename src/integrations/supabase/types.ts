@@ -270,6 +270,42 @@ export type Database = {
           },
         ]
       }
+      composicoes: {
+        Row: {
+          codigo: string
+          composicao: string
+          created_at: string
+          habilitado: boolean
+          id: string
+          ncm: string | null
+          owner_id: string | null
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          codigo: string
+          composicao: string
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          ncm?: string | null
+          owner_id?: string | null
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          codigo?: string
+          composicao?: string
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          ncm?: string | null
+          owner_id?: string | null
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       crm_leads: {
         Row: {
           created_at: string
