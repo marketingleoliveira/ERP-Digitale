@@ -119,6 +119,15 @@ function FioPage() {
     onError: (e: any) => toast.error(e.message ?? "Erro ao excluir"),
   });
 
+  const toggleHabMut = useMutation({
+    mutationFn: async ({ id, habilitado }: { id: string; habilitado: boolean }) => {
+      const { error } = await (supabase.from("fios" as any) as any).update({ habilitado }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["fios"] }),
+    onError: (e: any) => toast.error(e.message ?? "Erro ao atualizar"),
+  });
+
   const openNew = () => { setEditing(null); setDialogOpen(true); };
   const openEdit = () => {
     if (!selected) return toast.info("Selecione um fio");
