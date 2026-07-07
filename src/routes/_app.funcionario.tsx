@@ -41,19 +41,6 @@ type Funcionario = {
   habilitado: boolean;
 };
 
-const TIPOS = [
-  "Vendedor",
-  "Tecelão",
-  "Auxiliar de Escritório",
-  "Ajudante Geral",
-  "Revisador",
-  "Gerente",
-  "Financeiro",
-  "Produção",
-  "Logística",
-  "Qualidade",
-  "Outro",
-];
 
 const UFS = [
   "AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO",
@@ -190,6 +177,16 @@ function FuncionarioPage() {
 function FuncionarioDialog({
   open, onOpenChange, editing, onSaved,
 }: { open: boolean; onOpenChange: (v: boolean) => void; editing: Funcionario | null; onSaved: () => void }) {
+  const { data: cargos = [] } = useQuery<{ id: string; nome: string }[]>({
+    queryKey: ["cargos-opts"],
+    queryFn: async () => {
+      const { data, error } = await sb.from("cargos").select("id,nome").order("nome");
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: open,
+  });
+
   const [f, setF] = useState({
     tipo: "", nome: "", cpf: "", rg: "", cep: "", uf: "",
     endereco: "", numero: "", complemento: "", bairro: "", cidade: "",
@@ -285,7 +282,7 @@ function FuncionarioDialog({
             <Field label="Tipo" required>
               <Select value={f.tipo} onValueChange={(v) => upd("tipo", v)}>
                 <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-                <SelectContent>{TIPOS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                <SelectContent>{cargos.map((c) => <SelectItem key={c.id} value={c.nome}>{c.nome}</SelectItem>)}</SelectContent>
               </Select>
             </Field>
             <Field label="Habilitado">
