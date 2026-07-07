@@ -1,194 +1,165 @@
 
-# Reestruturação Industrial — Ordem de Produção como núcleo
+# FASE 1 REVISADA — Motor Fiscal Direto SEFAZ (A1)
 
-## Princípios
-1. **OP é o único caminho** para movimentar produção, estoque, faturamento e expedição.
-2. **Não duplicar dados**: cada domínio (Clientes, Produtos, Estoque, Fiscal, Financeiro) permanece dono das suas tabelas; a OP apenas **referencia** por FK.
-3. **Máquina de estados única** com transições validadas por trigger.
-4. **Rastreabilidade completa**: cada evento gera linha imutável em `op_eventos`.
+## AVISO CRÍTICO — LEIA ANTES DE APROVAR
 
----
+O runtime deste projeto é **Cloudflare Workers** (edge). SEFAZ NFe exige duas coisas que o Workers **não suporta nativamente**:
 
-## Etapa 1 — Fundação de dados (1 migração)
+1. **mTLS de saída** (fetch com certificado cliente) — Workers não expõe API para anexar cert/chave PFX em chamadas `fetch()` para os webservices SEFAZ. SEFAZ exige mTLS obrigatório em todos os endpoints (NfeAutorizacao4, NfeConsultaProtocolo4, RecepcaoEvento4, NfeInutilizacao4).
+2. **SOAP/XML-DSig com PFX** — bibliotecas maduras (`node-forge`, `xml-crypto`, `xmldsigjs`) rodam parcialmente, mas assinatura enveloped RSA-SHA1 com certificado extraído de PFX depende de operações que o WebCrypto do Workers restringe (importKey PKCS12).
 
-Novas tabelas (todas com RLS via `has_role`):
+**Conclusão honesta:** transmitir direto para SEFAZ **de dentro do Worker é inviável hoje**. Precisamos de um pequeno serviço externo que faça a ponte assinada.
 
-```text
-pedidos                      # Pedido de venda (cabeçalho)
-  id, numero, cliente_id → customers, vendedor_id → sales_reps,
-  data_pedido, prazo_entrega, status (rascunho/confirmado/cancelado),
-  valor_total, condicao_pagamento, observacao
+## Opções arquiteturais reais
 
-pedido_itens                 # Itens do pedido
-  id, pedido_id → pedidos, product_id → products, variante_id → variantes,
-  cor_id → cores, estampa_id → estampas, quantidade, valor_unitario
+| Opção | Custo/mês | Complexidade | Recomendação |
+|---|---|---|---|
+| **A) Microserviço Node.js self-hosted** (VPS Hetzner/Contabo €4-5, Node + node-forge + xml-crypto + soap) | ~R$25/mês | Média | ✅ **Recomendada** — atende ao objetivo "custo próximo de zero" |
+| B) Cloudflare Container (beta) rodando Node | ~US$5/mês | Média-alta | Alternativa se preferir tudo na Cloudflare |
+| C) Voltar para Focus NFe / eNotas | R$0,08-0,15/NFe | Baixa | Rejeitada pelo usuário |
+| D) Reescrever runtime do ERP (sair do Workers) | Alto | Muito alta | Não recomendada |
 
-ordens_producao              # OP — núcleo do sistema
-  id, numero (sequência atômica), pedido_id → pedidos (nullable p/ OP interna),
-  status (enum abaixo), prioridade, data_abertura, data_prevista,
-  data_conclusao, maquina_id → maquinas, funcionario_id → funcionarios,
-  responsavel_id → auth.users, observacao
+**Plano abaixo assume Opção A.**
 
-op_itens                     # O que a OP deve produzir
-  id, op_id → ordens_producao, product_id → products, variante_id,
-  cor_id, estampa_id, quantidade_planejada, quantidade_produzida,
-  quantidade_aprovada, quantidade_reprovada, unidade
+## 1. Componentes reaproveitados (preservados 100%)
 
-op_consumos                  # Insumos consumidos (fios/tecidos) — baixa estoque
-  id, op_id, lote_id → lotes, quantidade, momento, user_id
+- `nfe.builder.ts` — construção de payload (será adaptado para gerar XML nfeProc em vez de JSON Focus)
+- `nfe_logs`, `nfe_eventos`, `nfe_sequencias`, `notas_fiscais`, `notas_fiscais_itens`
+- `FiscalService` (`src/lib/nfe.functions.ts`) — assinaturas de server fns e contratos mantidos
+- Pré-faturamento (`pre-faturamento.functions.ts`)
+- Triggers: `on_nfe_autorizada`, `on_nfe_autorizada_op`, `on_nfe_autorizada_financeiro`
+- Bucket `fiscal` (storage)
+- Dashboard fiscal, integrações OP/estoque/financeiro
 
-op_apontamentos              # Tempo/produção reportada por operador
-  id, op_id, funcionario_id, maquina_id, inicio, fim,
-  quantidade_produzida, quantidade_refugo, observacao
+## 2. Componentes removidos
 
-op_qualidade                 # Controle de qualidade
-  id, op_id, inspetor_id, resultado (aprovado/reprovado/parcial),
-  quantidade_aprovada, quantidade_reprovada, motivo, data
+- `src/services/fiscal/focus.adapter.ts` (deletado)
+- Secret `FOCUS_NFE_TOKEN` (não usado)
+- Campos `provedor_nfe`, `provedor_ref` deixam de ser usados (mantidos para histórico)
 
-op_entradas_estoque          # Vincula OP → lote produzido
-  id, op_id, product_id, variante_id, lote_id → lotes,
-  quantidade, data_entrada
+## 3. Componentes novos
 
-op_eventos                   # Audit trail imutável (append-only)
-  id, op_id, tipo, de_status, para_status, payload jsonb,
-  user_id, created_at
+**No ERP (Worker):**
+- `src/services/fiscal/sefaz.adapter.ts` — cliente HTTP do microserviço (fetch com HMAC)
+- `src/services/fiscal/certificado.functions.ts` — server fns: upload PFX, listar, marcar ativo, alerta vencimento
+- `src/components/fiscal/certificado-a1-upload.tsx` — UI upload
+- `src/routes/_app.fiscal.certificados.tsx` — página gestão
 
-op_faturamento               # Vínculo OP ↔ NF-e
-  id, op_id, nota_fiscal_id → notas_fiscais, quantidade_faturada,
-  status (pendente/pre_faturado/faturado/expedido)
+**Microserviço externo (`sefaz-bridge/`):**
+- Node 20 + Express + `node-forge` + `xml-crypto` + `strong-soap` + `pdfkit`
+- Endpoints: `POST /nfe/emitir`, `/nfe/consultar`, `/nfe/cancelar`, `/nfe/cce`, `/nfe/inutilizar`, `/danfe/gerar`
+- Autenticação: HMAC-SHA256 compartilhado (`SEFAZ_BRIDGE_SECRET`)
+- Carrega PFX vindo do ERP (base64 + senha), assina XML, transmite SEFAZ, retorna XML autorizado
+- Dockerfile pronto para VPS (Hetzner/Contabo/Oracle Free Tier)
 
-op_expedicoes                # Expedição/entrega
-  id, op_id, nota_fiscal_id, transportadora_id, data_saida,
-  data_entrega, rastreio, status
+## 4. Bibliotecas recomendadas
+
+**Microserviço:**
+- `node-forge` — parse PFX, extrair chave/cert
+- `xml-crypto` — assinatura XMLDSig enveloped
+- `xml2js` / `fast-xml-parser` — parse/serialize XML
+- `strong-soap` ou `axios` + envelope manual — SOAP SEFAZ
+- `pdfkit` + `bwip-js` — DANFE PDF + código de barras
+- `xsd-schema-validator` (opcional) — validação XSD antes de enviar
+
+**ERP:** nada novo — só `fetch` nativo + HMAC via WebCrypto.
+
+## 5. Alterações no banco
+
+Migration única:
+
+```sql
+CREATE TABLE public.certificados_digitais (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  empresa_id uuid NOT NULL REFERENCES public.empresa(id) ON DELETE CASCADE,
+  nome text NOT NULL,
+  cnpj text NOT NULL,
+  pfx_storage_path text NOT NULL,   -- fiscal/certificados/{id}.pfx
+  senha_cifrada text NOT NULL,      -- AES-GCM com CERT_ENC_KEY
+  senha_iv text NOT NULL,
+  valido_de timestamptz NOT NULL,
+  valido_ate timestamptz NOT NULL,
+  ativo boolean NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.certificados_digitais TO authenticated;
+GRANT ALL ON public.certificados_digitais TO service_role;
+ALTER TABLE public.certificados_digitais ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "cert admin" ON public.certificados_digitais FOR ALL TO authenticated
+  USING (public.has_role(auth.uid(), 'desenvolvedor') OR public.has_role(auth.uid(), 'gerente'))
+  WITH CHECK (public.has_role(auth.uid(), 'desenvolvedor') OR public.has_role(auth.uid(), 'gerente'));
+
+ALTER TABLE public.notas_fiscais
+  ADD COLUMN IF NOT EXISTS xml_storage_path text,
+  ADD COLUMN IF NOT EXISTS danfe_storage_path text,
+  ADD COLUMN IF NOT EXISTS ambiente text CHECK (ambiente IN ('homologacao','producao'));
 ```
 
-**Estados da OP (enum `op_status`):**
-`planejada · programada · em_producao · parcial · aguardando_qualidade · reprovada · aprovada · pronta_estoque · pronta_faturamento · faturada · expedida · encerrada`
+Bucket `fiscal` já existe (privado). Novos prefixos: `certificados/`, `xml/{chave}.xml`, `pdf/{chave}.pdf`.
 
-**Funções SQL:**
-- `proximo_numero_op()` — sequência atômica (padrão `nfe_sequencias`).
-- `op_transicionar(_op_id, _novo_status, _payload)` — valida transição permitida e grava `op_eventos`.
-- Trigger `on_op_status_change` — dispara efeitos colaterais:
-  - `pronta_estoque` → cria `lotes` + `op_entradas_estoque`.
-  - `faturada` → registra `op_faturamento` (NF-e vinculada).
-  - `expedida` → cria `op_expedicoes`.
+## 6. Alterações no backend (ERP)
 
-**Extensões em tabelas existentes:**
-- `notas_fiscais.op_id uuid` (opcional) — permite faturar por OP.
-- `lotes.op_id uuid` (opcional) — rastreia origem do lote.
+- `nfe.builder.ts`: adicionar `buildNfeXml(nota, itens, empresa, dest)` retornando XML string (schema PL_010). Focus payload builder é removido.
+- `nfe.functions.ts`: `emitir/cancelar/cce/consultar/inutilizar` chamam `sefazAdapter.*` em vez de `focusAdapter.*`. Assinaturas de entrada/saída preservadas — nenhuma tela React muda.
+- `sefaz.adapter.ts` (novo): `fetch(${SEFAZ_BRIDGE_URL}/nfe/emitir, { headers HMAC, body: {xml, certId} })`.
+- Após autorização: baixar XML+PDF do bridge, salvar em `storage.fiscal/xml/{chave}.xml` e `pdf/{chave}.pdf` via `supabaseAdmin` (dentro do handler).
 
----
+## 7. Alterações no frontend
 
-## Etapa 2 — Backend / Server Functions
+- Nova rota `/fiscal/certificados` — upload PFX (drag&drop), senha, listar validade, badge vencimento < 30 dias.
+- Menu fiscal ganha item "Certificados Digitais".
+- Componente `NfeAcoesMenu` já existente continua chamando os mesmos server fns (contrato preservado).
 
-`src/services/producao/`:
-- `pedido.functions.ts` — criar/confirmar pedido, converter em OP.
-- `op.functions.ts` — criar, programar, iniciar, apontar, transicionar, encerrar.
-- `qualidade.functions.ts` — inspecionar, aprovar, reprovar (parcial).
-- `estoque.functions.ts` — dar entrada via OP, consumir insumo, ajustes.
-- `expedicao.functions.ts` — registrar saída, rastreio, entrega.
+## 8. Secrets necessários
 
-Regras:
-- Nenhuma NF-e de saída pode ser autorizada sem OP no status `pronta_faturamento` (validação server-side).
-- Nenhum lote é criado manualmente para produto acabado — só via OP.
-- Fiscal (já existente) passa a consumir `op_faturamento`.
+- `SEFAZ_BRIDGE_URL` — URL do microserviço (ex.: `https://sefaz.digitaletextil.com.br`)
+- `SEFAZ_BRIDGE_HMAC_SECRET` — segredo compartilhado (gerado)
+- `CERT_ENC_KEY` — chave AES-256 para cifrar senha do PFX no banco (gerado)
 
----
+## 9. Riscos técnicos
 
-## Etapa 3 — UI
-
-Novas rotas:
-```
-/producao                    → Kanban de OPs por status
-/producao/pedidos            → Lista + form de Pedido
-/producao/op                 → Lista + drill-down por OP
-/producao/op/$id             → Detalhe: itens, consumos, apontamentos,
-                               qualidade, timeline de eventos, ações de
-                               transição contextual
-/producao/qualidade          → Fila de OPs aguardando_qualidade
-/producao/expedicao          → Fila de OPs faturadas
-```
-
-Componentes:
-- `OpKanban` — colunas por status, drag opcional.
-- `OpTimeline` — linha do tempo de `op_eventos`.
-- `OpActionsBar` — botões contextuais por status (Iniciar, Apontar, Enviar p/ QC, Aprovar, Faturar, Expedir).
-- `OpFaturarDialog` — cria NF-e pré-preenchida a partir da OP + itens.
-
-Menu: novo grupo **Produção** (Pedidos, OPs, Qualidade, Expedição) — Fiscal e Estoque permanecem como estão mas com badges "via OP".
-
----
-
-## Etapa 4 — Integrações
-
-| Módulo | Papel | Como consulta OP |
+| Risco | Severidade | Mitigação |
 |---|---|---|
-| Clientes | Dono do cadastro | `pedidos.cliente_id → customers` |
-| Produtos | Dono do cadastro | `op_itens.product_id → products` |
-| Estoque | Dono dos lotes | `lotes ← op_entradas_estoque` (entrada) e `op_consumos` (saída) |
-| Fiscal | Emissor NF-e | `notas_fiscais.op_id → ordens_producao`; UI de emissão exige OP em `pronta_faturamento` |
-| Financeiro (futuro) | Contas a receber | trigger `notas_fiscais autorizada` cria conta a receber com `op_id` |
+| Precisar de VPS externa | Alta | Aceito pelo usuário; Hetzner CX11 €4/mês |
+| SEFAZ muda schema (PL_010→PL_011) | Média | Versionar `nfe.builder.ts`; monitorar Portal NFe |
+| Certificado A1 expira | Alta | Alerta 30/15/7 dias por email + banner |
+| Bridge cai → ERP não emite | Alta | Systemd + healthcheck + fallback manual |
+| Senha PFX vazar | Crítica | AES-GCM no banco, chave em secret Worker, nunca logar |
+| Assinatura XML inválida (namespaces) | Alta | Suite de testes com XMLs de referência SEFAZ |
+| Rate limit SEFAZ | Baixa | Retry exponencial no bridge |
 
----
+## 10. Complexidade e manutenção
 
-## Etapa 5 — Migração de dados existentes
-- Notas fiscais atuais recebem `op_id = null` (legado).
-- Nenhum backfill destrutivo; sistema atual continua funcionando em paralelo.
-- Um flag em `empresa.exige_op_para_nfe boolean default false` permite ativação gradual (produção pilota antes do bloqueio total).
+- **Complexidade inicial:** ALTA (SOAP SEFAZ, XMLDSig, XSD, DANFE — 3-5 semanas de dev experiente)
+- **Manutenção anual estimada:** 20-40h/ano (atualizações de schema NFe, renovação certificado, correções SEFAZ)
+- **Custo operacional:** ~R$25/mês (VPS) vs R$0,08-0,15/NFe do Focus. Break-even: ~200 NFe/mês.
 
----
-
-## Diagrama do fluxo
+## Plano de execução (fases)
 
 ```text
-Pedido (rascunho)
-  └─ confirmar → gera OP(s) automaticamente
-       ↓
-   ┌───────── OP ─────────┐
-   │ planejada            │
-   │  └ programar         │
-   │ programada           │
-   │  └ iniciar produção  │
-   │ em_producao          │
-   │  ├ apontamentos      │  op_apontamentos
-   │  ├ consumo insumos   │  op_consumos → baixa lote
-   │  └ enviar p/ QC      │
-   │ aguardando_qualidade │
-   │  ├ reprovar → reprovada (fim ou retrabalho)
-   │  └ aprovar (total/parcial)
-   │ aprovada / parcial   │
-   │  └ dar entrada       │  op_entradas_estoque → cria lote
-   │ pronta_estoque       │
-   │  └ liberar p/ fatur. │
-   │ pronta_faturamento   │
-   │  └ emitir NF-e       │  op_faturamento ← notas_fiscais
-   │ faturada             │
-   │  └ expedir           │  op_expedicoes
-   │ expedida             │
-   │  └ confirmar entrega │
-   │ encerrada            │
-   └──────────────────────┘
+FASE 1a — Infra e certificado (esta entrega)
+  1. Migration certificados_digitais + colunas notas_fiscais
+  2. Server fns upload/list/ativar certificado
+  3. UI /fiscal/certificados
+  4. Secrets CERT_ENC_KEY, SEFAZ_BRIDGE_URL, SEFAZ_BRIDGE_HMAC_SECRET
+
+FASE 1b — Microserviço bridge (repositório separado)
+  5. Scaffold Node 20 + Express + node-forge + xml-crypto
+  6. Endpoints emitir/consultar/cancelar/cce/inutilizar
+  7. Geração DANFE PDF
+  8. Dockerfile + docs deploy VPS
+
+FASE 1c — Substituir adapter no ERP
+  9. sefaz.adapter.ts + nfe.builder.ts (XML) + refatorar nfe.functions.ts
+  10. Deletar focus.adapter.ts
+  11. Persistir XML/DANFE em storage.fiscal
+  12. Testes E2E homologação (T1-T12 do plano anterior)
 ```
 
----
+## Decisões que preciso confirmar antes de começar
 
-## Ordem de execução (incremental — cada etapa é entregável)
-
-1. **Etapa 1**: migração de dados (10 tabelas + enum + funções + trigger).
-2. **Etapa 2**: server functions de Pedido e OP (fluxo básico).
-3. **Etapa 3a**: UI Pedidos + Lista OP + Detalhe OP + Kanban.
-4. **Etapa 3b**: Qualidade + Expedição.
-5. **Etapa 2b/4**: integração fiscal (bloqueio de NF-e sem OP + `OpFaturarDialog`).
-6. **Etapa 5**: flag de ativação gradual + documentação.
-
----
-
-## Confirmações antes de iniciar
-
-Preciso do seu OK em 3 pontos para começar pela Etapa 1:
-
-1. **Uma OP por item ou uma OP por pedido?** (recomendo: 1 pedido → N OPs, uma por artigo/cor).
-2. **Bloqueio duro de NF-e sem OP** já na Etapa 1, ou via flag `exige_op_para_nfe` para migração gradual? (recomendo: flag).
-3. **Kanban ou lista tradicional** como visão default de `/producao/op`? (recomendo: Kanban, com toggle para lista).
-
-Após sua confirmação inicio a Etapa 1 (migração das 10 tabelas).
+1. **Aceita rodar um microserviço externo (Opção A, ~R$25/mês)?** Se não, precisamos revisar a estratégia — não há caminho puramente Worker/edge para SEFAZ direto hoje.
+2. **Quem hospedará o bridge?** (VPS que você contrata / Oracle Cloud Free Tier / posso te entregar o Dockerfile + instruções).
+3. **Autoriza começar pela FASE 1a** (certificado + UI + migration) enquanto o bridge é desenvolvido em paralelo? Isso destrava a UI sem quebrar o fluxo atual (Focus continua funcionando até o cutover).
+4. **Certificado A1 disponível para upload em homologação?** Precisa ser um PFX válido (mesmo que expirado serve para dev).
