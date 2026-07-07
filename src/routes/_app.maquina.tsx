@@ -31,6 +31,7 @@ type Maquina = {
   disposicao_agulhas?: string | null;
   producao_media?: number | null;
   carga_agulhas?: CargaAgulha[] | null;
+  fio_id?: string | null;
 };
 
 const PAGE_SIZE = 20;
