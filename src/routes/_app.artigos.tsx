@@ -54,6 +54,7 @@ function ArtigosPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Article | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [detailId, setDetailId] = useState<string | null>(null);
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["articles"],
