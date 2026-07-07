@@ -379,6 +379,42 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_logs: {
+        Row: {
+          acao: string
+          created_at: string
+          de_status: string | null
+          entidade: string
+          entidade_id: string | null
+          id: string
+          para_status: string | null
+          payload: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          acao: string
+          created_at?: string
+          de_status?: string | null
+          entidade: string
+          entidade_id?: string | null
+          id?: string
+          para_status?: string | null
+          payload?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          acao?: string
+          created_at?: string
+          de_status?: string | null
+          entidade?: string
+          entidade_id?: string | null
+          id?: string
+          para_status?: string | null
+          payload?: Json | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       cargos: {
         Row: {
           created_at: string
@@ -436,6 +472,57 @@ export type Database = {
         }
         Relationships: []
       }
+      comissoes: {
+        Row: {
+          base_calculo: number
+          created_at: string
+          id: string
+          nota_fiscal_id: string | null
+          percentual: number
+          status: string
+          updated_at: string
+          valor: number
+          vendedor_id: string | null
+        }
+        Insert: {
+          base_calculo?: number
+          created_at?: string
+          id?: string
+          nota_fiscal_id?: string | null
+          percentual?: number
+          status?: string
+          updated_at?: string
+          valor?: number
+          vendedor_id?: string | null
+        }
+        Update: {
+          base_calculo?: number
+          created_at?: string
+          id?: string
+          nota_fiscal_id?: string | null
+          percentual?: number
+          status?: string
+          updated_at?: string
+          valor?: number
+          vendedor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comissoes_nota_fiscal_id_fkey"
+            columns: ["nota_fiscal_id"]
+            isOneToOne: false
+            referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comissoes_vendedor_id_fkey"
+            columns: ["vendedor_id"]
+            isOneToOne: false
+            referencedRelation: "sales_reps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       composicoes: {
         Row: {
           codigo: string
@@ -471,6 +558,76 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      contas_receber: {
+        Row: {
+          cliente_id: string | null
+          created_at: string
+          descricao: string | null
+          id: string
+          nota_fiscal_id: string | null
+          op_id: string | null
+          parcela: number
+          status: string
+          total_parcelas: number
+          updated_at: string
+          valor: number
+          valor_pago: number
+          vencimento: string | null
+        }
+        Insert: {
+          cliente_id?: string | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nota_fiscal_id?: string | null
+          op_id?: string | null
+          parcela?: number
+          status?: string
+          total_parcelas?: number
+          updated_at?: string
+          valor?: number
+          valor_pago?: number
+          vencimento?: string | null
+        }
+        Update: {
+          cliente_id?: string | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nota_fiscal_id?: string | null
+          op_id?: string | null
+          parcela?: number
+          status?: string
+          total_parcelas?: number
+          updated_at?: string
+          valor?: number
+          valor_pago?: number
+          vencimento?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contas_receber_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contas_receber_nota_fiscal_id_fkey"
+            columns: ["nota_fiscal_id"]
+            isOneToOne: false
+            referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contas_receber_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cores: {
         Row: {
