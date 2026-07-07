@@ -22,7 +22,7 @@ export type MenuItem = {
 
 /** Full catalog of available menus. Add new items here. */
 export const ALL_MENU_ITEMS: MenuItem[] = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, group: "Visão Geral", defaultHidden: true },
+  { title: "Início", url: "/inicio", icon: LayoutDashboard, group: "Visão Geral", locked: true },
   { title: "Empresa", url: "/empresa", icon: Building2, group: "Cadastros" },
   { title: "Composição", url: "/composicao", icon: FlaskConical, group: "Cadastros" },
   { title: "Fio", url: "/fio", icon: Spool, group: "Cadastros" },
@@ -63,7 +63,7 @@ export const GROUP_ORDER = [
   "Administração",
 ];
 
-const STORAGE_KEY = "digitale.menu.visibility.v5";
+const STORAGE_KEY = "digitale.menu.visibility.v6";
 
 /** New/current items default visible; legacy items marked defaultHidden stay off. */
 function getDefaults(): Record<string, boolean> {

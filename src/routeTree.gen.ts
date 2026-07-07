@@ -25,6 +25,7 @@ import { Route as AppProducaoRouteImport } from './routes/_app.producao'
 import { Route as AppMenusRouteImport } from './routes/_app.menus'
 import { Route as AppMaquinaRouteImport } from './routes/_app.maquina'
 import { Route as AppLogisticaRouteImport } from './routes/_app.logistica'
+import { Route as AppInicioRouteImport } from './routes/_app.inicio'
 import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
 import { Route as AppFiscalRouteImport } from './routes/_app.fiscal'
 import { Route as AppFioRouteImport } from './routes/_app.fio'
@@ -33,7 +34,6 @@ import { Route as AppFaccoesRouteImport } from './routes/_app.faccoes'
 import { Route as AppEstoqueRouteImport } from './routes/_app.estoque'
 import { Route as AppEstampaRouteImport } from './routes/_app.estampa'
 import { Route as AppEmpresaRouteImport } from './routes/_app.empresa'
-import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppCrmRouteImport } from './routes/_app.crm'
 import { Route as AppCorRouteImport } from './routes/_app.cor'
 import { Route as AppConfiguracoesRouteImport } from './routes/_app.configuracoes'
@@ -123,6 +123,11 @@ const AppLogisticaRoute = AppLogisticaRouteImport.update({
   path: '/logistica',
   getParentRoute: () => AppRoute,
 } as any)
+const AppInicioRoute = AppInicioRouteImport.update({
+  id: '/inicio',
+  path: '/inicio',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFornecedoresRoute = AppFornecedoresRouteImport.update({
   id: '/fornecedores',
   path: '/fornecedores',
@@ -161,11 +166,6 @@ const AppEstampaRoute = AppEstampaRouteImport.update({
 const AppEmpresaRoute = AppEmpresaRouteImport.update({
   id: '/empresa',
   path: '/empresa',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDashboardRoute = AppDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCrmRoute = AppCrmRouteImport.update({
@@ -227,7 +227,6 @@ export interface FileRoutesByFullPath {
   '/configuracoes': typeof AppConfiguracoesRoute
   '/cor': typeof AppCorRoute
   '/crm': typeof AppCrmRoute
-  '/dashboard': typeof AppDashboardRoute
   '/empresa': typeof AppEmpresaRoute
   '/estampa': typeof AppEstampaRoute
   '/estoque': typeof AppEstoqueRoute
@@ -236,6 +235,7 @@ export interface FileRoutesByFullPath {
   '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
   '/fornecedores': typeof AppFornecedoresRoute
+  '/inicio': typeof AppInicioRoute
   '/logistica': typeof AppLogisticaRoute
   '/maquina': typeof AppMaquinaRoute
   '/menus': typeof AppMenusRoute
@@ -262,7 +262,6 @@ export interface FileRoutesByTo {
   '/configuracoes': typeof AppConfiguracoesRoute
   '/cor': typeof AppCorRoute
   '/crm': typeof AppCrmRoute
-  '/dashboard': typeof AppDashboardRoute
   '/empresa': typeof AppEmpresaRoute
   '/estampa': typeof AppEstampaRoute
   '/estoque': typeof AppEstoqueRoute
@@ -271,6 +270,7 @@ export interface FileRoutesByTo {
   '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
   '/fornecedores': typeof AppFornecedoresRoute
+  '/inicio': typeof AppInicioRoute
   '/logistica': typeof AppLogisticaRoute
   '/maquina': typeof AppMaquinaRoute
   '/menus': typeof AppMenusRoute
@@ -299,7 +299,6 @@ export interface FileRoutesById {
   '/_app/configuracoes': typeof AppConfiguracoesRoute
   '/_app/cor': typeof AppCorRoute
   '/_app/crm': typeof AppCrmRoute
-  '/_app/dashboard': typeof AppDashboardRoute
   '/_app/empresa': typeof AppEmpresaRoute
   '/_app/estampa': typeof AppEstampaRoute
   '/_app/estoque': typeof AppEstoqueRoute
@@ -308,6 +307,7 @@ export interface FileRoutesById {
   '/_app/fio': typeof AppFioRoute
   '/_app/fiscal': typeof AppFiscalRoute
   '/_app/fornecedores': typeof AppFornecedoresRoute
+  '/_app/inicio': typeof AppInicioRoute
   '/_app/logistica': typeof AppLogisticaRoute
   '/_app/maquina': typeof AppMaquinaRoute
   '/_app/menus': typeof AppMenusRoute
@@ -336,7 +336,6 @@ export interface FileRouteTypes {
     | '/configuracoes'
     | '/cor'
     | '/crm'
-    | '/dashboard'
     | '/empresa'
     | '/estampa'
     | '/estoque'
@@ -345,6 +344,7 @@ export interface FileRouteTypes {
     | '/fio'
     | '/fiscal'
     | '/fornecedores'
+    | '/inicio'
     | '/logistica'
     | '/maquina'
     | '/menus'
@@ -371,7 +371,6 @@ export interface FileRouteTypes {
     | '/configuracoes'
     | '/cor'
     | '/crm'
-    | '/dashboard'
     | '/empresa'
     | '/estampa'
     | '/estoque'
@@ -380,6 +379,7 @@ export interface FileRouteTypes {
     | '/fio'
     | '/fiscal'
     | '/fornecedores'
+    | '/inicio'
     | '/logistica'
     | '/maquina'
     | '/menus'
@@ -407,7 +407,6 @@ export interface FileRouteTypes {
     | '/_app/configuracoes'
     | '/_app/cor'
     | '/_app/crm'
-    | '/_app/dashboard'
     | '/_app/empresa'
     | '/_app/estampa'
     | '/_app/estoque'
@@ -416,6 +415,7 @@ export interface FileRouteTypes {
     | '/_app/fio'
     | '/_app/fiscal'
     | '/_app/fornecedores'
+    | '/_app/inicio'
     | '/_app/logistica'
     | '/_app/maquina'
     | '/_app/menus'
@@ -551,6 +551,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLogisticaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/inicio': {
+      id: '/_app/inicio'
+      path: '/inicio'
+      fullPath: '/inicio'
+      preLoaderRoute: typeof AppInicioRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/fornecedores': {
       id: '/_app/fornecedores'
       path: '/fornecedores'
@@ -605,13 +612,6 @@ declare module '@tanstack/react-router' {
       path: '/empresa'
       fullPath: '/empresa'
       preLoaderRoute: typeof AppEmpresaRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/dashboard': {
-      id: '/_app/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/crm': {
@@ -690,7 +690,6 @@ interface AppRouteChildren {
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppCorRoute: typeof AppCorRoute
   AppCrmRoute: typeof AppCrmRoute
-  AppDashboardRoute: typeof AppDashboardRoute
   AppEmpresaRoute: typeof AppEmpresaRoute
   AppEstampaRoute: typeof AppEstampaRoute
   AppEstoqueRoute: typeof AppEstoqueRoute
@@ -699,6 +698,7 @@ interface AppRouteChildren {
   AppFioRoute: typeof AppFioRoute
   AppFiscalRoute: typeof AppFiscalRoute
   AppFornecedoresRoute: typeof AppFornecedoresRoute
+  AppInicioRoute: typeof AppInicioRoute
   AppLogisticaRoute: typeof AppLogisticaRoute
   AppMaquinaRoute: typeof AppMaquinaRoute
   AppMenusRoute: typeof AppMenusRoute
@@ -723,7 +723,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppCorRoute: AppCorRoute,
   AppCrmRoute: AppCrmRoute,
-  AppDashboardRoute: AppDashboardRoute,
   AppEmpresaRoute: AppEmpresaRoute,
   AppEstampaRoute: AppEstampaRoute,
   AppEstoqueRoute: AppEstoqueRoute,
@@ -732,6 +731,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFioRoute: AppFioRoute,
   AppFiscalRoute: AppFiscalRoute,
   AppFornecedoresRoute: AppFornecedoresRoute,
+  AppInicioRoute: AppInicioRoute,
   AppLogisticaRoute: AppLogisticaRoute,
   AppMaquinaRoute: AppMaquinaRoute,
   AppMenusRoute: AppMenusRoute,
