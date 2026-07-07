@@ -1,139 +1,87 @@
+# FASE 2 — Módulo Compras
 
-# Motor Tributário — Fase de Inteligência Fiscal
+Fecha o ciclo da matéria-prima com rastreabilidade completa e integração automática com fornecedores, estoque, lotes, financeiro e produção.
 
-## 1. Auditoria do que já existe
-
-**Presente e utilizável (reaproveitar):**
-- `empresa` → `regime_tributario`, `uf`, `codigo_municipio`
-- `customers` → `uf`, `entrega_uf`, `contribuinte_icms`, `regime_especial`, `suframa`, `icms`
-- `products` → `ncm`, `cest`, `origem`, `cfop_padrao`, `cst_icms`, `csosn`, `aliq_icms`, `cst_ipi`, `aliq_ipi`, `cst_pis`, `aliq_pis`, `cst_cofins`, `aliq_cofins`
-- `cfop` → catálogo (48 registros populados)
-- `uf_aliquotas` → 28 UFs com ICMS interno, interestadual, ICMS ST, FCP
-- `notas_fiscais_itens` → `ncm`, `cfop`, `base_icms`, `aliquota_icms`, `valor_icms`
-- `impostos` → tabela genérica pouco estruturada (será deprecada; mantida por compatibilidade)
-
-**Ausente (a criar):**
-- Tabela mestre de **NCM** com CST/CSOSN/alíquotas padrão por regime
-- **Regras tributárias** parametrizáveis (por UF orig/dest, tipo cliente, regime, operação, tipo produto)
-- **Benefícios fiscais** (redução base, isenção, diferimento) por UF/NCM
-- **MVA/IVA-ST** por NCM e UF
-- Motor de cálculo unificado (service TypeScript)
-
-## 2. Novas tabelas (migration)
+## Fluxo
 
 ```text
-ncm_catalogo
-  codigo (PK), descricao, cest_sugerido, ex_tipi,
-  aliq_ipi_padrao, cst_ipi_padrao, cst_pis_padrao, aliq_pis_padrao,
-  cst_cofins_padrao, aliq_cofins_padrao
-
-regras_tributarias  (motor principal)
-  id, nome, prioridade INT, ativo,
-  # escopo (todos opcionais → NULL = curinga)
-  uf_origem, uf_destino,
-  regime_tributario_emitente,        -- simples|presumido|real
-  tipo_cliente,                       -- pj_contribuinte|pj_nao_contrib|pf|orgao_publico|exterior
-  tipo_operacao,                      -- venda|devolucao|remessa|retorno|bonif|amostra|industrializacao|exportacao
-  ncm_prefix,                         -- ex. "6006" casa qualquer NCM que começa com
-  cest,
-  finalidade,                         -- consumo|revenda|industrializacao|ativo
-  # saída
-  cfop TEXT NOT NULL,
-  cst_icms, csosn,
-  aliq_icms, red_base_icms_pct,
-  calcula_st BOOLEAN, mva_pct, aliq_icms_st,
-  aliq_fcp, aliq_fcp_st,
-  cst_ipi, aliq_ipi,
-  cst_pis, aliq_pis,
-  cst_cofins, aliq_cofins,
-  calcula_difal BOOLEAN,
-  observacao
-
-beneficios_fiscais
-  id, uf, ncm_prefix, tipo (reducao|isencao|diferimento|suspensao),
-  percentual, base_legal, vigencia_inicio, vigencia_fim, ativo
+Solicitação → Cotação → Pedido → Recebimento → Conferência → Entrada Estoque → Contas a Pagar
+   (rascunho→aprovada)  (aberta→respondida→escolhida)  (rascunho→enviado→confirmado)
+                                                       ↓
+                                          gera lotes + movimenta estoque
+                                                       ↓
+                                          gera parcelas em contas_pagar
 ```
 
-Colunas adicionadas em `customers`: `consumidor_final BOOLEAN`, `indicador_ie TEXT` (1|2|9).
-Colunas adicionadas em `empresa`: `crt INT` (1 Simples, 2 Simples excesso, 3 Regime Normal).
+## Camada de dados (migration única)
 
-RLS: leitura autenticados; escrita `desenvolvedor`/`gerente`.
+Novos enums de status por etapa. Novas tabelas em `public`, todas com RLS (`authenticated` full, `service_role` all) + triggers `set_updated_at`:
 
-## 3. Motor de cálculo (TypeScript puro, sem I/O)
+- `fornecedores` — cnpj, razao, fantasia, ie, endereço, contato, condicao_pagamento_padrao, ativo. (se já existir em outro nome, reusar)
+- `solicitacoes_compra` — numero (seq), solicitante_id, setor, prioridade, justificativa, status (`rascunho|aprovada|cotando|atendida|cancelada`), aprovador_id, aprovada_em
+- `solicitacoes_compra_itens` — solicitacao_id, produto_id/variante_id/fio_id (polimórfico via tipo+ref_id), descricao, quantidade, unidade, observacao
+- `cotacoes` — numero, solicitacao_id, status (`aberta|respondida|escolhida|cancelada`), prazo_resposta, escolhida_fornecedor_id
+- `cotacao_fornecedores` — cotacao_id, fornecedor_id, condicao_pagamento, prazo_entrega_dias, frete, desconto, total, respondida_em, escolhida (bool)
+- `cotacao_itens` — cotacao_fornecedor_id, ref_solicitacao_item_id, preco_unitario, quantidade, ipi, icms, subtotal
+- `pedidos_compra` — numero (seq), cotacao_id, fornecedor_id, condicao_pagamento, prazo_entrega, frete, desconto, valor_total, status (`rascunho|enviado|confirmado|parcial|recebido|cancelado`), enviado_em, confirmado_em
+- `pedidos_compra_itens` — pedido_id, descricao, ref (produto/variante/fio), quantidade, quantidade_recebida, preco_unitario, ncm, cfop, subtotal
+- `recebimentos` — numero, pedido_id, nota_fornecedor, chave_nfe, data_recebimento, transportadora, status (`recebido|em_conferencia|conferido|divergente|estornado`), recebedor_id
+- `recebimento_itens` — recebimento_id, pedido_item_id, quantidade_recebida, quantidade_aprovada, quantidade_rejeitada, motivo_divergencia, lote_id (fk após entrada), lote_fornecedor
+- `contas_pagar` — pedido_id, recebimento_id, fornecedor_id, descricao, parcela, total_parcelas, valor, vencimento, status (`aberta|paga|vencida|cancelada`), pago_em
+- `compras_eventos` — tabela de auditoria (entidade, entidade_id, acao, de_status, para_status, payload jsonb, user_id) para rastreabilidade
 
-`src/services/fiscal/tax-engine/`
-```text
-types.ts              # TaxContext, TaxResult, ItemInput
-resolver.ts           # resolveRegra(ctx) — busca regra na tabela com maior prioridade compatível
-calculators/
-  icms.ts             # base, redução, alíquota, valor, DIFAL, FCP
-  icms-st.ts          # MVA, base ST, valor ST, FCP-ST
-  ipi.ts
-  pis-cofins.ts
-index.ts              # calcularItem(ctx, item) → { cfop, cst, csosn, bases, valores, totais }
-                      # calcularNota(ctx, itens) → agregação
-```
+Sequences: `seq_solicitacao_numero`, `seq_pedido_compra_numero`, `seq_recebimento_numero`.
 
-O engine recebe **snapshot** (dados já carregados) — nada de queries dentro dos cálculos. Puro, testável.
+Functions/triggers:
+- `sc_transicionar`, `pc_transicionar`, `rec_transicionar` — valida transições e loga em `compras_eventos`.
+- `on_recebimento_conferido()` → para cada item aprovado cria `lotes` (bucket existente), atualiza `pedidos_compra_itens.quantidade_recebida`, atualiza status do pedido (`parcial`/`recebido`), gera parcelas em `contas_pagar` conforme condição de pagamento.
+- `on_pedido_confirmado()` → notifica produção (evento em `compras_eventos`).
 
-## 4. Camada de dados (server functions)
+## Camada de serviço
 
-`src/services/fiscal/tax-rules.functions.ts`
-- `listRegras`, `upsertRegra`, `removeRegra`
-- `listBeneficios`, `upsertBeneficio`
-- `listNcms`, `upsertNcm`
-- `previewCalculoItem(pedido_item_id)` — carrega contexto e devolve resultado do engine (para UI de simulação)
+`src/services/compras/`:
+- `solicitacoes.functions.ts` — CRUD + `aprovarSolicitacao`, `cancelarSolicitacao`
+- `cotacoes.functions.ts` — criar a partir de solicitação, adicionar fornecedores, registrar respostas, escolher vencedor
+- `pedidos.functions.ts` — gerar a partir da cotação escolhida, enviar, confirmar, cancelar
+- `recebimentos.functions.ts` — criar recebimento, registrar conferência item a item, confirmar (dispara trigger)
+- `contas-pagar.functions.ts` — listar, marcar como paga
 
-## 5. Integração com Pré-Faturamento
+Todos com `requireSupabaseAuth`, validação zod, RPC `sc/pc/rec_transicionar`.
 
-Novo hook `useCalculoTributario(pedidoId)`:
-- Carrega empresa emitente, cliente, itens (com NCM/CFOP padrão) e regras.
-- Aplica engine.
-- Retorna totais e por item: base/valor ICMS, ST, IPI, PIS, COFINS, FCP, DIFAL.
+## UI (rotas em `src/routes/_app.compras.*.tsx`)
 
-Tela `/fiscal/pre-faturamento/:pedidoId` (já existe? verificar; caso contrário, criar somente a **prévia de cálculo** — sem emissão).
+- `/compras` — dashboard (kanban por etapa + KPIs)
+- `/compras/solicitacoes` — lista + filtros
+- `/compras/solicitacoes/nova` — form multi-item
+- `/compras/solicitacoes/$id` — detalhe + ações (aprovar, cotar)
+- `/compras/cotacoes` — lista
+- `/compras/cotacoes/$id` — comparativo lado a lado dos fornecedores, escolher vencedor
+- `/compras/pedidos` — lista
+- `/compras/pedidos/$id` — detalhe + enviar/confirmar + impressão
+- `/compras/recebimentos` — lista
+- `/compras/recebimentos/novo?pedido=` — registrar nota do fornecedor
+- `/compras/recebimentos/$id/conferencia` — conferência item-a-item (qtd aprovada/rejeitada, motivo)
+- `/compras/contas-pagar` — lista + baixa
 
-## 6. Telas de administração (grupo Fiscal)
+Componentes reutilizáveis: `StatusBadge`, `ItensTable`, `AprovacaoDialog`, `ConferenciaGrid`.
 
-- `/fiscal/ncm` — CRUD NCM com CST/alíquotas padrão
-- `/fiscal/regras-tributarias` — CRUD de regras com filtros por escopo, ordenação por prioridade, botão "Simular"
-- `/fiscal/beneficios` — CRUD benefícios fiscais
-- `/fiscal/simulador` — simulador manual (escolhe cliente + produto + qtd → mostra cálculo detalhado)
+## Menu
 
-## 7. Testes
+Novo grupo `Compras` em `src/lib/menu-config.ts` com todos os itens acima. Ícones lucide (`ShoppingCart`, `FileText`, `PackageCheck`, `Receipt`).
 
-`src/services/fiscal/tax-engine/__tests__/`
-- Venda SP→SP consumidor final PF (ICMS interno, sem DIFAL, sem ST)
-- Venda SP→MG contribuinte revenda (interestadual 12%, sem DIFAL)
-- Venda SP→RJ não contribuinte (interestadual + DIFAL + FCP 2%)
-- Venda com ST (MVA aplicada)
-- Simples Nacional (CSOSN 102, sem destacar ICMS)
-- Devolução (CFOP invertido, mesmo CST)
-- Exportação (CFOP 7xxx, isenção)
+## Integrações automáticas (sem código fixo — via triggers)
 
-## 8. Fora de escopo desta fase
+- Estoque/Lotes: `on_recebimento_conferido` cria lotes vinculados ao `item_id` e `fornecedor_id`, aumentando `quantidade_disponivel`.
+- Financeiro: mesma trigger insere parcelas em `contas_pagar` conforme condição.
+- Produção: evento `pedido_confirmado` fica disponível em `compras_eventos` para consumo pelo módulo de OP (leitura via query).
+- Rastreabilidade: `compras_eventos` liga solicitação↔cotação↔pedido↔recebimento↔lote↔conta.
 
-- Geração XML da NF-e
-- Assinatura digital / SEFAZ
-- DANFE
-- Cancelamento / CCe / Inutilização
+## Fora de escopo desta fase
 
-Essas etapas consumirão o motor via `calcularNota()` na fase seguinte, sem duplicar regras.
+- Emissão de NF-e de entrada (só importa dados da nota do fornecedor)
+- Integração bancária de pagamento
+- Portal do fornecedor
 
-## Arquivos a criar/alterar
+## Entregáveis
 
-- Migration: `ncm_catalogo`, `regras_tributarias`, `beneficios_fiscais` + colunas em `customers`/`empresa`
-- `src/services/fiscal/tax-engine/*` (engine puro + testes)
-- `src/services/fiscal/tax-rules.functions.ts` (server fns)
-- `src/routes/_app.fiscal.ncm.tsx`
-- `src/routes/_app.fiscal.regras-tributarias.tsx`
-- `src/routes/_app.fiscal.beneficios.tsx`
-- `src/routes/_app.fiscal.simulador.tsx`
-- `src/hooks/use-calculo-tributario.ts`
-- `src/lib/menu-config.ts` (novos itens no grupo Fiscal)
-
-## Riscos
-
-- Cobertura fiscal é infinita — o motor cobre o comum; regras excepcionais entram como novas linhas em `regras_tributarias` sem alterar código.
-- Tabela `impostos` legada permanecerá para não quebrar telas existentes; será marcada como deprecada.
-- MVA e benefícios são estaduais e mudam por convênio; entrada manual até integrar fonte externa.
+1 migration completa, ~5 arquivos `.functions.ts`, ~12 rotas, atualização do menu-config, componentes de UI. Nenhum código fixo — tudo parametrizável (condições, prioridades, motivos).
