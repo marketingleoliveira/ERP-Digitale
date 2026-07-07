@@ -801,6 +801,7 @@ export type Database = {
           csc_id: string | null
           csc_token: string | null
           email: string | null
+          exige_op_para_nfe: boolean
           id: string
           inscricao_estadual: string | null
           inscricao_municipal: string | null
@@ -835,6 +836,7 @@ export type Database = {
           csc_id?: string | null
           csc_token?: string | null
           email?: string | null
+          exige_op_para_nfe?: boolean
           id?: string
           inscricao_estadual?: string | null
           inscricao_municipal?: string | null
@@ -869,6 +871,7 @@ export type Database = {
           csc_id?: string | null
           csc_token?: string | null
           email?: string | null
+          exige_op_para_nfe?: boolean
           id?: string
           inscricao_estadual?: string | null
           inscricao_municipal?: string | null
@@ -1177,6 +1180,7 @@ export type Database = {
           item_id: string
           numero_lote: string
           observacao: string | null
+          op_id: string | null
           quantidade: number
           quantidade_disponivel: number
           tipo: string
@@ -1191,6 +1195,7 @@ export type Database = {
           item_id: string
           numero_lote: string
           observacao?: string | null
+          op_id?: string | null
           quantidade?: number
           quantidade_disponivel?: number
           tipo: string
@@ -1205,6 +1210,7 @@ export type Database = {
           item_id?: string
           numero_lote?: string
           observacao?: string | null
+          op_id?: string | null
           quantidade?: number
           quantidade_disponivel?: number
           tipo?: string
@@ -1216,6 +1222,13 @@ export type Database = {
             columns: ["fornecedor_id"]
             isOneToOne: false
             referencedRelation: "tinturarias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lotes_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
             referencedColumns: ["id"]
           },
         ]
@@ -1437,6 +1450,7 @@ export type Database = {
           modelo: string | null
           numero: string
           observacao: string | null
+          op_id: string | null
           pdf_url: string | null
           peso_bruto: number | null
           peso_liquido: number | null
@@ -1482,6 +1496,7 @@ export type Database = {
           modelo?: string | null
           numero: string
           observacao?: string | null
+          op_id?: string | null
           pdf_url?: string | null
           peso_bruto?: number | null
           peso_liquido?: number | null
@@ -1527,6 +1542,7 @@ export type Database = {
           modelo?: string | null
           numero?: string
           observacao?: string | null
+          op_id?: string | null
           pdf_url?: string | null
           peso_bruto?: number | null
           peso_liquido?: number | null
@@ -1578,6 +1594,13 @@ export type Database = {
             columns: ["fornecedor_id"]
             isOneToOne: false
             referencedRelation: "tinturarias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notas_fiscais_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
             referencedColumns: ["id"]
           },
           {
@@ -1733,6 +1756,698 @@ export type Database = {
             columns: ["variante_id"]
             isOneToOne: false
             referencedRelation: "variantes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      op_apontamentos: {
+        Row: {
+          created_at: string
+          fim: string | null
+          funcionario_id: string | null
+          id: string
+          inicio: string
+          maquina_id: string | null
+          observacao: string | null
+          op_id: string
+          quantidade_produzida: number
+          quantidade_refugo: number
+        }
+        Insert: {
+          created_at?: string
+          fim?: string | null
+          funcionario_id?: string | null
+          id?: string
+          inicio: string
+          maquina_id?: string | null
+          observacao?: string | null
+          op_id: string
+          quantidade_produzida?: number
+          quantidade_refugo?: number
+        }
+        Update: {
+          created_at?: string
+          fim?: string | null
+          funcionario_id?: string | null
+          id?: string
+          inicio?: string
+          maquina_id?: string | null
+          observacao?: string | null
+          op_id?: string
+          quantidade_produzida?: number
+          quantidade_refugo?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_apontamentos_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_apontamentos_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_apontamentos_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      op_consumos: {
+        Row: {
+          created_at: string
+          id: string
+          lote_id: string | null
+          momento: string
+          observacao: string | null
+          op_id: string
+          quantidade: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lote_id?: string | null
+          momento?: string
+          observacao?: string | null
+          op_id: string
+          quantidade: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lote_id?: string | null
+          momento?: string
+          observacao?: string | null
+          op_id?: string
+          quantidade?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_consumos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_consumos_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      op_entradas_estoque: {
+        Row: {
+          created_at: string
+          data_entrada: string
+          id: string
+          lote_id: string | null
+          op_id: string
+          product_id: string | null
+          quantidade: number
+          user_id: string | null
+          variante_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_entrada?: string
+          id?: string
+          lote_id?: string | null
+          op_id: string
+          product_id?: string | null
+          quantidade: number
+          user_id?: string | null
+          variante_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_entrada?: string
+          id?: string
+          lote_id?: string | null
+          op_id?: string
+          product_id?: string | null
+          quantidade?: number
+          user_id?: string | null
+          variante_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_entradas_estoque_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_entradas_estoque_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_entradas_estoque_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_entradas_estoque_variante_id_fkey"
+            columns: ["variante_id"]
+            isOneToOne: false
+            referencedRelation: "variantes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      op_eventos: {
+        Row: {
+          created_at: string
+          de_status: Database["public"]["Enums"]["op_status"] | null
+          id: string
+          op_id: string
+          para_status: Database["public"]["Enums"]["op_status"] | null
+          payload: Json | null
+          tipo: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          de_status?: Database["public"]["Enums"]["op_status"] | null
+          id?: string
+          op_id: string
+          para_status?: Database["public"]["Enums"]["op_status"] | null
+          payload?: Json | null
+          tipo: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          de_status?: Database["public"]["Enums"]["op_status"] | null
+          id?: string
+          op_id?: string
+          para_status?: Database["public"]["Enums"]["op_status"] | null
+          payload?: Json | null
+          tipo?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_eventos_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      op_expedicoes: {
+        Row: {
+          created_at: string
+          data_entrega: string | null
+          data_saida: string | null
+          id: string
+          nota_fiscal_id: string | null
+          observacao: string | null
+          op_id: string
+          rastreio: string | null
+          status: string
+          transportadora_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_entrega?: string | null
+          data_saida?: string | null
+          id?: string
+          nota_fiscal_id?: string | null
+          observacao?: string | null
+          op_id: string
+          rastreio?: string | null
+          status?: string
+          transportadora_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_entrega?: string | null
+          data_saida?: string | null
+          id?: string
+          nota_fiscal_id?: string | null
+          observacao?: string | null
+          op_id?: string
+          rastreio?: string | null
+          status?: string
+          transportadora_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_expedicoes_nota_fiscal_id_fkey"
+            columns: ["nota_fiscal_id"]
+            isOneToOne: false
+            referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_expedicoes_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_expedicoes_transportadora_id_fkey"
+            columns: ["transportadora_id"]
+            isOneToOne: false
+            referencedRelation: "tinturarias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      op_faturamento: {
+        Row: {
+          created_at: string
+          id: string
+          nota_fiscal_id: string | null
+          op_id: string
+          quantidade_faturada: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nota_fiscal_id?: string | null
+          op_id: string
+          quantidade_faturada?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nota_fiscal_id?: string | null
+          op_id?: string
+          quantidade_faturada?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_faturamento_nota_fiscal_id_fkey"
+            columns: ["nota_fiscal_id"]
+            isOneToOne: false
+            referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_faturamento_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      op_itens: {
+        Row: {
+          cor_id: string | null
+          created_at: string
+          descricao: string | null
+          estampa_id: string | null
+          id: string
+          op_id: string
+          pedido_item_id: string | null
+          product_id: string | null
+          quantidade_aprovada: number
+          quantidade_planejada: number
+          quantidade_produzida: number
+          quantidade_reprovada: number
+          unidade: string
+          variante_id: string | null
+        }
+        Insert: {
+          cor_id?: string | null
+          created_at?: string
+          descricao?: string | null
+          estampa_id?: string | null
+          id?: string
+          op_id: string
+          pedido_item_id?: string | null
+          product_id?: string | null
+          quantidade_aprovada?: number
+          quantidade_planejada?: number
+          quantidade_produzida?: number
+          quantidade_reprovada?: number
+          unidade?: string
+          variante_id?: string | null
+        }
+        Update: {
+          cor_id?: string | null
+          created_at?: string
+          descricao?: string | null
+          estampa_id?: string | null
+          id?: string
+          op_id?: string
+          pedido_item_id?: string | null
+          product_id?: string | null
+          quantidade_aprovada?: number
+          quantidade_planejada?: number
+          quantidade_produzida?: number
+          quantidade_reprovada?: number
+          unidade?: string
+          variante_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_itens_cor_id_fkey"
+            columns: ["cor_id"]
+            isOneToOne: false
+            referencedRelation: "cores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_itens_estampa_id_fkey"
+            columns: ["estampa_id"]
+            isOneToOne: false
+            referencedRelation: "estampas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_itens_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_itens_pedido_item_id_fkey"
+            columns: ["pedido_item_id"]
+            isOneToOne: false
+            referencedRelation: "pedido_itens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_itens_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_itens_variante_id_fkey"
+            columns: ["variante_id"]
+            isOneToOne: false
+            referencedRelation: "variantes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      op_qualidade: {
+        Row: {
+          created_at: string
+          data: string
+          id: string
+          inspetor_id: string | null
+          motivo: string | null
+          op_id: string
+          quantidade_aprovada: number
+          quantidade_reprovada: number
+          resultado: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data?: string
+          id?: string
+          inspetor_id?: string | null
+          motivo?: string | null
+          op_id: string
+          quantidade_aprovada?: number
+          quantidade_reprovada?: number
+          resultado: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          id?: string
+          inspetor_id?: string | null
+          motivo?: string | null
+          op_id?: string
+          quantidade_aprovada?: number
+          quantidade_reprovada?: number
+          resultado?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_qualidade_inspetor_id_fkey"
+            columns: ["inspetor_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_qualidade_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ordens_producao: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          data_abertura: string
+          data_conclusao: string | null
+          data_prevista: string | null
+          funcionario_id: string | null
+          id: string
+          maquina_id: string | null
+          numero: number
+          observacao: string | null
+          pedido_id: string | null
+          prioridade: number
+          responsavel_id: string | null
+          status: Database["public"]["Enums"]["op_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          data_abertura?: string
+          data_conclusao?: string | null
+          data_prevista?: string | null
+          funcionario_id?: string | null
+          id?: string
+          maquina_id?: string | null
+          numero: number
+          observacao?: string | null
+          pedido_id?: string | null
+          prioridade?: number
+          responsavel_id?: string | null
+          status?: Database["public"]["Enums"]["op_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          data_abertura?: string
+          data_conclusao?: string | null
+          data_prevista?: string | null
+          funcionario_id?: string | null
+          id?: string
+          maquina_id?: string | null
+          numero?: number
+          observacao?: string | null
+          pedido_id?: string | null
+          prioridade?: number
+          responsavel_id?: string | null
+          status?: Database["public"]["Enums"]["op_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ordens_producao_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ordens_producao_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ordens_producao_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pedido_itens: {
+        Row: {
+          cor_id: string | null
+          created_at: string
+          descricao: string | null
+          estampa_id: string | null
+          id: string
+          pedido_id: string
+          product_id: string | null
+          quantidade: number
+          unidade: string
+          valor_total: number | null
+          valor_unitario: number
+          variante_id: string | null
+        }
+        Insert: {
+          cor_id?: string | null
+          created_at?: string
+          descricao?: string | null
+          estampa_id?: string | null
+          id?: string
+          pedido_id: string
+          product_id?: string | null
+          quantidade?: number
+          unidade?: string
+          valor_total?: number | null
+          valor_unitario?: number
+          variante_id?: string | null
+        }
+        Update: {
+          cor_id?: string | null
+          created_at?: string
+          descricao?: string | null
+          estampa_id?: string | null
+          id?: string
+          pedido_id?: string
+          product_id?: string | null
+          quantidade?: number
+          unidade?: string
+          valor_total?: number | null
+          valor_unitario?: number
+          variante_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pedido_itens_cor_id_fkey"
+            columns: ["cor_id"]
+            isOneToOne: false
+            referencedRelation: "cores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pedido_itens_estampa_id_fkey"
+            columns: ["estampa_id"]
+            isOneToOne: false
+            referencedRelation: "estampas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pedido_itens_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pedido_itens_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pedido_itens_variante_id_fkey"
+            columns: ["variante_id"]
+            isOneToOne: false
+            referencedRelation: "variantes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pedidos: {
+        Row: {
+          cliente_id: string | null
+          condicao_pagamento: string | null
+          created_at: string
+          created_by: string | null
+          data_pedido: string
+          id: string
+          numero: string
+          observacao: string | null
+          prazo_entrega: string | null
+          status: string
+          updated_at: string
+          valor_total: number
+          vendedor_id: string | null
+        }
+        Insert: {
+          cliente_id?: string | null
+          condicao_pagamento?: string | null
+          created_at?: string
+          created_by?: string | null
+          data_pedido?: string
+          id?: string
+          numero: string
+          observacao?: string | null
+          prazo_entrega?: string | null
+          status?: string
+          updated_at?: string
+          valor_total?: number
+          vendedor_id?: string | null
+        }
+        Update: {
+          cliente_id?: string | null
+          condicao_pagamento?: string | null
+          created_at?: string
+          created_by?: string | null
+          data_pedido?: string
+          id?: string
+          numero?: string
+          observacao?: string | null
+          prazo_entrega?: string | null
+          status?: string
+          updated_at?: string
+          valor_total?: number
+          vendedor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pedidos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pedidos_vendedor_id_fkey"
+            columns: ["vendedor_id"]
+            isOneToOne: false
+            referencedRelation: "sales_reps"
             referencedColumns: ["id"]
           },
         ]
@@ -2181,6 +2896,21 @@ export type Database = {
         Returns: boolean
       }
       is_admin_or_gerente: { Args: { _user_id: string }; Returns: boolean }
+      op_transicao_valida: {
+        Args: {
+          _de: Database["public"]["Enums"]["op_status"]
+          _para: Database["public"]["Enums"]["op_status"]
+        }
+        Returns: boolean
+      }
+      op_transicionar: {
+        Args: {
+          _novo_status: Database["public"]["Enums"]["op_status"]
+          _op_id: string
+          _payload?: Json
+        }
+        Returns: Database["public"]["Enums"]["op_status"]
+      }
       proximo_numero_nfe: {
         Args: {
           _ambiente?: string
@@ -2190,6 +2920,7 @@ export type Database = {
         }
         Returns: number
       }
+      proximo_numero_op: { Args: never; Returns: number }
       user_has_menu_permission: {
         Args: { _url: string; _user_id: string }
         Returns: boolean
@@ -2205,6 +2936,20 @@ export type Database = {
         | "logistica"
         | "qualidade"
         | "desenvolvedor"
+      op_status:
+        | "planejada"
+        | "programada"
+        | "em_producao"
+        | "parcial"
+        | "aguardando_qualidade"
+        | "reprovada"
+        | "aprovada"
+        | "pronta_estoque"
+        | "pronta_faturamento"
+        | "faturada"
+        | "expedida"
+        | "encerrada"
+        | "cancelada"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2341,6 +3086,21 @@ export const Constants = {
         "logistica",
         "qualidade",
         "desenvolvedor",
+      ],
+      op_status: [
+        "planejada",
+        "programada",
+        "em_producao",
+        "parcial",
+        "aguardando_qualidade",
+        "reprovada",
+        "aprovada",
+        "pronta_estoque",
+        "pronta_faturamento",
+        "faturada",
+        "expedida",
+        "encerrada",
+        "cancelada",
       ],
     },
   },
