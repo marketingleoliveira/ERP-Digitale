@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FilePlus2, Loader2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useMultiSelection } from "@/hooks/use-multi-selection";
 
 export const Route = createFileRoute("/_app/variante")({
   ssr: false,
@@ -41,7 +42,6 @@ function VariantePage() {
   const [filter, setFilter] = useState("");
   const [applied, setApplied] = useState("");
   const [page, setPage] = useState(1);
-  const [selected, setSelected] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Variante | null>(null);
 
@@ -51,16 +51,18 @@ function VariantePage() {
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const selectedRow = data.find((v) => v.id === selected) ?? null;
+  const sel = useMultiSelection(paged);
+  const singleRow = sel.singleSelected;
 
   const deleteMut = useMutation({
-    mutationFn: async (row: Variante) => {
-      const { error } = await supabase.from("variantes").delete().eq("id", row.id);
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase.from("variantes").delete().in("id", ids);
       if (error) throw error;
+      return ids.length;
     },
-    onSuccess: () => {
-      toast.success("Variante excluída.");
-      setSelected(null);
+    onSuccess: (n) => {
+      toast.success(`${n} variante(s) excluída(s).`);
+      sel.clear();
       qc.invalidateQueries({ queryKey: ["variantes"] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -75,11 +77,11 @@ function VariantePage() {
           <Button size="sm" variant="outline" onClick={() => { setEditing(null); setDialogOpen(true); }}>
             <FilePlus2 className="h-4 w-4 mr-1.5" />CADASTRAR
           </Button>
-          <Button size="sm" variant="outline" disabled={!selectedRow} onClick={() => { setEditing(selectedRow); setDialogOpen(true); }}>
+          <Button size="sm" variant="outline" disabled={!singleRow} onClick={() => { setEditing(singleRow); setDialogOpen(true); }}>
             <Pencil className="h-4 w-4 mr-1.5" />ALTERAR
           </Button>
-          <Button size="sm" variant="outline" disabled={!selectedRow || deleteMut.isPending} onClick={() => selectedRow && deleteMut.mutate(selectedRow)}>
-            <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR
+          <Button size="sm" variant="outline" disabled={sel.count === 0 || deleteMut.isPending} onClick={() => deleteMut.mutate([...sel.selectedIds])}>
+            <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR{sel.count > 1 ? ` (${sel.count})` : ""}
           </Button>
         </div>
 
@@ -87,7 +89,9 @@ function VariantePage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-primary hover:bg-primary">
-                <TableHead className="w-10"></TableHead>
+                <TableHead className="w-10 text-center">
+                  <Checkbox checked={sel.allSelected} onCheckedChange={(c) => sel.toggleAll(!!c)} aria-label="Selecionar todas" />
+                </TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Variante</TableHead>
                 <TableHead className="text-primary-foreground font-semibold text-center w-16">Hab</TableHead>
               </TableRow>
@@ -100,7 +104,7 @@ function VariantePage() {
               ) : paged.map((v) => (
                 <TableRow key={v.id}>
                   <TableCell>
-                    <Checkbox checked={selected === v.id} onCheckedChange={(c) => setSelected(c ? v.id : null)} />
+                    <Checkbox checked={sel.isSelected(v.id)} onCheckedChange={(c) => sel.toggleOne(v.id, !!c)} />
                   </TableCell>
                   <TableCell>{v.nome}</TableCell>
                   <TableCell className="text-center">

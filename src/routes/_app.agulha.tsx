@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FilePlus2, Loader2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useMultiSelection } from "@/hooks/use-multi-selection";
 
 export const Route = createFileRoute("/_app/agulha")({
   ssr: false,
@@ -50,7 +51,6 @@ function AgulhaPage() {
   const [filter, setFilter] = useState("");
   const [applied, setApplied] = useState("");
   const [page, setPage] = useState(1);
-  const [selected, setSelected] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Agulha | null>(null);
 
@@ -60,16 +60,18 @@ function AgulhaPage() {
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const selectedRow = data.find((a) => a.id === selected) ?? null;
+  const sel = useMultiSelection(paged);
+  const singleRow = sel.singleSelected;
 
   const deleteMut = useMutation({
-    mutationFn: async (row: Agulha) => {
-      const { error } = await sb.from("agulhas").delete().eq("id", row.id);
+    mutationFn: async (ids: string[]) => {
+      const { error } = await (supabase.from("agulhas") as any).delete().in("id", ids);
       if (error) throw error;
+      return ids.length;
     },
-    onSuccess: () => {
-      toast.success("Agulha excluída.");
-      setSelected(null);
+    onSuccess: (n) => {
+      toast.success(`${n} agulha(s) excluída(s).`);
+      sel.clear();
       qc.invalidateQueries({ queryKey: ["agulhas"] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -84,11 +86,11 @@ function AgulhaPage() {
           <Button size="sm" variant="outline" onClick={() => { setEditing(null); setDialogOpen(true); }}>
             <FilePlus2 className="h-4 w-4 mr-1.5" />CADASTRAR
           </Button>
-          <Button size="sm" variant="outline" disabled={!selectedRow} onClick={() => { setEditing(selectedRow); setDialogOpen(true); }}>
+          <Button size="sm" variant="outline" disabled={!singleRow} onClick={() => { setEditing(singleRow); setDialogOpen(true); }}>
             <Pencil className="h-4 w-4 mr-1.5" />ALTERAR
           </Button>
-          <Button size="sm" variant="outline" disabled={!selectedRow || deleteMut.isPending} onClick={() => selectedRow && deleteMut.mutate(selectedRow)}>
-            <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR
+          <Button size="sm" variant="outline" disabled={sel.count === 0 || deleteMut.isPending} onClick={() => deleteMut.mutate([...sel.selectedIds])}>
+            <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR{sel.count > 1 ? ` (${sel.count})` : ""}
           </Button>
         </div>
 
@@ -96,7 +98,13 @@ function AgulhaPage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-primary hover:bg-primary">
-                <TableHead className="w-10"></TableHead>
+                <TableHead className="w-10 text-center">
+                  <Checkbox
+                    checked={sel.allSelected}
+                    onCheckedChange={(c) => sel.toggleAll(!!c)}
+                    aria-label="Selecionar todas"
+                  />
+                </TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Agulha</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Modelo</TableHead>
                 <TableHead className="text-primary-foreground font-semibold text-center w-20">PE</TableHead>
@@ -112,7 +120,7 @@ function AgulhaPage() {
               ) : paged.map((a) => (
                 <TableRow key={a.id}>
                   <TableCell>
-                    <Checkbox checked={selected === a.id} onCheckedChange={(c) => setSelected(c ? a.id : null)} />
+                    <Checkbox checked={sel.isSelected(a.id)} onCheckedChange={(c) => sel.toggleOne(a.id, !!c)} />
                   </TableCell>
                   <TableCell><span className="text-primary font-medium">{a.agulha}</span></TableCell>
                   <TableCell>{a.modelo ?? "—"}</TableCell>

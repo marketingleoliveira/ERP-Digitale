@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FilePlus2, Loader2, Pencil, Printer, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useMultiSelection } from "@/hooks/use-multi-selection";
 
 export const Route = createFileRoute("/_app/cor")({
   ssr: false,
@@ -57,7 +58,6 @@ function CorPage() {
   const [filter, setFilter] = useState("");
   const [applied, setApplied] = useState("");
   const [page, setPage] = useState(1);
-  const [selected, setSelected] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Cor | null>(null);
 
@@ -67,17 +67,18 @@ function CorPage() {
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const selectedRow = data.find((c) => c.id === selected) ?? null;
+  const sel = useMultiSelection(paged);
+  const singleRow = sel.singleSelected;
 
   const deleteMut = useMutation({
-    mutationFn: async (row: Cor) => {
-      const client = supabase as unknown as { from: (t: string) => { delete: () => { eq: (c: string, v: string) => Promise<{ error: Error | null }> } } };
-      const { error } = await client.from("cores").delete().eq("id", row.id);
+    mutationFn: async (ids: string[]) => {
+      const { error } = await (supabase.from("cores") as any).delete().in("id", ids);
       if (error) throw error;
+      return ids.length;
     },
-    onSuccess: () => {
-      toast.success("Cor excluída.");
-      setSelected(null);
+    onSuccess: (n) => {
+      toast.success(`${n} cor(es) excluída(s).`);
+      sel.clear();
       qc.invalidateQueries({ queryKey: ["cores"] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -92,11 +93,11 @@ function CorPage() {
           <Button size="sm" variant="outline" onClick={() => { setEditing(null); setDialogOpen(true); }}>
             <FilePlus2 className="h-4 w-4 mr-1.5" />CADASTRAR
           </Button>
-          <Button size="sm" variant="outline" disabled={!selectedRow} onClick={() => { setEditing(selectedRow); setDialogOpen(true); }}>
+          <Button size="sm" variant="outline" disabled={!singleRow} onClick={() => { setEditing(singleRow); setDialogOpen(true); }}>
             <Pencil className="h-4 w-4 mr-1.5" />ALTERAR
           </Button>
-          <Button size="sm" variant="outline" disabled={!selectedRow || deleteMut.isPending} onClick={() => selectedRow && deleteMut.mutate(selectedRow)}>
-            <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR
+          <Button size="sm" variant="outline" disabled={sel.count === 0 || deleteMut.isPending} onClick={() => deleteMut.mutate([...sel.selectedIds])}>
+            <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR{sel.count > 1 ? ` (${sel.count})` : ""}
           </Button>
           <Button size="sm" variant="outline" onClick={() => window.print()}>
             <Printer className="h-4 w-4 mr-1.5" />IMPRIMIR
@@ -107,7 +108,9 @@ function CorPage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-primary hover:bg-primary">
-                <TableHead className="w-10"></TableHead>
+                <TableHead className="w-10 text-center">
+                  <Checkbox checked={sel.allSelected} onCheckedChange={(v) => sel.toggleAll(!!v)} aria-label="Selecionar todas" />
+                </TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Código</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Tipo</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Cor</TableHead>
@@ -124,7 +127,7 @@ function CorPage() {
               ) : paged.map((c) => (
                 <TableRow key={c.id}>
                   <TableCell>
-                    <Checkbox checked={selected === c.id} onCheckedChange={(v) => setSelected(v ? c.id : null)} />
+                    <Checkbox checked={sel.isSelected(c.id)} onCheckedChange={(v) => sel.toggleOne(c.id, !!v)} />
                   </TableCell>
                   <TableCell><span className="text-primary font-medium">{c.codigo}</span></TableCell>
                   <TableCell>{c.tipo}</TableCell>
