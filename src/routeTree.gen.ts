@@ -38,6 +38,11 @@ import { Route as AppComposicaoRouteImport } from './routes/_app.composicao'
 import { Route as AppClienteArtigoRouteImport } from './routes/_app.cliente-artigo'
 import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
 import { Route as AppAgulhaRouteImport } from './routes/_app.agulha'
+import { Route as AppProducaoIndexRouteImport } from './routes/_app.producao.index'
+import { Route as AppProducaoQualidadeRouteImport } from './routes/_app.producao.qualidade'
+import { Route as AppProducaoPedidosRouteImport } from './routes/_app.producao.pedidos'
+import { Route as AppProducaoOpRouteImport } from './routes/_app.producao.op'
+import { Route as AppProducaoExpedicaoRouteImport } from './routes/_app.producao.expedicao'
 import { Route as AppFiscalUfIcmsRouteImport } from './routes/_app.fiscal.uf-icms'
 import { Route as AppFiscalRNotaFiscalRouteImport } from './routes/_app.fiscal.r-nota-fiscal'
 import { Route as AppFiscalNotaFiscalUploadRouteImport } from './routes/_app.fiscal.nota-fiscal-upload'
@@ -47,6 +52,7 @@ import { Route as AppFiscalImpostosRouteImport } from './routes/_app.fiscal.impo
 import { Route as AppFiscalDashboardRouteImport } from './routes/_app.fiscal.dashboard'
 import { Route as AppFiscalCfopRouteImport } from './routes/_app.fiscal.cfop'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
+import { Route as AppProducaoOpIdRouteImport } from './routes/_app.producao.op.$id'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -192,6 +198,31 @@ const AppAgulhaRoute = AppAgulhaRouteImport.update({
   path: '/agulha',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProducaoIndexRoute = AppProducaoIndexRouteImport.update({
+  id: '/producao/',
+  path: '/producao/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProducaoQualidadeRoute = AppProducaoQualidadeRouteImport.update({
+  id: '/producao/qualidade',
+  path: '/producao/qualidade',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProducaoPedidosRoute = AppProducaoPedidosRouteImport.update({
+  id: '/producao/pedidos',
+  path: '/producao/pedidos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProducaoOpRoute = AppProducaoOpRouteImport.update({
+  id: '/producao/op',
+  path: '/producao/op',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProducaoExpedicaoRoute = AppProducaoExpedicaoRouteImport.update({
+  id: '/producao/expedicao',
+  path: '/producao/expedicao',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFiscalUfIcmsRoute = AppFiscalUfIcmsRouteImport.update({
   id: '/fiscal/uf-icms',
   path: '/fiscal/uf-icms',
@@ -239,6 +270,11 @@ const AppDevCargosRoute = AppDevCargosRouteImport.update({
   path: '/dev/cargos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProducaoOpIdRoute = AppProducaoOpIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppProducaoOpRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -278,6 +314,12 @@ export interface FileRoutesByFullPath {
   '/fiscal/nota-fiscal-upload': typeof AppFiscalNotaFiscalUploadRoute
   '/fiscal/r-nota-fiscal': typeof AppFiscalRNotaFiscalRoute
   '/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
+  '/producao/expedicao': typeof AppProducaoExpedicaoRoute
+  '/producao/op': typeof AppProducaoOpRouteWithChildren
+  '/producao/pedidos': typeof AppProducaoPedidosRoute
+  '/producao/qualidade': typeof AppProducaoQualidadeRoute
+  '/producao/': typeof AppProducaoIndexRoute
+  '/producao/op/$id': typeof AppProducaoOpIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -317,6 +359,12 @@ export interface FileRoutesByTo {
   '/fiscal/nota-fiscal-upload': typeof AppFiscalNotaFiscalUploadRoute
   '/fiscal/r-nota-fiscal': typeof AppFiscalRNotaFiscalRoute
   '/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
+  '/producao/expedicao': typeof AppProducaoExpedicaoRoute
+  '/producao/op': typeof AppProducaoOpRouteWithChildren
+  '/producao/pedidos': typeof AppProducaoPedidosRoute
+  '/producao/qualidade': typeof AppProducaoQualidadeRoute
+  '/producao': typeof AppProducaoIndexRoute
+  '/producao/op/$id': typeof AppProducaoOpIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -358,6 +406,12 @@ export interface FileRoutesById {
   '/_app/fiscal/nota-fiscal-upload': typeof AppFiscalNotaFiscalUploadRoute
   '/_app/fiscal/r-nota-fiscal': typeof AppFiscalRNotaFiscalRoute
   '/_app/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
+  '/_app/producao/expedicao': typeof AppProducaoExpedicaoRoute
+  '/_app/producao/op': typeof AppProducaoOpRouteWithChildren
+  '/_app/producao/pedidos': typeof AppProducaoPedidosRoute
+  '/_app/producao/qualidade': typeof AppProducaoQualidadeRoute
+  '/_app/producao/': typeof AppProducaoIndexRoute
+  '/_app/producao/op/$id': typeof AppProducaoOpIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -399,6 +453,12 @@ export interface FileRouteTypes {
     | '/fiscal/nota-fiscal-upload'
     | '/fiscal/r-nota-fiscal'
     | '/fiscal/uf-icms'
+    | '/producao/expedicao'
+    | '/producao/op'
+    | '/producao/pedidos'
+    | '/producao/qualidade'
+    | '/producao/'
+    | '/producao/op/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -438,6 +498,12 @@ export interface FileRouteTypes {
     | '/fiscal/nota-fiscal-upload'
     | '/fiscal/r-nota-fiscal'
     | '/fiscal/uf-icms'
+    | '/producao/expedicao'
+    | '/producao/op'
+    | '/producao/pedidos'
+    | '/producao/qualidade'
+    | '/producao'
+    | '/producao/op/$id'
   id:
     | '__root__'
     | '/'
@@ -478,6 +544,12 @@ export interface FileRouteTypes {
     | '/_app/fiscal/nota-fiscal-upload'
     | '/_app/fiscal/r-nota-fiscal'
     | '/_app/fiscal/uf-icms'
+    | '/_app/producao/expedicao'
+    | '/_app/producao/op'
+    | '/_app/producao/pedidos'
+    | '/_app/producao/qualidade'
+    | '/_app/producao/'
+    | '/_app/producao/op/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -692,6 +764,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAgulhaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/producao/': {
+      id: '/_app/producao/'
+      path: '/producao'
+      fullPath: '/producao/'
+      preLoaderRoute: typeof AppProducaoIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/producao/qualidade': {
+      id: '/_app/producao/qualidade'
+      path: '/producao/qualidade'
+      fullPath: '/producao/qualidade'
+      preLoaderRoute: typeof AppProducaoQualidadeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/producao/pedidos': {
+      id: '/_app/producao/pedidos'
+      path: '/producao/pedidos'
+      fullPath: '/producao/pedidos'
+      preLoaderRoute: typeof AppProducaoPedidosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/producao/op': {
+      id: '/_app/producao/op'
+      path: '/producao/op'
+      fullPath: '/producao/op'
+      preLoaderRoute: typeof AppProducaoOpRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/producao/expedicao': {
+      id: '/_app/producao/expedicao'
+      path: '/producao/expedicao'
+      fullPath: '/producao/expedicao'
+      preLoaderRoute: typeof AppProducaoExpedicaoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/fiscal/uf-icms': {
       id: '/_app/fiscal/uf-icms'
       path: '/fiscal/uf-icms'
@@ -755,8 +862,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDevCargosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/producao/op/$id': {
+      id: '/_app/producao/op/$id'
+      path: '/$id'
+      fullPath: '/producao/op/$id'
+      preLoaderRoute: typeof AppProducaoOpIdRouteImport
+      parentRoute: typeof AppProducaoOpRoute
+    }
   }
 }
+
+interface AppProducaoOpRouteChildren {
+  AppProducaoOpIdRoute: typeof AppProducaoOpIdRoute
+}
+
+const AppProducaoOpRouteChildren: AppProducaoOpRouteChildren = {
+  AppProducaoOpIdRoute: AppProducaoOpIdRoute,
+}
+
+const AppProducaoOpRouteWithChildren = AppProducaoOpRoute._addFileChildren(
+  AppProducaoOpRouteChildren,
+)
 
 interface AppRouteChildren {
   AppAgulhaRoute: typeof AppAgulhaRoute
@@ -793,6 +919,11 @@ interface AppRouteChildren {
   AppFiscalNotaFiscalUploadRoute: typeof AppFiscalNotaFiscalUploadRoute
   AppFiscalRNotaFiscalRoute: typeof AppFiscalRNotaFiscalRoute
   AppFiscalUfIcmsRoute: typeof AppFiscalUfIcmsRoute
+  AppProducaoExpedicaoRoute: typeof AppProducaoExpedicaoRoute
+  AppProducaoOpRoute: typeof AppProducaoOpRouteWithChildren
+  AppProducaoPedidosRoute: typeof AppProducaoPedidosRoute
+  AppProducaoQualidadeRoute: typeof AppProducaoQualidadeRoute
+  AppProducaoIndexRoute: typeof AppProducaoIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -830,6 +961,11 @@ const AppRouteChildren: AppRouteChildren = {
   AppFiscalNotaFiscalUploadRoute: AppFiscalNotaFiscalUploadRoute,
   AppFiscalRNotaFiscalRoute: AppFiscalRNotaFiscalRoute,
   AppFiscalUfIcmsRoute: AppFiscalUfIcmsRoute,
+  AppProducaoExpedicaoRoute: AppProducaoExpedicaoRoute,
+  AppProducaoOpRoute: AppProducaoOpRouteWithChildren,
+  AppProducaoPedidosRoute: AppProducaoPedidosRoute,
+  AppProducaoQualidadeRoute: AppProducaoQualidadeRoute,
+  AppProducaoIndexRoute: AppProducaoIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
