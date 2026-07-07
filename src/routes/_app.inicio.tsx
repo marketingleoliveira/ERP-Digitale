@@ -139,6 +139,49 @@ function InicioPage() {
     { label: "R$ Ticket Médio Mês", value: fmtBRL(stats.ticket) },
   ];
 
+  // Dados para gráficos (últimos 6 meses)
+  const chartData = useMemo(() => {
+    const months: { key: string; label: string; date: Date }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push({
+        key: `${d.getFullYear()}-${d.getMonth()}`,
+        label: d.toLocaleDateString("pt-BR", { month: "short" }).replace(".", ""),
+        date: d,
+      });
+    }
+    const monthly = months.map((m, idx) => {
+      const next = idx + 1 < months.length ? months[idx + 1].date : new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      const novos = rows.filter((r) => {
+        if (!r.created_at) return false;
+        const c = new Date(r.created_at);
+        return c >= m.date && c < next;
+      }).length;
+      const ativos = rows.filter((r) => {
+        if (!r.updated_at) return false;
+        const u = new Date(r.updated_at);
+        return u >= m.date && u < next && r.status?.toLowerCase() === "ativo";
+      }).length;
+      return { mes: m.label, novos, ativos };
+    });
+
+    const ativosCount = rows.filter((r) => r.status?.toLowerCase() === "ativo").length;
+    const pie = [
+      { name: "Ativos", value: ativosCount },
+      { name: "Inativos", value: Math.max(0, rows.length - ativosCount) },
+    ];
+
+    const kpis = [
+      { name: "Clientes", value: rows.length },
+      { name: "Funcionários", value: counts.funcionarios },
+      { name: "Produtos", value: counts.produtos },
+      { name: "Artigos", value: counts.artigos },
+    ];
+
+    return { monthly, pie, kpis };
+  }, [rows, counts, now]);
+
+
   return (
     <div className="space-y-6">
       {/* Resumo Vendas */}
