@@ -61,7 +61,7 @@ export const GROUP_ORDER = [
 
 
 
-const STORAGE_KEY = "digitale.menu.visibility.v9";
+const STORAGE_KEY = "digitale.menu.visibility.v10";
 
 /** New/current items default visible; legacy items marked defaultHidden stay off. */
 function getDefaults(): Record<string, boolean> {
