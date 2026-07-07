@@ -235,7 +235,7 @@ function ArtigosPage() {
                     <td className="p-2 uppercase">{i.nome}</td>
                     <td className="p-2 text-right">{i.rendimento != null ? Number(i.rendimento).toFixed(2) : "—"}</td>
                     <td className="p-2 text-center">
-                      <StatusDot checked={i.ativo} onToggle={(v) => toggleAtivoMut.mutate({ id: i.id, ativo: v })} />
+                      <StatusDot checked={i.ativo} onToggle={(v: boolean) => toggleAtivoMut.mutate({ id: i.id, ativo: v })} />
                     </td>
                   </tr>
                 );
