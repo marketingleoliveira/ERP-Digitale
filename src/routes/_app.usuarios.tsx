@@ -163,6 +163,9 @@ function UsuariosPage() {
   );
 }
 
+type FuncOpt = { id: string; nome: string; email: string | null };
+type RepOpt = { id: string; nome: string; email: string | null };
+
 function UsuarioDialog({
   open, onOpenChange, editing, cargos, currentCargoId, onSaved,
 }: {
@@ -173,45 +176,87 @@ function UsuarioDialog({
   currentCargoId: string | null;
   onSaved: () => void;
 }) {
-  const [nome, setNome] = useState("");
+  const { data: funcionarios = [] } = useQuery<FuncOpt[]>({
+    queryKey: ["funcionarios-opts"],
+    queryFn: async () => {
+      const { data, error } = await sb.from("funcionarios").select("id,nome,email").eq("habilitado", true).order("nome");
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: open,
+  });
+  const { data: representantes = [] } = useQuery<RepOpt[]>({
+    queryKey: ["sales-reps-opts"],
+    queryFn: async () => {
+      const { data, error } = await sb.from("sales_reps").select("id,nome,email").eq("ativo", true).order("nome");
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: open,
+  });
+
+  const [cargoId, setCargoId] = useState<string>("");
+  const [funcionarioId, setFuncionarioId] = useState<string>("");
+  const [representanteId, setRepresentanteId] = useState<string>("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [confirma, setConfirma] = useState("");
   const [ativo, setAtivo] = useState(true);
-  const [cargoId, setCargoId] = useState<string>("");
 
-  // Reset form when opening
   useMemo(() => {
     if (open) {
-      setNome(editing?.nome ?? "");
+      setCargoId(currentCargoId ?? "");
+      setFuncionarioId("");
+      setRepresentanteId("");
       setEmail(editing?.email ?? "");
       setSenha("");
+      setConfirma("");
       setAtivo(editing?.ativo ?? true);
-      setCargoId(currentCargoId ?? "");
     }
   }, [open, editing, currentCargoId]);
 
+  // Auto-preencher email quando escolher funcionário/representante
+  const onSelectFuncionario = (id: string) => {
+    setFuncionarioId(id);
+    const f = funcionarios.find((x) => x.id === id);
+    if (f?.email && !editing) setEmail(f.email);
+  };
+  const onSelectRepresentante = (id: string) => {
+    setRepresentanteId(id);
+    const r = representantes.find((x) => x.id === id);
+    if (r?.email && !editing) setEmail(r.email);
+  };
+
+  const nomeSelecionado = useMemo(() => {
+    const f = funcionarios.find((x) => x.id === funcionarioId);
+    if (f) return f.nome;
+    const r = representantes.find((x) => x.id === representanteId);
+    if (r) return r.nome;
+    return editing?.nome ?? "";
+  }, [funcionarioId, representanteId, funcionarios, representantes, editing]);
+
   const saveMut = useMutation({
     mutationFn: async () => {
+      if (!cargoId) throw new Error("Selecione o Tipo (cargo).");
       if (editing) {
-        const { error } = await sb.from("profiles").update({ nome: nome.trim(), ativo }).eq("id", editing.id);
+        const { error } = await sb.from("profiles").update({ nome: nomeSelecionado.trim() || editing.nome, ativo }).eq("id", editing.id);
         if (error) throw error;
-        // Sync cargo
         await sb.from("user_cargos").delete().eq("user_id", editing.id);
-        if (cargoId) {
-          const { error: e2 } = await sb.from("user_cargos").insert({ user_id: editing.id, cargo_id: cargoId });
-          if (e2) throw e2;
-        }
+        const { error: e2 } = await sb.from("user_cargos").insert({ user_id: editing.id, cargo_id: cargoId });
+        if (e2) throw e2;
         return "Usuário atualizado.";
       } else {
+        if (!funcionarioId && !representanteId) throw new Error("Selecione um Funcionário ou Representante.");
         if (!email || !senha) throw new Error("Email e senha são obrigatórios.");
+        if (senha !== confirma) throw new Error("As senhas não conferem.");
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
           password: senha,
-          options: { data: { nome: nome.trim() } },
+          options: { data: { nome: nomeSelecionado.trim() } },
         });
         if (error) throw error;
         const uid = data.user?.id;
-        if (uid && cargoId) {
+        if (uid) {
           await sb.from("user_cargos").insert({ user_id: uid, cargo_id: cargoId });
         }
         return "Usuário cadastrado.";
@@ -221,40 +266,70 @@ function UsuarioDialog({
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const Field = ({ label, req, children }: { label: string; req?: 1 | 2; children: React.ReactNode }) => (
+    <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+      <Label className="text-right text-sm">
+        {req ? <span className="text-destructive mr-0.5">{"*".repeat(req)}</span> : null}
+        {label}:
+      </Label>
+      <div>{children}</div>
+    </div>
+  );
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle>{editing ? "Alterar Usuário" : "Cadastrar Usuário"}</DialogTitle>
+          <DialogTitle>{editing ? "Alterar Usuário" : "Cadastro Usuário"}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-3">
-          <div>
-            <Label>Nome</Label>
-            <Input value={nome} onChange={(e) => setNome(e.target.value)} />
-          </div>
-          <div>
-            <Label>Email</Label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={!!editing} />
-          </div>
-          {!editing && (
-            <div>
-              <Label>Senha</Label>
-              <Input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
-            </div>
-          )}
-          <div>
-            <Label>Cargo</Label>
+        <div className="space-y-3 rounded-md bg-muted/40 p-4">
+          <Field label="Tipo" req={1}>
             <Select value={cargoId} onValueChange={setCargoId}>
-              <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+              <SelectTrigger className="h-8"><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
               <SelectContent>
                 {cargos.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
               </SelectContent>
             </Select>
-          </div>
-          <div className="flex items-center gap-2">
-            <Checkbox id="ativo" checked={ativo} onCheckedChange={(v) => setAtivo(!!v)} />
-            <Label htmlFor="ativo">Habilitado</Label>
-          </div>
+          </Field>
+
+          <Field label="Funcionário" req={2}>
+            <Select value={funcionarioId} onValueChange={onSelectFuncionario} disabled={!!editing}>
+              <SelectTrigger className="h-8"><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>
+                {funcionarios.map((f) => <SelectItem key={f.id} value={f.id}>{f.nome}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </Field>
+
+          <Field label="Representante" req={2}>
+            <Select value={representanteId} onValueChange={onSelectRepresentante} disabled={!!editing}>
+              <SelectTrigger className="h-8"><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>
+                {representantes.map((r) => <SelectItem key={r.id} value={r.id}>{r.nome}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </Field>
+
+          <Field label="Email" req={1}>
+            <Input className="h-8" type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={!!editing} />
+          </Field>
+
+          {!editing && (
+            <>
+              <Field label="Senha" req={1}>
+                <Input className="h-8 w-40" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
+              </Field>
+              <Field label="Confirme Senha" req={1}>
+                <Input className="h-8 w-40" type="password" value={confirma} onChange={(e) => setConfirma(e.target.value)} />
+              </Field>
+            </>
+          )}
+
+          {editing && (
+            <Field label="Habilitado">
+              <Checkbox checked={ativo} onCheckedChange={(v) => setAtivo(!!v)} />
+            </Field>
+          )}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
