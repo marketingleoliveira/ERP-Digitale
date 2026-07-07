@@ -927,32 +927,50 @@ export type Database = {
       }
       maquinas: {
         Row: {
+          carga_agulhas: Json
           created_at: string
+          diametro: number | null
+          disposicao_agulhas: string | null
+          finura: number | null
           habilitado: boolean
           id: string
           maquina: string
           modelo: string | null
+          n_alimentadores: number | null
           numero: number
+          producao_media: number | null
           tipo: string
           updated_at: string
         }
         Insert: {
+          carga_agulhas?: Json
           created_at?: string
+          diametro?: number | null
+          disposicao_agulhas?: string | null
+          finura?: number | null
           habilitado?: boolean
           id?: string
           maquina: string
           modelo?: string | null
+          n_alimentadores?: number | null
           numero: number
+          producao_media?: number | null
           tipo: string
           updated_at?: string
         }
         Update: {
+          carga_agulhas?: Json
           created_at?: string
+          diametro?: number | null
+          disposicao_agulhas?: string | null
+          finura?: number | null
           habilitado?: boolean
           id?: string
           maquina?: string
           modelo?: string | null
+          n_alimentadores?: number | null
           numero?: number
+          producao_media?: number | null
           tipo?: string
           updated_at?: string
         }
