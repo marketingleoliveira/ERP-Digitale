@@ -335,7 +335,6 @@ function ArtigoDialog({
     },
   });
   const fioOpts = composicoes.filter((c) => c.tipo === "Fio");
-  const fioOpts = composicoes.filter((c) => c.tipo === "Fio");
 
   const { data: coresLookup = [] } = useQuery({
     enabled: open,
