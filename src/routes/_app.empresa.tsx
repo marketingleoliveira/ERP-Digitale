@@ -252,7 +252,13 @@ function EmpresaPage() {
           <table className="w-full border-collapse text-sm">
             <thead className="bg-primary text-primary-foreground">
               <tr>
-                <th className="w-8 p-2"></th>
+                <th className="w-8 p-2">
+                  <Checkbox
+                    checked={allSelected}
+                    onCheckedChange={(v) => toggleAll(!!v)}
+                    aria-label="Selecionar todas"
+                  />
+                </th>
                 <th className="p-2 text-left">Nome Fantasia</th>
                 <th className="p-2 text-left">CNPJ/CPF</th>
                 <th className="p-2 text-left">Telefone</th>
@@ -268,21 +274,22 @@ function EmpresaPage() {
               ) : filtered.length === 0 ? (
                 <tr><td colSpan={5 + FLAG_COLS.length} className="p-6 text-center text-muted-foreground">Nenhuma empresa encontrada</td></tr>
               ) : filtered.map((e) => {
-                const isSel = e.id === selectedId;
+                const isSel = selectedIds.has(e.id);
                 return (
                   <tr
                     key={e.id}
-                    onClick={() => setSelectedId(e.id)}
                     onDoubleClick={() => { setEditing(e); setDialogOpen(true); }}
                     className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""}`}
                   >
-                    <td className="p-2"><Checkbox checked={isSel} onCheckedChange={() => setSelectedId(e.id)} /></td>
-                    <td className="p-2 font-medium text-primary">{e.nome_fantasia || e.razao_social || "—"}</td>
-                    <td className="p-2 font-mono text-xs">{e.cnpj || e.cpf || "—"}</td>
-                    <td className="p-2">{e.telefone || "—"}</td>
-                    <td className="p-2">{e.contato || "—"}</td>
+                    <td className="p-2" onClick={(ev) => ev.stopPropagation()}>
+                      <Checkbox checked={isSel} onCheckedChange={(v) => toggleOne(e.id, !!v)} />
+                    </td>
+                    <td className="p-2 font-medium text-primary" onClick={() => toggleOne(e.id, !isSel)}>{e.nome_fantasia || e.razao_social || "—"}</td>
+                    <td className="p-2 font-mono text-xs" onClick={() => toggleOne(e.id, !isSel)}>{e.cnpj || e.cpf || "—"}</td>
+                    <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.telefone || "—"}</td>
+                    <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.contato || "—"}</td>
                     {FLAG_COLS.map((c) => (
-                      <td key={c.key} className="p-2 text-center">
+                      <td key={c.key} className="p-2 text-center" onClick={() => toggleOne(e.id, !isSel)}>
                         <span className={`inline-block h-3 w-3 rounded-full ${e[c.key] ? "bg-emerald-500" : "bg-rose-400"}`} />
                       </td>
                     ))}
