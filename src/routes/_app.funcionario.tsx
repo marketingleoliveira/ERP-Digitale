@@ -139,7 +139,7 @@ function FuncionarioPage() {
                     <Checkbox checked={sel.isSelected(f.id)} onCheckedChange={(c) => sel.toggleOne(f.id, !!c)} />
                   </TableCell>
                   <TableCell><span className="text-primary font-medium">{f.nome}</span></TableCell>
-                  <TableCell>{f.tipo ?? "—"}</TableCell>
+                  <TableCell>{f.cargo?.nome ?? f.tipo ?? "—"}</TableCell>
                   <TableCell>{f.cpf ?? ""}</TableCell>
                   <TableCell>{f.telefone ?? ""}</TableCell>
                   <TableCell>{f.celular ?? ""}</TableCell>
