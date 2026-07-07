@@ -82,7 +82,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Benefícios Fiscais", url: "/fiscal/beneficios", icon: Receipt, group: "Fiscal" },
   { title: "Simulador Fiscal", url: "/fiscal/simulador", icon: FlaskConical, group: "Fiscal" },
   { title: "Gerenciar Menus", url: "/menus", icon: SlidersHorizontal, group: "Administração", locked: true },
-  { title: "Certificados A1", url: "/fiscal/certificados", icon: ShieldCheck, group: "DEV" },
+  { title: "Certificados A1", url: "/fiscal/certificados", icon: ShieldCheck, group: "Fiscal" },
   { title: "Configurações", url: "/configuracoes", icon: Settings, group: "DEV" },
   { title: "Cargos", url: "/dev/cargos", icon: Briefcase, group: "DEV", locked: true },
   // Compras
