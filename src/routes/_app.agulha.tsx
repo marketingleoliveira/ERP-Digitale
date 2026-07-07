@@ -120,7 +120,7 @@ function AgulhaPage() {
               ) : paged.map((a) => (
                 <TableRow key={a.id}>
                   <TableCell>
-                    <Checkbox checked={selected === a.id} onCheckedChange={(c) => setSelected(c ? a.id : null)} />
+                    <Checkbox checked={sel.isSelected(a.id)} onCheckedChange={(c) => sel.toggleOne(a.id, !!c)} />
                   </TableCell>
                   <TableCell><span className="text-primary font-medium">{a.agulha}</span></TableCell>
                   <TableCell>{a.modelo ?? "—"}</TableCell>
