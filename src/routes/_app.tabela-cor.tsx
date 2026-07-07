@@ -87,7 +87,7 @@ function TinturariasPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-primary">🎨 Listagem Tinturarias</h1>
+      <h1 className="text-xl font-semibold text-primary">🎨 Listagem Fornecedores</h1>
 
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center justify-end gap-2 border-b border-border bg-muted/30 p-2">
