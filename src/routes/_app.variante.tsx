@@ -42,7 +42,6 @@ function VariantePage() {
   const [filter, setFilter] = useState("");
   const [applied, setApplied] = useState("");
   const [page, setPage] = useState(1);
-  const [selected, setSelected] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Variante | null>(null);
 
@@ -52,16 +51,18 @@ function VariantePage() {
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const selectedRow = data.find((v) => v.id === selected) ?? null;
+  const sel = useMultiSelection(paged);
+  const singleRow = sel.singleSelected;
 
   const deleteMut = useMutation({
-    mutationFn: async (row: Variante) => {
-      const { error } = await supabase.from("variantes").delete().eq("id", row.id);
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase.from("variantes").delete().in("id", ids);
       if (error) throw error;
+      return ids.length;
     },
-    onSuccess: () => {
-      toast.success("Variante excluída.");
-      setSelected(null);
+    onSuccess: (n) => {
+      toast.success(`${n} variante(s) excluída(s).`);
+      sel.clear();
       qc.invalidateQueries({ queryKey: ["variantes"] });
     },
     onError: (e: Error) => toast.error(e.message),
