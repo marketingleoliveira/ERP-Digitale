@@ -22,6 +22,7 @@ import { Route as AppProdutosRouteImport } from './routes/_app.produtos'
 import { Route as AppMenusRouteImport } from './routes/_app.menus'
 import { Route as AppMaquinaRouteImport } from './routes/_app.maquina'
 import { Route as AppInicioRouteImport } from './routes/_app.inicio'
+import { Route as AppFuncionarioRouteImport } from './routes/_app.funcionario'
 import { Route as AppFiscalRouteImport } from './routes/_app.fiscal'
 import { Route as AppFioRouteImport } from './routes/_app.fio'
 import { Route as AppEstampaRouteImport } from './routes/_app.estampa'
@@ -98,6 +99,11 @@ const AppInicioRoute = AppInicioRouteImport.update({
   path: '/inicio',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFuncionarioRoute = AppFuncionarioRouteImport.update({
+  id: '/funcionario',
+  path: '/funcionario',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFiscalRoute = AppFiscalRouteImport.update({
   id: '/fiscal',
   path: '/fiscal',
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/estampa': typeof AppEstampaRoute
   '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
+  '/funcionario': typeof AppFuncionarioRoute
   '/inicio': typeof AppInicioRoute
   '/maquina': typeof AppMaquinaRoute
   '/menus': typeof AppMenusRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
   '/estampa': typeof AppEstampaRoute
   '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
+  '/funcionario': typeof AppFuncionarioRoute
   '/inicio': typeof AppInicioRoute
   '/maquina': typeof AppMaquinaRoute
   '/menus': typeof AppMenusRoute
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/_app/estampa': typeof AppEstampaRoute
   '/_app/fio': typeof AppFioRoute
   '/_app/fiscal': typeof AppFiscalRoute
+  '/_app/funcionario': typeof AppFuncionarioRoute
   '/_app/inicio': typeof AppInicioRoute
   '/_app/maquina': typeof AppMaquinaRoute
   '/_app/menus': typeof AppMenusRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/estampa'
     | '/fio'
     | '/fiscal'
+    | '/funcionario'
     | '/inicio'
     | '/maquina'
     | '/menus'
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
     | '/estampa'
     | '/fio'
     | '/fiscal'
+    | '/funcionario'
     | '/inicio'
     | '/maquina'
     | '/menus'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/_app/estampa'
     | '/_app/fio'
     | '/_app/fiscal'
+    | '/_app/funcionario'
     | '/_app/inicio'
     | '/_app/maquina'
     | '/_app/menus'
@@ -410,6 +422,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInicioRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/funcionario': {
+      id: '/_app/funcionario'
+      path: '/funcionario'
+      fullPath: '/funcionario'
+      preLoaderRoute: typeof AppFuncionarioRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/fiscal': {
       id: '/_app/fiscal'
       path: '/fiscal'
@@ -501,6 +520,7 @@ interface AppRouteChildren {
   AppEstampaRoute: typeof AppEstampaRoute
   AppFioRoute: typeof AppFioRoute
   AppFiscalRoute: typeof AppFiscalRoute
+  AppFuncionarioRoute: typeof AppFuncionarioRoute
   AppInicioRoute: typeof AppInicioRoute
   AppMaquinaRoute: typeof AppMaquinaRoute
   AppMenusRoute: typeof AppMenusRoute
@@ -524,6 +544,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppEstampaRoute: AppEstampaRoute,
   AppFioRoute: AppFioRoute,
   AppFiscalRoute: AppFiscalRoute,
+  AppFuncionarioRoute: AppFuncionarioRoute,
   AppInicioRoute: AppInicioRoute,
   AppMaquinaRoute: AppMaquinaRoute,
   AppMenusRoute: AppMenusRoute,
