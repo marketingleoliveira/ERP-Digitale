@@ -27,6 +27,8 @@ import { Route as AppInicioRouteImport } from './routes/_app.inicio'
 import { Route as AppFuncionarioRouteImport } from './routes/_app.funcionario'
 import { Route as AppFiscalRouteImport } from './routes/_app.fiscal'
 import { Route as AppFioRouteImport } from './routes/_app.fio'
+import { Route as AppEstoqueTecidosRouteImport } from './routes/_app.estoque-tecidos'
+import { Route as AppEstoqueFiosRouteImport } from './routes/_app.estoque-fios'
 import { Route as AppEstampaRouteImport } from './routes/_app.estampa'
 import { Route as AppEmpresaRouteImport } from './routes/_app.empresa'
 import { Route as AppCorreiaRouteImport } from './routes/_app.correia'
@@ -127,6 +129,16 @@ const AppFioRoute = AppFioRouteImport.update({
   path: '/fio',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEstoqueTecidosRoute = AppEstoqueTecidosRouteImport.update({
+  id: '/estoque-tecidos',
+  path: '/estoque-tecidos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEstoqueFiosRoute = AppEstoqueFiosRouteImport.update({
+  id: '/estoque-fios',
+  path: '/estoque-fios',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppEstampaRoute = AppEstampaRouteImport.update({
   id: '/estampa',
   path: '/estampa',
@@ -191,6 +203,8 @@ export interface FileRoutesByFullPath {
   '/correia': typeof AppCorreiaRoute
   '/empresa': typeof AppEmpresaRoute
   '/estampa': typeof AppEstampaRoute
+  '/estoque-fios': typeof AppEstoqueFiosRoute
+  '/estoque-tecidos': typeof AppEstoqueTecidosRoute
   '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
   '/funcionario': typeof AppFuncionarioRoute
@@ -220,6 +234,8 @@ export interface FileRoutesByTo {
   '/correia': typeof AppCorreiaRoute
   '/empresa': typeof AppEmpresaRoute
   '/estampa': typeof AppEstampaRoute
+  '/estoque-fios': typeof AppEstoqueFiosRoute
+  '/estoque-tecidos': typeof AppEstoqueTecidosRoute
   '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
   '/funcionario': typeof AppFuncionarioRoute
@@ -251,6 +267,8 @@ export interface FileRoutesById {
   '/_app/correia': typeof AppCorreiaRoute
   '/_app/empresa': typeof AppEmpresaRoute
   '/_app/estampa': typeof AppEstampaRoute
+  '/_app/estoque-fios': typeof AppEstoqueFiosRoute
+  '/_app/estoque-tecidos': typeof AppEstoqueTecidosRoute
   '/_app/fio': typeof AppFioRoute
   '/_app/fiscal': typeof AppFiscalRoute
   '/_app/funcionario': typeof AppFuncionarioRoute
@@ -282,6 +300,8 @@ export interface FileRouteTypes {
     | '/correia'
     | '/empresa'
     | '/estampa'
+    | '/estoque-fios'
+    | '/estoque-tecidos'
     | '/fio'
     | '/fiscal'
     | '/funcionario'
@@ -311,6 +331,8 @@ export interface FileRouteTypes {
     | '/correia'
     | '/empresa'
     | '/estampa'
+    | '/estoque-fios'
+    | '/estoque-tecidos'
     | '/fio'
     | '/fiscal'
     | '/funcionario'
@@ -341,6 +363,8 @@ export interface FileRouteTypes {
     | '/_app/correia'
     | '/_app/empresa'
     | '/_app/estampa'
+    | '/_app/estoque-fios'
+    | '/_app/estoque-tecidos'
     | '/_app/fio'
     | '/_app/fiscal'
     | '/_app/funcionario'
@@ -493,6 +517,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFioRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/estoque-tecidos': {
+      id: '/_app/estoque-tecidos'
+      path: '/estoque-tecidos'
+      fullPath: '/estoque-tecidos'
+      preLoaderRoute: typeof AppEstoqueTecidosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/estoque-fios': {
+      id: '/_app/estoque-fios'
+      path: '/estoque-fios'
+      fullPath: '/estoque-fios'
+      preLoaderRoute: typeof AppEstoqueFiosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/estampa': {
       id: '/_app/estampa'
       path: '/estampa'
@@ -576,6 +614,8 @@ interface AppRouteChildren {
   AppCorreiaRoute: typeof AppCorreiaRoute
   AppEmpresaRoute: typeof AppEmpresaRoute
   AppEstampaRoute: typeof AppEstampaRoute
+  AppEstoqueFiosRoute: typeof AppEstoqueFiosRoute
+  AppEstoqueTecidosRoute: typeof AppEstoqueTecidosRoute
   AppFioRoute: typeof AppFioRoute
   AppFiscalRoute: typeof AppFiscalRoute
   AppFuncionarioRoute: typeof AppFuncionarioRoute
@@ -603,6 +643,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppCorreiaRoute: AppCorreiaRoute,
   AppEmpresaRoute: AppEmpresaRoute,
   AppEstampaRoute: AppEstampaRoute,
+  AppEstoqueFiosRoute: AppEstoqueFiosRoute,
+  AppEstoqueTecidosRoute: AppEstoqueTecidosRoute,
   AppFioRoute: AppFioRoute,
   AppFiscalRoute: AppFiscalRoute,
   AppFuncionarioRoute: AppFuncionarioRoute,
