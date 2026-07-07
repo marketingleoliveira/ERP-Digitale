@@ -199,9 +199,9 @@ function ArtigosPage() {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Carregando…</td></tr>
+                <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">Carregando…</td></tr>
               ) : pageItems.length === 0 ? (
-                <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Nenhum artigo encontrado</td></tr>
+                <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">Nenhum artigo encontrado</td></tr>
               ) : pageItems.map((i) => {
                 const isSel = i.id === selectedId;
                 return (
@@ -223,7 +223,6 @@ function ArtigosPage() {
                     </td>
                     <td className="p-2 font-mono text-xs">{i.ncm || "—"}</td>
                     <td className="p-2 uppercase">{i.nome}</td>
-                    <td className="p-2">{i.composicao || "—"}</td>
                     <td className="p-2 text-right">{i.rendimento != null ? Number(i.rendimento).toFixed(2) : "—"}</td>
                     <td className="p-2 text-center">
                       <span className={`inline-block h-3 w-3 rounded-full ${i.ativo ? "bg-emerald-500" : "bg-rose-400"}`} />
