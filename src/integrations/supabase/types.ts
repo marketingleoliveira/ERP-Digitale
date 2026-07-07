@@ -882,7 +882,9 @@ export type Database = {
       maquinas: {
         Row: {
           carga_agulhas: Json
+          correias: string[]
           created_at: string
+          data_fabricacao: string | null
           diametro: number | null
           disposicao_agulhas: string | null
           finura: number | null
@@ -899,7 +901,9 @@ export type Database = {
         }
         Insert: {
           carga_agulhas?: Json
+          correias?: string[]
           created_at?: string
+          data_fabricacao?: string | null
           diametro?: number | null
           disposicao_agulhas?: string | null
           finura?: number | null
@@ -916,7 +920,9 @@ export type Database = {
         }
         Update: {
           carga_agulhas?: Json
+          correias?: string[]
           created_at?: string
+          data_fabricacao?: string | null
           diametro?: number | null
           disposicao_agulhas?: string | null
           finura?: number | null
