@@ -112,7 +112,7 @@ export const cancelarNFe = createServerFn({ method: "POST" })
     if (res.ok) {
       await supabase.from("notas_fiscais").update({ status_sefaz: "cancelada" }).eq("id", data.notaId);
     }
-    return { ok: res.ok, body: res.body };
+    return { ok: res.ok, status: res.status, mensagem: String((res.body as Record<string,unknown>).mensagem ?? "") };
   });
 
 /* ==================== CARTA DE CORREÇÃO ==================== */
@@ -136,7 +136,7 @@ export const emitirCCe = createServerFn({ method: "POST" })
       payload: res.body, status: res.ok ? "sucesso" : "erro",
       mensagem: (res.body as Record<string, unknown>).mensagem as string ?? null, user_id: userId,
     } as never);
-    return { ok: res.ok, body: res.body };
+    return { ok: res.ok, status: res.status, mensagem: String((res.body as Record<string,unknown>).mensagem ?? "") };
   });
 
 /* ==================== CONSULTAR ==================== */
@@ -152,7 +152,7 @@ export const consultarNFe = createServerFn({ method: "POST" })
     const ref = (notaRec.provedor_ref as string) ?? `nfe-${notaRec.id as string}`;
     const res = await focusAdapter.consultar(cfg, ref);
     await logNfeAction(supabase, { notaFiscalId: notaRec.id as string, acao: "consultar", response: res.body, httpStatus: res.status, duracaoMs: res.durationMs, userId });
-    return { ok: res.ok, body: res.body };
+    return { ok: res.ok, status: res.status, mensagem: String((res.body as Record<string,unknown>).mensagem ?? "") };
   });
 
 /* ==================== INUTILIZAR ==================== */
@@ -178,5 +178,5 @@ export const inutilizarNFe = createServerFn({ method: "POST" })
       payload: res.body, status: res.ok ? "sucesso" : "erro",
       mensagem: (res.body as Record<string, unknown>).mensagem as string ?? null, user_id: userId,
     } as never);
-    return { ok: res.ok, body: res.body };
+    return { ok: res.ok, status: res.status, mensagem: String((res.body as Record<string,unknown>).mensagem ?? "") };
   });
