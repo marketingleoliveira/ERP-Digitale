@@ -56,17 +56,43 @@ function InicioPage() {
   const [fCnpj, setFCnpj] = useState("");
   const [fTipo, setFTipo] = useState<string>("all");
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const { data } = await supabase
+  const [counts, setCounts] = useState({ funcionarios: 0, produtos: 0, artigos: 0 });
+
+  const fetchAll = async () => {
+    setLoading(true);
+    const [{ data: cust }, fCount, pCount, aCount] = await Promise.all([
+      supabase
         .from("customers")
         .select("id, razao_social, nome_fantasia, cnpj, status, updated_at, created_at")
-        .order("razao_social");
-      setRows((data as Customer[]) ?? []);
-      setLoading(false);
-    })();
+        .order("razao_social"),
+      supabase.from("funcionarios").select("id", { count: "exact", head: true }),
+      supabase.from("products").select("id", { count: "exact", head: true }),
+      supabase.from("articles").select("id", { count: "exact", head: true }),
+    ]);
+    setRows((cust as Customer[]) ?? []);
+    setCounts({
+      funcionarios: fCount.count ?? 0,
+      produtos: pCount.count ?? 0,
+      artigos: aCount.count ?? 0,
+    });
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchAll();
+    const ch = supabase
+      .channel("inicio-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "customers" }, fetchAll)
+      .on("postgres_changes", { event: "*", schema: "public", table: "funcionarios" }, fetchAll)
+      .on("postgres_changes", { event: "*", schema: "public", table: "products" }, fetchAll)
+      .on("postgres_changes", { event: "*", schema: "public", table: "articles" }, fetchAll)
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const now = new Date();
   const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate());
