@@ -25,6 +25,8 @@ type Funcionario = {
   id: string;
   nome: string;
   tipo: string | null;
+  cargo_id: string | null;
+  cargo?: { id: string; nome: string } | null;
   cpf: string | null;
   rg: string | null;
   cep: string | null;
@@ -52,10 +54,14 @@ const PAGE_SIZE = 20;
 const sb = supabase as unknown as { from: (t: string) => any };
 
 async function fetchFuncionarios(): Promise<Funcionario[]> {
-  const { data, error } = await sb.from("funcionarios").select("*").order("nome", { ascending: true });
+  const { data, error } = await sb
+    .from("funcionarios")
+    .select("*, cargo:cargos(id,nome)")
+    .order("nome", { ascending: true });
   if (error) throw error;
   return (data ?? []) as Funcionario[];
 }
+
 
 function FuncionarioPage() {
   const qc = useQueryClient();
@@ -133,7 +139,7 @@ function FuncionarioPage() {
                     <Checkbox checked={sel.isSelected(f.id)} onCheckedChange={(c) => sel.toggleOne(f.id, !!c)} />
                   </TableCell>
                   <TableCell><span className="text-primary font-medium">{f.nome}</span></TableCell>
-                  <TableCell>{f.tipo ?? "—"}</TableCell>
+                  <TableCell>{f.cargo?.nome ?? f.tipo ?? "—"}</TableCell>
                   <TableCell>{f.cpf ?? ""}</TableCell>
                   <TableCell>{f.telefone ?? ""}</TableCell>
                   <TableCell>{f.celular ?? ""}</TableCell>
@@ -188,7 +194,7 @@ function FuncionarioDialog({
   });
 
   const [f, setF] = useState({
-    tipo: "", nome: "", cpf: "", rg: "", cep: "", uf: "",
+    cargo_id: "", nome: "", cpf: "", rg: "", cep: "", uf: "",
     endereco: "", numero: "", complemento: "", bairro: "", cidade: "",
     telefone: "", celular: "", email: "", observacao: "",
     habilitado: true,
@@ -197,7 +203,7 @@ function FuncionarioDialog({
   useEffect(() => {
     if (!open) return;
     setF({
-      tipo: editing?.tipo ?? "",
+      cargo_id: editing?.cargo_id ?? "",
       nome: editing?.nome ?? "",
       cpf: editing?.cpf ?? "",
       rg: editing?.rg ?? "",
@@ -221,8 +227,10 @@ function FuncionarioDialog({
   const mut = useMutation({
     mutationFn: async () => {
       const clean = (s: string) => s.trim() || null;
+      const cargoNome = cargos.find((c) => c.id === f.cargo_id)?.nome ?? null;
       const payload = {
-        tipo: clean(f.tipo),
+        cargo_id: f.cargo_id || null,
+        tipo: cargoNome, // mantém "tipo" sincronizado como cache legível
         nome: f.nome.trim(),
         cpf: clean(f.cpf),
         rg: clean(f.rg),
@@ -256,10 +264,11 @@ function FuncionarioDialog({
   });
 
   const submit = () => {
-    if (!f.tipo.trim()) { toast.error("Selecione o tipo."); return; }
+    if (!f.cargo_id) { toast.error("Selecione o cargo."); return; }
     if (!f.nome.trim()) { toast.error("Informe o nome."); return; }
     mut.mutate();
   };
+
 
   const Field = ({ label, required, children, className }: { label: string; required?: boolean; children: React.ReactNode; className?: string }) => (
     <div className={className}>
@@ -279,11 +288,12 @@ function FuncionarioDialog({
 
         <div className="rounded bg-muted/40 p-5 space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Field label="Tipo" required>
-              <Select value={f.tipo} onValueChange={(v) => upd("tipo", v)}>
+            <Field label="Cargo" required>
+              <Select value={f.cargo_id} onValueChange={(v) => upd("cargo_id", v)}>
                 <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-                <SelectContent>{cargos.map((c) => <SelectItem key={c.id} value={c.nome}>{c.nome}</SelectItem>)}</SelectContent>
+                <SelectContent>{cargos.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent>
               </Select>
+
             </Field>
             <Field label="Habilitado">
               <div className="h-9 flex items-center">
