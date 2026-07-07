@@ -128,9 +128,9 @@ function TinturariasPage() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-10"><Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" /></TableCell></TableRow>
+                <TableRow><TableCell colSpan={8} className="text-center py-10"><Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" /></TableCell></TableRow>
               ) : paged.length === 0 ? (
-                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-10">Nenhum registro encontrado.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-10">Nenhum registro encontrado.</TableCell></TableRow>
               ) : paged.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell>
@@ -138,6 +138,7 @@ function TinturariasPage() {
                   </TableCell>
                   <TableCell><span className="text-primary font-medium">{r.codigo}</span></TableCell>
                   <TableCell>{r.nome_fantasia}</TableCell>
+                  <TableCell><span className="inline-flex rounded bg-muted px-2 py-0.5 text-xs">{r.categoria}</span></TableCell>
                   <TableCell>{r.cnpj ?? "—"}</TableCell>
                   <TableCell>{r.telefone ?? "—"}</TableCell>
                   <TableCell>{r.contato ?? "—"}</TableCell>
