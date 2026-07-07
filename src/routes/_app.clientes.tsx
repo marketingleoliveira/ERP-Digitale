@@ -130,12 +130,9 @@ function ClientesPage() {
   };
 
   const loadRefs = async () => {
-    const [r, t] = await Promise.all([
-      supabase.from("sales_reps").select("id, nome").order("nome"),
-      supabase.from("transportadoras").select("id, nome").order("nome"),
-    ]);
+    const r = await supabase.from("sales_reps").select("id, nome").order("nome");
     setReps(((r.data ?? []) as any[]).map((x) => ({ id: x.id, label: x.nome })));
-    setTrans(((t.data ?? []) as any[]).map((x) => ({ id: x.id, label: x.nome })));
+    setTrans([]);
   };
 
   useEffect(() => {
