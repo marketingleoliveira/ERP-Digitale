@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppVarianteRouteImport } from './routes/_app.variante'
 import { Route as AppUsuariosRouteImport } from './routes/_app.usuarios'
 import { Route as AppTabelaCorRouteImport } from './routes/_app.tabela-cor'
+import { Route as AppSenhaRouteImport } from './routes/_app.senha'
 import { Route as AppRepresentantesRouteImport } from './routes/_app.representantes'
 import { Route as AppRepMetaRouteImport } from './routes/_app.rep-meta'
 import { Route as AppProdutosRouteImport } from './routes/_app.produtos'
@@ -67,6 +68,11 @@ const AppUsuariosRoute = AppUsuariosRouteImport.update({
 const AppTabelaCorRoute = AppTabelaCorRouteImport.update({
   id: '/tabela-cor',
   path: '/tabela-cor',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSenhaRoute = AppSenhaRouteImport.update({
+  id: '/senha',
+  path: '/senha',
   getParentRoute: () => AppRoute,
 } as any)
 const AppRepresentantesRoute = AppRepresentantesRouteImport.update({
@@ -181,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/produtos': typeof AppProdutosRoute
   '/rep-meta': typeof AppRepMetaRoute
   '/representantes': typeof AppRepresentantesRoute
+  '/senha': typeof AppSenhaRoute
   '/tabela-cor': typeof AppTabelaCorRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
@@ -207,6 +214,7 @@ export interface FileRoutesByTo {
   '/produtos': typeof AppProdutosRoute
   '/rep-meta': typeof AppRepMetaRoute
   '/representantes': typeof AppRepresentantesRoute
+  '/senha': typeof AppSenhaRoute
   '/tabela-cor': typeof AppTabelaCorRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
@@ -235,6 +243,7 @@ export interface FileRoutesById {
   '/_app/produtos': typeof AppProdutosRoute
   '/_app/rep-meta': typeof AppRepMetaRoute
   '/_app/representantes': typeof AppRepresentantesRoute
+  '/_app/senha': typeof AppSenhaRoute
   '/_app/tabela-cor': typeof AppTabelaCorRoute
   '/_app/usuarios': typeof AppUsuariosRoute
   '/_app/variante': typeof AppVarianteRoute
@@ -263,6 +272,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/rep-meta'
     | '/representantes'
+    | '/senha'
     | '/tabela-cor'
     | '/usuarios'
     | '/variante'
@@ -289,6 +299,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/rep-meta'
     | '/representantes'
+    | '/senha'
     | '/tabela-cor'
     | '/usuarios'
     | '/variante'
@@ -316,6 +327,7 @@ export interface FileRouteTypes {
     | '/_app/produtos'
     | '/_app/rep-meta'
     | '/_app/representantes'
+    | '/_app/senha'
     | '/_app/tabela-cor'
     | '/_app/usuarios'
     | '/_app/variante'
@@ -378,6 +390,13 @@ declare module '@tanstack/react-router' {
       path: '/tabela-cor'
       fullPath: '/tabela-cor'
       preLoaderRoute: typeof AppTabelaCorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/senha': {
+      id: '/_app/senha'
+      path: '/senha'
+      fullPath: '/senha'
+      preLoaderRoute: typeof AppSenhaRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/representantes': {
@@ -527,6 +546,7 @@ interface AppRouteChildren {
   AppProdutosRoute: typeof AppProdutosRoute
   AppRepMetaRoute: typeof AppRepMetaRoute
   AppRepresentantesRoute: typeof AppRepresentantesRoute
+  AppSenhaRoute: typeof AppSenhaRoute
   AppTabelaCorRoute: typeof AppTabelaCorRoute
   AppUsuariosRoute: typeof AppUsuariosRoute
   AppVarianteRoute: typeof AppVarianteRoute
@@ -551,6 +571,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProdutosRoute: AppProdutosRoute,
   AppRepMetaRoute: AppRepMetaRoute,
   AppRepresentantesRoute: AppRepresentantesRoute,
+  AppSenhaRoute: AppSenhaRoute,
   AppTabelaCorRoute: AppTabelaCorRoute,
   AppUsuariosRoute: AppUsuariosRoute,
   AppVarianteRoute: AppVarianteRoute,
