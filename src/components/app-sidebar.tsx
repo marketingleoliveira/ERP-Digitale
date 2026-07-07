@@ -26,6 +26,7 @@ export function AppSidebar() {
   const { visibility } = useMenuVisibility();
 
   const visibleItems = ALL_MENU_ITEMS.filter((i) => visibility[i.url]);
+  const standalone = visibleItems.filter((i) => !i.group);
   const groups = GROUP_ORDER
     .map((label) => ({ label, items: visibleItems.filter((i) => i.group === label) }))
     .filter((g) => g.items.length > 0);
