@@ -196,6 +196,20 @@ function MaquinaDialog({
   const [agulha, setAgulha] = useState("");
   const [qtd, setQtd] = useState("");
 
+  const { data: agulhasOptions = [] } = useQuery({
+    queryKey: ["agulhas", "enabled"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("agulhas" as never)
+        .select("agulha,habilitado")
+        .order("agulha", { ascending: true });
+      if (error) throw error;
+      return ((data ?? []) as unknown as { agulha: string; habilitado: boolean }[])
+        .filter((a) => a.habilitado)
+        .map((a) => a.agulha);
+    },
+  });
+
   useEffect(() => {
     if (!open) return;
     setNumero(editing?.numero?.toString() ?? "");
@@ -325,7 +339,14 @@ function MaquinaDialog({
             <div className="grid grid-cols-1 md:grid-cols-[1fr_180px_auto] gap-3 items-end">
               <div>
                 <Label className="text-sm"><span className="text-destructive mr-1">*</span>Agulha:</Label>
-                <Input value={agulha} onChange={(e) => setAgulha(e.target.value)} maxLength={80} />
+                <select
+                  value={agulha}
+                  onChange={(e) => setAgulha(e.target.value)}
+                  className="h-9 w-full rounded border border-input bg-background px-2 text-sm"
+                >
+                  <option value="">[SELECIONE]</option>
+                  {agulhasOptions.map((a) => <option key={a} value={a}>{a}</option>)}
+                </select>
               </div>
               <div>
                 <Label className="text-sm"><span className="text-destructive mr-1">*</span>Quantidade:</Label>
