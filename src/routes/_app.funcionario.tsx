@@ -273,15 +273,6 @@ function FuncionarioDialog({
   };
 
 
-  const Field = ({ label, required, children, className }: { label: string; required?: boolean; children: React.ReactNode; className?: string }) => (
-    <div className={className}>
-      <Label className="text-xs font-semibold">
-        {required && <span className="text-destructive mr-1">*</span>}{label}:
-      </Label>
-      <div className="mt-1">{children}</div>
-    </div>
-  );
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto">
