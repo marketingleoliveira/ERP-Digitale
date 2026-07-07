@@ -172,6 +172,18 @@ function UsuariosPage() {
 type FuncOpt = { id: string; nome: string; email: string | null };
 type RepOpt = { id: string; nome: string; email: string | null };
 
+function Field({ label, req, children }: { label: string; req?: 1 | 2; children: React.ReactNode }) {
+  return (
+    <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+      <Label className="text-right text-sm">
+        {req ? <span className="text-destructive mr-0.5">{"*".repeat(req)}</span> : null}
+        {label}:
+      </Label>
+      <div>{children}</div>
+    </div>
+  );
+}
+
 function UsuarioDialog({
   open, onOpenChange, editing, cargos, currentCargoId, onSaved,
 }: {
@@ -287,16 +299,6 @@ function UsuarioDialog({
     onError: (e: Error) => { const m = friendlyDbError(e); setErrorMsg(m); toast.error(m); },
   });
 
-
-  const Field = ({ label, req, children }: { label: string; req?: 1 | 2; children: React.ReactNode }) => (
-    <div className="grid grid-cols-[140px_1fr] items-center gap-3">
-      <Label className="text-right text-sm">
-        {req ? <span className="text-destructive mr-0.5">{"*".repeat(req)}</span> : null}
-        {label}:
-      </Label>
-      <div>{children}</div>
-    </div>
-  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
