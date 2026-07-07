@@ -565,17 +565,6 @@ function ArtigoDialog({
             <Label className={lbl}>Nº Voltas</Label>
             <Input className={inp} type="number" value={form.n_voltas ?? ""} onChange={(e) => set("n_voltas", e.target.value === "" ? null : Number(e.target.value))} />
           </div>
-          {[1, 2, 3].map((n) => (
-            <div key={n} className={n === 3 ? "" : ""}>
-              <Label className={lbl}>Alimentador Fio {n}</Label>
-              <Select value={form[`alimentador_fio_${n}`] ?? ""} onValueChange={(v) => set(`alimentador_fio_${n}`, v)}>
-                <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-                <SelectContent>
-                  {fioOpts.map((f) => <SelectItem key={f.id} value={f.composicao}>{f.codigo} — {f.composicao}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          ))}
 
           <Section title="REGULAGEM MÁQUINA" />
 
