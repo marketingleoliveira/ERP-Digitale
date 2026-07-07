@@ -242,7 +242,7 @@ function TinturariaDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle className="text-primary">🎨 {editing ? "Alterar" : "Cadastro"} Tinturaria</DialogTitle>
+          <DialogTitle className="text-primary">🏭 {editing ? "Alterar" : "Cadastro"} Fornecedor</DialogTitle>
         </DialogHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded bg-muted/50 p-5">
           <div className="space-y-1.5">
@@ -250,6 +250,17 @@ function TinturariaDialog({
             <Input value={codigo} onChange={(e) => setCodigo(e.target.value)} maxLength={20} />
           </div>
           <div className="space-y-1.5">
+            <Label><span className="text-destructive">*</span> Categoria:</Label>
+            <Select value={categoria} onValueChange={(v) => setCategoria(v as Categoria)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {CATEGORIAS.map((c) => (
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5 md:col-span-2">
             <Label>CNPJ/CPF:</Label>
             <Input value={cnpj} onChange={(e) => setCnpj(e.target.value)} maxLength={20} />
           </div>
