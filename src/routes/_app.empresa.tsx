@@ -306,14 +306,17 @@ function EmpresaPage() {
                     <td className="p-2 font-mono text-xs" onClick={() => toggleOne(e.id, !isSel)}>{e.cnpj || e.cpf || "—"}</td>
                     <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.telefone || "—"}</td>
                     <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.contato || "—"}</td>
-                    {FLAG_COLS.map((c) => (
-                      <td key={c.key} className="p-2 text-center">
-                        <StatusDot
-                          checked={!!e[c.key]}
-                          onToggle={(v: boolean) => toggleFlagMut.mutate({ id: e.id, key: c.key as string, value: v })}
-                        />
-                      </td>
-                    ))}
+                    <td className="p-2 text-sm" onClick={() => toggleOne(e.id, !isSel)}>
+                      <span className="inline-flex rounded bg-muted px-2 py-0.5 text-xs font-medium">
+                        {getTipoLabel(e)}
+                      </span>
+                    </td>
+                    <td className="p-2 text-center">
+                      <StatusDot
+                        checked={!!e.flag_habilitado}
+                        onToggle={(v: boolean) => toggleFlagMut.mutate({ id: e.id, key: "flag_habilitado", value: v })}
+                      />
+                    </td>
                   </tr>
                 );
               })}
