@@ -195,11 +195,12 @@ function MaquinaDialog({
       const n = Number(numero);
       if (!Number.isInteger(n) || n <= 0) throw new Error("Número inválido.");
       const payload = { numero: n, tipo, maquina: maquina.trim(), modelo: modelo.trim() || null, habilitado };
+      const client = supabase as unknown as { from: (t: string) => { update: (p: unknown) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> }; insert: (p: unknown) => Promise<{ error: Error | null }> } };
       if (editing) {
-        const { error } = await supabase.from("maquinas" as never).update(payload).eq("id", editing.id);
+        const { error } = await client.from("maquinas").update(payload).eq("id", editing.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("maquinas" as never).insert(payload);
+        const { error } = await client.from("maquinas").insert(payload);
         if (error) throw error;
       }
     },
