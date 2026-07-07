@@ -24,6 +24,7 @@ import { useAuth, useUserRoles } from "@/hooks/use-auth";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import logoAsset from "@/assets/digitale-logo.png.asset.json";
+import { StatusDot } from "@/components/status-dot";
 
 export const Route = createFileRoute("/_app/artigos")({
   ssr: false,
