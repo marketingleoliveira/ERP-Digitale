@@ -305,35 +305,35 @@ function ComposicaoDialog({
             {item ? "Alterar Composição" : "Cadastrar Composição"}
           </DialogTitle>
         </DialogHeader>
-        <div className="grid gap-3">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label className="text-xs">* Tipo</Label>
+        <div className="rounded-md bg-muted/40 p-6">
+          <div className="mx-auto grid max-w-md gap-3">
+            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+              <Label className="text-right text-sm"><span className="text-destructive">*</span> Tipo:</Label>
               <Select value={form.tipo ?? "Artigo"} onValueChange={(v) => set("tipo", v as Composicao["tipo"])}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-8 w-24"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Artigo">Artigo</SelectItem>
                   <SelectItem value="Fio">Fio</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label className="text-xs">* Código</Label>
-              <Input value={form.codigo ?? ""} onChange={(e) => set("codigo", e.target.value)} />
+            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+              <Label className="text-right text-sm"><span className="text-destructive">*</span> Código:</Label>
+              <Input className="h-8 w-40" value={form.codigo ?? ""} onChange={(e) => set("codigo", e.target.value)} />
             </div>
+            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+              <Label className="text-right text-sm">NCM:</Label>
+              <Input className="h-8 w-40" value={form.ncm ?? ""} onChange={(e) => set("ncm", e.target.value)} />
+            </div>
+            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+              <Label className="text-right text-sm"><span className="text-destructive">*</span> Composição:</Label>
+              <Input className="h-8" value={form.composicao ?? ""} onChange={(e) => set("composicao", e.target.value)} placeholder="Ex: 75%PES 25%PUE" />
+            </div>
+            <label className="ml-[122px] flex items-center gap-2 text-sm">
+              <Checkbox checked={Boolean(form.habilitado)} onCheckedChange={(v) => set("habilitado", Boolean(v))} />
+              Habilitado
+            </label>
           </div>
-          <div>
-            <Label className="text-xs">NCM</Label>
-            <Input value={form.ncm ?? ""} onChange={(e) => set("ncm", e.target.value)} />
-          </div>
-          <div>
-            <Label className="text-xs">* Composição</Label>
-            <Input value={form.composicao ?? ""} onChange={(e) => set("composicao", e.target.value)} placeholder="Ex: 75%PES 25%PUE" />
-          </div>
-          <label className="flex items-center gap-2 text-sm">
-            <Checkbox checked={Boolean(form.habilitado)} onCheckedChange={(v) => set("habilitado", Boolean(v))} />
-            Habilitado
-          </label>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
