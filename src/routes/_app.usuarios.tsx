@@ -303,7 +303,14 @@ function UsuarioDialog({
         <DialogHeader>
           <DialogTitle>{editing ? "Alterar Usuário" : "Cadastro Usuário"}</DialogTitle>
         </DialogHeader>
+        {errorMsg && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{errorMsg}</AlertDescription>
+          </Alert>
+        )}
         <div className="space-y-3 rounded-md bg-muted/40 p-4">
+
           <Field label="Tipo" req={1}>
             <Select value={cargoId} onValueChange={setCargoId}>
               <SelectTrigger className="h-8"><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
