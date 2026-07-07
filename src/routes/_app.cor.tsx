@@ -61,6 +61,7 @@ function CorPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Cor | null>(null);
+  const [detail, setDetail] = useState<Cor | null>(null);
 
   const filtered = useMemo(
     () => DATA.filter((c) => c.cor.toLowerCase().includes(applied.toLowerCase())),
