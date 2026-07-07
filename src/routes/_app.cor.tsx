@@ -73,6 +73,7 @@ function CorPage() {
       <div className="flex items-center gap-2">
         <h1 className="text-xl font-semibold text-primary">🎨 Listagem Tinturarias</h1>
         <div className="ml-auto flex gap-2">
+          <CadastroCorDialog />
           <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1.5" />Excel</Button>
           <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1.5" />PDF</Button>
           <Button variant="outline" size="sm" onClick={() => window.print()}><Printer className="h-4 w-4 mr-1.5" />Imprimir</Button>
