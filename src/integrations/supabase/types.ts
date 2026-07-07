@@ -137,8 +137,10 @@ export type Database = {
           id: string
           imagem_url: string | null
           largura: number | null
+          ncm: string | null
           nome: string
           preco_venda: number | null
+          rendimento: number | null
           slug: string | null
           tecnologias: string[] | null
           updated_at: string
@@ -155,8 +157,10 @@ export type Database = {
           id?: string
           imagem_url?: string | null
           largura?: number | null
+          ncm?: string | null
           nome: string
           preco_venda?: number | null
+          rendimento?: number | null
           slug?: string | null
           tecnologias?: string[] | null
           updated_at?: string
@@ -173,8 +177,10 @@ export type Database = {
           id?: string
           imagem_url?: string | null
           largura?: number | null
+          ncm?: string | null
           nome?: string
           preco_venda?: number | null
+          rendimento?: number | null
           slug?: string | null
           tecnologias?: string[] | null
           updated_at?: string
