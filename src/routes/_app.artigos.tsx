@@ -267,9 +267,9 @@ function ArtigosPage() {
       <ArtigoDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        item={editing}
-        onSave={(p) => saveMut.mutate(p)}
-        saving={saveMut.isPending}
+        articleId={editing?.id ?? null}
+        ownerId={user?.id ?? null}
+        onSaved={() => qc.invalidateQueries({ queryKey: ["articles"] })}
       />
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
