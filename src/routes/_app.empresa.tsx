@@ -239,7 +239,7 @@ function EmpresaPage() {
           <Button size="sm" variant="outline" onClick={openEdit} disabled={!selected}>
             <Pencil className="h-4 w-4" /> Alterar
           </Button>
-          <Button size="sm" variant="outline" onClick={askDelete} disabled={!selected}>
+          <Button size="sm" variant="outline" onClick={askDelete} disabled={selectedList.length === 0}>
             <Trash2 className="h-4 w-4" /> Excluir
           </Button>
           <Button size="sm" onClick={handlePrint}>
