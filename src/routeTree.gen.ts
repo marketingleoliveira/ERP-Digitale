@@ -26,7 +26,6 @@ import { Route as AppMaquinaRouteImport } from './routes/_app.maquina'
 import { Route as AppLotesRouteImport } from './routes/_app.lotes'
 import { Route as AppInicioRouteImport } from './routes/_app.inicio'
 import { Route as AppFuncionarioRouteImport } from './routes/_app.funcionario'
-import { Route as AppFiscalRouteImport } from './routes/_app.fiscal'
 import { Route as AppFioRouteImport } from './routes/_app.fio'
 import { Route as AppEstoqueTecidosRouteImport } from './routes/_app.estoque-tecidos'
 import { Route as AppEstoqueFiosRouteImport } from './routes/_app.estoque-fios'
@@ -125,11 +124,6 @@ const AppFuncionarioRoute = AppFuncionarioRouteImport.update({
   path: '/funcionario',
   getParentRoute: () => AppRoute,
 } as any)
-const AppFiscalRoute = AppFiscalRouteImport.update({
-  id: '/fiscal',
-  path: '/fiscal',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppFioRoute = AppFioRouteImport.update({
   id: '/fio',
   path: '/fio',
@@ -212,7 +206,6 @@ export interface FileRoutesByFullPath {
   '/estoque-fios': typeof AppEstoqueFiosRoute
   '/estoque-tecidos': typeof AppEstoqueTecidosRoute
   '/fio': typeof AppFioRoute
-  '/fiscal': typeof AppFiscalRoute
   '/funcionario': typeof AppFuncionarioRoute
   '/inicio': typeof AppInicioRoute
   '/lotes': typeof AppLotesRoute
@@ -244,7 +237,6 @@ export interface FileRoutesByTo {
   '/estoque-fios': typeof AppEstoqueFiosRoute
   '/estoque-tecidos': typeof AppEstoqueTecidosRoute
   '/fio': typeof AppFioRoute
-  '/fiscal': typeof AppFiscalRoute
   '/funcionario': typeof AppFuncionarioRoute
   '/inicio': typeof AppInicioRoute
   '/lotes': typeof AppLotesRoute
@@ -278,7 +270,6 @@ export interface FileRoutesById {
   '/_app/estoque-fios': typeof AppEstoqueFiosRoute
   '/_app/estoque-tecidos': typeof AppEstoqueTecidosRoute
   '/_app/fio': typeof AppFioRoute
-  '/_app/fiscal': typeof AppFiscalRoute
   '/_app/funcionario': typeof AppFuncionarioRoute
   '/_app/inicio': typeof AppInicioRoute
   '/_app/lotes': typeof AppLotesRoute
@@ -312,7 +303,6 @@ export interface FileRouteTypes {
     | '/estoque-fios'
     | '/estoque-tecidos'
     | '/fio'
-    | '/fiscal'
     | '/funcionario'
     | '/inicio'
     | '/lotes'
@@ -344,7 +334,6 @@ export interface FileRouteTypes {
     | '/estoque-fios'
     | '/estoque-tecidos'
     | '/fio'
-    | '/fiscal'
     | '/funcionario'
     | '/inicio'
     | '/lotes'
@@ -377,7 +366,6 @@ export interface FileRouteTypes {
     | '/_app/estoque-fios'
     | '/_app/estoque-tecidos'
     | '/_app/fio'
-    | '/_app/fiscal'
     | '/_app/funcionario'
     | '/_app/inicio'
     | '/_app/lotes'
@@ -522,13 +510,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFuncionarioRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/fiscal': {
-      id: '/_app/fiscal'
-      path: '/fiscal'
-      fullPath: '/fiscal'
-      preLoaderRoute: typeof AppFiscalRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/fio': {
       id: '/_app/fio'
       path: '/fio'
@@ -636,7 +617,6 @@ interface AppRouteChildren {
   AppEstoqueFiosRoute: typeof AppEstoqueFiosRoute
   AppEstoqueTecidosRoute: typeof AppEstoqueTecidosRoute
   AppFioRoute: typeof AppFioRoute
-  AppFiscalRoute: typeof AppFiscalRoute
   AppFuncionarioRoute: typeof AppFuncionarioRoute
   AppInicioRoute: typeof AppInicioRoute
   AppLotesRoute: typeof AppLotesRoute
@@ -666,7 +646,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppEstoqueFiosRoute: AppEstoqueFiosRoute,
   AppEstoqueTecidosRoute: AppEstoqueTecidosRoute,
   AppFioRoute: AppFioRoute,
-  AppFiscalRoute: AppFiscalRoute,
   AppFuncionarioRoute: AppFuncionarioRoute,
   AppInicioRoute: AppInicioRoute,
   AppLotesRoute: AppLotesRoute,
