@@ -56,21 +56,30 @@ function TinturariasPage() {
 
   const [filterNome, setFilterNome] = useState("");
   const [filterCnpj, setFilterCnpj] = useState("");
+  const [filterCategoria, setFilterCategoria] = useState<string>("__all");
   const [appliedNome, setAppliedNome] = useState("");
   const [appliedCnpj, setAppliedCnpj] = useState("");
+  const [appliedCategoria, setAppliedCategoria] = useState<string>("__all");
+  const [sortBy, setSortBy] = useState<"nome_fantasia" | "codigo" | "categoria">("nome_fantasia");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Tinturaria | null>(null);
 
-  const filtered = useMemo(
-    () =>
-      data.filter(
-        (r) =>
-          r.nome_fantasia.toLowerCase().includes(appliedNome.toLowerCase()) &&
-          (r.cnpj ?? "").includes(appliedCnpj.trim()),
-      ),
-    [data, appliedNome, appliedCnpj],
-  );
+  const filtered = useMemo(() => {
+    const rows = data.filter(
+      (r) =>
+        r.nome_fantasia.toLowerCase().includes(appliedNome.toLowerCase()) &&
+        (r.cnpj ?? "").includes(appliedCnpj.trim()) &&
+        (appliedCategoria === "__all" || r.categoria === appliedCategoria),
+    );
+    const dir = sortDir === "asc" ? 1 : -1;
+    return [...rows].sort((a, b) => {
+      const av = (a[sortBy] ?? "").toString().toLowerCase();
+      const bv = (b[sortBy] ?? "").toString().toLowerCase();
+      return av < bv ? -dir : av > bv ? dir : 0;
+    });
+  }, [data, appliedNome, appliedCnpj, appliedCategoria, sortBy, sortDir]);
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const sel = useMultiSelection(paged);
@@ -159,15 +168,51 @@ function TinturariasPage() {
             <span className="ml-auto text-muted-foreground">Total de Registros: {filtered.length}</span>
           </div>
           <div className="mt-3 flex flex-wrap items-end gap-3">
-            <div className="flex-1 min-w-[240px]">
+            <div className="flex-1 min-w-[220px]">
               <Label className="text-xs text-muted-foreground">Nome/Razão:</Label>
               <Input value={filterNome} onChange={(e) => setFilterNome(e.target.value)} className="h-9" maxLength={100} />
             </div>
-            <div className="min-w-[200px]">
+            <div className="min-w-[180px]">
               <Label className="text-xs text-muted-foreground">CNPJ:</Label>
               <Input value={filterCnpj} onChange={(e) => setFilterCnpj(e.target.value)} className="h-9" maxLength={20} />
             </div>
-            <Button variant="secondary" onClick={() => { setAppliedNome(filterNome); setAppliedCnpj(filterCnpj); setPage(1); }}>FILTRAR</Button>
+            <div className="min-w-[160px]">
+              <Label className="text-xs text-muted-foreground">Categoria:</Label>
+              <Select value={filterCategoria} onValueChange={setFilterCategoria}>
+                <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__all">Todas</SelectItem>
+                  {CATEGORIAS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="min-w-[160px]">
+              <Label className="text-xs text-muted-foreground">Ordenar por:</Label>
+              <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+                <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="nome_fantasia">Nome</SelectItem>
+                  <SelectItem value="codigo">Código</SelectItem>
+                  <SelectItem value="categoria">Categoria</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="min-w-[120px]">
+              <Label className="text-xs text-muted-foreground">Direção:</Label>
+              <Select value={sortDir} onValueChange={(v) => setSortDir(v as typeof sortDir)}>
+                <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="asc">A→Z</SelectItem>
+                  <SelectItem value="desc">Z→A</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button variant="secondary" onClick={() => {
+              setAppliedNome(filterNome);
+              setAppliedCnpj(filterCnpj);
+              setAppliedCategoria(filterCategoria);
+              setPage(1);
+            }}>FILTRAR</Button>
           </div>
         </div>
       </Card>
