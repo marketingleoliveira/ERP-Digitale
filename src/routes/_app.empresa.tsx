@@ -214,12 +214,13 @@ function EmpresaPage() {
       e.cnpj ?? e.cpf ?? "-",
       e.telefone ?? "-",
       e.contato ?? "-",
-      ...FLAG_COLS.map((c) => ((e[c.key] as boolean) ? "●" : "○")),
+      getTipoLabel(e),
+      e.flag_habilitado ? "Sim" : "Não",
     ]);
 
     autoTable(doc, {
       startY: 80,
-      head: [["Nome Fantasia", "CNPJ/CPF", "Telefone", "Contato", ...FLAG_COLS.map((c) => c.label)]],
+      head: [["Nome Fantasia", "CNPJ/CPF", "Telefone", "Contato", "Tipo", "Hab"]],
       body,
       styles: { fontSize: 8, cellPadding: 3 },
       headStyles: { fillColor: [30, 58, 138], textColor: 255 },
