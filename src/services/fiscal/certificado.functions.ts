@@ -86,15 +86,20 @@ export const uploadCertificado = createServerFn({ method: "POST" })
   });
 
 /* ==================== LISTAR ==================== */
+type CertRow = {
+  id: string; nome: string; cnpj: string;
+  valido_de: string; valido_ate: string; ativo: boolean;
+  pfx_storage_path: string; created_at: string; empresa_id: string | null;
+};
 export const listarCertificados = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("certificados_digitais" as never)
-      .select("*")
+      .select("id, nome, cnpj, valido_de, valido_ate, ativo, pfx_storage_path, created_at, empresa_id")
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
-    return { certificados: (data ?? []) as Record<string, unknown>[] };
+    return { certificados: (data ?? []) as unknown as CertRow[] };
   });
 
 /* ==================== ATIVAR ==================== */
