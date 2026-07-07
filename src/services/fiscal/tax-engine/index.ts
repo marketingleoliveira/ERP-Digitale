@@ -193,8 +193,7 @@ export function calcularNota(ctx: TaxContext, itens: ItemInput[]): {
     totais.valor_difal += r.valor_difal;
     totais.valor_total += r.valor_total;
   });
-  Object.keys(totais).forEach((k) => {
-    (totais as Record<string, number>)[k] = round((totais as Record<string, number>)[k]);
-  });
+  const rec = totais as unknown as Record<string, number>;
+  Object.keys(rec).forEach((k) => { rec[k] = round(rec[k]); });
   return { itens: resultados, totais };
 }
