@@ -235,6 +235,7 @@ function MaquinaDialog({
     setDisposicao(editing?.disposicao_agulhas ?? "");
     setProdMedia(editing?.producao_media?.toString() ?? "");
     setHabilitado(editing?.habilitado ?? true);
+    setFioId(editing?.fio_id ?? "");
     setCarga(Array.isArray(editing?.carga_agulhas) ? editing!.carga_agulhas! : []);
     setAgulha(""); setQtd("");
   }, [open, editing]);
