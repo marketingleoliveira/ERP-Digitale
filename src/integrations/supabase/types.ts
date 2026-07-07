@@ -47,6 +47,59 @@ export type Database = {
         }
         Relationships: []
       }
+      article_bom: {
+        Row: {
+          article_id: string
+          created_at: string
+          descricao: string
+          fator_perda_pct: number
+          id: string
+          observacao: string | null
+          qtd_por_kg: number
+          ref_id: string | null
+          ref_tipo: string | null
+          tipo: string
+          unidade: string
+          updated_at: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          descricao: string
+          fator_perda_pct?: number
+          id?: string
+          observacao?: string | null
+          qtd_por_kg?: number
+          ref_id?: string | null
+          ref_tipo?: string | null
+          tipo: string
+          unidade?: string
+          updated_at?: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          descricao?: string
+          fator_perda_pct?: number
+          id?: string
+          observacao?: string | null
+          qtd_por_kg?: number
+          ref_id?: string | null
+          ref_tipo?: string | null
+          tipo?: string
+          unidade?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_bom_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       article_cores: {
         Row: {
           article_id: string
@@ -979,6 +1032,13 @@ export type Database = {
             referencedRelation: "ordens_producao"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "contas_receber_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
         ]
       }
       cores: {
@@ -1804,6 +1864,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "estoque_movimentos_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
             foreignKeyName: "estoque_movimentos_recebimento_id_fkey"
             columns: ["recebimento_id"]
             isOneToOne: false
@@ -2056,6 +2123,7 @@ export type Database = {
       lotes: {
         Row: {
           created_at: string
+          custo_unitario: number | null
           data_entrada: string
           fornecedor_id: string | null
           habilitado: boolean
@@ -2071,6 +2139,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          custo_unitario?: number | null
           data_entrada?: string
           fornecedor_id?: string | null
           habilitado?: boolean
@@ -2086,6 +2155,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          custo_unitario?: number | null
           data_entrada?: string
           fornecedor_id?: string | null
           habilitado?: boolean
@@ -2113,6 +2183,71 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ordens_producao"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lotes_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+        ]
+      }
+      maquina_capacidade: {
+        Row: {
+          created_at: string
+          dias_uteis_semana: number
+          eficiencia_alvo_pct: number
+          horas_por_turno: number
+          id: string
+          kg_por_hora: number
+          maquina_id: string
+          turnos_por_dia: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dias_uteis_semana?: number
+          eficiencia_alvo_pct?: number
+          horas_por_turno?: number
+          id?: string
+          kg_por_hora?: number
+          maquina_id: string
+          turnos_por_dia?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dias_uteis_semana?: number
+          eficiencia_alvo_pct?: number
+          horas_por_turno?: number
+          id?: string
+          kg_por_hora?: number
+          maquina_id?: string
+          turnos_por_dia?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maquina_capacidade_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: true
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maquina_capacidade_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: true
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "maquina_capacidade_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: true
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
           },
         ]
       }
@@ -2272,6 +2407,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ordens_producao"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentos_financeiros_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
           },
         ]
       }
@@ -2643,6 +2785,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "notas_fiscais_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
             foreignKeyName: "notas_fiscais_transportadora_id_fkey"
             columns: ["transportadora_id"]
             isOneToOne: false
@@ -2807,6 +2956,7 @@ export type Database = {
           id: string
           inicio: string
           maquina_id: string | null
+          motivo_refugo: string | null
           observacao: string | null
           op_id: string
           quantidade_produzida: number
@@ -2819,6 +2969,7 @@ export type Database = {
           id?: string
           inicio: string
           maquina_id?: string | null
+          motivo_refugo?: string | null
           observacao?: string | null
           op_id: string
           quantidade_produzida?: number
@@ -2831,6 +2982,7 @@ export type Database = {
           id?: string
           inicio?: string
           maquina_id?: string | null
+          motivo_refugo?: string | null
           observacao?: string | null
           op_id?: string
           quantidade_produzida?: number
@@ -2852,11 +3004,32 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "op_apontamentos_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "op_apontamentos_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
             foreignKeyName: "op_apontamentos_op_id_fkey"
             columns: ["op_id"]
             isOneToOne: false
             referencedRelation: "ordens_producao"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_apontamentos_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
           },
         ]
       }
@@ -2905,6 +3078,73 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ordens_producao"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_consumos_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+        ]
+      }
+      op_custos: {
+        Row: {
+          calculado_em: string
+          created_at: string
+          custo_cif: number
+          custo_mao_obra: number
+          custo_materia_prima: number
+          custo_por_kg: number | null
+          custo_total: number | null
+          id: string
+          observacao: string | null
+          op_id: string
+          quantidade_produzida: number
+          updated_at: string
+        }
+        Insert: {
+          calculado_em?: string
+          created_at?: string
+          custo_cif?: number
+          custo_mao_obra?: number
+          custo_materia_prima?: number
+          custo_por_kg?: number | null
+          custo_total?: number | null
+          id?: string
+          observacao?: string | null
+          op_id: string
+          quantidade_produzida?: number
+          updated_at?: string
+        }
+        Update: {
+          calculado_em?: string
+          created_at?: string
+          custo_cif?: number
+          custo_mao_obra?: number
+          custo_materia_prima?: number
+          custo_por_kg?: number | null
+          custo_total?: number | null
+          id?: string
+          observacao?: string | null
+          op_id?: string
+          quantidade_produzida?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_custos_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: true
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_custos_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: true
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
           },
         ]
       }
@@ -2956,6 +3196,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ordens_producao"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_entradas_estoque_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
           },
           {
             foreignKeyName: "op_entradas_estoque_product_id_fkey"
@@ -3011,6 +3258,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ordens_producao"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_eventos_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
           },
         ]
       }
@@ -3070,6 +3324,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "op_expedicoes_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
             foreignKeyName: "op_expedicoes_transportadora_id_fkey"
             columns: ["transportadora_id"]
             isOneToOne: false
@@ -3120,6 +3381,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ordens_producao"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_faturamento_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
           },
         ]
       }
@@ -3195,6 +3463,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "op_itens_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
             foreignKeyName: "op_itens_pedido_item_id_fkey"
             columns: ["pedido_item_id"]
             isOneToOne: false
@@ -3214,6 +3489,81 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "variantes"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      op_paradas: {
+        Row: {
+          created_at: string
+          duracao_min: number | null
+          fim: string | null
+          id: string
+          inicio: string
+          maquina_id: string | null
+          motivo: string | null
+          op_id: string
+          tipo: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          duracao_min?: number | null
+          fim?: string | null
+          id?: string
+          inicio: string
+          maquina_id?: string | null
+          motivo?: string | null
+          op_id: string
+          tipo: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          duracao_min?: number | null
+          fim?: string | null
+          id?: string
+          inicio?: string
+          maquina_id?: string | null
+          motivo?: string | null
+          op_id?: string
+          tipo?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_paradas_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_paradas_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "op_paradas_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "op_paradas_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_paradas_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
           },
         ]
       }
@@ -3268,6 +3618,84 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ordens_producao"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_qualidade_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+        ]
+      }
+      op_reprocessos: {
+        Row: {
+          created_at: string
+          custo_adicional: number
+          id: string
+          motivo: string
+          observacao: string | null
+          op_filha_id: string | null
+          op_origem_id: string
+          quantidade: number
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          custo_adicional?: number
+          id?: string
+          motivo: string
+          observacao?: string | null
+          op_filha_id?: string | null
+          op_origem_id: string
+          quantidade?: number
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          custo_adicional?: number
+          id?: string
+          motivo?: string
+          observacao?: string | null
+          op_filha_id?: string | null
+          op_origem_id?: string
+          quantidade?: number
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_reprocessos_op_filha_id_fkey"
+            columns: ["op_filha_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_reprocessos_op_filha_id_fkey"
+            columns: ["op_filha_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "op_reprocessos_op_origem_id_fkey"
+            columns: ["op_origem_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_reprocessos_op_origem_id_fkey"
+            columns: ["op_origem_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
           },
         ]
       }
@@ -3337,6 +3765,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "maquinas"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ordens_producao_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "ordens_producao_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
           },
           {
             foreignKeyName: "ordens_producao_pedido_id_fkey"
@@ -3618,6 +4060,145 @@ export type Database = {
             columns: ["pedido_id"]
             isOneToOne: false
             referencedRelation: "pedidos_compra"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plano_producao: {
+        Row: {
+          codigo: string
+          created_at: string
+          descricao: string | null
+          id: string
+          observacao: string | null
+          responsavel_id: string | null
+          semana_fim: string
+          semana_inicio: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          codigo: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          observacao?: string | null
+          responsavel_id?: string | null
+          semana_fim: string
+          semana_inicio: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          codigo?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          observacao?: string | null
+          responsavel_id?: string | null
+          semana_fim?: string
+          semana_inicio?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plano_producao_responsavel_id_fkey"
+            columns: ["responsavel_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plano_producao_itens: {
+        Row: {
+          article_id: string | null
+          created_at: string
+          data_prevista: string
+          horas_estimadas: number | null
+          id: string
+          maquina_id: string | null
+          observacao: string | null
+          op_id: string | null
+          plano_id: string
+          quantidade_planejada: number
+          sequencia: number
+        }
+        Insert: {
+          article_id?: string | null
+          created_at?: string
+          data_prevista: string
+          horas_estimadas?: number | null
+          id?: string
+          maquina_id?: string | null
+          observacao?: string | null
+          op_id?: string | null
+          plano_id: string
+          quantidade_planejada?: number
+          sequencia?: number
+        }
+        Update: {
+          article_id?: string | null
+          created_at?: string
+          data_prevista?: string
+          horas_estimadas?: number | null
+          id?: string
+          maquina_id?: string | null
+          observacao?: string | null
+          op_id?: string | null
+          plano_id?: string
+          quantidade_planejada?: number
+          sequencia?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plano_producao_itens_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plano_producao_itens_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plano_producao_itens_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "plano_producao_itens_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "plano_producao_itens_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plano_producao_itens_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "plano_producao_itens_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "plano_producao"
             referencedColumns: ["id"]
           },
         ]
@@ -4130,6 +4711,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "romaneio_itens_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
             foreignKeyName: "romaneio_itens_pedido_id_fkey"
             columns: ["pedido_id"]
             isOneToOne: false
@@ -4379,6 +4967,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ordens_producao"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "separacoes_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
           },
           {
             foreignKeyName: "separacoes_pedido_id_fkey"
@@ -4755,6 +5350,37 @@ export type Database = {
       }
     }
     Views: {
+      vw_capacidade_semanal: {
+        Row: {
+          capacidade_efetiva_semana_kg: number | null
+          capacidade_nominal_semana_kg: number | null
+          dias_uteis_semana: number | null
+          eficiencia_alvo_pct: number | null
+          horas_por_turno: number | null
+          kg_por_hora: number | null
+          maquina: string | null
+          maquina_id: string | null
+          numero: number | null
+          tipo: string | null
+          turnos_por_dia: number | null
+        }
+        Relationships: []
+      }
+      vw_custo_op: {
+        Row: {
+          calculado_em: string | null
+          custo_cif: number | null
+          custo_mao_obra: number | null
+          custo_materia_prima: number | null
+          custo_por_kg: number | null
+          custo_total: number | null
+          numero: number | null
+          op_id: string | null
+          quantidade_produzida: number | null
+          status: Database["public"]["Enums"]["op_status"] | null
+        }
+        Relationships: []
+      }
       vw_fluxo_caixa: {
         Row: {
           centro_custo_id: string | null
@@ -4765,6 +5391,21 @@ export type Database = {
           origem: string | null
           tipo: string | null
           valor: number | null
+        }
+        Relationships: []
+      }
+      vw_oee_maquina: {
+        Row: {
+          disponibilidade_pct: number | null
+          maquina: string | null
+          maquina_id: string | null
+          min_operado: number | null
+          min_parado: number | null
+          numero: number | null
+          performance_pct: number | null
+          qtd_produzida: number | null
+          qtd_refugo: number | null
+          qualidade_pct: number | null
         }
         Relationships: []
       }
@@ -4821,6 +5462,11 @@ export type Database = {
           _observacao?: string
           _valor_pago: number
         }
+        Returns: string
+      }
+      op_calcular_custo: { Args: { _op_id: string }; Returns: string }
+      op_criar_reprocesso: {
+        Args: { _motivo: string; _op_id: string; _quantidade: number }
         Returns: string
       }
       op_transicao_valida: {

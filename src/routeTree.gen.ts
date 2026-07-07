@@ -45,6 +45,7 @@ import { Route as AppComprasIndexRouteImport } from './routes/_app.compras.index
 import { Route as AppProducaoQualidadeRouteImport } from './routes/_app.producao.qualidade'
 import { Route as AppProducaoPedidosRouteImport } from './routes/_app.producao.pedidos'
 import { Route as AppProducaoOpRouteImport } from './routes/_app.producao.op'
+import { Route as AppProducaoIndustrialRouteImport } from './routes/_app.producao.industrial'
 import { Route as AppProducaoExpedicaoRouteImport } from './routes/_app.producao.expedicao'
 import { Route as AppLogisticaTransportadorasRouteImport } from './routes/_app.logistica.transportadoras'
 import { Route as AppLogisticaSeparacoesRouteImport } from './routes/_app.logistica.separacoes'
@@ -263,6 +264,11 @@ const AppProducaoPedidosRoute = AppProducaoPedidosRouteImport.update({
 const AppProducaoOpRoute = AppProducaoOpRouteImport.update({
   id: '/producao/op',
   path: '/producao/op',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProducaoIndustrialRoute = AppProducaoIndustrialRouteImport.update({
+  id: '/producao/industrial',
+  path: '/producao/industrial',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProducaoExpedicaoRoute = AppProducaoExpedicaoRouteImport.update({
@@ -538,6 +544,7 @@ export interface FileRoutesByFullPath {
   '/logistica/separacoes': typeof AppLogisticaSeparacoesRoute
   '/logistica/transportadoras': typeof AppLogisticaTransportadorasRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
+  '/producao/industrial': typeof AppProducaoIndustrialRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
   '/producao/pedidos': typeof AppProducaoPedidosRoute
   '/producao/qualidade': typeof AppProducaoQualidadeRoute
@@ -615,6 +622,7 @@ export interface FileRoutesByTo {
   '/logistica/separacoes': typeof AppLogisticaSeparacoesRoute
   '/logistica/transportadoras': typeof AppLogisticaTransportadorasRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
+  '/producao/industrial': typeof AppProducaoIndustrialRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
   '/producao/pedidos': typeof AppProducaoPedidosRoute
   '/producao/qualidade': typeof AppProducaoQualidadeRoute
@@ -694,6 +702,7 @@ export interface FileRoutesById {
   '/_app/logistica/separacoes': typeof AppLogisticaSeparacoesRoute
   '/_app/logistica/transportadoras': typeof AppLogisticaTransportadorasRoute
   '/_app/producao/expedicao': typeof AppProducaoExpedicaoRoute
+  '/_app/producao/industrial': typeof AppProducaoIndustrialRoute
   '/_app/producao/op': typeof AppProducaoOpRouteWithChildren
   '/_app/producao/pedidos': typeof AppProducaoPedidosRoute
   '/_app/producao/qualidade': typeof AppProducaoQualidadeRoute
@@ -773,6 +782,7 @@ export interface FileRouteTypes {
     | '/logistica/separacoes'
     | '/logistica/transportadoras'
     | '/producao/expedicao'
+    | '/producao/industrial'
     | '/producao/op'
     | '/producao/pedidos'
     | '/producao/qualidade'
@@ -850,6 +860,7 @@ export interface FileRouteTypes {
     | '/logistica/separacoes'
     | '/logistica/transportadoras'
     | '/producao/expedicao'
+    | '/producao/industrial'
     | '/producao/op'
     | '/producao/pedidos'
     | '/producao/qualidade'
@@ -928,6 +939,7 @@ export interface FileRouteTypes {
     | '/_app/logistica/separacoes'
     | '/_app/logistica/transportadoras'
     | '/_app/producao/expedicao'
+    | '/_app/producao/industrial'
     | '/_app/producao/op'
     | '/_app/producao/pedidos'
     | '/_app/producao/qualidade'
@@ -1204,6 +1216,13 @@ declare module '@tanstack/react-router' {
       path: '/producao/op'
       fullPath: '/producao/op'
       preLoaderRoute: typeof AppProducaoOpRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/producao/industrial': {
+      id: '/_app/producao/industrial'
+      path: '/producao/industrial'
+      fullPath: '/producao/industrial'
+      preLoaderRoute: typeof AppProducaoIndustrialRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/producao/expedicao': {
@@ -1613,6 +1632,7 @@ interface AppRouteChildren {
   AppLogisticaSeparacoesRoute: typeof AppLogisticaSeparacoesRoute
   AppLogisticaTransportadorasRoute: typeof AppLogisticaTransportadorasRoute
   AppProducaoExpedicaoRoute: typeof AppProducaoExpedicaoRoute
+  AppProducaoIndustrialRoute: typeof AppProducaoIndustrialRoute
   AppProducaoOpRoute: typeof AppProducaoOpRouteWithChildren
   AppProducaoPedidosRoute: typeof AppProducaoPedidosRoute
   AppProducaoQualidadeRoute: typeof AppProducaoQualidadeRoute
@@ -1681,6 +1701,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppLogisticaSeparacoesRoute: AppLogisticaSeparacoesRoute,
   AppLogisticaTransportadorasRoute: AppLogisticaTransportadorasRoute,
   AppProducaoExpedicaoRoute: AppProducaoExpedicaoRoute,
+  AppProducaoIndustrialRoute: AppProducaoIndustrialRoute,
   AppProducaoOpRoute: AppProducaoOpRouteWithChildren,
   AppProducaoPedidosRoute: AppProducaoPedidosRoute,
   AppProducaoQualidadeRoute: AppProducaoQualidadeRoute,
