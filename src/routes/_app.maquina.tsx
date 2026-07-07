@@ -195,6 +195,19 @@ function MaquinaDialog({
   const [dataFab, setDataFab] = useState("");
   const [correias, setCorreias] = useState<string[]>([""]);
 
+  const { data: correiasOptions = [] } = useQuery({
+    queryKey: ["correias", "options"],
+    queryFn: async (): Promise<Array<{ id: string; correia: string }>> => {
+      const { data, error } = await supabase
+        .from("correias" as never)
+        .select("id, correia")
+        .eq("habilitado", true)
+        .order("correia", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as unknown as Array<{ id: string; correia: string }>;
+    },
+  });
+
   useEffect(() => {
     if (!open) return;
     setNumero(editing?.numero?.toString() ?? "");
