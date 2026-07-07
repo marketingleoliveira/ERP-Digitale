@@ -193,9 +193,21 @@ function MaquinaDialog({
   const [disposicao, setDisposicao] = useState("");
   const [prodMedia, setProdMedia] = useState("");
   const [habilitado, setHabilitado] = useState(true);
+  const [fioId, setFioId] = useState<string>("");
   const [carga, setCarga] = useState<CargaAgulha[]>([]);
   const [agulha, setAgulha] = useState("");
   const [qtd, setQtd] = useState("");
+
+  const { data: fiosOptions = [] } = useQuery({
+    queryKey: ["composicoes", "fios"],
+    queryFn: async () => {
+      const { data, error } = await (supabase.from("composicoes" as never) as never as {
+        select: (c: string) => { eq: (a: string, b: unknown) => { order: (o: string) => Promise<{ data: Array<{ id: string; codigo: string; composicao: string | null; tipo: string; habilitado: boolean }> | null; error: Error | null }> } }
+      }).select("id,codigo,composicao,tipo,habilitado").eq("tipo", "Fio").order("codigo");
+      if (error) throw error;
+      return (data ?? []).filter((f) => f.habilitado);
+    },
+  });
 
   const { data: agulhasOptions = [] } = useQuery({
     queryKey: ["agulhas", "enabled"],
