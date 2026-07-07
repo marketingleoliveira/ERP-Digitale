@@ -51,7 +51,6 @@ function AgulhaPage() {
   const [filter, setFilter] = useState("");
   const [applied, setApplied] = useState("");
   const [page, setPage] = useState(1);
-  const [selected, setSelected] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Agulha | null>(null);
 
@@ -61,16 +60,18 @@ function AgulhaPage() {
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const selectedRow = data.find((a) => a.id === selected) ?? null;
+  const sel = useMultiSelection(paged);
+  const singleRow = sel.singleSelected;
 
   const deleteMut = useMutation({
-    mutationFn: async (row: Agulha) => {
-      const { error } = await sb.from("agulhas").delete().eq("id", row.id);
+    mutationFn: async (ids: string[]) => {
+      const { error } = await sb.from("agulhas").delete().in("id", ids as any);
       if (error) throw error;
+      return ids.length;
     },
-    onSuccess: () => {
-      toast.success("Agulha excluída.");
-      setSelected(null);
+    onSuccess: (n) => {
+      toast.success(`${n} agulha(s) excluída(s).`);
+      sel.clear();
       qc.invalidateQueries({ queryKey: ["agulhas"] });
     },
     onError: (e: Error) => toast.error(e.message),
