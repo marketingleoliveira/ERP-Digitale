@@ -32,9 +32,16 @@ type Tinturaria = {
   contato: string | null;
   habilitado: boolean;
   categoria: Categoria;
+  ncm: string | null;
+  unidade: string | null;
+  preco_custo: number | null;
+  preco_venda: number | null;
+  estoque_minimo: number | null;
+  observacao: string | null;
 };
 
 const PAGE_SIZE = 20;
+const UNIDADES = ["UN", "KG", "MT", "M2", "PC", "CX", "LT"];
 
 async function fetchTinturarias(): Promise<Tinturaria[]> {
   const client = supabase as unknown as {
@@ -44,7 +51,7 @@ async function fetchTinturarias(): Promise<Tinturaria[]> {
   };
   const { data, error } = await client
     .from("tinturarias")
-    .select("id,codigo,nome_fantasia,razao_social,cnpj,telefone,contato,habilitado,categoria")
+    .select("*")
     .order("nome_fantasia", { ascending: true });
   if (error) throw error;
   return data ?? [];
