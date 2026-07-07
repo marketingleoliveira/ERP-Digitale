@@ -31,6 +31,7 @@ type Tinturaria = {
   telefone: string | null;
   contato: string | null;
   habilitado: boolean;
+  categoria: Categoria;
 };
 
 const PAGE_SIZE = 20;
