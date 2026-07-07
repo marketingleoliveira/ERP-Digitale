@@ -191,6 +191,9 @@ function FuncionarioDialog({
       return data ?? [];
     },
     enabled: open,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 
   const [f, setF] = useState({
