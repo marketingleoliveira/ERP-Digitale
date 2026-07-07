@@ -1090,21 +1090,37 @@ export type Database = {
           base_icms: number
           cfop_id: string | null
           chave_acesso: string | null
+          chave_ref: string | null
           cliente_id: string | null
           created_at: string
           data_emissao: string
+          destinatario_id: string | null
+          drawback: string | null
+          emissor: string | null
+          finalidade: string
           fornecedor_id: string | null
+          frete_tipo: string | null
           id: string
+          modelo: string | null
           numero: string
           observacao: string | null
           pdf_url: string | null
+          peso_bruto: number | null
+          peso_liquido: number | null
+          placa_veiculo: string | null
+          quantidade_emb: number | null
           serie: string
           status: string
           tipo: string
+          tipo_embalagem: string | null
+          transportadora_id: string | null
           updated_at: string
           valor_cofins: number
+          valor_desconto: number
+          valor_frete: number
           valor_icms: number
           valor_ipi: number
+          valor_outros: number
           valor_pis: number
           valor_total: number
           xml_url: string | null
@@ -1113,21 +1129,37 @@ export type Database = {
           base_icms?: number
           cfop_id?: string | null
           chave_acesso?: string | null
+          chave_ref?: string | null
           cliente_id?: string | null
           created_at?: string
           data_emissao?: string
+          destinatario_id?: string | null
+          drawback?: string | null
+          emissor?: string | null
+          finalidade?: string
           fornecedor_id?: string | null
+          frete_tipo?: string | null
           id?: string
+          modelo?: string | null
           numero: string
           observacao?: string | null
           pdf_url?: string | null
+          peso_bruto?: number | null
+          peso_liquido?: number | null
+          placa_veiculo?: string | null
+          quantidade_emb?: number | null
           serie?: string
           status?: string
           tipo?: string
+          tipo_embalagem?: string | null
+          transportadora_id?: string | null
           updated_at?: string
           valor_cofins?: number
+          valor_desconto?: number
+          valor_frete?: number
           valor_icms?: number
           valor_ipi?: number
+          valor_outros?: number
           valor_pis?: number
           valor_total?: number
           xml_url?: string | null
@@ -1136,21 +1168,37 @@ export type Database = {
           base_icms?: number
           cfop_id?: string | null
           chave_acesso?: string | null
+          chave_ref?: string | null
           cliente_id?: string | null
           created_at?: string
           data_emissao?: string
+          destinatario_id?: string | null
+          drawback?: string | null
+          emissor?: string | null
+          finalidade?: string
           fornecedor_id?: string | null
+          frete_tipo?: string | null
           id?: string
+          modelo?: string | null
           numero?: string
           observacao?: string | null
           pdf_url?: string | null
+          peso_bruto?: number | null
+          peso_liquido?: number | null
+          placa_veiculo?: string | null
+          quantidade_emb?: number | null
           serie?: string
           status?: string
           tipo?: string
+          tipo_embalagem?: string | null
+          transportadora_id?: string | null
           updated_at?: string
           valor_cofins?: number
+          valor_desconto?: number
+          valor_frete?: number
           valor_icms?: number
           valor_ipi?: number
+          valor_outros?: number
           valor_pis?: number
           valor_total?: number
           xml_url?: string | null
@@ -1171,54 +1219,172 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "notas_fiscais_destinatario_id_fkey"
+            columns: ["destinatario_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "notas_fiscais_fornecedor_id_fkey"
             columns: ["fornecedor_id"]
             isOneToOne: false
             referencedRelation: "tinturarias"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "notas_fiscais_transportadora_id_fkey"
+            columns: ["transportadora_id"]
+            isOneToOne: false
+            referencedRelation: "tinturarias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notas_fiscais_faturas: {
+        Row: {
+          created_at: string
+          dias: number | null
+          id: string
+          intervalo: number | null
+          nota_fiscal_id: string
+          numero: string
+          parcelas: number | null
+          valor: number
+          valor_complementar: number
+          vencimento: string
+        }
+        Insert: {
+          created_at?: string
+          dias?: number | null
+          id?: string
+          intervalo?: number | null
+          nota_fiscal_id: string
+          numero: string
+          parcelas?: number | null
+          valor?: number
+          valor_complementar?: number
+          vencimento: string
+        }
+        Update: {
+          created_at?: string
+          dias?: number | null
+          id?: string
+          intervalo?: number | null
+          nota_fiscal_id?: string
+          numero?: string
+          parcelas?: number | null
+          valor?: number
+          valor_complementar?: number
+          vencimento?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notas_fiscais_faturas_nota_fiscal_id_fkey"
+            columns: ["nota_fiscal_id"]
+            isOneToOne: false
+            referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
         ]
       }
       notas_fiscais_itens: {
         Row: {
+          aliquota_icms: number | null
+          base_icms: number | null
           cfop: string | null
+          cor_id: string | null
           created_at: string
           descricao: string
+          estampa_id: string | null
           id: string
           ncm: string | null
           nota_fiscal_id: string
+          observacao_lote: string | null
           quantidade: number
+          quantidade_embalagem: number | null
+          quantidade_entrada: number | null
+          quantidade_saida: number | null
+          unidade: string | null
+          valor_complementar: number | null
+          valor_icms: number | null
           valor_total: number
           valor_unitario: number
+          variante_id: string | null
         }
         Insert: {
+          aliquota_icms?: number | null
+          base_icms?: number | null
           cfop?: string | null
+          cor_id?: string | null
           created_at?: string
           descricao: string
+          estampa_id?: string | null
           id?: string
           ncm?: string | null
           nota_fiscal_id: string
+          observacao_lote?: string | null
           quantidade?: number
+          quantidade_embalagem?: number | null
+          quantidade_entrada?: number | null
+          quantidade_saida?: number | null
+          unidade?: string | null
+          valor_complementar?: number | null
+          valor_icms?: number | null
           valor_total?: number
           valor_unitario?: number
+          variante_id?: string | null
         }
         Update: {
+          aliquota_icms?: number | null
+          base_icms?: number | null
           cfop?: string | null
+          cor_id?: string | null
           created_at?: string
           descricao?: string
+          estampa_id?: string | null
           id?: string
           ncm?: string | null
           nota_fiscal_id?: string
+          observacao_lote?: string | null
           quantidade?: number
+          quantidade_embalagem?: number | null
+          quantidade_entrada?: number | null
+          quantidade_saida?: number | null
+          unidade?: string | null
+          valor_complementar?: number | null
+          valor_icms?: number | null
           valor_total?: number
           valor_unitario?: number
+          variante_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "notas_fiscais_itens_cor_id_fkey"
+            columns: ["cor_id"]
+            isOneToOne: false
+            referencedRelation: "cores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notas_fiscais_itens_estampa_id_fkey"
+            columns: ["estampa_id"]
+            isOneToOne: false
+            referencedRelation: "estampas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "notas_fiscais_itens_nota_fiscal_id_fkey"
             columns: ["nota_fiscal_id"]
             isOneToOne: false
             referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notas_fiscais_itens_variante_id_fkey"
+            columns: ["variante_id"]
+            isOneToOne: false
+            referencedRelation: "variantes"
             referencedColumns: ["id"]
           },
         ]
