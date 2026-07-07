@@ -48,7 +48,7 @@ type Product = {
 };
 
 const PAGE_SIZE = 20;
-const TIPOS = ["Produtos", "Insumos", "Outros"];
+const TIPOS = ["Produtos", "Outros"];
 const ORIGENS = ["0 - Nacional", "1 - Estrangeira - Importação direta", "2 - Estrangeira - Adquirida no mercado interno"];
 const UNIDADES = ["UN", "KG", "MT", "M2", "PC", "CX", "LT"];
 
