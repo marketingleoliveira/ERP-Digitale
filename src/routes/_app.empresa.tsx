@@ -280,16 +280,15 @@ function EmpresaPage() {
                 <th className="p-2 text-left">CNPJ/CPF</th>
                 <th className="p-2 text-left">Telefone</th>
                 <th className="p-2 text-left">Contato</th>
-                {FLAG_COLS.map((c) => (
-                  <th key={c.key} title={c.title} className="p-2 text-center text-xs w-10">{c.label}</th>
-                ))}
+                <th className="p-2 text-left">Tipo</th>
+                <th className="p-2 text-center w-14">Hab</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan={5 + FLAG_COLS.length} className="p-6 text-center text-muted-foreground">Carregando…</td></tr>
+                <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Carregando…</td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={5 + FLAG_COLS.length} className="p-6 text-center text-muted-foreground">Nenhuma empresa encontrada</td></tr>
+                <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Nenhuma empresa encontrada</td></tr>
               ) : filtered.map((e) => {
                 const isSel = selectedIds.has(e.id);
                 return (
