@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -177,7 +177,7 @@ function EstampaDialog({
   const [habilitado, setHabilitado] = useState(true);
   const [imagemUrl, setImagemUrl] = useState<string | undefined>();
 
-  useMemo(() => {
+  useEffect(() => {
     if (open) {
       setCodigo(editing?.codigo ?? "");
       setEstampa(editing?.estampa ?? "");
