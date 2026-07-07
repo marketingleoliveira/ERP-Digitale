@@ -177,7 +177,7 @@ function EstampaDialog({
   const [habilitado, setHabilitado] = useState(true);
   const [imagemUrl, setImagemUrl] = useState<string | undefined>();
 
-  useMemo(() => {
+  useEffect(() => {
     if (open) {
       setCodigo(editing?.codigo ?? "");
       setEstampa(editing?.estampa ?? "");
