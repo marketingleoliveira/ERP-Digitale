@@ -415,6 +415,48 @@ export type Database = {
         }
         Relationships: []
       }
+      beneficios_fiscais: {
+        Row: {
+          ativo: boolean
+          base_legal: string | null
+          created_at: string
+          id: string
+          ncm_prefix: string | null
+          percentual: number
+          tipo: string
+          uf: string | null
+          updated_at: string
+          vigencia_fim: string | null
+          vigencia_inicio: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          base_legal?: string | null
+          created_at?: string
+          id?: string
+          ncm_prefix?: string | null
+          percentual?: number
+          tipo: string
+          uf?: string | null
+          updated_at?: string
+          vigencia_fim?: string | null
+          vigencia_inicio?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          base_legal?: string | null
+          created_at?: string
+          id?: string
+          ncm_prefix?: string | null
+          percentual?: number
+          tipo?: string
+          uf?: string | null
+          updated_at?: string
+          vigencia_fim?: string | null
+          vigencia_inicio?: string | null
+        }
+        Relationships: []
+      }
       cargos: {
         Row: {
           created_at: string
@@ -1502,6 +1544,54 @@ export type Database = {
           numero?: number
           producao_media?: number | null
           tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ncm_catalogo: {
+        Row: {
+          aliq_cofins_padrao: number | null
+          aliq_ipi_padrao: number | null
+          aliq_pis_padrao: number | null
+          ativo: boolean
+          cest_sugerido: string | null
+          codigo: string
+          created_at: string
+          cst_cofins_padrao: string | null
+          cst_ipi_padrao: string | null
+          cst_pis_padrao: string | null
+          descricao: string
+          ex_tipi: string | null
+          updated_at: string
+        }
+        Insert: {
+          aliq_cofins_padrao?: number | null
+          aliq_ipi_padrao?: number | null
+          aliq_pis_padrao?: number | null
+          ativo?: boolean
+          cest_sugerido?: string | null
+          codigo: string
+          created_at?: string
+          cst_cofins_padrao?: string | null
+          cst_ipi_padrao?: string | null
+          cst_pis_padrao?: string | null
+          descricao: string
+          ex_tipi?: string | null
+          updated_at?: string
+        }
+        Update: {
+          aliq_cofins_padrao?: number | null
+          aliq_ipi_padrao?: number | null
+          aliq_pis_padrao?: number | null
+          ativo?: boolean
+          cest_sugerido?: string | null
+          codigo?: string
+          created_at?: string
+          cst_cofins_padrao?: string | null
+          cst_ipi_padrao?: string | null
+          cst_pis_padrao?: string | null
+          descricao?: string
+          ex_tipi?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -2891,6 +2981,111 @@ export type Database = {
           id?: string
           nome?: string
           telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      regras_tributarias: {
+        Row: {
+          aliq_cofins: number | null
+          aliq_fcp: number | null
+          aliq_fcp_st: number | null
+          aliq_icms: number | null
+          aliq_icms_st: number | null
+          aliq_ipi: number | null
+          aliq_pis: number | null
+          ativo: boolean
+          calcula_difal: boolean
+          calcula_st: boolean
+          cest: string | null
+          cfop: string
+          created_at: string
+          csosn: string | null
+          cst_cofins: string | null
+          cst_icms: string | null
+          cst_ipi: string | null
+          cst_pis: string | null
+          finalidade: string | null
+          id: string
+          mva_pct: number | null
+          ncm_prefix: string | null
+          nome: string
+          observacao: string | null
+          prioridade: number
+          red_base_icms_pct: number | null
+          regime_tributario_emitente: string | null
+          tipo_cliente: string | null
+          tipo_operacao: string | null
+          uf_destino: string | null
+          uf_origem: string | null
+          updated_at: string
+        }
+        Insert: {
+          aliq_cofins?: number | null
+          aliq_fcp?: number | null
+          aliq_fcp_st?: number | null
+          aliq_icms?: number | null
+          aliq_icms_st?: number | null
+          aliq_ipi?: number | null
+          aliq_pis?: number | null
+          ativo?: boolean
+          calcula_difal?: boolean
+          calcula_st?: boolean
+          cest?: string | null
+          cfop: string
+          created_at?: string
+          csosn?: string | null
+          cst_cofins?: string | null
+          cst_icms?: string | null
+          cst_ipi?: string | null
+          cst_pis?: string | null
+          finalidade?: string | null
+          id?: string
+          mva_pct?: number | null
+          ncm_prefix?: string | null
+          nome: string
+          observacao?: string | null
+          prioridade?: number
+          red_base_icms_pct?: number | null
+          regime_tributario_emitente?: string | null
+          tipo_cliente?: string | null
+          tipo_operacao?: string | null
+          uf_destino?: string | null
+          uf_origem?: string | null
+          updated_at?: string
+        }
+        Update: {
+          aliq_cofins?: number | null
+          aliq_fcp?: number | null
+          aliq_fcp_st?: number | null
+          aliq_icms?: number | null
+          aliq_icms_st?: number | null
+          aliq_ipi?: number | null
+          aliq_pis?: number | null
+          ativo?: boolean
+          calcula_difal?: boolean
+          calcula_st?: boolean
+          cest?: string | null
+          cfop?: string
+          created_at?: string
+          csosn?: string | null
+          cst_cofins?: string | null
+          cst_icms?: string | null
+          cst_ipi?: string | null
+          cst_pis?: string | null
+          finalidade?: string | null
+          id?: string
+          mva_pct?: number | null
+          ncm_prefix?: string | null
+          nome?: string
+          observacao?: string | null
+          prioridade?: number
+          red_base_icms_pct?: number | null
+          regime_tributario_emitente?: string | null
+          tipo_cliente?: string | null
+          tipo_operacao?: string | null
+          uf_destino?: string | null
+          uf_origem?: string | null
           updated_at?: string
         }
         Relationships: []

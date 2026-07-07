@@ -45,14 +45,18 @@ import { Route as AppProducaoPedidosRouteImport } from './routes/_app.producao.p
 import { Route as AppProducaoOpRouteImport } from './routes/_app.producao.op'
 import { Route as AppProducaoExpedicaoRouteImport } from './routes/_app.producao.expedicao'
 import { Route as AppFiscalUfIcmsRouteImport } from './routes/_app.fiscal.uf-icms'
+import { Route as AppFiscalSimuladorRouteImport } from './routes/_app.fiscal.simulador'
+import { Route as AppFiscalRegrasTributariasRouteImport } from './routes/_app.fiscal.regras-tributarias'
 import { Route as AppFiscalRNotaFiscalRouteImport } from './routes/_app.fiscal.r-nota-fiscal'
 import { Route as AppFiscalNotaFiscalUploadRouteImport } from './routes/_app.fiscal.nota-fiscal-upload'
 import { Route as AppFiscalNotaFiscalImportacaoRouteImport } from './routes/_app.fiscal.nota-fiscal-importacao'
 import { Route as AppFiscalNotaFiscalRouteImport } from './routes/_app.fiscal.nota-fiscal'
+import { Route as AppFiscalNcmRouteImport } from './routes/_app.fiscal.ncm'
 import { Route as AppFiscalImpostosRouteImport } from './routes/_app.fiscal.impostos'
 import { Route as AppFiscalDashboardRouteImport } from './routes/_app.fiscal.dashboard'
 import { Route as AppFiscalCfopRouteImport } from './routes/_app.fiscal.cfop'
 import { Route as AppFiscalCertificadosRouteImport } from './routes/_app.fiscal.certificados'
+import { Route as AppFiscalBeneficiosRouteImport } from './routes/_app.fiscal.beneficios'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 import { Route as AppDashboardIndustrialRouteImport } from './routes/_app.dashboard.industrial'
 import { Route as AppProducaoOpIdRouteImport } from './routes/_app.producao.op.$id'
@@ -236,6 +240,17 @@ const AppFiscalUfIcmsRoute = AppFiscalUfIcmsRouteImport.update({
   path: '/fiscal/uf-icms',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFiscalSimuladorRoute = AppFiscalSimuladorRouteImport.update({
+  id: '/fiscal/simulador',
+  path: '/fiscal/simulador',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFiscalRegrasTributariasRoute =
+  AppFiscalRegrasTributariasRouteImport.update({
+    id: '/fiscal/regras-tributarias',
+    path: '/fiscal/regras-tributarias',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppFiscalRNotaFiscalRoute = AppFiscalRNotaFiscalRouteImport.update({
   id: '/fiscal/r-nota-fiscal',
   path: '/fiscal/r-nota-fiscal',
@@ -258,6 +273,11 @@ const AppFiscalNotaFiscalRoute = AppFiscalNotaFiscalRouteImport.update({
   path: '/fiscal/nota-fiscal',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFiscalNcmRoute = AppFiscalNcmRouteImport.update({
+  id: '/fiscal/ncm',
+  path: '/fiscal/ncm',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFiscalImpostosRoute = AppFiscalImpostosRouteImport.update({
   id: '/fiscal/impostos',
   path: '/fiscal/impostos',
@@ -276,6 +296,11 @@ const AppFiscalCfopRoute = AppFiscalCfopRouteImport.update({
 const AppFiscalCertificadosRoute = AppFiscalCertificadosRouteImport.update({
   id: '/fiscal/certificados',
   path: '/fiscal/certificados',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFiscalBeneficiosRoute = AppFiscalBeneficiosRouteImport.update({
+  id: '/fiscal/beneficios',
+  path: '/fiscal/beneficios',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDevCargosRoute = AppDevCargosRouteImport.update({
@@ -325,14 +350,18 @@ export interface FileRoutesByFullPath {
   '/variante': typeof AppVarianteRoute
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
+  '/fiscal/beneficios': typeof AppFiscalBeneficiosRoute
   '/fiscal/certificados': typeof AppFiscalCertificadosRoute
   '/fiscal/cfop': typeof AppFiscalCfopRoute
   '/fiscal/dashboard': typeof AppFiscalDashboardRoute
   '/fiscal/impostos': typeof AppFiscalImpostosRoute
+  '/fiscal/ncm': typeof AppFiscalNcmRoute
   '/fiscal/nota-fiscal': typeof AppFiscalNotaFiscalRoute
   '/fiscal/nota-fiscal-importacao': typeof AppFiscalNotaFiscalImportacaoRoute
   '/fiscal/nota-fiscal-upload': typeof AppFiscalNotaFiscalUploadRoute
   '/fiscal/r-nota-fiscal': typeof AppFiscalRNotaFiscalRoute
+  '/fiscal/regras-tributarias': typeof AppFiscalRegrasTributariasRoute
+  '/fiscal/simulador': typeof AppFiscalSimuladorRoute
   '/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
@@ -373,14 +402,18 @@ export interface FileRoutesByTo {
   '/variante': typeof AppVarianteRoute
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
+  '/fiscal/beneficios': typeof AppFiscalBeneficiosRoute
   '/fiscal/certificados': typeof AppFiscalCertificadosRoute
   '/fiscal/cfop': typeof AppFiscalCfopRoute
   '/fiscal/dashboard': typeof AppFiscalDashboardRoute
   '/fiscal/impostos': typeof AppFiscalImpostosRoute
+  '/fiscal/ncm': typeof AppFiscalNcmRoute
   '/fiscal/nota-fiscal': typeof AppFiscalNotaFiscalRoute
   '/fiscal/nota-fiscal-importacao': typeof AppFiscalNotaFiscalImportacaoRoute
   '/fiscal/nota-fiscal-upload': typeof AppFiscalNotaFiscalUploadRoute
   '/fiscal/r-nota-fiscal': typeof AppFiscalRNotaFiscalRoute
+  '/fiscal/regras-tributarias': typeof AppFiscalRegrasTributariasRoute
+  '/fiscal/simulador': typeof AppFiscalSimuladorRoute
   '/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
@@ -423,14 +456,18 @@ export interface FileRoutesById {
   '/_app/variante': typeof AppVarianteRoute
   '/_app/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
+  '/_app/fiscal/beneficios': typeof AppFiscalBeneficiosRoute
   '/_app/fiscal/certificados': typeof AppFiscalCertificadosRoute
   '/_app/fiscal/cfop': typeof AppFiscalCfopRoute
   '/_app/fiscal/dashboard': typeof AppFiscalDashboardRoute
   '/_app/fiscal/impostos': typeof AppFiscalImpostosRoute
+  '/_app/fiscal/ncm': typeof AppFiscalNcmRoute
   '/_app/fiscal/nota-fiscal': typeof AppFiscalNotaFiscalRoute
   '/_app/fiscal/nota-fiscal-importacao': typeof AppFiscalNotaFiscalImportacaoRoute
   '/_app/fiscal/nota-fiscal-upload': typeof AppFiscalNotaFiscalUploadRoute
   '/_app/fiscal/r-nota-fiscal': typeof AppFiscalRNotaFiscalRoute
+  '/_app/fiscal/regras-tributarias': typeof AppFiscalRegrasTributariasRoute
+  '/_app/fiscal/simulador': typeof AppFiscalSimuladorRoute
   '/_app/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
   '/_app/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/_app/producao/op': typeof AppProducaoOpRouteWithChildren
@@ -473,14 +510,18 @@ export interface FileRouteTypes {
     | '/variante'
     | '/dashboard/industrial'
     | '/dev/cargos'
+    | '/fiscal/beneficios'
     | '/fiscal/certificados'
     | '/fiscal/cfop'
     | '/fiscal/dashboard'
     | '/fiscal/impostos'
+    | '/fiscal/ncm'
     | '/fiscal/nota-fiscal'
     | '/fiscal/nota-fiscal-importacao'
     | '/fiscal/nota-fiscal-upload'
     | '/fiscal/r-nota-fiscal'
+    | '/fiscal/regras-tributarias'
+    | '/fiscal/simulador'
     | '/fiscal/uf-icms'
     | '/producao/expedicao'
     | '/producao/op'
@@ -521,14 +562,18 @@ export interface FileRouteTypes {
     | '/variante'
     | '/dashboard/industrial'
     | '/dev/cargos'
+    | '/fiscal/beneficios'
     | '/fiscal/certificados'
     | '/fiscal/cfop'
     | '/fiscal/dashboard'
     | '/fiscal/impostos'
+    | '/fiscal/ncm'
     | '/fiscal/nota-fiscal'
     | '/fiscal/nota-fiscal-importacao'
     | '/fiscal/nota-fiscal-upload'
     | '/fiscal/r-nota-fiscal'
+    | '/fiscal/regras-tributarias'
+    | '/fiscal/simulador'
     | '/fiscal/uf-icms'
     | '/producao/expedicao'
     | '/producao/op'
@@ -570,14 +615,18 @@ export interface FileRouteTypes {
     | '/_app/variante'
     | '/_app/dashboard/industrial'
     | '/_app/dev/cargos'
+    | '/_app/fiscal/beneficios'
     | '/_app/fiscal/certificados'
     | '/_app/fiscal/cfop'
     | '/_app/fiscal/dashboard'
     | '/_app/fiscal/impostos'
+    | '/_app/fiscal/ncm'
     | '/_app/fiscal/nota-fiscal'
     | '/_app/fiscal/nota-fiscal-importacao'
     | '/_app/fiscal/nota-fiscal-upload'
     | '/_app/fiscal/r-nota-fiscal'
+    | '/_app/fiscal/regras-tributarias'
+    | '/_app/fiscal/simulador'
     | '/_app/fiscal/uf-icms'
     | '/_app/producao/expedicao'
     | '/_app/producao/op'
@@ -849,6 +898,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFiscalUfIcmsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/fiscal/simulador': {
+      id: '/_app/fiscal/simulador'
+      path: '/fiscal/simulador'
+      fullPath: '/fiscal/simulador'
+      preLoaderRoute: typeof AppFiscalSimuladorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fiscal/regras-tributarias': {
+      id: '/_app/fiscal/regras-tributarias'
+      path: '/fiscal/regras-tributarias'
+      fullPath: '/fiscal/regras-tributarias'
+      preLoaderRoute: typeof AppFiscalRegrasTributariasRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/fiscal/r-nota-fiscal': {
       id: '/_app/fiscal/r-nota-fiscal'
       path: '/fiscal/r-nota-fiscal'
@@ -877,6 +940,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFiscalNotaFiscalRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/fiscal/ncm': {
+      id: '/_app/fiscal/ncm'
+      path: '/fiscal/ncm'
+      fullPath: '/fiscal/ncm'
+      preLoaderRoute: typeof AppFiscalNcmRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/fiscal/impostos': {
       id: '/_app/fiscal/impostos'
       path: '/fiscal/impostos'
@@ -903,6 +973,13 @@ declare module '@tanstack/react-router' {
       path: '/fiscal/certificados'
       fullPath: '/fiscal/certificados'
       preLoaderRoute: typeof AppFiscalCertificadosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fiscal/beneficios': {
+      id: '/_app/fiscal/beneficios'
+      path: '/fiscal/beneficios'
+      fullPath: '/fiscal/beneficios'
+      preLoaderRoute: typeof AppFiscalBeneficiosRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/dev/cargos': {
@@ -969,14 +1046,18 @@ interface AppRouteChildren {
   AppVarianteRoute: typeof AppVarianteRoute
   AppDashboardIndustrialRoute: typeof AppDashboardIndustrialRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
+  AppFiscalBeneficiosRoute: typeof AppFiscalBeneficiosRoute
   AppFiscalCertificadosRoute: typeof AppFiscalCertificadosRoute
   AppFiscalCfopRoute: typeof AppFiscalCfopRoute
   AppFiscalDashboardRoute: typeof AppFiscalDashboardRoute
   AppFiscalImpostosRoute: typeof AppFiscalImpostosRoute
+  AppFiscalNcmRoute: typeof AppFiscalNcmRoute
   AppFiscalNotaFiscalRoute: typeof AppFiscalNotaFiscalRoute
   AppFiscalNotaFiscalImportacaoRoute: typeof AppFiscalNotaFiscalImportacaoRoute
   AppFiscalNotaFiscalUploadRoute: typeof AppFiscalNotaFiscalUploadRoute
   AppFiscalRNotaFiscalRoute: typeof AppFiscalRNotaFiscalRoute
+  AppFiscalRegrasTributariasRoute: typeof AppFiscalRegrasTributariasRoute
+  AppFiscalSimuladorRoute: typeof AppFiscalSimuladorRoute
   AppFiscalUfIcmsRoute: typeof AppFiscalUfIcmsRoute
   AppProducaoExpedicaoRoute: typeof AppProducaoExpedicaoRoute
   AppProducaoOpRoute: typeof AppProducaoOpRouteWithChildren
@@ -1014,14 +1095,18 @@ const AppRouteChildren: AppRouteChildren = {
   AppVarianteRoute: AppVarianteRoute,
   AppDashboardIndustrialRoute: AppDashboardIndustrialRoute,
   AppDevCargosRoute: AppDevCargosRoute,
+  AppFiscalBeneficiosRoute: AppFiscalBeneficiosRoute,
   AppFiscalCertificadosRoute: AppFiscalCertificadosRoute,
   AppFiscalCfopRoute: AppFiscalCfopRoute,
   AppFiscalDashboardRoute: AppFiscalDashboardRoute,
   AppFiscalImpostosRoute: AppFiscalImpostosRoute,
+  AppFiscalNcmRoute: AppFiscalNcmRoute,
   AppFiscalNotaFiscalRoute: AppFiscalNotaFiscalRoute,
   AppFiscalNotaFiscalImportacaoRoute: AppFiscalNotaFiscalImportacaoRoute,
   AppFiscalNotaFiscalUploadRoute: AppFiscalNotaFiscalUploadRoute,
   AppFiscalRNotaFiscalRoute: AppFiscalRNotaFiscalRoute,
+  AppFiscalRegrasTributariasRoute: AppFiscalRegrasTributariasRoute,
+  AppFiscalSimuladorRoute: AppFiscalSimuladorRoute,
   AppFiscalUfIcmsRoute: AppFiscalUfIcmsRoute,
   AppProducaoExpedicaoRoute: AppProducaoExpedicaoRoute,
   AppProducaoOpRoute: AppProducaoOpRouteWithChildren,
