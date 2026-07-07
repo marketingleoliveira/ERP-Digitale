@@ -332,8 +332,14 @@ function UsuarioDialog({
           </Field>
 
           <Field label="Email" req={1}>
-            <Input className="h-8" type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={!!editing} />
+            <div className="space-y-1">
+              <Input className="h-8" type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={!!editing} />
+              {emailJaExiste && (
+                <p className="text-xs text-destructive">Este e-mail já está cadastrado.</p>
+              )}
+            </div>
           </Field>
+
 
           {!editing && (
             <>
