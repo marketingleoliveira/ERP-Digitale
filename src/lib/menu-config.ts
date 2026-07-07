@@ -36,18 +36,18 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Máquina", url: "/maquina", icon: Wrench, group: "Cadastros" },
   { title: "Agulha", url: "/agulha", icon: Syringe, group: "Cadastros" },
   { title: "Rep. Meta R$", url: "/rep-meta", icon: Target, group: "Cadastros" },
-  { title: "Clientes", url: "/clientes", icon: Users, group: "Cadastros", defaultHidden: true },
-  { title: "Fornecedores", url: "/fornecedores", icon: Truck, group: "Cadastros", defaultHidden: true },
-  { title: "Representantes", url: "/representantes", icon: UserCheck, group: "Cadastros", defaultHidden: true },
-  { title: "Estoque", url: "/estoque", icon: Warehouse, group: "Operacional", defaultHidden: true },
-  { title: "Compras", url: "/compras", icon: ShoppingCart, group: "Operacional", defaultHidden: true },
-  { title: "Vendas", url: "/vendas", icon: Receipt, group: "Operacional", defaultHidden: true },
-  { title: "CRM", url: "/crm", icon: Handshake, group: "Operacional", defaultHidden: true },
-  { title: "Ordens de Produção", url: "/producao", icon: Factory, group: "Produção (PCP)", defaultHidden: true },
-  { title: "Facções", url: "/faccoes", icon: Scissors, group: "Produção (PCP)", defaultHidden: true },
-  { title: "Qualidade", url: "/qualidade", icon: BadgeCheck, group: "Produção (PCP)", defaultHidden: true },
-  { title: "Financeiro", url: "/financeiro", icon: Wallet, group: "Financeiro & Logística", defaultHidden: true },
-  { title: "Logística", url: "/logistica", icon: PackageCheck, group: "Financeiro & Logística", defaultHidden: true },
+  { title: "Clientes", url: "/clientes", icon: Users, group: "Cadastros" },
+  { title: "Fornecedores", url: "/fornecedores", icon: Truck, group: "Cadastros" },
+  { title: "Representantes", url: "/representantes", icon: UserCheck, group: "Cadastros" },
+  { title: "Estoque", url: "/estoque", icon: Warehouse, group: "Operacional" },
+  { title: "Compras", url: "/compras", icon: ShoppingCart, group: "Operacional" },
+  { title: "Vendas", url: "/vendas", icon: Receipt, group: "Operacional" },
+  { title: "CRM", url: "/crm", icon: Handshake, group: "Operacional" },
+  { title: "Ordens de Produção", url: "/producao", icon: Factory, group: "Produção (PCP)" },
+  { title: "Facções", url: "/faccoes", icon: Scissors, group: "Produção (PCP)" },
+  { title: "Qualidade", url: "/qualidade", icon: BadgeCheck, group: "Produção (PCP)" },
+  { title: "Financeiro", url: "/financeiro", icon: Wallet, group: "Financeiro & Logística" },
+  { title: "Logística", url: "/logistica", icon: PackageCheck, group: "Financeiro & Logística" },
   { title: "Fiscal", url: "/fiscal", icon: FileText, group: "Financeiro & Logística", defaultHidden: true },
   { title: "Usuários", url: "/usuarios", icon: ShieldCheck, group: "Administração", defaultHidden: true },
   { title: "Configurações", url: "/configuracoes", icon: Settings, group: "Administração", defaultHidden: true },
@@ -63,7 +63,7 @@ export const GROUP_ORDER = [
   "Administração",
 ];
 
-const STORAGE_KEY = "digitale.menu.visibility.v3";
+const STORAGE_KEY = "digitale.menu.visibility.v4";
 
 /** New/current items default visible; legacy items marked defaultHidden stay off. */
 function getDefaults(): Record<string, boolean> {
