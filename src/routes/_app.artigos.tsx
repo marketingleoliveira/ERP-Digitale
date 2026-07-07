@@ -849,15 +849,11 @@ function ArtigoDetailDialog({ id, onOpenChange }: { id: string | null; onOpenCha
             <div className="grid grid-cols-2 gap-x-4 p-3">
               <div>
                 <Row label="Código:" value={art.codigo} />
-                <Row label="Composicao:" value={art.composicao} />
-                <Row label="Artigo:" value={art.nome} />
+                <Row label="Descrição:" value={art.nome} />
                 <Row label="NCM:" value={art.ncm} />
                 <Row label="Origem:" value={art.origem} />
                 <Row label="FCI:" value={art.fci} />
-                <Row label="Cliente:" value={art.cliente} />
-                <Row label="P. Acabamento:" value={art.p_acabamento} />
                 <Row label="Gramatura:" value={fmt(art.gramatura, 0)} />
-                <Row label="LFA:" value={fmt(art.lfa, 0)} />
                 <Row label="Tipo Máquina:" value={art.tipo_maquina} />
                 <Row label="Finura:" value={fmt(art.finura, 0)} />
                 <Row label="Disposição Agulhas:" value={art.disposicao_agulhas} />
@@ -869,9 +865,7 @@ function ArtigoDetailDialog({ id, onOpenChange }: { id: string | null; onOpenCha
               <div>
                 <Row label="Tipo:" value={art.tipo} />
                 <Row label="" value="" />
-                <Row label="" value="" />
                 <Row label="CEST:" value={art.cest} />
-                <Row label="" value="" />
                 <Row label="" value="" />
                 <Row label="" value="" />
                 <Row label="Largura:" value={fmt(art.largura)} />
@@ -880,9 +874,7 @@ function ArtigoDetailDialog({ id, onOpenChange }: { id: string | null; onOpenCha
                 <Row label="Diametro:" value={fmt(art.diametro, 0)} />
                 <Row label="Nº Alimentadores:" value={fmt(art.n_alimentadores, 0)} />
                 <Row label="RPM:" value={fmt(art.rpm, 0)} />
-                <Row label="" value="" />
                 <Row label="R$ Malharia Compl.:" value={fmt(art.r_malharia_compl)} />
-                <Row label="" value="" />
                 <Row label="R$ Venda Metros:" value={fmt(art.r_venda_metros)} />
               </div>
             </div>
