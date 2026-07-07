@@ -124,65 +124,176 @@ export type Database = {
           },
         ]
       }
+      article_fios: {
+        Row: {
+          article_id: string
+          created_at: string
+          fio_descricao: string
+          fio_id: string | null
+          id: string
+          porcentagem: number
+          qtd_cones: number
+          updated_at: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          fio_descricao: string
+          fio_id?: string | null
+          id?: string
+          porcentagem?: number
+          qtd_cones?: number
+          updated_at?: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          fio_descricao?: string
+          fio_id?: string | null
+          id?: string
+          porcentagem?: number
+          qtd_cones?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_fios_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_fios_fio_id_fkey"
+            columns: ["fio_id"]
+            isOneToOne: false
+            referencedRelation: "fios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       articles: {
         Row: {
           ativo: boolean
           categoria: string | null
+          cest: string | null
+          cliente: string | null
           codigo: string | null
           composicao: string | null
           created_at: string
           descricao: string | null
           descricao_curta: string | null
+          diametro: number | null
+          disposicao_agulhas: string | null
+          falha_agulha: boolean | null
+          fci: string | null
+          finura: number | null
           gramatura: number | null
           id: string
           imagem_url: string | null
           largura: number | null
+          lfa: number | null
+          n_alimentadores: number | null
+          n_voltas: number | null
           ncm: string | null
           nome: string
+          observacao: string | null
+          origem: string | null
+          p_acabamento: string | null
           preco_venda: number | null
+          r_custo: number | null
+          r_malharia: number | null
+          r_malharia_compl: number | null
+          r_venda: number | null
+          r_venda_metros: number | null
           rendimento: number | null
+          rpm: number | null
           slug: string | null
           tecnologias: string[] | null
+          tipo: string | null
+          tipo_maquina: string | null
           updated_at: string
         }
         Insert: {
           ativo?: boolean
           categoria?: string | null
+          cest?: string | null
+          cliente?: string | null
           codigo?: string | null
           composicao?: string | null
           created_at?: string
           descricao?: string | null
           descricao_curta?: string | null
+          diametro?: number | null
+          disposicao_agulhas?: string | null
+          falha_agulha?: boolean | null
+          fci?: string | null
+          finura?: number | null
           gramatura?: number | null
           id?: string
           imagem_url?: string | null
           largura?: number | null
+          lfa?: number | null
+          n_alimentadores?: number | null
+          n_voltas?: number | null
           ncm?: string | null
           nome: string
+          observacao?: string | null
+          origem?: string | null
+          p_acabamento?: string | null
           preco_venda?: number | null
+          r_custo?: number | null
+          r_malharia?: number | null
+          r_malharia_compl?: number | null
+          r_venda?: number | null
+          r_venda_metros?: number | null
           rendimento?: number | null
+          rpm?: number | null
           slug?: string | null
           tecnologias?: string[] | null
+          tipo?: string | null
+          tipo_maquina?: string | null
           updated_at?: string
         }
         Update: {
           ativo?: boolean
           categoria?: string | null
+          cest?: string | null
+          cliente?: string | null
           codigo?: string | null
           composicao?: string | null
           created_at?: string
           descricao?: string | null
           descricao_curta?: string | null
+          diametro?: number | null
+          disposicao_agulhas?: string | null
+          falha_agulha?: boolean | null
+          fci?: string | null
+          finura?: number | null
           gramatura?: number | null
           id?: string
           imagem_url?: string | null
           largura?: number | null
+          lfa?: number | null
+          n_alimentadores?: number | null
+          n_voltas?: number | null
           ncm?: string | null
           nome?: string
+          observacao?: string | null
+          origem?: string | null
+          p_acabamento?: string | null
           preco_venda?: number | null
+          r_custo?: number | null
+          r_malharia?: number | null
+          r_malharia_compl?: number | null
+          r_venda?: number | null
+          r_venda_metros?: number | null
           rendimento?: number | null
+          rpm?: number | null
           slug?: string | null
           tecnologias?: string[] | null
+          tipo?: string | null
+          tipo_maquina?: string | null
           updated_at?: string
         }
         Relationships: []

@@ -54,6 +54,7 @@ function ArtigosPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Article | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [detailId, setDetailId] = useState<string | null>(null);
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["articles"],
@@ -214,28 +215,13 @@ function ArtigosPage() {
                   >
                     <td className="p-2"><Checkbox checked={isSel} onCheckedChange={() => setSelectedId(i.id)} /></td>
                     <td className="p-2">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <button
-                            type="button"
-                            onClick={(e) => { e.stopPropagation(); setSelectedId(i.id); }}
-                            className="font-medium text-primary underline-offset-2 hover:underline"
-                          >
-                            {i.codigo || "—"}
-                          </button>
-                        </PopoverTrigger>
-                        <PopoverContent align="start" className="w-80 p-0">
-                          <table className="w-full text-sm">
-                            <tbody>
-                              <tr className="border-b"><td className="w-28 bg-muted/50 p-2 font-medium">Código:</td><td className="p-2">{i.codigo || "—"}</td></tr>
-                              <tr className="border-b"><td className="bg-muted/50 p-2 font-medium">NCM:</td><td className="p-2 font-mono">{i.ncm || "—"}</td></tr>
-                              <tr className="border-b"><td className="bg-muted/50 p-2 font-medium">Artigo:</td><td className="p-2">{i.nome}</td></tr>
-                              <tr className="border-b"><td className="bg-muted/50 p-2 font-medium">Composição:</td><td className="p-2">{i.composicao || "—"}</td></tr>
-                              <tr><td className="bg-muted/50 p-2 font-medium">Rendimento:</td><td className="p-2">{i.rendimento != null ? Number(i.rendimento).toFixed(2) : "—"}</td></tr>
-                            </tbody>
-                          </table>
-                        </PopoverContent>
-                      </Popover>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setSelectedId(i.id); setDetailId(i.id); }}
+                        className="font-medium text-primary underline-offset-2 hover:underline"
+                      >
+                        {i.codigo || "—"}
+                      </button>
                     </td>
                     <td className="p-2 font-mono text-xs">{i.ncm || "—"}</td>
                     <td className="p-2 uppercase">{i.nome}</td>
@@ -300,6 +286,8 @@ function ArtigosPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ArtigoDetailDialog id={detailId} onOpenChange={(o) => !o && setDetailId(null)} />
     </div>
   );
 }
@@ -377,6 +365,138 @@ function ArtigoDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
           <Button onClick={submit} disabled={saving}>{saving ? "Salvando…" : (item ? "Salvar" : "Cadastrar")}</Button>
         </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+type ArticleDetail = Article & {
+  tipo: string | null; cest: string | null; origem: string | null; fci: string | null;
+  cliente: string | null; p_acabamento: string | null; largura: number | null;
+  gramatura: number | null; lfa: number | null; falha_agulha: boolean | null;
+  tipo_maquina: string | null; diametro: number | null; finura: number | null;
+  n_alimentadores: number | null; disposicao_agulhas: string | null; rpm: number | null;
+  n_voltas: number | null; r_malharia: number | null; r_malharia_compl: number | null;
+  r_custo: number | null; r_venda: number | null; r_venda_metros: number | null;
+  observacao: string | null; imagem_url: string | null;
+};
+
+type ArticleFio = {
+  id: string; fio_descricao: string; qtd_cones: number; porcentagem: number;
+};
+
+function Row({ label, value, className = "" }: { label: string; value: React.ReactNode; className?: string }) {
+  return (
+    <div className={`grid grid-cols-[130px_1fr] border-b border-border/60 ${className}`}>
+      <div className="bg-primary/10 px-3 py-1.5 text-sm font-medium">{label}</div>
+      <div className="px-3 py-1.5 text-sm">{value ?? "—"}</div>
+    </div>
+  );
+}
+
+function ArtigoDetailDialog({ id, onOpenChange }: { id: string | null; onOpenChange: (o: boolean) => void }) {
+  const { data } = useQuery({
+    enabled: !!id,
+    queryKey: ["article-detail", id],
+    queryFn: async () => {
+      const [{ data: art, error: e1 }, { data: fios, error: e2 }] = await Promise.all([
+        supabase.from("articles").select("*").eq("id", id!).maybeSingle(),
+        (supabase.from("article_fios" as any) as any).select("id, fio_descricao, qtd_cones, porcentagem").eq("article_id", id!),
+      ]);
+      if (e1) throw e1;
+      if (e2) throw e2;
+      return { art: art as ArticleDetail | null, fios: (fios ?? []) as ArticleFio[] };
+    },
+  });
+
+  const art = data?.art ?? null;
+  const fios = data?.fios ?? [];
+  const fmt = (v: number | null | undefined, d = 2) => (v == null ? "" : Number(v).toFixed(d));
+
+  return (
+    <Dialog open={!!id} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-3xl p-0">
+        <DialogHeader className="border-b bg-primary/10 px-4 py-2">
+          <DialogTitle className="text-sm font-semibold text-primary">Detalhes do Artigo</DialogTitle>
+        </DialogHeader>
+
+        {!art ? (
+          <div className="p-8 text-center text-muted-foreground">Carregando…</div>
+        ) : (
+          <div className="max-h-[75vh] overflow-auto">
+            <div className="grid grid-cols-2 gap-x-4 p-3">
+              <div>
+                <Row label="Código:" value={art.codigo} />
+                <Row label="Composicao:" value={art.composicao} />
+                <Row label="Artigo:" value={art.nome} />
+                <Row label="NCM:" value={art.ncm} />
+                <Row label="Origem:" value={art.origem} />
+                <Row label="FCI:" value={art.fci} />
+                <Row label="Cliente:" value={art.cliente} />
+                <Row label="P. Acabamento:" value={art.p_acabamento} />
+                <Row label="Gramatura:" value={fmt(art.gramatura, 0)} />
+                <Row label="LFA:" value={fmt(art.lfa, 0)} />
+                <Row label="Tipo Máquina:" value={art.tipo_maquina} />
+                <Row label="Finura:" value={fmt(art.finura, 0)} />
+                <Row label="Disposição Agulhas:" value={art.disposicao_agulhas} />
+                <Row label="Nº Voltas:" value={fmt(art.n_voltas, 0)} />
+                <Row label="R$ Malharia:" value={fmt(art.r_malharia)} />
+                <Row label="R$ Custo:" value={fmt(art.r_custo)} />
+                <Row label="R$ Venda:" value={fmt(art.r_venda)} />
+              </div>
+              <div>
+                <Row label="Tipo:" value={art.tipo} />
+                <Row label="" value="" />
+                <Row label="" value="" />
+                <Row label="CEST:" value={art.cest} />
+                <Row label="" value="" />
+                <Row label="" value="" />
+                <Row label="" value="" />
+                <Row label="Largura:" value={fmt(art.largura)} />
+                <Row label="Rendimento:" value={fmt(art.rendimento)} />
+                <Row label="Falha Agulha:" value={art.falha_agulha ? "Sim" : "Não"} />
+                <Row label="Diametro:" value={fmt(art.diametro, 0)} />
+                <Row label="Nº Alimentadores:" value={fmt(art.n_alimentadores, 0)} />
+                <Row label="RPM:" value={fmt(art.rpm, 0)} />
+                <Row label="" value="" />
+                <Row label="R$ Malharia Compl.:" value={fmt(art.r_malharia_compl)} />
+                <Row label="" value="" />
+                <Row label="R$ Venda Metros:" value={fmt(art.r_venda_metros)} />
+              </div>
+            </div>
+
+            <div className="px-3 pb-2">
+              <Row label="Observação:" value={art.observacao} />
+              <Row label="Imagem:" value={art.imagem_url ? <a href={art.imagem_url} target="_blank" rel="noreferrer" className="text-primary underline">Abrir</a> : "—"} />
+            </div>
+
+            <div className="mt-2 border-t bg-primary/10 px-3 py-2 text-center text-sm font-semibold text-primary">
+              COMPOSIÇÃO FIO
+            </div>
+            <div className="p-3">
+              <table className="w-full border text-sm">
+                <thead className="bg-primary/10">
+                  <tr>
+                    <th className="border p-2 text-left">Fio</th>
+                    <th className="border p-2 text-right w-28">Qtd. Cones</th>
+                    <th className="border p-2 text-right w-28">Porcentagem</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {fios.length === 0 ? (
+                    <tr><td colSpan={3} className="p-3 text-center text-muted-foreground">Nenhum fio cadastrado</td></tr>
+                  ) : fios.map((f) => (
+                    <tr key={f.id} className="border-b">
+                      <td className="border p-2">{f.fio_descricao}</td>
+                      <td className="border p-2 text-right">{Number(f.qtd_cones).toFixed(0)}</td>
+                      <td className="border p-2 text-right">{Number(f.porcentagem).toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
