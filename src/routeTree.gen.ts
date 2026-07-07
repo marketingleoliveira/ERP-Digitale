@@ -35,6 +35,7 @@ import { Route as AppEstampaRouteImport } from './routes/_app.estampa'
 import { Route as AppEmpresaRouteImport } from './routes/_app.empresa'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppCrmRouteImport } from './routes/_app.crm'
+import { Route as AppCorRouteImport } from './routes/_app.cor'
 import { Route as AppConfiguracoesRouteImport } from './routes/_app.configuracoes'
 import { Route as AppComprasRouteImport } from './routes/_app.compras'
 import { Route as AppComposicaoRouteImport } from './routes/_app.composicao'
@@ -172,6 +173,11 @@ const AppCrmRoute = AppCrmRouteImport.update({
   path: '/crm',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCorRoute = AppCorRouteImport.update({
+  id: '/cor',
+  path: '/cor',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
   id: '/configuracoes',
   path: '/configuracoes',
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/composicao': typeof AppComposicaoRoute
   '/compras': typeof AppComprasRoute
   '/configuracoes': typeof AppConfiguracoesRoute
+  '/cor': typeof AppCorRoute
   '/crm': typeof AppCrmRoute
   '/dashboard': typeof AppDashboardRoute
   '/empresa': typeof AppEmpresaRoute
@@ -253,6 +260,7 @@ export interface FileRoutesByTo {
   '/composicao': typeof AppComposicaoRoute
   '/compras': typeof AppComprasRoute
   '/configuracoes': typeof AppConfiguracoesRoute
+  '/cor': typeof AppCorRoute
   '/crm': typeof AppCrmRoute
   '/dashboard': typeof AppDashboardRoute
   '/empresa': typeof AppEmpresaRoute
@@ -289,6 +297,7 @@ export interface FileRoutesById {
   '/_app/composicao': typeof AppComposicaoRoute
   '/_app/compras': typeof AppComprasRoute
   '/_app/configuracoes': typeof AppConfiguracoesRoute
+  '/_app/cor': typeof AppCorRoute
   '/_app/crm': typeof AppCrmRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/empresa': typeof AppEmpresaRoute
@@ -325,6 +334,7 @@ export interface FileRouteTypes {
     | '/composicao'
     | '/compras'
     | '/configuracoes'
+    | '/cor'
     | '/crm'
     | '/dashboard'
     | '/empresa'
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/composicao'
     | '/compras'
     | '/configuracoes'
+    | '/cor'
     | '/crm'
     | '/dashboard'
     | '/empresa'
@@ -394,6 +405,7 @@ export interface FileRouteTypes {
     | '/_app/composicao'
     | '/_app/compras'
     | '/_app/configuracoes'
+    | '/_app/cor'
     | '/_app/crm'
     | '/_app/dashboard'
     | '/_app/empresa'
@@ -609,6 +621,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCrmRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/cor': {
+      id: '/_app/cor'
+      path: '/cor'
+      fullPath: '/cor'
+      preLoaderRoute: typeof AppCorRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/configuracoes': {
       id: '/_app/configuracoes'
       path: '/configuracoes'
@@ -669,6 +688,7 @@ interface AppRouteChildren {
   AppComposicaoRoute: typeof AppComposicaoRoute
   AppComprasRoute: typeof AppComprasRoute
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
+  AppCorRoute: typeof AppCorRoute
   AppCrmRoute: typeof AppCrmRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppEmpresaRoute: typeof AppEmpresaRoute
@@ -701,6 +721,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppComposicaoRoute: AppComposicaoRoute,
   AppComprasRoute: AppComprasRoute,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
+  AppCorRoute: AppCorRoute,
   AppCrmRoute: AppCrmRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppEmpresaRoute: AppEmpresaRoute,
