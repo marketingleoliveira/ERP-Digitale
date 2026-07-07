@@ -75,6 +75,7 @@ function EmpresaPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Empresa | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [viewingId, setViewingId] = useState<string | null>(null);
 
   const { data: empresas = [], isLoading } = useQuery({
     queryKey: ["empresas"],
