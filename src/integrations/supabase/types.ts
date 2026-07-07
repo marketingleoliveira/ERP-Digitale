@@ -1678,6 +1678,30 @@ export type Database = {
         }
         Relationships: []
       }
+      variantes: {
+        Row: {
+          created_at: string
+          habilitado: boolean
+          id: string
+          nome: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          nome: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          nome?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
