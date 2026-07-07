@@ -19,6 +19,7 @@ import { Route as AppRepresentantesRouteImport } from './routes/_app.representan
 import { Route as AppQualidadeRouteImport } from './routes/_app.qualidade'
 import { Route as AppProdutosRouteImport } from './routes/_app.produtos'
 import { Route as AppProducaoRouteImport } from './routes/_app.producao'
+import { Route as AppMenusRouteImport } from './routes/_app.menus'
 import { Route as AppLogisticaRouteImport } from './routes/_app.logistica'
 import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
 import { Route as AppFiscalRouteImport } from './routes/_app.fiscal'
@@ -79,6 +80,11 @@ const AppProdutosRoute = AppProdutosRouteImport.update({
 const AppProducaoRoute = AppProducaoRouteImport.update({
   id: '/producao',
   path: '/producao',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMenusRoute = AppMenusRouteImport.update({
+  id: '/menus',
+  path: '/menus',
   getParentRoute: () => AppRoute,
 } as any)
 const AppLogisticaRoute = AppLogisticaRouteImport.update({
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/fiscal': typeof AppFiscalRoute
   '/fornecedores': typeof AppFornecedoresRoute
   '/logistica': typeof AppLogisticaRoute
+  '/menus': typeof AppMenusRoute
   '/producao': typeof AppProducaoRoute
   '/produtos': typeof AppProdutosRoute
   '/qualidade': typeof AppQualidadeRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/fiscal': typeof AppFiscalRoute
   '/fornecedores': typeof AppFornecedoresRoute
   '/logistica': typeof AppLogisticaRoute
+  '/menus': typeof AppMenusRoute
   '/producao': typeof AppProducaoRoute
   '/produtos': typeof AppProdutosRoute
   '/qualidade': typeof AppQualidadeRoute
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/_app/fiscal': typeof AppFiscalRoute
   '/_app/fornecedores': typeof AppFornecedoresRoute
   '/_app/logistica': typeof AppLogisticaRoute
+  '/_app/menus': typeof AppMenusRoute
   '/_app/producao': typeof AppProducaoRoute
   '/_app/produtos': typeof AppProdutosRoute
   '/_app/qualidade': typeof AppQualidadeRoute
@@ -231,6 +240,7 @@ export interface FileRouteTypes {
     | '/fiscal'
     | '/fornecedores'
     | '/logistica'
+    | '/menus'
     | '/producao'
     | '/produtos'
     | '/qualidade'
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
     | '/fiscal'
     | '/fornecedores'
     | '/logistica'
+    | '/menus'
     | '/producao'
     | '/produtos'
     | '/qualidade'
@@ -278,6 +289,7 @@ export interface FileRouteTypes {
     | '/_app/fiscal'
     | '/_app/fornecedores'
     | '/_app/logistica'
+    | '/_app/menus'
     | '/_app/producao'
     | '/_app/produtos'
     | '/_app/qualidade'
@@ -363,6 +375,13 @@ declare module '@tanstack/react-router' {
       path: '/producao'
       fullPath: '/producao'
       preLoaderRoute: typeof AppProducaoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/menus': {
+      id: '/_app/menus'
+      path: '/menus'
+      fullPath: '/menus'
+      preLoaderRoute: typeof AppMenusRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/logistica': {
@@ -465,6 +484,7 @@ interface AppRouteChildren {
   AppFiscalRoute: typeof AppFiscalRoute
   AppFornecedoresRoute: typeof AppFornecedoresRoute
   AppLogisticaRoute: typeof AppLogisticaRoute
+  AppMenusRoute: typeof AppMenusRoute
   AppProducaoRoute: typeof AppProducaoRoute
   AppProdutosRoute: typeof AppProdutosRoute
   AppQualidadeRoute: typeof AppQualidadeRoute
@@ -486,6 +506,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFiscalRoute: AppFiscalRoute,
   AppFornecedoresRoute: AppFornecedoresRoute,
   AppLogisticaRoute: AppLogisticaRoute,
+  AppMenusRoute: AppMenusRoute,
   AppProducaoRoute: AppProducaoRoute,
   AppProdutosRoute: AppProdutosRoute,
   AppQualidadeRoute: AppQualidadeRoute,
