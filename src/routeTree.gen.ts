@@ -77,6 +77,7 @@ import { Route as AppComprasPedidosRouteImport } from './routes/_app.compras.ped
 import { Route as AppComprasFornecedoresRouteImport } from './routes/_app.compras.fornecedores'
 import { Route as AppComprasCotacoesRouteImport } from './routes/_app.compras.cotacoes'
 import { Route as AppComprasContasPagarRouteImport } from './routes/_app.compras.contas-pagar'
+import { Route as AppRastreabilidadeTipoIdRouteImport } from './routes/_app.rastreabilidade.$tipo.$id'
 import { Route as AppProducaoOpIdRouteImport } from './routes/_app.producao.op.$id'
 import { Route as AppComprasSolicitacoesNovaRouteImport } from './routes/_app.compras.solicitacoes.nova'
 import { Route as AppComprasSolicitacoesIdRouteImport } from './routes/_app.compras.solicitacoes.$id'
@@ -430,6 +431,12 @@ const AppComprasContasPagarRoute = AppComprasContasPagarRouteImport.update({
   path: '/compras/contas-pagar',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRastreabilidadeTipoIdRoute =
+  AppRastreabilidadeTipoIdRouteImport.update({
+    id: '/rastreabilidade/$tipo/$id',
+    path: '/rastreabilidade/$tipo/$id',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppProducaoOpIdRoute = AppProducaoOpIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -545,6 +552,7 @@ export interface FileRoutesByFullPath {
   '/compras/solicitacoes/$id': typeof AppComprasSolicitacoesIdRoute
   '/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
   '/producao/op/$id': typeof AppProducaoOpIdRoute
+  '/rastreabilidade/$tipo/$id': typeof AppRastreabilidadeTipoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -621,6 +629,7 @@ export interface FileRoutesByTo {
   '/compras/solicitacoes/$id': typeof AppComprasSolicitacoesIdRoute
   '/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
   '/producao/op/$id': typeof AppProducaoOpIdRoute
+  '/rastreabilidade/$tipo/$id': typeof AppRastreabilidadeTipoIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -699,6 +708,7 @@ export interface FileRoutesById {
   '/_app/compras/solicitacoes/$id': typeof AppComprasSolicitacoesIdRoute
   '/_app/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
   '/_app/producao/op/$id': typeof AppProducaoOpIdRoute
+  '/_app/rastreabilidade/$tipo/$id': typeof AppRastreabilidadeTipoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -777,6 +787,7 @@ export interface FileRouteTypes {
     | '/compras/solicitacoes/$id'
     | '/compras/solicitacoes/nova'
     | '/producao/op/$id'
+    | '/rastreabilidade/$tipo/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -853,6 +864,7 @@ export interface FileRouteTypes {
     | '/compras/solicitacoes/$id'
     | '/compras/solicitacoes/nova'
     | '/producao/op/$id'
+    | '/rastreabilidade/$tipo/$id'
   id:
     | '__root__'
     | '/'
@@ -930,6 +942,7 @@ export interface FileRouteTypes {
     | '/_app/compras/solicitacoes/$id'
     | '/_app/compras/solicitacoes/nova'
     | '/_app/producao/op/$id'
+    | '/_app/rastreabilidade/$tipo/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1417,6 +1430,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppComprasContasPagarRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/rastreabilidade/$tipo/$id': {
+      id: '/_app/rastreabilidade/$tipo/$id'
+      path: '/rastreabilidade/$tipo/$id'
+      fullPath: '/rastreabilidade/$tipo/$id'
+      preLoaderRoute: typeof AppRastreabilidadeTipoIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/producao/op/$id': {
       id: '/_app/producao/op/$id'
       path: '/$id'
@@ -1600,6 +1620,7 @@ interface AppRouteChildren {
   AppFinanceiroIndexRoute: typeof AppFinanceiroIndexRoute
   AppLogisticaIndexRoute: typeof AppLogisticaIndexRoute
   AppProducaoIndexRoute: typeof AppProducaoIndexRoute
+  AppRastreabilidadeTipoIdRoute: typeof AppRastreabilidadeTipoIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -1667,6 +1688,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFinanceiroIndexRoute: AppFinanceiroIndexRoute,
   AppLogisticaIndexRoute: AppLogisticaIndexRoute,
   AppProducaoIndexRoute: AppProducaoIndexRoute,
+  AppRastreabilidadeTipoIdRoute: AppRastreabilidadeTipoIdRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

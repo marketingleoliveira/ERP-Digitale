@@ -37,7 +37,8 @@ const tipoLabel: Record<NodeTipo, string> = {
 
 export function labelDe(t: NodeTipo) { return tipoLabel[t]; }
 
-async function one<T>(q: PromiseLike<{ data: T | null; error: unknown }>): Promise<T | null> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function one(q: PromiseLike<{ data: any; error: unknown }>): Promise<any> {
   const r = await q; return r.data ?? null;
 }
 
