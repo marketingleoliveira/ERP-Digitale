@@ -91,7 +91,7 @@ function CfopDialog({ open, onOpenChange, editing, onSaved }: { open: boolean; o
   const [tipo, setTipo] = useState<"entrada" | "saida">(editing?.tipo ?? "saida");
   const [ativo, setAtivo] = useState(editing?.ativo ?? true);
 
-  useMemo(() => {
+  useEffect(() => {
     setCodigo(editing?.codigo ?? ""); setDescricao(editing?.descricao ?? "");
     setTipo(editing?.tipo ?? "saida"); setAtivo(editing?.ativo ?? true);
   }, [editing, open]);
