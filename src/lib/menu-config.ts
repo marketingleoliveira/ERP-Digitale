@@ -20,7 +20,7 @@ export type MenuItem = {
 
 /** Full catalog of available menus. Add new items here. */
 export const ALL_MENU_ITEMS: MenuItem[] = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, group: "Visão Geral" },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, group: "Visão Geral", defaultHidden: true },
   { title: "Empresa", url: "/empresa", icon: Building2, group: "Cadastros" },
   { title: "Composição", url: "/composicao", icon: FlaskConical, group: "Cadastros" },
   { title: "Fio", url: "/fio", icon: Spool, group: "Cadastros" },
@@ -34,18 +34,21 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Máquina", url: "/maquina", icon: Wrench, group: "Cadastros" },
   { title: "Agulha", url: "/agulha", icon: Syringe, group: "Cadastros" },
   { title: "Rep. Meta R$", url: "/rep-meta", icon: Target, group: "Cadastros" },
-  { title: "Estoque", url: "/estoque", icon: Warehouse, group: "Operacional" },
-  { title: "Compras", url: "/compras", icon: ShoppingCart, group: "Operacional" },
-  { title: "Vendas", url: "/vendas", icon: Receipt, group: "Operacional" },
-  { title: "CRM", url: "/crm", icon: Handshake, group: "Operacional" },
-  { title: "Ordens de Produção", url: "/producao", icon: Factory, group: "Produção (PCP)" },
-  { title: "Facções", url: "/faccoes", icon: Scissors, group: "Produção (PCP)" },
-  { title: "Qualidade", url: "/qualidade", icon: BadgeCheck, group: "Produção (PCP)" },
-  { title: "Financeiro", url: "/financeiro", icon: Wallet, group: "Financeiro & Logística" },
-  { title: "Logística", url: "/logistica", icon: PackageCheck, group: "Financeiro & Logística" },
-  { title: "Fiscal", url: "/fiscal", icon: FileText, group: "Financeiro & Logística" },
-  { title: "Usuários", url: "/usuarios", icon: ShieldCheck, group: "Administração" },
-  { title: "Configurações", url: "/configuracoes", icon: Settings, group: "Administração" },
+  { title: "Clientes", url: "/clientes", icon: Users, group: "Cadastros", defaultHidden: true },
+  { title: "Fornecedores", url: "/fornecedores", icon: Truck, group: "Cadastros", defaultHidden: true },
+  { title: "Representantes", url: "/representantes", icon: UserCheck, group: "Cadastros", defaultHidden: true },
+  { title: "Estoque", url: "/estoque", icon: Warehouse, group: "Operacional", defaultHidden: true },
+  { title: "Compras", url: "/compras", icon: ShoppingCart, group: "Operacional", defaultHidden: true },
+  { title: "Vendas", url: "/vendas", icon: Receipt, group: "Operacional", defaultHidden: true },
+  { title: "CRM", url: "/crm", icon: Handshake, group: "Operacional", defaultHidden: true },
+  { title: "Ordens de Produção", url: "/producao", icon: Factory, group: "Produção (PCP)", defaultHidden: true },
+  { title: "Facções", url: "/faccoes", icon: Scissors, group: "Produção (PCP)", defaultHidden: true },
+  { title: "Qualidade", url: "/qualidade", icon: BadgeCheck, group: "Produção (PCP)", defaultHidden: true },
+  { title: "Financeiro", url: "/financeiro", icon: Wallet, group: "Financeiro & Logística", defaultHidden: true },
+  { title: "Logística", url: "/logistica", icon: PackageCheck, group: "Financeiro & Logística", defaultHidden: true },
+  { title: "Fiscal", url: "/fiscal", icon: FileText, group: "Financeiro & Logística", defaultHidden: true },
+  { title: "Usuários", url: "/usuarios", icon: ShieldCheck, group: "Administração", defaultHidden: true },
+  { title: "Configurações", url: "/configuracoes", icon: Settings, group: "Administração", defaultHidden: true },
   { title: "Gerenciar Menus", url: "/menus", icon: SlidersHorizontal, group: "Administração", locked: true },
 ];
 
@@ -58,12 +61,12 @@ export const GROUP_ORDER = [
   "Administração",
 ];
 
-const STORAGE_KEY = "digitale.menu.visibility.v1";
+const STORAGE_KEY = "digitale.menu.visibility.v2";
 
-/** By default: everything OFF except locked items. User rebuilds from scratch. */
+/** New/current items default visible; legacy items marked defaultHidden stay off. */
 function getDefaults(): Record<string, boolean> {
   const map: Record<string, boolean> = {};
-  for (const item of ALL_MENU_ITEMS) map[item.url] = Boolean(item.locked);
+  for (const item of ALL_MENU_ITEMS) map[item.url] = !item.defaultHidden;
   return map;
 }
 
