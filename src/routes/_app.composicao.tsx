@@ -211,7 +211,7 @@ function ComposicaoPage() {
                     key={i.id}
                     onClick={() => setSelectedId(i.id)}
                     onDoubleClick={() => { setEditing(i); setDialogOpen(true); }}
-                    className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""}`}
+                    className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""} ${!i.habilitado ? "bg-destructive/10" : ""}`}
                   >
                     <td className="p-2"><Checkbox checked={isSel} onCheckedChange={() => setSelectedId(i.id)} /></td>
                     <td className="p-2">{i.tipo}</td>
