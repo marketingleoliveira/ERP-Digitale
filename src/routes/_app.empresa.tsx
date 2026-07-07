@@ -290,7 +290,7 @@ function EmpresaPage() {
                   <tr
                     key={e.id}
                     onDoubleClick={() => setViewingId(e.id)}
-                    className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""}`}
+                    className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""} ${!e.flag_habilitado ? "bg-destructive/10" : ""}`}
                   >
                     <td className="p-2" onClick={(ev) => ev.stopPropagation()}>
                       <Checkbox checked={isSel} onCheckedChange={(v) => toggleOne(e.id, !!v)} />
@@ -302,8 +302,11 @@ function EmpresaPage() {
                     <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.telefone || "—"}</td>
                     <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.contato || "—"}</td>
                     {FLAG_COLS.map((c) => (
-                      <td key={c.key} className="p-2 text-center" onClick={() => toggleOne(e.id, !isSel)}>
-                        <span className={`inline-block h-3 w-3 rounded-full ${e[c.key] ? "bg-emerald-500" : "bg-rose-400"}`} />
+                      <td key={c.key} className="p-2 text-center">
+                        <StatusDot
+                          checked={!!e[c.key]}
+                          onToggle={(v: boolean) => toggleFlagMut.mutate({ id: e.id, key: c.key as string, value: v })}
+                        />
                       </td>
                     ))}
                   </tr>
