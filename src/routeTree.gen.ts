@@ -14,24 +14,35 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppVendasRouteImport } from './routes/_app.vendas'
+import { Route as AppVarianteRouteImport } from './routes/_app.variante'
 import { Route as AppUsuariosRouteImport } from './routes/_app.usuarios'
+import { Route as AppTabelaCorRouteImport } from './routes/_app.tabela-cor'
 import { Route as AppRepresentantesRouteImport } from './routes/_app.representantes'
+import { Route as AppRepMetaRouteImport } from './routes/_app.rep-meta'
 import { Route as AppQualidadeRouteImport } from './routes/_app.qualidade'
 import { Route as AppProdutosRouteImport } from './routes/_app.produtos'
 import { Route as AppProducaoRouteImport } from './routes/_app.producao'
 import { Route as AppMenusRouteImport } from './routes/_app.menus'
+import { Route as AppMaquinaRouteImport } from './routes/_app.maquina'
 import { Route as AppLogisticaRouteImport } from './routes/_app.logistica'
 import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
 import { Route as AppFiscalRouteImport } from './routes/_app.fiscal'
+import { Route as AppFioRouteImport } from './routes/_app.fio'
 import { Route as AppFinanceiroRouteImport } from './routes/_app.financeiro'
 import { Route as AppFaccoesRouteImport } from './routes/_app.faccoes'
 import { Route as AppEstoqueRouteImport } from './routes/_app.estoque'
+import { Route as AppEstampaRouteImport } from './routes/_app.estampa'
+import { Route as AppEmpresaRouteImport } from './routes/_app.empresa'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppCrmRouteImport } from './routes/_app.crm'
+import { Route as AppCorRouteImport } from './routes/_app.cor'
 import { Route as AppConfiguracoesRouteImport } from './routes/_app.configuracoes'
 import { Route as AppComprasRouteImport } from './routes/_app.compras'
+import { Route as AppComposicaoRouteImport } from './routes/_app.composicao'
 import { Route as AppClientesRouteImport } from './routes/_app.clientes'
+import { Route as AppClienteArtigoRouteImport } from './routes/_app.cliente-artigo'
 import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
+import { Route as AppAgulhaRouteImport } from './routes/_app.agulha'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -57,14 +68,29 @@ const AppVendasRoute = AppVendasRouteImport.update({
   path: '/vendas',
   getParentRoute: () => AppRoute,
 } as any)
+const AppVarianteRoute = AppVarianteRouteImport.update({
+  id: '/variante',
+  path: '/variante',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppUsuariosRoute = AppUsuariosRouteImport.update({
   id: '/usuarios',
   path: '/usuarios',
   getParentRoute: () => AppRoute,
 } as any)
+const AppTabelaCorRoute = AppTabelaCorRouteImport.update({
+  id: '/tabela-cor',
+  path: '/tabela-cor',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppRepresentantesRoute = AppRepresentantesRouteImport.update({
   id: '/representantes',
   path: '/representantes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRepMetaRoute = AppRepMetaRouteImport.update({
+  id: '/rep-meta',
+  path: '/rep-meta',
   getParentRoute: () => AppRoute,
 } as any)
 const AppQualidadeRoute = AppQualidadeRouteImport.update({
@@ -87,6 +113,11 @@ const AppMenusRoute = AppMenusRouteImport.update({
   path: '/menus',
   getParentRoute: () => AppRoute,
 } as any)
+const AppMaquinaRoute = AppMaquinaRouteImport.update({
+  id: '/maquina',
+  path: '/maquina',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppLogisticaRoute = AppLogisticaRouteImport.update({
   id: '/logistica',
   path: '/logistica',
@@ -100,6 +131,11 @@ const AppFornecedoresRoute = AppFornecedoresRouteImport.update({
 const AppFiscalRoute = AppFiscalRouteImport.update({
   id: '/fiscal',
   path: '/fiscal',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFioRoute = AppFioRouteImport.update({
+  id: '/fio',
+  path: '/fio',
   getParentRoute: () => AppRoute,
 } as any)
 const AppFinanceiroRoute = AppFinanceiroRouteImport.update({
@@ -117,6 +153,16 @@ const AppEstoqueRoute = AppEstoqueRouteImport.update({
   path: '/estoque',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEstampaRoute = AppEstampaRouteImport.update({
+  id: '/estampa',
+  path: '/estampa',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEmpresaRoute = AppEmpresaRouteImport.update({
+  id: '/empresa',
+  path: '/empresa',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -125,6 +171,11 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
 const AppCrmRoute = AppCrmRouteImport.update({
   id: '/crm',
   path: '/crm',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCorRoute = AppCorRouteImport.update({
+  id: '/cor',
+  path: '/cor',
   getParentRoute: () => AppRoute,
 } as any)
 const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
@@ -137,9 +188,19 @@ const AppComprasRoute = AppComprasRouteImport.update({
   path: '/compras',
   getParentRoute: () => AppRoute,
 } as any)
+const AppComposicaoRoute = AppComposicaoRouteImport.update({
+  id: '/composicao',
+  path: '/composicao',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppClientesRoute = AppClientesRouteImport.update({
   id: '/clientes',
   path: '/clientes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppClienteArtigoRoute = AppClienteArtigoRouteImport.update({
+  id: '/cliente-artigo',
+  path: '/cliente-artigo',
   getParentRoute: () => AppRoute,
 } as any)
 const AppArtigosRoute = AppArtigosRouteImport.update({
@@ -147,53 +208,80 @@ const AppArtigosRoute = AppArtigosRouteImport.update({
   path: '/artigos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAgulhaRoute = AppAgulhaRouteImport.update({
+  id: '/agulha',
+  path: '/agulha',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
+  '/agulha': typeof AppAgulhaRoute
   '/artigos': typeof AppArtigosRoute
+  '/cliente-artigo': typeof AppClienteArtigoRoute
   '/clientes': typeof AppClientesRoute
+  '/composicao': typeof AppComposicaoRoute
   '/compras': typeof AppComprasRoute
   '/configuracoes': typeof AppConfiguracoesRoute
+  '/cor': typeof AppCorRoute
   '/crm': typeof AppCrmRoute
   '/dashboard': typeof AppDashboardRoute
+  '/empresa': typeof AppEmpresaRoute
+  '/estampa': typeof AppEstampaRoute
   '/estoque': typeof AppEstoqueRoute
   '/faccoes': typeof AppFaccoesRoute
   '/financeiro': typeof AppFinanceiroRoute
+  '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
   '/fornecedores': typeof AppFornecedoresRoute
   '/logistica': typeof AppLogisticaRoute
+  '/maquina': typeof AppMaquinaRoute
   '/menus': typeof AppMenusRoute
   '/producao': typeof AppProducaoRoute
   '/produtos': typeof AppProdutosRoute
   '/qualidade': typeof AppQualidadeRoute
+  '/rep-meta': typeof AppRepMetaRoute
   '/representantes': typeof AppRepresentantesRoute
+  '/tabela-cor': typeof AppTabelaCorRoute
   '/usuarios': typeof AppUsuariosRoute
+  '/variante': typeof AppVarianteRoute
   '/vendas': typeof AppVendasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
+  '/agulha': typeof AppAgulhaRoute
   '/artigos': typeof AppArtigosRoute
+  '/cliente-artigo': typeof AppClienteArtigoRoute
   '/clientes': typeof AppClientesRoute
+  '/composicao': typeof AppComposicaoRoute
   '/compras': typeof AppComprasRoute
   '/configuracoes': typeof AppConfiguracoesRoute
+  '/cor': typeof AppCorRoute
   '/crm': typeof AppCrmRoute
   '/dashboard': typeof AppDashboardRoute
+  '/empresa': typeof AppEmpresaRoute
+  '/estampa': typeof AppEstampaRoute
   '/estoque': typeof AppEstoqueRoute
   '/faccoes': typeof AppFaccoesRoute
   '/financeiro': typeof AppFinanceiroRoute
+  '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
   '/fornecedores': typeof AppFornecedoresRoute
   '/logistica': typeof AppLogisticaRoute
+  '/maquina': typeof AppMaquinaRoute
   '/menus': typeof AppMenusRoute
   '/producao': typeof AppProducaoRoute
   '/produtos': typeof AppProdutosRoute
   '/qualidade': typeof AppQualidadeRoute
+  '/rep-meta': typeof AppRepMetaRoute
   '/representantes': typeof AppRepresentantesRoute
+  '/tabela-cor': typeof AppTabelaCorRoute
   '/usuarios': typeof AppUsuariosRoute
+  '/variante': typeof AppVarianteRoute
   '/vendas': typeof AppVendasRoute
 }
 export interface FileRoutesById {
@@ -202,24 +290,35 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
+  '/_app/agulha': typeof AppAgulhaRoute
   '/_app/artigos': typeof AppArtigosRoute
+  '/_app/cliente-artigo': typeof AppClienteArtigoRoute
   '/_app/clientes': typeof AppClientesRoute
+  '/_app/composicao': typeof AppComposicaoRoute
   '/_app/compras': typeof AppComprasRoute
   '/_app/configuracoes': typeof AppConfiguracoesRoute
+  '/_app/cor': typeof AppCorRoute
   '/_app/crm': typeof AppCrmRoute
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/empresa': typeof AppEmpresaRoute
+  '/_app/estampa': typeof AppEstampaRoute
   '/_app/estoque': typeof AppEstoqueRoute
   '/_app/faccoes': typeof AppFaccoesRoute
   '/_app/financeiro': typeof AppFinanceiroRoute
+  '/_app/fio': typeof AppFioRoute
   '/_app/fiscal': typeof AppFiscalRoute
   '/_app/fornecedores': typeof AppFornecedoresRoute
   '/_app/logistica': typeof AppLogisticaRoute
+  '/_app/maquina': typeof AppMaquinaRoute
   '/_app/menus': typeof AppMenusRoute
   '/_app/producao': typeof AppProducaoRoute
   '/_app/produtos': typeof AppProdutosRoute
   '/_app/qualidade': typeof AppQualidadeRoute
+  '/_app/rep-meta': typeof AppRepMetaRoute
   '/_app/representantes': typeof AppRepresentantesRoute
+  '/_app/tabela-cor': typeof AppTabelaCorRoute
   '/_app/usuarios': typeof AppUsuariosRoute
+  '/_app/variante': typeof AppVarianteRoute
   '/_app/vendas': typeof AppVendasRoute
 }
 export interface FileRouteTypes {
@@ -228,48 +327,70 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/login'
+    | '/agulha'
     | '/artigos'
+    | '/cliente-artigo'
     | '/clientes'
+    | '/composicao'
     | '/compras'
     | '/configuracoes'
+    | '/cor'
     | '/crm'
     | '/dashboard'
+    | '/empresa'
+    | '/estampa'
     | '/estoque'
     | '/faccoes'
     | '/financeiro'
+    | '/fio'
     | '/fiscal'
     | '/fornecedores'
     | '/logistica'
+    | '/maquina'
     | '/menus'
     | '/producao'
     | '/produtos'
     | '/qualidade'
+    | '/rep-meta'
     | '/representantes'
+    | '/tabela-cor'
     | '/usuarios'
+    | '/variante'
     | '/vendas'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/login'
+    | '/agulha'
     | '/artigos'
+    | '/cliente-artigo'
     | '/clientes'
+    | '/composicao'
     | '/compras'
     | '/configuracoes'
+    | '/cor'
     | '/crm'
     | '/dashboard'
+    | '/empresa'
+    | '/estampa'
     | '/estoque'
     | '/faccoes'
     | '/financeiro'
+    | '/fio'
     | '/fiscal'
     | '/fornecedores'
     | '/logistica'
+    | '/maquina'
     | '/menus'
     | '/producao'
     | '/produtos'
     | '/qualidade'
+    | '/rep-meta'
     | '/representantes'
+    | '/tabela-cor'
     | '/usuarios'
+    | '/variante'
     | '/vendas'
   id:
     | '__root__'
@@ -277,24 +398,35 @@ export interface FileRouteTypes {
     | '/_app'
     | '/auth'
     | '/login'
+    | '/_app/agulha'
     | '/_app/artigos'
+    | '/_app/cliente-artigo'
     | '/_app/clientes'
+    | '/_app/composicao'
     | '/_app/compras'
     | '/_app/configuracoes'
+    | '/_app/cor'
     | '/_app/crm'
     | '/_app/dashboard'
+    | '/_app/empresa'
+    | '/_app/estampa'
     | '/_app/estoque'
     | '/_app/faccoes'
     | '/_app/financeiro'
+    | '/_app/fio'
     | '/_app/fiscal'
     | '/_app/fornecedores'
     | '/_app/logistica'
+    | '/_app/maquina'
     | '/_app/menus'
     | '/_app/producao'
     | '/_app/produtos'
     | '/_app/qualidade'
+    | '/_app/rep-meta'
     | '/_app/representantes'
+    | '/_app/tabela-cor'
     | '/_app/usuarios'
+    | '/_app/variante'
     | '/_app/vendas'
   fileRoutesById: FileRoutesById
 }
@@ -342,6 +474,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppVendasRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/variante': {
+      id: '/_app/variante'
+      path: '/variante'
+      fullPath: '/variante'
+      preLoaderRoute: typeof AppVarianteRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/usuarios': {
       id: '/_app/usuarios'
       path: '/usuarios'
@@ -349,11 +488,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppUsuariosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/tabela-cor': {
+      id: '/_app/tabela-cor'
+      path: '/tabela-cor'
+      fullPath: '/tabela-cor'
+      preLoaderRoute: typeof AppTabelaCorRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/representantes': {
       id: '/_app/representantes'
       path: '/representantes'
       fullPath: '/representantes'
       preLoaderRoute: typeof AppRepresentantesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/rep-meta': {
+      id: '/_app/rep-meta'
+      path: '/rep-meta'
+      fullPath: '/rep-meta'
+      preLoaderRoute: typeof AppRepMetaRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/qualidade': {
@@ -384,6 +537,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMenusRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/maquina': {
+      id: '/_app/maquina'
+      path: '/maquina'
+      fullPath: '/maquina'
+      preLoaderRoute: typeof AppMaquinaRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/logistica': {
       id: '/_app/logistica'
       path: '/logistica'
@@ -403,6 +563,13 @@ declare module '@tanstack/react-router' {
       path: '/fiscal'
       fullPath: '/fiscal'
       preLoaderRoute: typeof AppFiscalRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fio': {
+      id: '/_app/fio'
+      path: '/fio'
+      fullPath: '/fio'
+      preLoaderRoute: typeof AppFioRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/financeiro': {
@@ -426,6 +593,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEstoqueRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/estampa': {
+      id: '/_app/estampa'
+      path: '/estampa'
+      fullPath: '/estampa'
+      preLoaderRoute: typeof AppEstampaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/empresa': {
+      id: '/_app/empresa'
+      path: '/empresa'
+      fullPath: '/empresa'
+      preLoaderRoute: typeof AppEmpresaRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dashboard': {
       id: '/_app/dashboard'
       path: '/dashboard'
@@ -438,6 +619,13 @@ declare module '@tanstack/react-router' {
       path: '/crm'
       fullPath: '/crm'
       preLoaderRoute: typeof AppCrmRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/cor': {
+      id: '/_app/cor'
+      path: '/cor'
+      fullPath: '/cor'
+      preLoaderRoute: typeof AppCorRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/configuracoes': {
@@ -454,11 +642,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppComprasRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/composicao': {
+      id: '/_app/composicao'
+      path: '/composicao'
+      fullPath: '/composicao'
+      preLoaderRoute: typeof AppComposicaoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/clientes': {
       id: '/_app/clientes'
       path: '/clientes'
       fullPath: '/clientes'
       preLoaderRoute: typeof AppClientesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/cliente-artigo': {
+      id: '/_app/cliente-artigo'
+      path: '/cliente-artigo'
+      fullPath: '/cliente-artigo'
+      preLoaderRoute: typeof AppClienteArtigoRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/artigos': {
@@ -468,50 +670,79 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppArtigosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/agulha': {
+      id: '/_app/agulha'
+      path: '/agulha'
+      fullPath: '/agulha'
+      preLoaderRoute: typeof AppAgulhaRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAgulhaRoute: typeof AppAgulhaRoute
   AppArtigosRoute: typeof AppArtigosRoute
+  AppClienteArtigoRoute: typeof AppClienteArtigoRoute
   AppClientesRoute: typeof AppClientesRoute
+  AppComposicaoRoute: typeof AppComposicaoRoute
   AppComprasRoute: typeof AppComprasRoute
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
+  AppCorRoute: typeof AppCorRoute
   AppCrmRoute: typeof AppCrmRoute
   AppDashboardRoute: typeof AppDashboardRoute
+  AppEmpresaRoute: typeof AppEmpresaRoute
+  AppEstampaRoute: typeof AppEstampaRoute
   AppEstoqueRoute: typeof AppEstoqueRoute
   AppFaccoesRoute: typeof AppFaccoesRoute
   AppFinanceiroRoute: typeof AppFinanceiroRoute
+  AppFioRoute: typeof AppFioRoute
   AppFiscalRoute: typeof AppFiscalRoute
   AppFornecedoresRoute: typeof AppFornecedoresRoute
   AppLogisticaRoute: typeof AppLogisticaRoute
+  AppMaquinaRoute: typeof AppMaquinaRoute
   AppMenusRoute: typeof AppMenusRoute
   AppProducaoRoute: typeof AppProducaoRoute
   AppProdutosRoute: typeof AppProdutosRoute
   AppQualidadeRoute: typeof AppQualidadeRoute
+  AppRepMetaRoute: typeof AppRepMetaRoute
   AppRepresentantesRoute: typeof AppRepresentantesRoute
+  AppTabelaCorRoute: typeof AppTabelaCorRoute
   AppUsuariosRoute: typeof AppUsuariosRoute
+  AppVarianteRoute: typeof AppVarianteRoute
   AppVendasRoute: typeof AppVendasRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAgulhaRoute: AppAgulhaRoute,
   AppArtigosRoute: AppArtigosRoute,
+  AppClienteArtigoRoute: AppClienteArtigoRoute,
   AppClientesRoute: AppClientesRoute,
+  AppComposicaoRoute: AppComposicaoRoute,
   AppComprasRoute: AppComprasRoute,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
+  AppCorRoute: AppCorRoute,
   AppCrmRoute: AppCrmRoute,
   AppDashboardRoute: AppDashboardRoute,
+  AppEmpresaRoute: AppEmpresaRoute,
+  AppEstampaRoute: AppEstampaRoute,
   AppEstoqueRoute: AppEstoqueRoute,
   AppFaccoesRoute: AppFaccoesRoute,
   AppFinanceiroRoute: AppFinanceiroRoute,
+  AppFioRoute: AppFioRoute,
   AppFiscalRoute: AppFiscalRoute,
   AppFornecedoresRoute: AppFornecedoresRoute,
   AppLogisticaRoute: AppLogisticaRoute,
+  AppMaquinaRoute: AppMaquinaRoute,
   AppMenusRoute: AppMenusRoute,
   AppProducaoRoute: AppProducaoRoute,
   AppProdutosRoute: AppProdutosRoute,
   AppQualidadeRoute: AppQualidadeRoute,
+  AppRepMetaRoute: AppRepMetaRoute,
   AppRepresentantesRoute: AppRepresentantesRoute,
+  AppTabelaCorRoute: AppTabelaCorRoute,
   AppUsuariosRoute: AppUsuariosRoute,
+  AppVarianteRoute: AppVarianteRoute,
   AppVendasRoute: AppVendasRoute,
 }
 
