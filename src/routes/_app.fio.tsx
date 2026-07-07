@@ -263,7 +263,7 @@ function FioPage() {
                     <td className="p-2 text-center">{i.n_cabos ?? "—"}</td>
                     <td className="p-2">{i.composicao || "—"}</td>
                     <td className="p-2 text-center">
-                      <span className={`inline-block h-3 w-3 rounded-full ${i.habilitado ? "bg-emerald-500" : "bg-rose-400"}`} />
+                      <StatusDot checked={!!i.habilitado} onToggle={(v: boolean) => toggleHabMut.mutate({ id: i.id, habilitado: v })} />
                     </td>
                   </tr>
                 );
