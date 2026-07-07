@@ -54,7 +54,6 @@ function TinturariasPage() {
   const [appliedNome, setAppliedNome] = useState("");
   const [appliedCnpj, setAppliedCnpj] = useState("");
   const [page, setPage] = useState(1);
-  const [selected, setSelected] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Tinturaria | null>(null);
 
@@ -69,17 +68,18 @@ function TinturariasPage() {
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const selectedRow = data.find((r) => r.id === selected) ?? null;
+  const sel = useMultiSelection(paged);
+  const singleRow = sel.singleSelected;
 
   const deleteMut = useMutation({
-    mutationFn: async (row: Tinturaria) => {
-      const client = supabase as unknown as { from: (t: string) => { delete: () => { eq: (c: string, v: string) => Promise<{ error: Error | null }> } } };
-      const { error } = await client.from("tinturarias").delete().eq("id", row.id);
+    mutationFn: async (ids: string[]) => {
+      const { error } = await (supabase.from("tinturarias") as any).delete().in("id", ids);
       if (error) throw error;
+      return ids.length;
     },
-    onSuccess: () => {
-      toast.success("Tinturaria excluída.");
-      setSelected(null);
+    onSuccess: (n) => {
+      toast.success(`${n} tinturaria(s) excluída(s).`);
+      sel.clear();
       qc.invalidateQueries({ queryKey: ["tinturarias"] });
     },
     onError: (e: Error) => toast.error(e.message),
