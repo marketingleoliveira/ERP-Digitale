@@ -163,6 +163,7 @@ function CorPage() {
       </Card>
 
       <CadastroCorDialog open={dialogOpen} onOpenChange={setDialogOpen} editing={editing} />
+      <CorDetailDialog cor={detail} onOpenChange={(v) => !v && setDetail(null)} />
     </div>
   );
 }
