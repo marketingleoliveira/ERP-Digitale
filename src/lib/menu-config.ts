@@ -25,12 +25,13 @@ export type MenuItem = {
 /** Full catalog of available menus. Add new items here. */
 export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Início", url: "/inicio", icon: LayoutDashboard, group: "", locked: true },
-  { title: "Empresa", url: "/empresa", icon: Building2, group: "Sistema" },
   { title: "Funcionário", url: "/funcionario", icon: IdCard, group: "Sistema" },
   { title: "Usuário", url: "/usuarios", icon: ShieldCheck, group: "Sistema" },
   { title: "Senha", url: "/senha", icon: KeyRound, group: "Sistema" },
   { title: "Time Log", url: "/time-log", icon: Clock, group: "Sistema" },
+  { title: "Empresa", url: "/empresa", icon: Building2, group: "Cadastros" },
   { title: "Composição", url: "/composicao", icon: FlaskConical, group: "Cadastros" },
+
   { title: "Fio", url: "/fio", icon: Spool, group: "Cadastros" },
   { title: "Artigo", url: "/artigos", icon: Shirt, group: "Cadastros" },
   { title: "Cliente Artigo", url: "/cliente-artigo", icon: UserSquare2, group: "Cadastros", defaultHidden: true },
