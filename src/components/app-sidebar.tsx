@@ -1,10 +1,23 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { ChevronDown } from "lucide-react";
 import {
-  Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
-  SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
+  Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
+  SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+  SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, useSidebar,
 } from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import logoAsset from "@/assets/digitale-logo-white.png.asset.json";
 import { ALL_MENU_ITEMS, GROUP_ORDER, useMenuVisibility } from "@/lib/menu-config";
+import { LayoutDashboard, Users, ShoppingCart, Factory, Wallet, ShieldCheck, type LucideIcon } from "lucide-react";
+
+const GROUP_ICONS: Record<string, LucideIcon> = {
+  "Visão Geral": LayoutDashboard,
+  "Cadastros": Users,
+  "Operacional": ShoppingCart,
+  "Produção (PCP)": Factory,
+  "Financeiro & Logística": Wallet,
+  "Administração": ShieldCheck,
+};
 
 export function AppSidebar() {
   const { state } = useSidebar();
@@ -36,28 +49,48 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        {groups.map((g) => (
-          <SidebarGroup key={g.label}>
-            {!collapsed && <SidebarGroupLabel>{g.label}</SidebarGroupLabel>}
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {g.items.map((item) => {
-                  const active = pathname === item.url || pathname.startsWith(item.url + "/");
-                  return (
-                    <SidebarMenuItem key={item.url}>
-                      <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
-                        <Link to={item.url}>
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
+        {groups.map((g) => {
+          const GroupIcon = GROUP_ICONS[g.label] ?? Users;
+          const hasActive = g.items.some(
+            (i) => pathname === i.url || pathname.startsWith(i.url + "/"),
+          );
+          return (
+            <SidebarGroup key={g.label}>
+              <SidebarGroupContent>
+                <Collapsible defaultOpen={hasActive} className="group/collapsible">
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton tooltip={g.label} isActive={hasActive}>
+                          <GroupIcon className="h-4 w-4" />
+                          <span>{g.label}</span>
+                          <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {g.items.map((item) => {
+                            const active = pathname === item.url || pathname.startsWith(item.url + "/");
+                            return (
+                              <SidebarMenuSubItem key={item.url}>
+                                <SidebarMenuSubButton asChild isActive={active}>
+                                  <Link to={item.url}>
+                                    <item.icon className="h-4 w-4" />
+                                    <span>{item.title}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            );
+                          })}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
                     </SidebarMenuItem>
-                  );
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+                  </SidebarMenu>
+                </Collapsible>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          );
+        })}
       </SidebarContent>
     </Sidebar>
   );
