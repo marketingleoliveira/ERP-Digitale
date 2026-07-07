@@ -29,6 +29,7 @@ import { Route as AppFiscalRouteImport } from './routes/_app.fiscal'
 import { Route as AppFioRouteImport } from './routes/_app.fio'
 import { Route as AppEstampaRouteImport } from './routes/_app.estampa'
 import { Route as AppEmpresaRouteImport } from './routes/_app.empresa'
+import { Route as AppCorreiaRouteImport } from './routes/_app.correia'
 import { Route as AppCorRouteImport } from './routes/_app.cor'
 import { Route as AppConfiguracoesRouteImport } from './routes/_app.configuracoes'
 import { Route as AppComposicaoRouteImport } from './routes/_app.composicao'
@@ -136,6 +137,11 @@ const AppEmpresaRoute = AppEmpresaRouteImport.update({
   path: '/empresa',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCorreiaRoute = AppCorreiaRouteImport.update({
+  id: '/correia',
+  path: '/correia',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCorRoute = AppCorRouteImport.update({
   id: '/cor',
   path: '/cor',
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/composicao': typeof AppComposicaoRoute
   '/configuracoes': typeof AppConfiguracoesRoute
   '/cor': typeof AppCorRoute
+  '/correia': typeof AppCorreiaRoute
   '/empresa': typeof AppEmpresaRoute
   '/estampa': typeof AppEstampaRoute
   '/fio': typeof AppFioRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/composicao': typeof AppComposicaoRoute
   '/configuracoes': typeof AppConfiguracoesRoute
   '/cor': typeof AppCorRoute
+  '/correia': typeof AppCorreiaRoute
   '/empresa': typeof AppEmpresaRoute
   '/estampa': typeof AppEstampaRoute
   '/fio': typeof AppFioRoute
@@ -240,6 +248,7 @@ export interface FileRoutesById {
   '/_app/composicao': typeof AppComposicaoRoute
   '/_app/configuracoes': typeof AppConfiguracoesRoute
   '/_app/cor': typeof AppCorRoute
+  '/_app/correia': typeof AppCorreiaRoute
   '/_app/empresa': typeof AppEmpresaRoute
   '/_app/estampa': typeof AppEstampaRoute
   '/_app/fio': typeof AppFioRoute
@@ -270,6 +279,7 @@ export interface FileRouteTypes {
     | '/composicao'
     | '/configuracoes'
     | '/cor'
+    | '/correia'
     | '/empresa'
     | '/estampa'
     | '/fio'
@@ -298,6 +308,7 @@ export interface FileRouteTypes {
     | '/composicao'
     | '/configuracoes'
     | '/cor'
+    | '/correia'
     | '/empresa'
     | '/estampa'
     | '/fio'
@@ -327,6 +338,7 @@ export interface FileRouteTypes {
     | '/_app/composicao'
     | '/_app/configuracoes'
     | '/_app/cor'
+    | '/_app/correia'
     | '/_app/empresa'
     | '/_app/estampa'
     | '/_app/fio'
@@ -495,6 +507,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEmpresaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/correia': {
+      id: '/_app/correia'
+      path: '/correia'
+      fullPath: '/correia'
+      preLoaderRoute: typeof AppCorreiaRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/cor': {
       id: '/_app/cor'
       path: '/cor'
@@ -554,6 +573,7 @@ interface AppRouteChildren {
   AppComposicaoRoute: typeof AppComposicaoRoute
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppCorRoute: typeof AppCorRoute
+  AppCorreiaRoute: typeof AppCorreiaRoute
   AppEmpresaRoute: typeof AppEmpresaRoute
   AppEstampaRoute: typeof AppEstampaRoute
   AppFioRoute: typeof AppFioRoute
@@ -580,6 +600,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppComposicaoRoute: AppComposicaoRoute,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppCorRoute: AppCorRoute,
+  AppCorreiaRoute: AppCorreiaRoute,
   AppEmpresaRoute: AppEmpresaRoute,
   AppEstampaRoute: AppEstampaRoute,
   AppFioRoute: AppFioRoute,

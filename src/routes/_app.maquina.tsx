@@ -327,12 +327,16 @@ function MaquinaDialog({
             <div className="space-y-2">
               {correias.map((c, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Input
+                  <select
                     value={c}
                     onChange={(e) => updateCorreia(i, e.target.value)}
-                    placeholder={`Correia ${i + 1}`}
-                    className="flex-1"
-                  />
+                    className="flex-1 h-9 rounded border border-input bg-background px-2 text-sm"
+                  >
+                    <option value="">— Selecione uma correia —</option>
+                    {correiasOptions.map((opt) => (
+                      <option key={opt.id} value={opt.correia}>{opt.correia}</option>
+                    ))}
+                  </select>
                   <Button
                     type="button"
                     size="icon"
