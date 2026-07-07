@@ -128,7 +128,7 @@ function TinturariasPage() {
               ) : paged.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell>
-                    <Checkbox checked={selected === r.id} onCheckedChange={(c) => setSelected(c ? r.id : null)} />
+                    <Checkbox checked={sel.isSelected(r.id)} onCheckedChange={(c) => sel.toggleOne(r.id, !!c)} />
                   </TableCell>
                   <TableCell><span className="text-primary font-medium">{r.codigo}</span></TableCell>
                   <TableCell>{r.nome_fantasia}</TableCell>
