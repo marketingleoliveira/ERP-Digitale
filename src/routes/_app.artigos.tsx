@@ -602,10 +602,6 @@ function ArtigoDialog({
             <Label className={lbl}>Tensão Lycra</Label>
             <Input className={inp} type="number" step="0.01" value={form.tensao_lycra ?? ""} onChange={(e) => set("tensao_lycra", e.target.value === "" ? null : Number(e.target.value))} />
           </div>
-          <div>
-            <Label className={lbl}>Tensão Fio</Label>
-            <Input className={inp} type="number" step="0.01" value={form.tensao_fio ?? ""} onChange={(e) => set("tensao_fio", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
 
           <div className="md:col-span-4">
             <Label className={lbl}>Imagem (URL)</Label>
