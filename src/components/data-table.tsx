@@ -2,6 +2,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowUpDown, Download, Printer, Search } from "lucide-react";
 
@@ -13,6 +14,14 @@ export interface Column<T> {
   sortable?: boolean;
 }
 
+export interface DataTableSelection<T> {
+  getRowId: (row: T) => string;
+  selectedIds: Set<string>;
+  onChange: (ids: Set<string>) => void;
+  /** When "page" (default), the header checkbox toggles only the current page. When "all", toggles across all filtered rows. */
+  mode?: "page" | "all";
+}
+
 interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
@@ -20,10 +29,11 @@ interface DataTableProps<T> {
   pageSize?: number;
   toolbar?: ReactNode;
   onRowClick?: (row: T) => void;
+  selection?: DataTableSelection<T>;
 }
 
 export function DataTable<T extends Record<string, any>>({
-  data, columns, searchKeys, pageSize = 10, toolbar, onRowClick,
+  data, columns, searchKeys, pageSize = 10, toolbar, onRowClick, selection,
 }: DataTableProps<T>) {
   const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
@@ -50,6 +60,29 @@ export function DataTable<T extends Record<string, any>>({
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const paged = sorted.slice((page - 1) * pageSize, page * pageSize);
 
+  const selMode = selection?.mode ?? "page";
+  const scopeRows = selection ? (selMode === "all" ? sorted : paged) : [];
+  const scopeIds = selection ? scopeRows.map((r) => selection.getRowId(r)) : [];
+  const allScopeSelected =
+    !!selection && scopeIds.length > 0 && scopeIds.every((id) => selection.selectedIds.has(id));
+  const someScopeSelected =
+    !!selection && !allScopeSelected && scopeIds.some((id) => selection.selectedIds.has(id));
+
+  const toggleScope = (checked: boolean) => {
+    if (!selection) return;
+    const next = new Set(selection.selectedIds);
+    if (checked) scopeIds.forEach((id) => next.add(id));
+    else scopeIds.forEach((id) => next.delete(id));
+    selection.onChange(next);
+  };
+
+  const toggleOne = (id: string, checked: boolean) => {
+    if (!selection) return;
+    const next = new Set(selection.selectedIds);
+    if (checked) next.add(id); else next.delete(id);
+    selection.onChange(next);
+  };
+
   return (
     <Card className="overflow-hidden">
       <div className="flex flex-wrap items-center gap-2 border-b border-border p-3">
@@ -73,6 +106,15 @@ export function DataTable<T extends Record<string, any>>({
         <Table>
           <TableHeader>
             <TableRow>
+              {selection && (
+                <TableHead className="w-10">
+                  <Checkbox
+                    aria-label="Selecionar todas"
+                    checked={allScopeSelected ? true : someScopeSelected ? "indeterminate" : false}
+                    onCheckedChange={(v) => toggleScope(v === true)}
+                  />
+                </TableHead>
+              )}
               {columns.map((c) => (
                 <TableHead key={String(c.key)} className={c.className}>
                   {c.sortable ? (
@@ -94,33 +136,49 @@ export function DataTable<T extends Record<string, any>>({
           <TableBody>
             {paged.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center text-muted-foreground py-10">
+                <TableCell colSpan={columns.length + (selection ? 1 : 0)} className="text-center text-muted-foreground py-10">
                   Nenhum registro encontrado.
                 </TableCell>
               </TableRow>
-            ) : paged.map((row, i) => (
-              <TableRow
-                key={i}
-                onClick={onRowClick ? (e) => {
-                  // Ignore clicks on interactive elements inside the row.
-                  const target = e.target as HTMLElement;
-                  if (target.closest("button,a,input,select,textarea,[role=checkbox],[role=switch]")) return;
-                  onRowClick(row);
-                } : undefined}
-                className={onRowClick ? "cursor-pointer hover:bg-muted/50" : undefined}
-              >
-                {columns.map((c) => (
-                  <TableCell key={String(c.key)} className={c.className}>
-                    {c.render ? c.render(row) : String(row[c.key as keyof T] ?? "")}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
+            ) : paged.map((row, i) => {
+              const rowId = selection ? selection.getRowId(row) : undefined;
+              const checked = !!(rowId && selection!.selectedIds.has(rowId));
+              return (
+                <TableRow
+                  key={rowId ?? i}
+                  data-state={checked ? "selected" : undefined}
+                  onClick={onRowClick ? (e) => {
+                    const target = e.target as HTMLElement;
+                    if (target.closest("button,a,input,select,textarea,[role=checkbox],[role=switch]")) return;
+                    onRowClick(row);
+                  } : undefined}
+                  className={onRowClick ? "cursor-pointer hover:bg-muted/50" : undefined}
+                >
+                  {selection && (
+                    <TableCell className="w-10">
+                      <Checkbox
+                        aria-label="Selecionar linha"
+                        checked={checked}
+                        onCheckedChange={(v) => toggleOne(rowId!, v === true)}
+                      />
+                    </TableCell>
+                  )}
+                  {columns.map((c) => (
+                    <TableCell key={String(c.key)} className={c.className}>
+                      {c.render ? c.render(row) : String(row[c.key as keyof T] ?? "")}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
       <div className="flex items-center justify-between border-t border-border p-3 text-sm">
         <span className="text-muted-foreground">
+          {selection && selection.selectedIds.size > 0 && (
+            <span className="mr-2 font-medium text-foreground">{selection.selectedIds.size} selecionado(s) •</span>
+          )}
           {sorted.length} registro(s) • Página {page} de {totalPages}
         </span>
         <div className="flex gap-1">
