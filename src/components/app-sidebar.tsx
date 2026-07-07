@@ -27,12 +27,17 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { visibility } = useMenuVisibility();
+  const { user } = useAuth();
+  const roles = useUserRoles(user?.id);
+  const isDev = roles.includes("desenvolvedor");
 
   const visibleItems = ALL_MENU_ITEMS.filter((i) => visibility[i.url]);
   const standalone = visibleItems.filter((i) => !i.group);
   const groups = GROUP_ORDER
+    .filter((label) => label !== "DEV" || isDev)
     .map((label) => ({ label, items: visibleItems.filter((i) => i.group === label) }))
     .filter((g) => g.items.length > 0);
+
 
   return (
     <Sidebar collapsible="icon">
