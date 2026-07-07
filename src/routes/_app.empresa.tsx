@@ -71,7 +71,7 @@ function EmpresaPage() {
   const isDev = roles.includes("desenvolvedor");
 
   const [filters, setFilters] = useState({ nome: "", cnpj: "", cpf: "", tipo: "" });
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Empresa | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -97,7 +97,20 @@ function EmpresaPage() {
     });
   }, [empresas, filters]);
 
-  const selected = filtered.find((e) => e.id === selectedId) ?? null;
+  const selectedList = filtered.filter((e) => selectedIds.has(e.id));
+  const selected = selectedList.length === 1 ? selectedList[0] : null;
+  const allSelected = filtered.length > 0 && filtered.every((e) => selectedIds.has(e.id));
+
+  const toggleOne = (id: string, checked: boolean) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(id); else next.delete(id);
+      return next;
+    });
+  };
+  const toggleAll = (checked: boolean) => {
+    setSelectedIds(checked ? new Set(filtered.map((e) => e.id)) : new Set());
+  };
 
   const saveMut = useMutation({
     mutationFn: async (payload: Record<string, unknown>) => {
@@ -122,27 +135,39 @@ function EmpresaPage() {
   });
 
   const deleteMut = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("customers").delete().eq("id", id);
+    mutationFn: async (ids: string[]) => {
+      const { data, error } = await supabase
+        .from("customers")
+        .delete()
+        .in("id", ids)
+        .select("id");
       if (error) throw error;
+      const deleted = (data ?? []).length;
+      if (deleted === 0) {
+        throw new Error("Nenhuma empresa foi excluída. Verifique suas permissões.");
+      }
+      return { deleted, requested: ids.length };
     },
-    onSuccess: () => {
+    onSuccess: ({ deleted, requested }) => {
       qc.invalidateQueries({ queryKey: ["empresas"] });
-      setSelectedId(null);
+      setSelectedIds(new Set());
       setDeleteOpen(false);
-      toast.success("Empresa excluída");
+      toast.success(
+        deleted === requested
+          ? `${deleted} empresa(s) excluída(s)`
+          : `${deleted} de ${requested} excluída(s) — demais bloqueadas por permissão`,
+      );
     },
     onError: (e: any) => toast.error(e.message ?? "Erro ao excluir"),
   });
 
   const openNew = () => { setEditing(null); setDialogOpen(true); };
   const openEdit = () => {
-    if (!selected) return toast.info("Selecione uma empresa");
+    if (!selected) return toast.info("Selecione exatamente uma empresa para alterar");
     setEditing(selected); setDialogOpen(true);
   };
   const askDelete = () => {
-    if (!selected) return toast.info("Selecione uma empresa");
-    if (!isDev) return toast.error("Apenas o Desenvolvedor pode excluir");
+    if (selectedList.length === 0) return toast.info("Selecione ao menos uma empresa");
     setDeleteOpen(true);
   };
 
@@ -214,7 +239,7 @@ function EmpresaPage() {
           <Button size="sm" variant="outline" onClick={openEdit} disabled={!selected}>
             <Pencil className="h-4 w-4" /> Alterar
           </Button>
-          <Button size="sm" variant="outline" onClick={askDelete} disabled={!selected}>
+          <Button size="sm" variant="outline" onClick={askDelete} disabled={selectedList.length === 0}>
             <Trash2 className="h-4 w-4" /> Excluir
           </Button>
           <Button size="sm" onClick={handlePrint}>
@@ -227,7 +252,13 @@ function EmpresaPage() {
           <table className="w-full border-collapse text-sm">
             <thead className="bg-primary text-primary-foreground">
               <tr>
-                <th className="w-8 p-2"></th>
+                <th className="w-8 p-2">
+                  <Checkbox
+                    checked={allSelected}
+                    onCheckedChange={(v) => toggleAll(!!v)}
+                    aria-label="Selecionar todas"
+                  />
+                </th>
                 <th className="p-2 text-left">Nome Fantasia</th>
                 <th className="p-2 text-left">CNPJ/CPF</th>
                 <th className="p-2 text-left">Telefone</th>
@@ -243,21 +274,22 @@ function EmpresaPage() {
               ) : filtered.length === 0 ? (
                 <tr><td colSpan={5 + FLAG_COLS.length} className="p-6 text-center text-muted-foreground">Nenhuma empresa encontrada</td></tr>
               ) : filtered.map((e) => {
-                const isSel = e.id === selectedId;
+                const isSel = selectedIds.has(e.id);
                 return (
                   <tr
                     key={e.id}
-                    onClick={() => setSelectedId(e.id)}
                     onDoubleClick={() => { setEditing(e); setDialogOpen(true); }}
                     className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""}`}
                   >
-                    <td className="p-2"><Checkbox checked={isSel} onCheckedChange={() => setSelectedId(e.id)} /></td>
-                    <td className="p-2 font-medium text-primary">{e.nome_fantasia || e.razao_social || "—"}</td>
-                    <td className="p-2 font-mono text-xs">{e.cnpj || e.cpf || "—"}</td>
-                    <td className="p-2">{e.telefone || "—"}</td>
-                    <td className="p-2">{e.contato || "—"}</td>
+                    <td className="p-2" onClick={(ev) => ev.stopPropagation()}>
+                      <Checkbox checked={isSel} onCheckedChange={(v) => toggleOne(e.id, !!v)} />
+                    </td>
+                    <td className="p-2 font-medium text-primary" onClick={() => toggleOne(e.id, !isSel)}>{e.nome_fantasia || e.razao_social || "—"}</td>
+                    <td className="p-2 font-mono text-xs" onClick={() => toggleOne(e.id, !isSel)}>{e.cnpj || e.cpf || "—"}</td>
+                    <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.telefone || "—"}</td>
+                    <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.contato || "—"}</td>
                     {FLAG_COLS.map((c) => (
-                      <td key={c.key} className="p-2 text-center">
+                      <td key={c.key} className="p-2 text-center" onClick={() => toggleOne(e.id, !isSel)}>
                         <span className={`inline-block h-3 w-3 rounded-full ${e[c.key] ? "bg-emerald-500" : "bg-rose-400"}`} />
                       </td>
                     ))}
@@ -316,14 +348,17 @@ function EmpresaPage() {
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Excluir empresa?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Excluir {selectedList.length} empresa(s)?
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {selected?.nome_fantasia || selected?.razao_social} — esta ação não pode ser desfeita.
+              {selectedList.slice(0, 5).map((e) => e.nome_fantasia || e.razao_social).join(", ")}
+              {selectedList.length > 5 ? "…" : ""} — esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => selected && deleteMut.mutate(selected.id)}>
+            <AlertDialogAction onClick={() => deleteMut.mutate(selectedList.map((e) => e.id))}>
               Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
