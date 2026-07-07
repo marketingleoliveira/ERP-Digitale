@@ -100,7 +100,7 @@ function EmpresaPage() {
   const selected = filtered.find((e) => e.id === selectedId) ?? null;
 
   const saveMut = useMutation({
-    mutationFn: async (payload: Partial<Empresa>) => {
+    mutationFn: async (payload: Record<string, unknown>) => {
       if (editing?.id) {
         const { error } = await (supabase.from("customers") as any).update(payload).eq("id", editing.id);
         if (error) throw error;
