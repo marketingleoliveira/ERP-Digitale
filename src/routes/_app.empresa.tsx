@@ -279,13 +279,15 @@ function EmpresaPage() {
                 return (
                   <tr
                     key={e.id}
-                    onDoubleClick={() => { setEditing(e); setDialogOpen(true); }}
+                    onDoubleClick={() => setViewingId(e.id)}
                     className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""}`}
                   >
                     <td className="p-2" onClick={(ev) => ev.stopPropagation()}>
                       <Checkbox checked={isSel} onCheckedChange={(v) => toggleOne(e.id, !!v)} />
                     </td>
-                    <td className="p-2 font-medium text-primary" onClick={() => toggleOne(e.id, !isSel)}>{e.nome_fantasia || e.razao_social || "—"}</td>
+                    <td className="p-2 font-medium text-primary underline-offset-2 hover:underline" onClick={() => setViewingId(e.id)}>
+                      {e.nome_fantasia || e.razao_social || "—"}
+                    </td>
                     <td className="p-2 font-mono text-xs" onClick={() => toggleOne(e.id, !isSel)}>{e.cnpj || e.cpf || "—"}</td>
                     <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.telefone || "—"}</td>
                     <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.contato || "—"}</td>
