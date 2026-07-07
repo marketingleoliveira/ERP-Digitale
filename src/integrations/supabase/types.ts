@@ -1527,6 +1527,98 @@ export type Database = {
         }
         Relationships: []
       }
+      estoque_movimentos: {
+        Row: {
+          created_at: string
+          data: string
+          documento_origem: string | null
+          hora: string
+          id: string
+          item_id: string | null
+          item_tipo: string | null
+          lote_id: string | null
+          nota_fiscal_id: string | null
+          observacao: string | null
+          op_id: string | null
+          operacao: string
+          quantidade: number
+          recebimento_id: string | null
+          saldo_anterior: number
+          saldo_posterior: number
+          tipo: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data?: string
+          documento_origem?: string | null
+          hora?: string
+          id?: string
+          item_id?: string | null
+          item_tipo?: string | null
+          lote_id?: string | null
+          nota_fiscal_id?: string | null
+          observacao?: string | null
+          op_id?: string | null
+          operacao: string
+          quantidade: number
+          recebimento_id?: string | null
+          saldo_anterior: number
+          saldo_posterior: number
+          tipo: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          documento_origem?: string | null
+          hora?: string
+          id?: string
+          item_id?: string | null
+          item_tipo?: string | null
+          lote_id?: string | null
+          nota_fiscal_id?: string | null
+          observacao?: string | null
+          op_id?: string | null
+          operacao?: string
+          quantidade?: number
+          recebimento_id?: string | null
+          saldo_anterior?: number
+          saldo_posterior?: number
+          tipo?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estoque_movimentos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estoque_movimentos_nota_fiscal_id_fkey"
+            columns: ["nota_fiscal_id"]
+            isOneToOne: false
+            referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estoque_movimentos_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estoque_movimentos_recebimento_id_fkey"
+            columns: ["recebimento_id"]
+            isOneToOne: false
+            referencedRelation: "recebimentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fios: {
         Row: {
           cest: string | null
@@ -4053,6 +4145,17 @@ export type Database = {
         Returns: boolean
       }
       is_admin_or_gerente: { Args: { _user_id: string }; Returns: boolean }
+      kardex_movimentar: {
+        Args: {
+          _documento_origem?: string
+          _lote_id: string
+          _observacao?: string
+          _operacao?: string
+          _quantidade: number
+          _tipo: string
+        }
+        Returns: string
+      }
       op_transicao_valida: {
         Args: {
           _de: Database["public"]["Enums"]["op_status"]
