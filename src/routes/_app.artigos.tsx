@@ -463,18 +463,10 @@ function ArtigoDialog({
               <SelectContent>{TIPO_OPTS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
             </Select>
           </div>
-          <div className="md:col-span-2">
-            <Label className={lbl}><span className="text-destructive">*</span> Composição</Label>
-            <Select value={form.composicao ?? ""} onValueChange={(v) => set("composicao", v)}>
-              <SelectTrigger className={inp}><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-              <SelectContent>
-                {composicaoOpts.map((c) => <SelectItem key={c.id} value={c.composicao}>{c.codigo} — {c.composicao}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
+          <div className="md:col-span-2"></div>
 
           <div className="md:col-span-4">
-            <Label className={lbl}><span className="text-destructive">*</span> Artigo</Label>
+            <Label className={lbl}><span className="text-destructive">*</span> Descrição</Label>
             <Input className={inp} value={form.nome ?? ""} onChange={(e) => set("nome", e.target.value)} />
           </div>
 
