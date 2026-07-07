@@ -456,6 +456,56 @@ export type Database = {
         }
         Relationships: []
       }
+      cores: {
+        Row: {
+          codigo: string
+          cor: string
+          created_at: string
+          habilitado: boolean
+          id: string
+          observacao: string | null
+          tinturaria_id: string | null
+          tipo: string
+          updated_at: string
+          valor: number | null
+          valor_complementar: number | null
+        }
+        Insert: {
+          codigo: string
+          cor: string
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          observacao?: string | null
+          tinturaria_id?: string | null
+          tipo: string
+          updated_at?: string
+          valor?: number | null
+          valor_complementar?: number | null
+        }
+        Update: {
+          codigo?: string
+          cor?: string
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          observacao?: string | null
+          tinturaria_id?: string | null
+          tipo?: string
+          updated_at?: string
+          valor?: number | null
+          valor_complementar?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cores_tinturaria_id_fkey"
+            columns: ["tinturaria_id"]
+            isOneToOne: false
+            referencedRelation: "tinturarias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_leads: {
         Row: {
           created_at: string
@@ -1728,6 +1778,45 @@ export type Database = {
           status?: string
           telefone?: string | null
           uf?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tinturarias: {
+        Row: {
+          cnpj: string | null
+          codigo: string
+          contato: string | null
+          created_at: string
+          habilitado: boolean
+          id: string
+          nome_fantasia: string
+          razao_social: string | null
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          cnpj?: string | null
+          codigo: string
+          contato?: string | null
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          nome_fantasia: string
+          razao_social?: string | null
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cnpj?: string | null
+          codigo?: string
+          contato?: string | null
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          nome_fantasia?: string
+          razao_social?: string | null
+          telefone?: string | null
           updated_at?: string
         }
         Relationships: []
