@@ -62,9 +62,9 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "R. Nota Fiscal", url: "/fiscal/r-nota-fiscal", icon: FileText, group: "Fiscal" },
   { title: "CFOP", url: "/fiscal/cfop", icon: BadgeCheck, group: "Fiscal" },
   { title: "UF ICMS", url: "/fiscal/uf-icms", icon: BadgeCheck, group: "Fiscal" },
-  { title: "Certificados A1", url: "/fiscal/certificados", icon: ShieldCheck, group: "Fiscal" },
-  { title: "Configurações", url: "/configuracoes", icon: Settings, group: "Administração" },
   { title: "Gerenciar Menus", url: "/menus", icon: SlidersHorizontal, group: "Administração", locked: true },
+  { title: "Certificados A1", url: "/fiscal/certificados", icon: ShieldCheck, group: "DEV" },
+  { title: "Configurações", url: "/configuracoes", icon: Settings, group: "DEV" },
   { title: "Cargos", url: "/dev/cargos", icon: Briefcase, group: "DEV", locked: true },
 ];
 
