@@ -26,10 +26,39 @@ type Funcionario = {
   nome: string;
   tipo: string | null;
   cpf: string | null;
+  rg: string | null;
+  cep: string | null;
+  uf: string | null;
+  endereco: string | null;
+  numero: string | null;
+  complemento: string | null;
+  bairro: string | null;
+  cidade: string | null;
   telefone: string | null;
   celular: string | null;
+  email: string | null;
+  observacao: string | null;
   habilitado: boolean;
 };
+
+const TIPOS = [
+  "Vendedor",
+  "Tecelão",
+  "Auxiliar de Escritório",
+  "Ajudante Geral",
+  "Revisador",
+  "Gerente",
+  "Financeiro",
+  "Produção",
+  "Logística",
+  "Qualidade",
+  "Outro",
+];
+
+const UFS = [
+  "AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO",
+];
+
 
 const PAGE_SIZE = 20;
 
