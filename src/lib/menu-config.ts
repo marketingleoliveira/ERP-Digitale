@@ -29,13 +29,12 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Usuário", url: "/usuarios", icon: ShieldCheck, group: "Sistema" },
   { title: "Senha", url: "/senha", icon: KeyRound, group: "Sistema" },
   { title: "Time Log", url: "/time-log", icon: Clock, group: "Sistema" },
-  { title: "Empresa", url: "/empresa", icon: Building2, group: "Cadastros" },
-  { title: "Composição", url: "/composicao", icon: FlaskConical, group: "Cadastros" },
-
-  { title: "Fio", url: "/fio", icon: Spool, group: "Cadastros" },
-  { title: "Artigo", url: "/artigos", icon: Shirt, group: "Cadastros" },
+  { title: "Clientes", url: "/empresa", icon: Building2, group: "Cadastros" },
+  { title: "Composição", url: "/composicao", icon: FlaskConical, group: "Cadastros", defaultHidden: true },
+  { title: "Fio", url: "/fio", icon: Spool, group: "Cadastros", defaultHidden: true },
+  { title: "Tecidos", url: "/artigos", icon: Shirt, group: "Cadastros" },
   { title: "Cliente Artigo", url: "/cliente-artigo", icon: UserSquare2, group: "Cadastros", defaultHidden: true },
-  { title: "Tinturarias", url: "/tabela-cor", icon: Palette, group: "Cadastros" },
+  { title: "Fornecedores", url: "/tabela-cor", icon: Palette, group: "Cadastros" },
   { title: "Cor", url: "/cor", icon: Droplet, group: "Cadastros" },
   { title: "Estampa", url: "/estampa", icon: Sparkles, group: "Cadastros" },
   { title: "Variante", url: "/variante", icon: Layers, group: "Cadastros" },
@@ -62,7 +61,7 @@ export const GROUP_ORDER = [
 
 
 
-const STORAGE_KEY = "digitale.menu.visibility.v9";
+const STORAGE_KEY = "digitale.menu.visibility.v10";
 
 /** New/current items default visible; legacy items marked defaultHidden stay off. */
 function getDefaults(): Record<string, boolean> {
