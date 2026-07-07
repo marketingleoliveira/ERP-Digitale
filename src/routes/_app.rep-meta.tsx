@@ -191,6 +191,116 @@ function RepMetaPage() {
           </div>
         </div>
       </Card>
+
+      <RepDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSaved={() => qc.invalidateQueries({ queryKey: ["rep-meta"] })}
+      />
     </div>
+  );
+}
+
+function RepDialog({
+  open, onOpenChange, onSaved,
+}: {
+  open: boolean; onOpenChange: (v: boolean) => void; onSaved: () => void;
+}) {
+  const [nomeFantasia, setNomeFantasia] = useState("");
+  const [razaoSocial, setRazaoSocial] = useState("");
+  const [documento, setDocumento] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [contato, setContato] = useState("");
+  const [valor, setValor] = useState("");
+
+  useEffect(() => {
+    if (!open) return;
+    setNomeFantasia(""); setRazaoSocial(""); setDocumento("");
+    setTelefone(""); setContato(""); setValor("");
+  }, [open]);
+
+  const parseBRL = (s: string): number => {
+    const clean = s.replace(/\./g, "").replace(",", ".").replace(/[^\d.-]/g, "");
+    const n = Number(clean);
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  const onlyDigits = (s: string) => s.replace(/\D/g, "");
+
+  const mut = useMutation({
+    mutationFn: async () => {
+      if (!nomeFantasia.trim() && !razaoSocial.trim()) {
+        throw new Error("Informe Nome Fantasia ou Razão Social.");
+      }
+      const digits = onlyDigits(documento);
+      const isCnpj = digits.length === 14;
+      const isCpf = digits.length === 11;
+      const payload = {
+        nome_fantasia: nomeFantasia.trim() || null,
+        razao_social: (razaoSocial.trim() || nomeFantasia.trim()),
+        cnpj: isCnpj ? documento.trim() : null,
+        cpf: isCpf ? documento.trim() : null,
+        telefone: telefone.trim() || null,
+        contato: contato.trim() || null,
+        meta_valor: parseBRL(valor),
+        flag_representante: true,
+        status: "ativo",
+      };
+      const { error } = await supabase.from("customers").insert(payload);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Representante cadastrado.");
+      onSaved();
+      onOpenChange(false);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const Row = ({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
+    <div className="grid grid-cols-[150px_1fr] items-center gap-3">
+      <Label className="justify-self-end text-sm">
+        {required && <span className="text-destructive mr-1">*</span>}{label}:
+      </Label>
+      <div>{children}</div>
+    </div>
+  );
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="text-primary">🌸 Cadastro Representante</DialogTitle>
+        </DialogHeader>
+        <div className="rounded bg-muted/50 p-5 space-y-3">
+          <Row label="Nome Fantasia" required>
+            <Input value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} maxLength={120} />
+          </Row>
+          <Row label="Razão Social">
+            <Input value={razaoSocial} onChange={(e) => setRazaoSocial(e.target.value)} maxLength={160} />
+          </Row>
+          <Row label="CNPJ/CPF">
+            <Input value={documento} onChange={(e) => setDocumento(e.target.value)} maxLength={20} />
+          </Row>
+          <Row label="Telefone">
+            <Input value={telefone} onChange={(e) => setTelefone(e.target.value)} maxLength={30} />
+          </Row>
+          <Row label="Contato">
+            <Input value={contato} onChange={(e) => setContato(e.target.value)} maxLength={80} />
+          </Row>
+          <Row label="Valor R$">
+            <Input value={valor} onChange={(e) => setValor(e.target.value)} className="text-right max-w-[200px]" />
+          </Row>
+        </div>
+        <p className="text-center text-sm text-destructive">* Campo Obrigatório</p>
+        <DialogFooter className="sm:justify-center">
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={mut.isPending}>Cancelar</Button>
+          <Button onClick={() => mut.mutate()} disabled={mut.isPending}>
+            {mut.isPending && <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />}
+            CADASTRAR
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
