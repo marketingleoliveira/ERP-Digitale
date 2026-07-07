@@ -563,7 +563,9 @@ export type Database = {
           cnpj: string | null
           comissao: number | null
           complemento: string | null
+          consumidor_final: boolean | null
           contato: string | null
+          contribuinte_icms: number | null
           cpf: string | null
           created_at: string
           crt: string | null
@@ -589,6 +591,8 @@ export type Database = {
           flag_transportadora: boolean
           icms: number | null
           id: string
+          indicador_ie: number | null
+          indicador_presenca: number | null
           inscricao_estadual: string | null
           intervalo: number | null
           limite_credito: number | null
@@ -604,6 +608,7 @@ export type Database = {
           peca_tara_kg: number | null
           prazo: number | null
           razao_social: string
+          regime_especial: string | null
           rg: string | null
           sales_rep_id: string | null
           segmento: string | null
@@ -615,6 +620,7 @@ export type Database = {
           tipo_cliente: string | null
           tipo_pagamento: string | null
           transportadora_id: string | null
+          transportadora_preferencial_id: string | null
           uf: string | null
           updated_at: string
         }
@@ -628,7 +634,9 @@ export type Database = {
           cnpj?: string | null
           comissao?: number | null
           complemento?: string | null
+          consumidor_final?: boolean | null
           contato?: string | null
+          contribuinte_icms?: number | null
           cpf?: string | null
           created_at?: string
           crt?: string | null
@@ -654,6 +662,8 @@ export type Database = {
           flag_transportadora?: boolean
           icms?: number | null
           id?: string
+          indicador_ie?: number | null
+          indicador_presenca?: number | null
           inscricao_estadual?: string | null
           intervalo?: number | null
           limite_credito?: number | null
@@ -669,6 +679,7 @@ export type Database = {
           peca_tara_kg?: number | null
           prazo?: number | null
           razao_social: string
+          regime_especial?: string | null
           rg?: string | null
           sales_rep_id?: string | null
           segmento?: string | null
@@ -680,6 +691,7 @@ export type Database = {
           tipo_cliente?: string | null
           tipo_pagamento?: string | null
           transportadora_id?: string | null
+          transportadora_preferencial_id?: string | null
           uf?: string | null
           updated_at?: string
         }
@@ -693,7 +705,9 @@ export type Database = {
           cnpj?: string | null
           comissao?: number | null
           complemento?: string | null
+          consumidor_final?: boolean | null
           contato?: string | null
+          contribuinte_icms?: number | null
           cpf?: string | null
           created_at?: string
           crt?: string | null
@@ -719,6 +733,8 @@ export type Database = {
           flag_transportadora?: boolean
           icms?: number | null
           id?: string
+          indicador_ie?: number | null
+          indicador_presenca?: number | null
           inscricao_estadual?: string | null
           intervalo?: number | null
           limite_credito?: number | null
@@ -734,6 +750,7 @@ export type Database = {
           peca_tara_kg?: number | null
           prazo?: number | null
           razao_social?: string
+          regime_especial?: string | null
           rg?: string | null
           sales_rep_id?: string | null
           segmento?: string | null
@@ -745,6 +762,7 @@ export type Database = {
           tipo_cliente?: string | null
           tipo_pagamento?: string | null
           transportadora_id?: string | null
+          transportadora_preferencial_id?: string | null
           uf?: string | null
           updated_at?: string
         }
@@ -756,6 +774,13 @@ export type Database = {
             referencedRelation: "sales_reps"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "customers_transportadora_preferencial_id_fkey"
+            columns: ["transportadora_preferencial_id"]
+            isOneToOne: false
+            referencedRelation: "tinturarias"
+            referencedColumns: ["id"]
+          },
         ]
       }
       empresa: {
@@ -764,6 +789,7 @@ export type Database = {
           bairro: string | null
           cep: string | null
           certificado_a1_nome: string | null
+          certificado_a1_path: string | null
           certificado_a1_validade: string | null
           cidade: string | null
           cnae: string | null
@@ -771,6 +797,9 @@ export type Database = {
           codigo_municipio: string | null
           complemento: string | null
           created_at: string
+          crt: number | null
+          csc_id: string | null
+          csc_token: string | null
           email: string | null
           id: string
           inscricao_estadual: string | null
@@ -794,6 +823,7 @@ export type Database = {
           bairro?: string | null
           cep?: string | null
           certificado_a1_nome?: string | null
+          certificado_a1_path?: string | null
           certificado_a1_validade?: string | null
           cidade?: string | null
           cnae?: string | null
@@ -801,6 +831,9 @@ export type Database = {
           codigo_municipio?: string | null
           complemento?: string | null
           created_at?: string
+          crt?: number | null
+          csc_id?: string | null
+          csc_token?: string | null
           email?: string | null
           id?: string
           inscricao_estadual?: string | null
@@ -824,6 +857,7 @@ export type Database = {
           bairro?: string | null
           cep?: string | null
           certificado_a1_nome?: string | null
+          certificado_a1_path?: string | null
           certificado_a1_validade?: string | null
           cidade?: string | null
           cnae?: string | null
@@ -831,6 +865,9 @@ export type Database = {
           codigo_municipio?: string | null
           complemento?: string | null
           created_at?: string
+          crt?: number | null
+          csc_id?: string | null
+          csc_token?: string | null
           email?: string | null
           id?: string
           inscricao_estadual?: string | null
@@ -850,6 +887,71 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      empresa_filiais: {
+        Row: {
+          ativo: boolean | null
+          bairro: string | null
+          cep: string | null
+          cidade: string | null
+          cnpj: string
+          created_at: string
+          email: string | null
+          id: string
+          inscricao_estadual: string | null
+          logradouro: string | null
+          matriz_id: string | null
+          numero: string | null
+          razao_social: string
+          telefone: string | null
+          uf: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean | null
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cnpj: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          inscricao_estadual?: string | null
+          logradouro?: string | null
+          matriz_id?: string | null
+          numero?: string | null
+          razao_social: string
+          telefone?: string | null
+          uf?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean | null
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          inscricao_estadual?: string | null
+          logradouro?: string | null
+          matriz_id?: string | null
+          numero?: string | null
+          razao_social?: string
+          telefone?: string | null
+          uf?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "empresa_filiais_matriz_id_fkey"
+            columns: ["matriz_id"]
+            isOneToOne: false
+            referencedRelation: "empresa"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       estampas: {
         Row: {
@@ -1177,6 +1279,141 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      nfe_eventos: {
+        Row: {
+          created_at: string
+          id: string
+          mensagem: string | null
+          motivo: string | null
+          nota_fiscal_id: string | null
+          payload: Json | null
+          protocolo: string | null
+          status: string | null
+          tipo: string
+          user_id: string | null
+          xml_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mensagem?: string | null
+          motivo?: string | null
+          nota_fiscal_id?: string | null
+          payload?: Json | null
+          protocolo?: string | null
+          status?: string | null
+          tipo: string
+          user_id?: string | null
+          xml_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mensagem?: string | null
+          motivo?: string | null
+          nota_fiscal_id?: string | null
+          payload?: Json | null
+          protocolo?: string | null
+          status?: string | null
+          tipo?: string
+          user_id?: string | null
+          xml_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nfe_eventos_nota_fiscal_id_fkey"
+            columns: ["nota_fiscal_id"]
+            isOneToOne: false
+            referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nfe_logs: {
+        Row: {
+          acao: string
+          created_at: string
+          duracao_ms: number | null
+          http_status: number | null
+          id: string
+          nota_fiscal_id: string | null
+          request: Json | null
+          response: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          acao: string
+          created_at?: string
+          duracao_ms?: number | null
+          http_status?: number | null
+          id?: string
+          nota_fiscal_id?: string | null
+          request?: Json | null
+          response?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          acao?: string
+          created_at?: string
+          duracao_ms?: number | null
+          http_status?: number | null
+          id?: string
+          nota_fiscal_id?: string | null
+          request?: Json | null
+          response?: Json | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nfe_logs_nota_fiscal_id_fkey"
+            columns: ["nota_fiscal_id"]
+            isOneToOne: false
+            referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nfe_sequencias: {
+        Row: {
+          ambiente: string
+          created_at: string
+          empresa_id: string | null
+          id: string
+          modelo: string
+          serie: number
+          ultimo_numero: number
+          updated_at: string
+        }
+        Insert: {
+          ambiente?: string
+          created_at?: string
+          empresa_id?: string | null
+          id?: string
+          modelo?: string
+          serie?: number
+          ultimo_numero?: number
+          updated_at?: string
+        }
+        Update: {
+          ambiente?: string
+          created_at?: string
+          empresa_id?: string | null
+          id?: string
+          modelo?: string
+          serie?: number
+          ultimo_numero?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nfe_sequencias_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresa"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notas_fiscais: {
         Row: {
@@ -1549,13 +1786,27 @@ export type Database = {
       }
       products: {
         Row: {
+          aliq_cofins: number | null
+          aliq_icms: number | null
+          aliq_ipi: number | null
+          aliq_pis: number | null
           area_peca: number | null
           ativo: boolean
           categoria: string | null
           cest: string | null
+          cfop_padrao: string | null
           codigo: string
+          codigo_anp: string | null
+          codigo_beneficio: string | null
           composicao: string | null
           created_at: string
+          csosn: string | null
+          cst_cofins: string | null
+          cst_icms: string | null
+          cst_ipi: string | null
+          cst_pis: string | null
+          ean: string | null
+          ean_tributavel: string | null
           estoque_minimo: number | null
           ficha_tecnica: Json
           gramatura: number | null
@@ -1567,6 +1818,8 @@ export type Database = {
           nome: string
           observacao: string | null
           origem: string | null
+          peso_bruto: number | null
+          peso_liquido: number | null
           peso_padrao_peca: number | null
           preco_custo: number | null
           preco_venda: number | null
@@ -1574,16 +1827,31 @@ export type Database = {
           rendimento: number | null
           tipo: string | null
           unidade: string | null
+          unidade_tributavel: string | null
           updated_at: string
         }
         Insert: {
+          aliq_cofins?: number | null
+          aliq_icms?: number | null
+          aliq_ipi?: number | null
+          aliq_pis?: number | null
           area_peca?: number | null
           ativo?: boolean
           categoria?: string | null
           cest?: string | null
+          cfop_padrao?: string | null
           codigo: string
+          codigo_anp?: string | null
+          codigo_beneficio?: string | null
           composicao?: string | null
           created_at?: string
+          csosn?: string | null
+          cst_cofins?: string | null
+          cst_icms?: string | null
+          cst_ipi?: string | null
+          cst_pis?: string | null
+          ean?: string | null
+          ean_tributavel?: string | null
           estoque_minimo?: number | null
           ficha_tecnica?: Json
           gramatura?: number | null
@@ -1595,6 +1863,8 @@ export type Database = {
           nome: string
           observacao?: string | null
           origem?: string | null
+          peso_bruto?: number | null
+          peso_liquido?: number | null
           peso_padrao_peca?: number | null
           preco_custo?: number | null
           preco_venda?: number | null
@@ -1602,16 +1872,31 @@ export type Database = {
           rendimento?: number | null
           tipo?: string | null
           unidade?: string | null
+          unidade_tributavel?: string | null
           updated_at?: string
         }
         Update: {
+          aliq_cofins?: number | null
+          aliq_icms?: number | null
+          aliq_ipi?: number | null
+          aliq_pis?: number | null
           area_peca?: number | null
           ativo?: boolean
           categoria?: string | null
           cest?: string | null
+          cfop_padrao?: string | null
           codigo?: string
+          codigo_anp?: string | null
+          codigo_beneficio?: string | null
           composicao?: string | null
           created_at?: string
+          csosn?: string | null
+          cst_cofins?: string | null
+          cst_icms?: string | null
+          cst_ipi?: string | null
+          cst_pis?: string | null
+          ean?: string | null
+          ean_tributavel?: string | null
           estoque_minimo?: number | null
           ficha_tecnica?: Json
           gramatura?: number | null
@@ -1623,6 +1908,8 @@ export type Database = {
           nome?: string
           observacao?: string | null
           origem?: string | null
+          peso_bruto?: number | null
+          peso_liquido?: number | null
           peso_padrao_peca?: number | null
           preco_custo?: number | null
           preco_venda?: number | null
@@ -1630,6 +1917,7 @@ export type Database = {
           rendimento?: number | null
           tipo?: string | null
           unidade?: string | null
+          unidade_tributavel?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -1892,6 +2180,15 @@ export type Database = {
         Returns: boolean
       }
       is_admin_or_gerente: { Args: { _user_id: string }; Returns: boolean }
+      proximo_numero_nfe: {
+        Args: {
+          _ambiente?: string
+          _empresa_id: string
+          _modelo?: string
+          _serie?: number
+        }
+        Returns: number
+      }
       user_has_menu_permission: {
         Args: { _url: string; _user_id: string }
         Returns: boolean
