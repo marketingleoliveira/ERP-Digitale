@@ -1636,6 +1636,57 @@ export type Database = {
           },
         ]
       }
+      entrega_eventos: {
+        Row: {
+          created_at: string
+          data: string
+          descricao: string | null
+          evento: string
+          id: string
+          local: string | null
+          nota_fiscal_id: string | null
+          romaneio_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data?: string
+          descricao?: string | null
+          evento: string
+          id?: string
+          local?: string | null
+          nota_fiscal_id?: string | null
+          romaneio_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          descricao?: string | null
+          evento?: string
+          id?: string
+          local?: string | null
+          nota_fiscal_id?: string | null
+          romaneio_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entrega_eventos_nota_fiscal_id_fkey"
+            columns: ["nota_fiscal_id"]
+            isOneToOne: false
+            referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entrega_eventos_romaneio_id_fkey"
+            columns: ["romaneio_id"]
+            isOneToOne: false
+            referencedRelation: "romaneios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       estampas: {
         Row: {
           codigo: string
@@ -4023,6 +4074,149 @@ export type Database = {
         }
         Relationships: []
       }
+      romaneio_itens: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          id: string
+          nota_fiscal_id: string | null
+          op_id: string | null
+          pedido_id: string | null
+          peso: number
+          romaneio_id: string
+          separacao_id: string | null
+          updated_at: string
+          volumes: number
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nota_fiscal_id?: string | null
+          op_id?: string | null
+          pedido_id?: string | null
+          peso?: number
+          romaneio_id: string
+          separacao_id?: string | null
+          updated_at?: string
+          volumes?: number
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nota_fiscal_id?: string | null
+          op_id?: string | null
+          pedido_id?: string | null
+          peso?: number
+          romaneio_id?: string
+          separacao_id?: string | null
+          updated_at?: string
+          volumes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "romaneio_itens_nota_fiscal_id_fkey"
+            columns: ["nota_fiscal_id"]
+            isOneToOne: false
+            referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "romaneio_itens_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "romaneio_itens_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "romaneio_itens_romaneio_id_fkey"
+            columns: ["romaneio_id"]
+            isOneToOne: false
+            referencedRelation: "romaneios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "romaneio_itens_separacao_id_fkey"
+            columns: ["separacao_id"]
+            isOneToOne: false
+            referencedRelation: "separacoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      romaneios: {
+        Row: {
+          created_at: string
+          data_emissao: string
+          data_entrega: string | null
+          data_saida: string | null
+          id: string
+          motorista: string | null
+          numero: number
+          observacao: string | null
+          peso_total: number
+          status: string
+          transportadora_id: string | null
+          updated_at: string
+          valor_frete: number
+          veiculo_descricao: string | null
+          veiculo_placa: string | null
+          volumes_total: number
+        }
+        Insert: {
+          created_at?: string
+          data_emissao?: string
+          data_entrega?: string | null
+          data_saida?: string | null
+          id?: string
+          motorista?: string | null
+          numero?: number
+          observacao?: string | null
+          peso_total?: number
+          status?: string
+          transportadora_id?: string | null
+          updated_at?: string
+          valor_frete?: number
+          veiculo_descricao?: string | null
+          veiculo_placa?: string | null
+          volumes_total?: number
+        }
+        Update: {
+          created_at?: string
+          data_emissao?: string
+          data_entrega?: string | null
+          data_saida?: string | null
+          id?: string
+          motorista?: string | null
+          numero?: number
+          observacao?: string | null
+          peso_total?: number
+          status?: string
+          transportadora_id?: string | null
+          updated_at?: string
+          valor_frete?: number
+          veiculo_descricao?: string | null
+          veiculo_placa?: string | null
+          volumes_total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "romaneios_transportadora_id_fkey"
+            columns: ["transportadora_id"]
+            isOneToOne: false
+            referencedRelation: "transportadoras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sales_reps: {
         Row: {
           ativo: boolean
@@ -4064,6 +4258,136 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      separacao_itens: {
+        Row: {
+          created_at: string
+          descricao: string
+          divergencia: string | null
+          id: string
+          item_id: string | null
+          item_tipo: string | null
+          lote_id: string | null
+          qtd_conferida: number
+          qtd_separada: number
+          qtd_solicitada: number
+          separacao_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descricao: string
+          divergencia?: string | null
+          id?: string
+          item_id?: string | null
+          item_tipo?: string | null
+          lote_id?: string | null
+          qtd_conferida?: number
+          qtd_separada?: number
+          qtd_solicitada?: number
+          separacao_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string
+          divergencia?: string | null
+          id?: string
+          item_id?: string | null
+          item_tipo?: string | null
+          lote_id?: string | null
+          qtd_conferida?: number
+          qtd_separada?: number
+          qtd_solicitada?: number
+          separacao_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "separacao_itens_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "separacao_itens_separacao_id_fkey"
+            columns: ["separacao_id"]
+            isOneToOne: false
+            referencedRelation: "separacoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      separacoes: {
+        Row: {
+          conferente_id: string | null
+          conferida_em: string | null
+          created_at: string
+          finalizada_em: string | null
+          id: string
+          iniciada_em: string | null
+          nota_fiscal_id: string | null
+          observacao: string | null
+          op_id: string | null
+          pedido_id: string | null
+          responsavel_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          conferente_id?: string | null
+          conferida_em?: string | null
+          created_at?: string
+          finalizada_em?: string | null
+          id?: string
+          iniciada_em?: string | null
+          nota_fiscal_id?: string | null
+          observacao?: string | null
+          op_id?: string | null
+          pedido_id?: string | null
+          responsavel_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          conferente_id?: string | null
+          conferida_em?: string | null
+          created_at?: string
+          finalizada_em?: string | null
+          id?: string
+          iniciada_em?: string | null
+          nota_fiscal_id?: string | null
+          observacao?: string | null
+          op_id?: string | null
+          pedido_id?: string | null
+          responsavel_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "separacoes_nota_fiscal_id_fkey"
+            columns: ["nota_fiscal_id"]
+            isOneToOne: false
+            referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "separacoes_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "separacoes_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       solicitacoes_compra: {
         Row: {
@@ -4216,6 +4540,63 @@ export type Database = {
           razao_social?: string | null
           telefone?: string | null
           unidade?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transportadoras: {
+        Row: {
+          antt: string | null
+          ativa: boolean
+          cep: string | null
+          cidade: string | null
+          cnpj: string | null
+          created_at: string
+          email: string | null
+          endereco: string | null
+          id: string
+          ie: string | null
+          nome_fantasia: string | null
+          observacao: string | null
+          razao_social: string
+          telefone: string | null
+          uf: string | null
+          updated_at: string
+        }
+        Insert: {
+          antt?: string | null
+          ativa?: boolean
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          ie?: string | null
+          nome_fantasia?: string | null
+          observacao?: string | null
+          razao_social: string
+          telefone?: string | null
+          uf?: string | null
+          updated_at?: string
+        }
+        Update: {
+          antt?: string | null
+          ativa?: boolean
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          ie?: string | null
+          nome_fantasia?: string | null
+          observacao?: string | null
+          razao_social?: string
+          telefone?: string | null
+          uf?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -4460,6 +4841,10 @@ export type Database = {
         Returns: number
       }
       proximo_numero_op: { Args: never; Returns: number }
+      romaneio_transicionar: {
+        Args: { _novo_status: string; _romaneio_id: string }
+        Returns: string
+      }
       user_has_menu_permission: {
         Args: { _url: string; _user_id: string }
         Returns: boolean
