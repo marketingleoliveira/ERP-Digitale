@@ -36,8 +36,6 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Máquina", url: "/maquina", icon: Wrench, group: "Cadastros" },
   { title: "Agulha", url: "/agulha", icon: Syringe, group: "Cadastros" },
   { title: "Rep. Meta R$", url: "/rep-meta", icon: Target, group: "Cadastros" },
-  { title: "Clientes", url: "/clientes", icon: Users, group: "Cadastros" },
-  { title: "Fornecedores", url: "/fornecedores", icon: Truck, group: "Cadastros" },
   { title: "Representantes (legado)", url: "/representantes", icon: UserCheck, group: "Cadastros", defaultHidden: true },
   { title: "Fiscal", url: "/fiscal", icon: FileText, group: "Financeiro & Logística", defaultHidden: true },
   { title: "Usuários", url: "/usuarios", icon: ShieldCheck, group: "Administração", defaultHidden: true },
