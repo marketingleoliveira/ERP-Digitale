@@ -1,142 +1,175 @@
+/**
+ * Server functions do módulo fiscal.
+ * Fachada única para o frontend chamar operações SEFAZ via useServerFn.
+ */
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { focusAdapter, type FocusConfig } from "@/services/fiscal/focus.adapter";
+import { buildFocusNfePayload } from "@/services/fiscal/nfe.builder";
+import { logNfeAction } from "@/services/fiscal/logs.repository";
 
-/**
- * Emite NF-e via provedor configurado (Focus NFe ou PlugNotas).
- * Requer secret FOCUS_NFE_TOKEN ou PLUGNOTAS_TOKEN configurado.
- */
+async function getFocusConfig(supabase: {
+  from: (t: string) => { select: (c: string) => { limit: (n: number) => { maybeSingle: () => Promise<{ data: unknown; error: unknown }> } } }
+}): Promise<{ empresa: Record<string, unknown>; cfg: FocusConfig }> {
+  const { data: empresa, error } = await supabase.from("empresa").select("*").limit(1).maybeSingle();
+  if (error) throw new Error(String(error));
+  if (!empresa) throw new Error("Configure a Empresa em Configurações antes de operar NF-e.");
+  const emp = empresa as Record<string, unknown>;
+  if (emp.provedor_nfe !== "focus_nfe") {
+    throw new Error("Provedor SEFAZ diferente de Focus NFe. Ajuste em Configurações → Empresa.");
+  }
+  const token = process.env.FOCUS_NFE_TOKEN;
+  if (!token) throw new Error("Secret FOCUS_NFE_TOKEN não configurado.");
+  return {
+    empresa: emp,
+    cfg: { token, ambiente: (emp.ambiente_nfe as "homologacao" | "producao") ?? "homologacao" },
+  };
+}
+
+/* ==================== EMITIR NF-e ==================== */
 export const emitirNFe = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { notaId: string }) => input)
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
+    const sb = supabase as unknown as Parameters<typeof getFocusConfig>[0];
+    const { empresa, cfg } = await getFocusConfig(sb);
 
-    // Carrega empresa (emissor)
-    const { data: empresa, error: eErr } = await supabase
-      .from("empresa")
-      .select("*")
-      .limit(1)
-      .maybeSingle();
-    if (eErr) throw new Error(eErr.message);
-    if (!empresa) throw new Error("Configure os dados da Empresa em Configurações antes de emitir NF-e.");
-
-    // Carrega nota + itens
-    const { data: nota, error: nErr } = await supabase
-      .from("notas_fiscais")
-      .select("*")
-      .eq("id", data.notaId)
-      .maybeSingle();
+    const { data: nota, error: nErr } = await supabase.from("notas_fiscais").select("*").eq("id", data.notaId).maybeSingle();
     if (nErr) throw new Error(nErr.message);
     if (!nota) throw new Error("Nota fiscal não encontrada.");
 
-    const { data: itens } = await supabase
-      .from("notas_fiscais_itens")
-      .select("*")
-      .eq("nota_fiscal_id", data.notaId);
+    const { data: itens = [] } = await supabase.from("notas_fiscais_itens").select("*").eq("nota_fiscal_id", data.notaId);
+    const notaRec = nota as Record<string, unknown>;
+    const { data: dest } = notaRec.cliente_id
+      ? await supabase.from("customers").select("*").eq("id", notaRec.cliente_id as string).maybeSingle()
+      : { data: null };
 
-    const provider = (empresa as { provedor_nfe?: string }).provedor_nfe ?? "nenhum";
-    const ambiente = (empresa as { ambiente_nfe?: string }).ambiente_nfe ?? "homologacao";
+    const ref = `nfe-${notaRec.id as string}`;
+    const payload = buildFocusNfePayload(empresa, notaRec, (itens ?? []) as Record<string, unknown>[], dest as Record<string, unknown> | null);
+    const res = await focusAdapter.emitir(cfg, ref, payload);
 
-    if (provider === "nenhum") {
-      throw new Error(
-        "Nenhum provedor SEFAZ configurado. Vá em Configurações → Empresa e selecione um provedor (Focus NFe ou PlugNotas)."
-      );
+    await logNfeAction(supabase, {
+      notaFiscalId: notaRec.id as string,
+      acao: "emitir",
+      request: payload, response: res.body, httpStatus: res.status, duracaoMs: res.durationMs, userId,
+    });
+
+    const body = res.body as Record<string, unknown>;
+    if (!res.ok) {
+      await supabase.from("notas_fiscais").update({
+        status_sefaz: "rejeitada",
+        mensagem_sefaz: String(body.mensagem ?? body.erros ?? res.status),
+      }).eq("id", data.notaId);
+      throw new Error(`SEFAZ rejeitou: ${body.mensagem ?? JSON.stringify(body.erros ?? {})}`);
     }
 
-    // Focus NFe
-    if (provider === "focus_nfe") {
-      const token = process.env.FOCUS_NFE_TOKEN;
-      if (!token) {
-        throw new Error(
-          "Secret FOCUS_NFE_TOKEN não configurado. Peça ao administrador para cadastrá-lo."
-        );
-      }
-      const baseUrl =
-        ambiente === "producao"
-          ? "https://api.focusnfe.com.br"
-          : "https://homologacao.focusnfe.com.br";
+    await supabase.from("notas_fiscais").update({
+      status_sefaz: body.status === "autorizado" ? "autorizada" : "processando",
+      chave_acesso: body.chave_nfe ?? null,
+      protocolo_autorizacao: body.protocolo ?? null,
+      xml_url: body.caminho_xml_nota_fiscal ? `${focusAdapter.baseUrl(cfg)}${body.caminho_xml_nota_fiscal}` : null,
+      danfe_url: body.caminho_danfe ? `${focusAdapter.baseUrl(cfg)}${body.caminho_danfe}` : null,
+      provedor_ref: ref,
+      data_autorizacao: body.data_emissao ?? null,
+    }).eq("id", data.notaId);
 
-      const referencia = `nfe-${nota.id}`;
-      const payload = buildFocusPayload(empresa, nota, itens ?? []);
-
-      const res = await fetch(`${baseUrl}/v2/nfe?ref=${referencia}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Basic " + Buffer.from(`${token}:`).toString("base64"),
-        },
-        body: JSON.stringify(payload),
-      });
-      const body = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        await supabase
-          .from("notas_fiscais")
-          .update({ status_sefaz: "rejeitada", mensagem_sefaz: JSON.stringify(body) })
-          .eq("id", data.notaId);
-        throw new Error(`SEFAZ rejeitou: ${body.mensagem ?? body.erros?.[0]?.mensagem ?? res.statusText}`);
-      }
-
-      await supabase
-        .from("notas_fiscais")
-        .update({
-          status_sefaz: body.status === "autorizado" ? "autorizada" : "processando",
-          chave_acesso: body.chave_nfe ?? null,
-          protocolo_autorizacao: body.protocolo ?? null,
-          xml_url: body.caminho_xml_nota_fiscal ? `${baseUrl}${body.caminho_xml_nota_fiscal}` : null,
-          danfe_url: body.caminho_danfe ? `${baseUrl}${body.caminho_danfe}` : null,
-          provedor_ref: referencia,
-          data_autorizacao: body.data_emissao ?? null,
-        })
-        .eq("id", data.notaId);
-
-      return { ok: true, status: body.status, chave: body.chave_nfe, referencia };
-    }
-
-    // PlugNotas
-    if (provider === "plugnotas") {
-      const token = process.env.PLUGNOTAS_TOKEN;
-      if (!token) throw new Error("Secret PLUGNOTAS_TOKEN não configurado.");
-      // Implementação equivalente para PlugNotas
-      throw new Error("Integração PlugNotas em desenvolvimento. Use Focus NFe por enquanto.");
-    }
-
-    throw new Error(`Provedor desconhecido: ${provider}`);
+    return { ok: true, status: body.status, chave: body.chave_nfe, ref };
   });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildFocusPayload(empresa: any, nota: any, itens: any[]) {
-  return {
-    natureza_operacao: nota.natureza_operacao ?? "Venda",
-    data_emissao: nota.data_emissao,
-    tipo_documento: nota.tipo === "entrada" ? 0 : 1,
-    finalidade_emissao: 1,
-    cnpj_emitente: empresa.cnpj?.replace(/\D/g, ""),
-    nome_emitente: empresa.razao_social,
-    logradouro_emitente: empresa.logradouro,
-    numero_emitente: empresa.numero,
-    bairro_emitente: empresa.bairro,
-    municipio_emitente: empresa.cidade,
-    uf_emitente: empresa.uf,
-    cep_emitente: empresa.cep?.replace(/\D/g, ""),
-    inscricao_estadual_emitente: empresa.inscricao_estadual,
-    regime_tributario_emitente: empresa.regime_tributario === "simples" ? 1 : 3,
-    valor_total: Number(nota.valor_total ?? 0),
-    valor_produtos: Number(nota.valor_produtos ?? nota.valor_total ?? 0),
-    modalidade_frete: 9,
-    items: itens.map((i, idx) => ({
-      numero_item: idx + 1,
-      codigo_produto: i.produto_id ?? `ITEM${idx + 1}`,
-      descricao: i.descricao ?? "",
-      cfop: i.cfop ?? "5102",
-      unidade_comercial: i.unidade ?? "UN",
-      quantidade_comercial: Number(i.qtd_saida ?? i.quantidade ?? 1),
-      valor_unitario_comercial: Number(i.valor_unitario ?? 0),
-      valor_bruto: Number(i.valor_total ?? 0),
-      unidade_tributavel: i.unidade ?? "UN",
-      quantidade_tributavel: Number(i.qtd_saida ?? i.quantidade ?? 1),
-      valor_unitario_tributavel: Number(i.valor_unitario ?? 0),
-      icms_situacao_tributaria: "102",
-      icms_origem: 0,
-    })),
-  };
-}
+/* ==================== CANCELAR ==================== */
+export const cancelarNFe = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: { notaId: string; justificativa: string }) => {
+    if (!i.justificativa || i.justificativa.trim().length < 15) {
+      throw new Error("Justificativa deve ter no mínimo 15 caracteres.");
+    }
+    return i;
+  })
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { cfg } = await getFocusConfig(supabase as never);
+    const { data: nota } = await supabase.from("notas_fiscais").select("*").eq("id", data.notaId).maybeSingle();
+    if (!nota) throw new Error("Nota não encontrada.");
+    const notaRec = nota as Record<string, unknown>;
+    const ref = (notaRec.provedor_ref as string) ?? `nfe-${notaRec.id as string}`;
+    const res = await focusAdapter.cancelar(cfg, ref, data.justificativa);
+    await logNfeAction(supabase, { notaFiscalId: notaRec.id as string, acao: "cancelar", request: data, response: res.body, httpStatus: res.status, duracaoMs: res.durationMs, userId });
+    await supabase.from("nfe_eventos").insert({
+      nota_fiscal_id: notaRec.id, tipo: "cancelamento",
+      motivo: data.justificativa, payload: res.body,
+      status: res.ok ? "sucesso" : "erro",
+      mensagem: (res.body as Record<string, unknown>).mensagem as string ?? null,
+      user_id: userId,
+    } as never);
+    if (res.ok) {
+      await supabase.from("notas_fiscais").update({ status_sefaz: "cancelada" }).eq("id", data.notaId);
+    }
+    return { ok: res.ok, body: res.body };
+  });
+
+/* ==================== CARTA DE CORREÇÃO ==================== */
+export const emitirCCe = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: { notaId: string; correcao: string }) => {
+    if (!i.correcao || i.correcao.trim().length < 15) throw new Error("Correção deve ter no mínimo 15 caracteres.");
+    return i;
+  })
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { cfg } = await getFocusConfig(supabase as never);
+    const { data: nota } = await supabase.from("notas_fiscais").select("*").eq("id", data.notaId).maybeSingle();
+    if (!nota) throw new Error("Nota não encontrada.");
+    const notaRec = nota as Record<string, unknown>;
+    const ref = (notaRec.provedor_ref as string) ?? `nfe-${notaRec.id as string}`;
+    const res = await focusAdapter.cartaCorrecao(cfg, ref, data.correcao);
+    await logNfeAction(supabase, { notaFiscalId: notaRec.id as string, acao: "cce", request: data, response: res.body, httpStatus: res.status, duracaoMs: res.durationMs, userId });
+    await supabase.from("nfe_eventos").insert({
+      nota_fiscal_id: notaRec.id, tipo: "cce", motivo: data.correcao,
+      payload: res.body, status: res.ok ? "sucesso" : "erro",
+      mensagem: (res.body as Record<string, unknown>).mensagem as string ?? null, user_id: userId,
+    } as never);
+    return { ok: res.ok, body: res.body };
+  });
+
+/* ==================== CONSULTAR ==================== */
+export const consultarNFe = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: { notaId: string }) => i)
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { cfg } = await getFocusConfig(supabase as never);
+    const { data: nota } = await supabase.from("notas_fiscais").select("*").eq("id", data.notaId).maybeSingle();
+    if (!nota) throw new Error("Nota não encontrada.");
+    const notaRec = nota as Record<string, unknown>;
+    const ref = (notaRec.provedor_ref as string) ?? `nfe-${notaRec.id as string}`;
+    const res = await focusAdapter.consultar(cfg, ref);
+    await logNfeAction(supabase, { notaFiscalId: notaRec.id as string, acao: "consultar", response: res.body, httpStatus: res.status, duracaoMs: res.durationMs, userId });
+    return { ok: res.ok, body: res.body };
+  });
+
+/* ==================== INUTILIZAR ==================== */
+export const inutilizarNFe = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: { serie: number; numero_inicial: number; numero_final: number; justificativa: string }) => {
+    if (i.justificativa.trim().length < 15) throw new Error("Justificativa mín 15 chars.");
+    if (i.numero_final < i.numero_inicial) throw new Error("Faixa inválida.");
+    return i;
+  })
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { empresa, cfg } = await getFocusConfig(supabase as never);
+    const cnpj = String(empresa.cnpj ?? "").replace(/\D/g, "");
+    const res = await focusAdapter.inutilizar(cfg, {
+      cnpj, serie: data.serie, numero_inicial: data.numero_inicial,
+      numero_final: data.numero_final, justificativa: data.justificativa,
+      ano: new Date().getFullYear(),
+    });
+    await logNfeAction(supabase, { notaFiscalId: null, acao: "inutilizar", request: data, response: res.body, httpStatus: res.status, duracaoMs: res.durationMs, userId });
+    await supabase.from("nfe_eventos").insert({
+      nota_fiscal_id: null, tipo: "inutilizacao", motivo: data.justificativa,
+      payload: res.body, status: res.ok ? "sucesso" : "erro",
+      mensagem: (res.body as Record<string, unknown>).mensagem as string ?? null, user_id: userId,
+    } as never);
+    return { ok: res.ok, body: res.body };
+  });
