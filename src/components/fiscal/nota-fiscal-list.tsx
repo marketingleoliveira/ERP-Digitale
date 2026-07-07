@@ -9,9 +9,12 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { FilePlus2, Loader2, Pencil, Trash2, Plus, X } from "lucide-react";
+import { FilePlus2, Loader2, Pencil, Trash2, Plus, X, Send, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { emitirNFe } from "@/lib/nfe.functions";
+import { openDanfe, type DanfeData } from "@/lib/danfe";
 
 export type NF = {
   id: string; tipo: "saida" | "entrada" | "importacao"; numero: string; serie: string;
@@ -86,6 +89,7 @@ export function NotaFiscalList({ tipo, title, emoji }: { tipo: NF["tipo"]; title
                   <TableCell>R$ {Number(n.valor_total).toFixed(2)}</TableCell>
                   <TableCell><Badge variant="outline" className="capitalize">{n.status}</Badge></TableCell>
                   <TableCell className="text-right space-x-1">
+                    <NFActions nf={n} />
                     <Button size="sm" variant="ghost" onClick={() => { setEditingId(n.id); setOpen(true); }}><Pencil className="h-4 w-4" /></Button>
                     <Button size="sm" variant="ghost" onClick={() => del.mutate(n.id)}><Trash2 className="h-4 w-4" /></Button>
                   </TableCell>
@@ -106,6 +110,75 @@ export function NotaFiscalList({ tipo, title, emoji }: { tipo: NF["tipo"]; title
     </div>
   );
 }
+
+function NFActions({ nf }: { nf: NF }) {
+  const emit = useServerFn(emitirNFe);
+  const [loading, setLoading] = useState(false);
+  const qc = useQueryClient();
+
+  async function doEmit() {
+    setLoading(true);
+    try {
+      const r = await emit({ data: { notaId: nf.id } }) as { status?: string };
+      toast.success(`SEFAZ: ${r.status ?? "processando"}`);
+      qc.invalidateQueries({ queryKey: ["notas_fiscais"] });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally { setLoading(false); }
+  }
+
+  async function doDanfe() {
+    const { data: empresa } = await supabase.from("empresa" as never).select("*").limit(1).maybeSingle();
+    if (!empresa) { toast.error("Cadastre a empresa em Configurações."); return; }
+    const { data: full } = await supabase.from("notas_fiscais" as never).select("*").eq("id", nf.id).maybeSingle();
+    const { data: itens } = await supabase.from("notas_fiscais_itens" as never).select("*").eq("nota_fiscal_id", nf.id);
+    const f = (full ?? {}) as Record<string, unknown>;
+    const dest = f.cliente_id ? await supabase.from("customers" as never).select("*").eq("id", f.cliente_id as string).maybeSingle() : { data: null };
+    const d = (dest.data ?? {}) as Record<string, unknown>;
+    const danfe: DanfeData = {
+      numero: nf.numero, serie: nf.serie, data_emissao: nf.data_emissao,
+      natureza_operacao: (f.natureza_operacao as string) ?? "Venda",
+      chave_acesso: (f.chave_acesso as string) ?? null,
+      protocolo: (f.protocolo_autorizacao as string) ?? null,
+      emissor: empresa as unknown as DanfeData["emissor"],
+      destinatario: {
+        nome: (d.razao_social as string) ?? (d.nome_fantasia as string) ?? "-",
+        cnpj_cpf: (d.cnpj as string) ?? null,
+        endereco: `${d.logradouro ?? ""} ${d.numero ?? ""}`.trim(),
+        cidade: (d.cidade as string) ?? null,
+        uf: (d.uf as string) ?? null,
+      },
+      itens: (itens ?? []).map((i: Record<string, unknown>) => ({
+        codigo: (i.produto_id as string) ?? "",
+        descricao: (i.descricao as string) ?? "",
+        cfop: (i.cfop as string) ?? "5102",
+        unidade: (i.unidade as string) ?? "UN",
+        quantidade: Number(i.qtd_saida ?? i.quantidade ?? 0),
+        valor_unitario: Number(i.valor_unitario ?? 0),
+        valor_total: Number(i.valor_total ?? 0),
+      })),
+      valor_produtos: Number(f.valor_produtos ?? nf.valor_total ?? 0),
+      valor_frete: Number(f.valor_frete ?? 0),
+      valor_desconto: Number(f.valor_desconto ?? 0),
+      valor_total: Number(nf.valor_total ?? 0),
+      observacoes: (f.observacoes as string) ?? null,
+    };
+    openDanfe(danfe);
+  }
+
+  return (
+    <>
+      <Button size="sm" variant="ghost" title="Emitir na SEFAZ" onClick={doEmit} disabled={loading}>
+        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+      </Button>
+      <Button size="sm" variant="ghost" title="Imprimir DANFE" onClick={doDanfe}>
+        <Printer className="h-4 w-4" />
+      </Button>
+    </>
+  );
+}
+
+
 
 /* =============== Dialog completo =============== */
 

@@ -758,6 +758,99 @@ export type Database = {
           },
         ]
       }
+      empresa: {
+        Row: {
+          ambiente_nfe: string
+          bairro: string | null
+          cep: string | null
+          certificado_a1_nome: string | null
+          certificado_a1_validade: string | null
+          cidade: string | null
+          cnae: string | null
+          cnpj: string
+          codigo_municipio: string | null
+          complemento: string | null
+          created_at: string
+          email: string | null
+          id: string
+          inscricao_estadual: string | null
+          inscricao_municipal: string | null
+          logo_url: string | null
+          logradouro: string | null
+          nome_fantasia: string | null
+          numero: string | null
+          pais: string | null
+          provedor_nfe: string | null
+          proximo_numero_nfe: number | null
+          razao_social: string
+          regime_tributario: string
+          serie_nfe: number | null
+          telefone: string | null
+          uf: string | null
+          updated_at: string
+        }
+        Insert: {
+          ambiente_nfe?: string
+          bairro?: string | null
+          cep?: string | null
+          certificado_a1_nome?: string | null
+          certificado_a1_validade?: string | null
+          cidade?: string | null
+          cnae?: string | null
+          cnpj: string
+          codigo_municipio?: string | null
+          complemento?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          inscricao_estadual?: string | null
+          inscricao_municipal?: string | null
+          logo_url?: string | null
+          logradouro?: string | null
+          nome_fantasia?: string | null
+          numero?: string | null
+          pais?: string | null
+          provedor_nfe?: string | null
+          proximo_numero_nfe?: number | null
+          razao_social: string
+          regime_tributario?: string
+          serie_nfe?: number | null
+          telefone?: string | null
+          uf?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ambiente_nfe?: string
+          bairro?: string | null
+          cep?: string | null
+          certificado_a1_nome?: string | null
+          certificado_a1_validade?: string | null
+          cidade?: string | null
+          cnae?: string | null
+          cnpj?: string
+          codigo_municipio?: string | null
+          complemento?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          inscricao_estadual?: string | null
+          inscricao_municipal?: string | null
+          logo_url?: string | null
+          logradouro?: string | null
+          nome_fantasia?: string | null
+          numero?: string | null
+          pais?: string | null
+          provedor_nfe?: string | null
+          proximo_numero_nfe?: number | null
+          razao_social?: string
+          regime_tributario?: string
+          serie_nfe?: number | null
+          telefone?: string | null
+          uf?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       estampas: {
         Row: {
           codigo: string
@@ -1093,6 +1186,8 @@ export type Database = {
           chave_ref: string | null
           cliente_id: string | null
           created_at: string
+          danfe_url: string | null
+          data_autorizacao: string | null
           data_emissao: string
           destinatario_id: string | null
           drawback: string | null
@@ -1101,6 +1196,7 @@ export type Database = {
           fornecedor_id: string | null
           frete_tipo: string | null
           id: string
+          mensagem_sefaz: string | null
           modelo: string | null
           numero: string
           observacao: string | null
@@ -1108,9 +1204,12 @@ export type Database = {
           peso_bruto: number | null
           peso_liquido: number | null
           placa_veiculo: string | null
+          protocolo_autorizacao: string | null
+          provedor_ref: string | null
           quantidade_emb: number | null
           serie: string
           status: string
+          status_sefaz: string | null
           tipo: string
           tipo_embalagem: string | null
           transportadora_id: string | null
@@ -1132,6 +1231,8 @@ export type Database = {
           chave_ref?: string | null
           cliente_id?: string | null
           created_at?: string
+          danfe_url?: string | null
+          data_autorizacao?: string | null
           data_emissao?: string
           destinatario_id?: string | null
           drawback?: string | null
@@ -1140,6 +1241,7 @@ export type Database = {
           fornecedor_id?: string | null
           frete_tipo?: string | null
           id?: string
+          mensagem_sefaz?: string | null
           modelo?: string | null
           numero: string
           observacao?: string | null
@@ -1147,9 +1249,12 @@ export type Database = {
           peso_bruto?: number | null
           peso_liquido?: number | null
           placa_veiculo?: string | null
+          protocolo_autorizacao?: string | null
+          provedor_ref?: string | null
           quantidade_emb?: number | null
           serie?: string
           status?: string
+          status_sefaz?: string | null
           tipo?: string
           tipo_embalagem?: string | null
           transportadora_id?: string | null
@@ -1171,6 +1276,8 @@ export type Database = {
           chave_ref?: string | null
           cliente_id?: string | null
           created_at?: string
+          danfe_url?: string | null
+          data_autorizacao?: string | null
           data_emissao?: string
           destinatario_id?: string | null
           drawback?: string | null
@@ -1179,6 +1286,7 @@ export type Database = {
           fornecedor_id?: string | null
           frete_tipo?: string | null
           id?: string
+          mensagem_sefaz?: string | null
           modelo?: string | null
           numero?: string
           observacao?: string | null
@@ -1186,9 +1294,12 @@ export type Database = {
           peso_bruto?: number | null
           peso_liquido?: number | null
           placa_veiculo?: string | null
+          protocolo_autorizacao?: string | null
+          provedor_ref?: string | null
           quantidade_emb?: number | null
           serie?: string
           status?: string
+          status_sefaz?: string | null
           tipo?: string
           tipo_embalagem?: string | null
           transportadora_id?: string | null

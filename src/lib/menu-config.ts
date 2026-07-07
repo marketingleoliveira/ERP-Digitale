@@ -54,7 +54,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "R. Nota Fiscal", url: "/fiscal/r-nota-fiscal", icon: FileText, group: "Fiscal" },
   { title: "CFOP", url: "/fiscal/cfop", icon: BadgeCheck, group: "Fiscal" },
   { title: "UF ICMS", url: "/fiscal/uf-icms", icon: BadgeCheck, group: "Fiscal" },
-  { title: "Configurações", url: "/configuracoes", icon: Settings, group: "Administração", defaultHidden: true },
+  { title: "Configurações", url: "/configuracoes", icon: Settings, group: "Administração" },
   { title: "Gerenciar Menus", url: "/menus", icon: SlidersHorizontal, group: "Administração", locked: true },
   { title: "Cargos", url: "/dev/cargos", icon: Briefcase, group: "DEV", locked: true },
 ];
