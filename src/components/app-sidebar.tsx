@@ -26,6 +26,7 @@ export function AppSidebar() {
   const { visibility } = useMenuVisibility();
 
   const visibleItems = ALL_MENU_ITEMS.filter((i) => visibility[i.url]);
+  const standalone = visibleItems.filter((i) => !i.group);
   const groups = GROUP_ORDER
     .map((label) => ({ label, items: visibleItems.filter((i) => i.group === label) }))
     .filter((g) => g.items.length > 0);
@@ -49,6 +50,27 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
+        {standalone.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {standalone.map((item) => {
+                  const active = pathname === item.url || pathname.startsWith(item.url + "/");
+                  return (
+                    <SidebarMenuItem key={item.url}>
+                      <SidebarMenuButton asChild tooltip={item.title} isActive={active}>
+                        <Link to={item.url}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
         {groups.map((g) => {
           const GroupIcon = GROUP_ICONS[g.label] ?? Users;
           const hasActive = g.items.some(
