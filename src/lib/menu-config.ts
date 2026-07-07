@@ -46,7 +46,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
 ];
 
 export const GROUP_ORDER = [
-  "Visão Geral",
+  
   "Cadastros",
   "Operacional",
   "Produção (PCP)",
