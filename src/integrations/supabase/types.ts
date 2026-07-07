@@ -692,6 +692,39 @@ export type Database = {
           },
         ]
       }
+      estampas: {
+        Row: {
+          codigo: string
+          created_at: string
+          estampa: string
+          habilitado: boolean
+          id: string
+          imagem_path: string | null
+          updated_at: string
+          variante: number
+        }
+        Insert: {
+          codigo: string
+          created_at?: string
+          estampa: string
+          habilitado?: boolean
+          id?: string
+          imagem_path?: string | null
+          updated_at?: string
+          variante?: number
+        }
+        Update: {
+          codigo?: string
+          created_at?: string
+          estampa?: string
+          habilitado?: boolean
+          id?: string
+          imagem_path?: string | null
+          updated_at?: string
+          variante?: number
+        }
+        Relationships: []
+      }
       faccao_ordens: {
         Row: {
           created_at: string
