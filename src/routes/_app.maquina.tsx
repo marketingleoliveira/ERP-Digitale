@@ -267,6 +267,7 @@ function MaquinaDialog({
         disposicao_agulhas: disposicao.trim() || null,
         producao_media: numOrNull(prodMedia),
         carga_agulhas: carga,
+        fio_id: fioId || null,
         habilitado,
       };
       const client = supabase as unknown as { from: (t: string) => { update: (p: unknown) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> }; insert: (p: unknown) => Promise<{ error: Error | null }> } };
