@@ -26,7 +26,6 @@ import { Route as AppMaquinaRouteImport } from './routes/_app.maquina'
 import { Route as AppLotesRouteImport } from './routes/_app.lotes'
 import { Route as AppInicioRouteImport } from './routes/_app.inicio'
 import { Route as AppFuncionarioRouteImport } from './routes/_app.funcionario'
-import { Route as AppFiscalRouteImport } from './routes/_app.fiscal'
 import { Route as AppFioRouteImport } from './routes/_app.fio'
 import { Route as AppEstoqueTecidosRouteImport } from './routes/_app.estoque-tecidos'
 import { Route as AppEstoqueFiosRouteImport } from './routes/_app.estoque-fios'
@@ -39,6 +38,13 @@ import { Route as AppComposicaoRouteImport } from './routes/_app.composicao'
 import { Route as AppClienteArtigoRouteImport } from './routes/_app.cliente-artigo'
 import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
 import { Route as AppAgulhaRouteImport } from './routes/_app.agulha'
+import { Route as AppFiscalUfIcmsRouteImport } from './routes/_app.fiscal.uf-icms'
+import { Route as AppFiscalRNotaFiscalRouteImport } from './routes/_app.fiscal.r-nota-fiscal'
+import { Route as AppFiscalNotaFiscalUploadRouteImport } from './routes/_app.fiscal.nota-fiscal-upload'
+import { Route as AppFiscalNotaFiscalImportacaoRouteImport } from './routes/_app.fiscal.nota-fiscal-importacao'
+import { Route as AppFiscalNotaFiscalRouteImport } from './routes/_app.fiscal.nota-fiscal'
+import { Route as AppFiscalImpostosRouteImport } from './routes/_app.fiscal.impostos'
+import { Route as AppFiscalCfopRouteImport } from './routes/_app.fiscal.cfop'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 
 const LoginRoute = LoginRouteImport.update({
@@ -125,11 +131,6 @@ const AppFuncionarioRoute = AppFuncionarioRouteImport.update({
   path: '/funcionario',
   getParentRoute: () => AppRoute,
 } as any)
-const AppFiscalRoute = AppFiscalRouteImport.update({
-  id: '/fiscal',
-  path: '/fiscal',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppFioRoute = AppFioRouteImport.update({
   id: '/fio',
   path: '/fio',
@@ -190,6 +191,43 @@ const AppAgulhaRoute = AppAgulhaRouteImport.update({
   path: '/agulha',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFiscalUfIcmsRoute = AppFiscalUfIcmsRouteImport.update({
+  id: '/fiscal/uf-icms',
+  path: '/fiscal/uf-icms',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFiscalRNotaFiscalRoute = AppFiscalRNotaFiscalRouteImport.update({
+  id: '/fiscal/r-nota-fiscal',
+  path: '/fiscal/r-nota-fiscal',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFiscalNotaFiscalUploadRoute =
+  AppFiscalNotaFiscalUploadRouteImport.update({
+    id: '/fiscal/nota-fiscal-upload',
+    path: '/fiscal/nota-fiscal-upload',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppFiscalNotaFiscalImportacaoRoute =
+  AppFiscalNotaFiscalImportacaoRouteImport.update({
+    id: '/fiscal/nota-fiscal-importacao',
+    path: '/fiscal/nota-fiscal-importacao',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppFiscalNotaFiscalRoute = AppFiscalNotaFiscalRouteImport.update({
+  id: '/fiscal/nota-fiscal',
+  path: '/fiscal/nota-fiscal',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFiscalImpostosRoute = AppFiscalImpostosRouteImport.update({
+  id: '/fiscal/impostos',
+  path: '/fiscal/impostos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFiscalCfopRoute = AppFiscalCfopRouteImport.update({
+  id: '/fiscal/cfop',
+  path: '/fiscal/cfop',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDevCargosRoute = AppDevCargosRouteImport.update({
   id: '/dev/cargos',
   path: '/dev/cargos',
@@ -212,7 +250,6 @@ export interface FileRoutesByFullPath {
   '/estoque-fios': typeof AppEstoqueFiosRoute
   '/estoque-tecidos': typeof AppEstoqueTecidosRoute
   '/fio': typeof AppFioRoute
-  '/fiscal': typeof AppFiscalRoute
   '/funcionario': typeof AppFuncionarioRoute
   '/inicio': typeof AppInicioRoute
   '/lotes': typeof AppLotesRoute
@@ -227,6 +264,13 @@ export interface FileRoutesByFullPath {
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
   '/dev/cargos': typeof AppDevCargosRoute
+  '/fiscal/cfop': typeof AppFiscalCfopRoute
+  '/fiscal/impostos': typeof AppFiscalImpostosRoute
+  '/fiscal/nota-fiscal': typeof AppFiscalNotaFiscalRoute
+  '/fiscal/nota-fiscal-importacao': typeof AppFiscalNotaFiscalImportacaoRoute
+  '/fiscal/nota-fiscal-upload': typeof AppFiscalNotaFiscalUploadRoute
+  '/fiscal/r-nota-fiscal': typeof AppFiscalRNotaFiscalRoute
+  '/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -244,7 +288,6 @@ export interface FileRoutesByTo {
   '/estoque-fios': typeof AppEstoqueFiosRoute
   '/estoque-tecidos': typeof AppEstoqueTecidosRoute
   '/fio': typeof AppFioRoute
-  '/fiscal': typeof AppFiscalRoute
   '/funcionario': typeof AppFuncionarioRoute
   '/inicio': typeof AppInicioRoute
   '/lotes': typeof AppLotesRoute
@@ -259,6 +302,13 @@ export interface FileRoutesByTo {
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
   '/dev/cargos': typeof AppDevCargosRoute
+  '/fiscal/cfop': typeof AppFiscalCfopRoute
+  '/fiscal/impostos': typeof AppFiscalImpostosRoute
+  '/fiscal/nota-fiscal': typeof AppFiscalNotaFiscalRoute
+  '/fiscal/nota-fiscal-importacao': typeof AppFiscalNotaFiscalImportacaoRoute
+  '/fiscal/nota-fiscal-upload': typeof AppFiscalNotaFiscalUploadRoute
+  '/fiscal/r-nota-fiscal': typeof AppFiscalRNotaFiscalRoute
+  '/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -278,7 +328,6 @@ export interface FileRoutesById {
   '/_app/estoque-fios': typeof AppEstoqueFiosRoute
   '/_app/estoque-tecidos': typeof AppEstoqueTecidosRoute
   '/_app/fio': typeof AppFioRoute
-  '/_app/fiscal': typeof AppFiscalRoute
   '/_app/funcionario': typeof AppFuncionarioRoute
   '/_app/inicio': typeof AppInicioRoute
   '/_app/lotes': typeof AppLotesRoute
@@ -293,6 +342,13 @@ export interface FileRoutesById {
   '/_app/usuarios': typeof AppUsuariosRoute
   '/_app/variante': typeof AppVarianteRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
+  '/_app/fiscal/cfop': typeof AppFiscalCfopRoute
+  '/_app/fiscal/impostos': typeof AppFiscalImpostosRoute
+  '/_app/fiscal/nota-fiscal': typeof AppFiscalNotaFiscalRoute
+  '/_app/fiscal/nota-fiscal-importacao': typeof AppFiscalNotaFiscalImportacaoRoute
+  '/_app/fiscal/nota-fiscal-upload': typeof AppFiscalNotaFiscalUploadRoute
+  '/_app/fiscal/r-nota-fiscal': typeof AppFiscalRNotaFiscalRoute
+  '/_app/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -312,7 +368,6 @@ export interface FileRouteTypes {
     | '/estoque-fios'
     | '/estoque-tecidos'
     | '/fio'
-    | '/fiscal'
     | '/funcionario'
     | '/inicio'
     | '/lotes'
@@ -327,6 +382,13 @@ export interface FileRouteTypes {
     | '/usuarios'
     | '/variante'
     | '/dev/cargos'
+    | '/fiscal/cfop'
+    | '/fiscal/impostos'
+    | '/fiscal/nota-fiscal'
+    | '/fiscal/nota-fiscal-importacao'
+    | '/fiscal/nota-fiscal-upload'
+    | '/fiscal/r-nota-fiscal'
+    | '/fiscal/uf-icms'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -344,7 +406,6 @@ export interface FileRouteTypes {
     | '/estoque-fios'
     | '/estoque-tecidos'
     | '/fio'
-    | '/fiscal'
     | '/funcionario'
     | '/inicio'
     | '/lotes'
@@ -359,6 +420,13 @@ export interface FileRouteTypes {
     | '/usuarios'
     | '/variante'
     | '/dev/cargos'
+    | '/fiscal/cfop'
+    | '/fiscal/impostos'
+    | '/fiscal/nota-fiscal'
+    | '/fiscal/nota-fiscal-importacao'
+    | '/fiscal/nota-fiscal-upload'
+    | '/fiscal/r-nota-fiscal'
+    | '/fiscal/uf-icms'
   id:
     | '__root__'
     | '/'
@@ -377,7 +445,6 @@ export interface FileRouteTypes {
     | '/_app/estoque-fios'
     | '/_app/estoque-tecidos'
     | '/_app/fio'
-    | '/_app/fiscal'
     | '/_app/funcionario'
     | '/_app/inicio'
     | '/_app/lotes'
@@ -392,6 +459,13 @@ export interface FileRouteTypes {
     | '/_app/usuarios'
     | '/_app/variante'
     | '/_app/dev/cargos'
+    | '/_app/fiscal/cfop'
+    | '/_app/fiscal/impostos'
+    | '/_app/fiscal/nota-fiscal'
+    | '/_app/fiscal/nota-fiscal-importacao'
+    | '/_app/fiscal/nota-fiscal-upload'
+    | '/_app/fiscal/r-nota-fiscal'
+    | '/_app/fiscal/uf-icms'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -522,13 +596,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFuncionarioRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/fiscal': {
-      id: '/_app/fiscal'
-      path: '/fiscal'
-      fullPath: '/fiscal'
-      preLoaderRoute: typeof AppFiscalRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/fio': {
       id: '/_app/fio'
       path: '/fio'
@@ -613,6 +680,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAgulhaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/fiscal/uf-icms': {
+      id: '/_app/fiscal/uf-icms'
+      path: '/fiscal/uf-icms'
+      fullPath: '/fiscal/uf-icms'
+      preLoaderRoute: typeof AppFiscalUfIcmsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fiscal/r-nota-fiscal': {
+      id: '/_app/fiscal/r-nota-fiscal'
+      path: '/fiscal/r-nota-fiscal'
+      fullPath: '/fiscal/r-nota-fiscal'
+      preLoaderRoute: typeof AppFiscalRNotaFiscalRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fiscal/nota-fiscal-upload': {
+      id: '/_app/fiscal/nota-fiscal-upload'
+      path: '/fiscal/nota-fiscal-upload'
+      fullPath: '/fiscal/nota-fiscal-upload'
+      preLoaderRoute: typeof AppFiscalNotaFiscalUploadRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fiscal/nota-fiscal-importacao': {
+      id: '/_app/fiscal/nota-fiscal-importacao'
+      path: '/fiscal/nota-fiscal-importacao'
+      fullPath: '/fiscal/nota-fiscal-importacao'
+      preLoaderRoute: typeof AppFiscalNotaFiscalImportacaoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fiscal/nota-fiscal': {
+      id: '/_app/fiscal/nota-fiscal'
+      path: '/fiscal/nota-fiscal'
+      fullPath: '/fiscal/nota-fiscal'
+      preLoaderRoute: typeof AppFiscalNotaFiscalRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fiscal/impostos': {
+      id: '/_app/fiscal/impostos'
+      path: '/fiscal/impostos'
+      fullPath: '/fiscal/impostos'
+      preLoaderRoute: typeof AppFiscalImpostosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fiscal/cfop': {
+      id: '/_app/fiscal/cfop'
+      path: '/fiscal/cfop'
+      fullPath: '/fiscal/cfop'
+      preLoaderRoute: typeof AppFiscalCfopRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dev/cargos': {
       id: '/_app/dev/cargos'
       path: '/dev/cargos'
@@ -636,7 +752,6 @@ interface AppRouteChildren {
   AppEstoqueFiosRoute: typeof AppEstoqueFiosRoute
   AppEstoqueTecidosRoute: typeof AppEstoqueTecidosRoute
   AppFioRoute: typeof AppFioRoute
-  AppFiscalRoute: typeof AppFiscalRoute
   AppFuncionarioRoute: typeof AppFuncionarioRoute
   AppInicioRoute: typeof AppInicioRoute
   AppLotesRoute: typeof AppLotesRoute
@@ -651,6 +766,13 @@ interface AppRouteChildren {
   AppUsuariosRoute: typeof AppUsuariosRoute
   AppVarianteRoute: typeof AppVarianteRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
+  AppFiscalCfopRoute: typeof AppFiscalCfopRoute
+  AppFiscalImpostosRoute: typeof AppFiscalImpostosRoute
+  AppFiscalNotaFiscalRoute: typeof AppFiscalNotaFiscalRoute
+  AppFiscalNotaFiscalImportacaoRoute: typeof AppFiscalNotaFiscalImportacaoRoute
+  AppFiscalNotaFiscalUploadRoute: typeof AppFiscalNotaFiscalUploadRoute
+  AppFiscalRNotaFiscalRoute: typeof AppFiscalRNotaFiscalRoute
+  AppFiscalUfIcmsRoute: typeof AppFiscalUfIcmsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -666,7 +788,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppEstoqueFiosRoute: AppEstoqueFiosRoute,
   AppEstoqueTecidosRoute: AppEstoqueTecidosRoute,
   AppFioRoute: AppFioRoute,
-  AppFiscalRoute: AppFiscalRoute,
   AppFuncionarioRoute: AppFuncionarioRoute,
   AppInicioRoute: AppInicioRoute,
   AppLotesRoute: AppLotesRoute,
@@ -681,6 +802,13 @@ const AppRouteChildren: AppRouteChildren = {
   AppUsuariosRoute: AppUsuariosRoute,
   AppVarianteRoute: AppVarianteRoute,
   AppDevCargosRoute: AppDevCargosRoute,
+  AppFiscalCfopRoute: AppFiscalCfopRoute,
+  AppFiscalImpostosRoute: AppFiscalImpostosRoute,
+  AppFiscalNotaFiscalRoute: AppFiscalNotaFiscalRoute,
+  AppFiscalNotaFiscalImportacaoRoute: AppFiscalNotaFiscalImportacaoRoute,
+  AppFiscalNotaFiscalUploadRoute: AppFiscalNotaFiscalUploadRoute,
+  AppFiscalRNotaFiscalRoute: AppFiscalRNotaFiscalRoute,
+  AppFiscalUfIcmsRoute: AppFiscalUfIcmsRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

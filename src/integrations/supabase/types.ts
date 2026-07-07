@@ -406,6 +406,36 @@ export type Database = {
         }
         Relationships: []
       }
+      cfop: {
+        Row: {
+          ativo: boolean
+          codigo: string
+          created_at: string
+          descricao: string
+          id: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          codigo: string
+          created_at?: string
+          descricao: string
+          id?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          codigo?: string
+          created_at?: string
+          descricao?: string
+          id?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       composicoes: {
         Row: {
           codigo: string
@@ -909,6 +939,39 @@ export type Database = {
           },
         ]
       }
+      impostos: {
+        Row: {
+          aliquota: number
+          ativo: boolean
+          created_at: string
+          id: string
+          nome: string
+          observacao: string | null
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          aliquota?: number
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome: string
+          observacao?: string | null
+          tipo?: string
+          updated_at?: string
+        }
+        Update: {
+          aliquota?: number
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome?: string
+          observacao?: string | null
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       lotes: {
         Row: {
           created_at: string
@@ -1021,6 +1084,144 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      notas_fiscais: {
+        Row: {
+          base_icms: number
+          cfop_id: string | null
+          chave_acesso: string | null
+          cliente_id: string | null
+          created_at: string
+          data_emissao: string
+          fornecedor_id: string | null
+          id: string
+          numero: string
+          observacao: string | null
+          pdf_url: string | null
+          serie: string
+          status: string
+          tipo: string
+          updated_at: string
+          valor_cofins: number
+          valor_icms: number
+          valor_ipi: number
+          valor_pis: number
+          valor_total: number
+          xml_url: string | null
+        }
+        Insert: {
+          base_icms?: number
+          cfop_id?: string | null
+          chave_acesso?: string | null
+          cliente_id?: string | null
+          created_at?: string
+          data_emissao?: string
+          fornecedor_id?: string | null
+          id?: string
+          numero: string
+          observacao?: string | null
+          pdf_url?: string | null
+          serie?: string
+          status?: string
+          tipo?: string
+          updated_at?: string
+          valor_cofins?: number
+          valor_icms?: number
+          valor_ipi?: number
+          valor_pis?: number
+          valor_total?: number
+          xml_url?: string | null
+        }
+        Update: {
+          base_icms?: number
+          cfop_id?: string | null
+          chave_acesso?: string | null
+          cliente_id?: string | null
+          created_at?: string
+          data_emissao?: string
+          fornecedor_id?: string | null
+          id?: string
+          numero?: string
+          observacao?: string | null
+          pdf_url?: string | null
+          serie?: string
+          status?: string
+          tipo?: string
+          updated_at?: string
+          valor_cofins?: number
+          valor_icms?: number
+          valor_ipi?: number
+          valor_pis?: number
+          valor_total?: number
+          xml_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notas_fiscais_cfop_id_fkey"
+            columns: ["cfop_id"]
+            isOneToOne: false
+            referencedRelation: "cfop"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notas_fiscais_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notas_fiscais_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "tinturarias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notas_fiscais_itens: {
+        Row: {
+          cfop: string | null
+          created_at: string
+          descricao: string
+          id: string
+          ncm: string | null
+          nota_fiscal_id: string
+          quantidade: number
+          valor_total: number
+          valor_unitario: number
+        }
+        Insert: {
+          cfop?: string | null
+          created_at?: string
+          descricao: string
+          id?: string
+          ncm?: string | null
+          nota_fiscal_id: string
+          quantidade?: number
+          valor_total?: number
+          valor_unitario?: number
+        }
+        Update: {
+          cfop?: string | null
+          created_at?: string
+          descricao?: string
+          id?: string
+          ncm?: string | null
+          nota_fiscal_id?: string
+          quantidade?: number
+          valor_total?: number
+          valor_unitario?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notas_fiscais_itens_nota_fiscal_id_fkey"
+            columns: ["nota_fiscal_id"]
+            isOneToOne: false
+            referencedRelation: "notas_fiscais"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       product_variants: {
         Row: {
@@ -1290,6 +1491,39 @@ export type Database = {
           razao_social?: string | null
           telefone?: string | null
           unidade?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      uf_icms: {
+        Row: {
+          aliquota: number
+          ativo: boolean
+          created_at: string
+          id: string
+          tipo: string
+          uf_destino: string
+          uf_origem: string
+          updated_at: string
+        }
+        Insert: {
+          aliquota?: number
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          tipo?: string
+          uf_destino: string
+          uf_origem: string
+          updated_at?: string
+        }
+        Update: {
+          aliquota?: number
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          tipo?: string
+          uf_destino?: string
+          uf_origem?: string
           updated_at?: string
         }
         Relationships: []
