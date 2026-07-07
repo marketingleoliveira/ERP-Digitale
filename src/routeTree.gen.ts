@@ -40,6 +40,7 @@ import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
 import { Route as AppAgulhaRouteImport } from './routes/_app.agulha'
 import { Route as AppProducaoIndexRouteImport } from './routes/_app.producao.index'
 import { Route as AppFinanceiroIndexRouteImport } from './routes/_app.financeiro.index'
+import { Route as AppComprasIndexRouteImport } from './routes/_app.compras.index'
 import { Route as AppProducaoQualidadeRouteImport } from './routes/_app.producao.qualidade'
 import { Route as AppProducaoPedidosRouteImport } from './routes/_app.producao.pedidos'
 import { Route as AppProducaoOpRouteImport } from './routes/_app.producao.op'
@@ -59,7 +60,19 @@ import { Route as AppFiscalCertificadosRouteImport } from './routes/_app.fiscal.
 import { Route as AppFiscalBeneficiosRouteImport } from './routes/_app.fiscal.beneficios'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 import { Route as AppDashboardIndustrialRouteImport } from './routes/_app.dashboard.industrial'
+import { Route as AppComprasSolicitacoesRouteImport } from './routes/_app.compras.solicitacoes'
+import { Route as AppComprasRecebimentosRouteImport } from './routes/_app.compras.recebimentos'
+import { Route as AppComprasPedidosRouteImport } from './routes/_app.compras.pedidos'
+import { Route as AppComprasFornecedoresRouteImport } from './routes/_app.compras.fornecedores'
+import { Route as AppComprasCotacoesRouteImport } from './routes/_app.compras.cotacoes'
+import { Route as AppComprasContasPagarRouteImport } from './routes/_app.compras.contas-pagar'
 import { Route as AppProducaoOpIdRouteImport } from './routes/_app.producao.op.$id'
+import { Route as AppComprasSolicitacoesNovaRouteImport } from './routes/_app.compras.solicitacoes.nova'
+import { Route as AppComprasSolicitacoesIdRouteImport } from './routes/_app.compras.solicitacoes.$id'
+import { Route as AppComprasRecebimentosNovoRouteImport } from './routes/_app.compras.recebimentos.novo'
+import { Route as AppComprasRecebimentosIdRouteImport } from './routes/_app.compras.recebimentos.$id'
+import { Route as AppComprasPedidosIdRouteImport } from './routes/_app.compras.pedidos.$id'
+import { Route as AppComprasCotacoesIdRouteImport } from './routes/_app.compras.cotacoes.$id'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -215,6 +228,11 @@ const AppFinanceiroIndexRoute = AppFinanceiroIndexRouteImport.update({
   path: '/financeiro/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppComprasIndexRoute = AppComprasIndexRouteImport.update({
+  id: '/compras/',
+  path: '/compras/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProducaoQualidadeRoute = AppProducaoQualidadeRouteImport.update({
   id: '/producao/qualidade',
   path: '/producao/qualidade',
@@ -313,10 +331,74 @@ const AppDashboardIndustrialRoute = AppDashboardIndustrialRouteImport.update({
   path: '/dashboard/industrial',
   getParentRoute: () => AppRoute,
 } as any)
+const AppComprasSolicitacoesRoute = AppComprasSolicitacoesRouteImport.update({
+  id: '/compras/solicitacoes',
+  path: '/compras/solicitacoes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppComprasRecebimentosRoute = AppComprasRecebimentosRouteImport.update({
+  id: '/compras/recebimentos',
+  path: '/compras/recebimentos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppComprasPedidosRoute = AppComprasPedidosRouteImport.update({
+  id: '/compras/pedidos',
+  path: '/compras/pedidos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppComprasFornecedoresRoute = AppComprasFornecedoresRouteImport.update({
+  id: '/compras/fornecedores',
+  path: '/compras/fornecedores',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppComprasCotacoesRoute = AppComprasCotacoesRouteImport.update({
+  id: '/compras/cotacoes',
+  path: '/compras/cotacoes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppComprasContasPagarRoute = AppComprasContasPagarRouteImport.update({
+  id: '/compras/contas-pagar',
+  path: '/compras/contas-pagar',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProducaoOpIdRoute = AppProducaoOpIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => AppProducaoOpRoute,
+} as any)
+const AppComprasSolicitacoesNovaRoute =
+  AppComprasSolicitacoesNovaRouteImport.update({
+    id: '/nova',
+    path: '/nova',
+    getParentRoute: () => AppComprasSolicitacoesRoute,
+  } as any)
+const AppComprasSolicitacoesIdRoute =
+  AppComprasSolicitacoesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AppComprasSolicitacoesRoute,
+  } as any)
+const AppComprasRecebimentosNovoRoute =
+  AppComprasRecebimentosNovoRouteImport.update({
+    id: '/novo',
+    path: '/novo',
+    getParentRoute: () => AppComprasRecebimentosRoute,
+  } as any)
+const AppComprasRecebimentosIdRoute =
+  AppComprasRecebimentosIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AppComprasRecebimentosRoute,
+  } as any)
+const AppComprasPedidosIdRoute = AppComprasPedidosIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppComprasPedidosRoute,
+} as any)
+const AppComprasCotacoesIdRoute = AppComprasCotacoesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppComprasCotacoesRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -348,6 +430,12 @@ export interface FileRoutesByFullPath {
   '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
+  '/compras/contas-pagar': typeof AppComprasContasPagarRoute
+  '/compras/cotacoes': typeof AppComprasCotacoesRouteWithChildren
+  '/compras/fornecedores': typeof AppComprasFornecedoresRoute
+  '/compras/pedidos': typeof AppComprasPedidosRouteWithChildren
+  '/compras/recebimentos': typeof AppComprasRecebimentosRouteWithChildren
+  '/compras/solicitacoes': typeof AppComprasSolicitacoesRouteWithChildren
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/fiscal/beneficios': typeof AppFiscalBeneficiosRoute
@@ -367,8 +455,15 @@ export interface FileRoutesByFullPath {
   '/producao/op': typeof AppProducaoOpRouteWithChildren
   '/producao/pedidos': typeof AppProducaoPedidosRoute
   '/producao/qualidade': typeof AppProducaoQualidadeRoute
+  '/compras/': typeof AppComprasIndexRoute
   '/financeiro/': typeof AppFinanceiroIndexRoute
   '/producao/': typeof AppProducaoIndexRoute
+  '/compras/cotacoes/$id': typeof AppComprasCotacoesIdRoute
+  '/compras/pedidos/$id': typeof AppComprasPedidosIdRoute
+  '/compras/recebimentos/$id': typeof AppComprasRecebimentosIdRoute
+  '/compras/recebimentos/novo': typeof AppComprasRecebimentosNovoRoute
+  '/compras/solicitacoes/$id': typeof AppComprasSolicitacoesIdRoute
+  '/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
   '/producao/op/$id': typeof AppProducaoOpIdRoute
 }
 export interface FileRoutesByTo {
@@ -400,6 +495,12 @@ export interface FileRoutesByTo {
   '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
+  '/compras/contas-pagar': typeof AppComprasContasPagarRoute
+  '/compras/cotacoes': typeof AppComprasCotacoesRouteWithChildren
+  '/compras/fornecedores': typeof AppComprasFornecedoresRoute
+  '/compras/pedidos': typeof AppComprasPedidosRouteWithChildren
+  '/compras/recebimentos': typeof AppComprasRecebimentosRouteWithChildren
+  '/compras/solicitacoes': typeof AppComprasSolicitacoesRouteWithChildren
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/fiscal/beneficios': typeof AppFiscalBeneficiosRoute
@@ -419,8 +520,15 @@ export interface FileRoutesByTo {
   '/producao/op': typeof AppProducaoOpRouteWithChildren
   '/producao/pedidos': typeof AppProducaoPedidosRoute
   '/producao/qualidade': typeof AppProducaoQualidadeRoute
+  '/compras': typeof AppComprasIndexRoute
   '/financeiro': typeof AppFinanceiroIndexRoute
   '/producao': typeof AppProducaoIndexRoute
+  '/compras/cotacoes/$id': typeof AppComprasCotacoesIdRoute
+  '/compras/pedidos/$id': typeof AppComprasPedidosIdRoute
+  '/compras/recebimentos/$id': typeof AppComprasRecebimentosIdRoute
+  '/compras/recebimentos/novo': typeof AppComprasRecebimentosNovoRoute
+  '/compras/solicitacoes/$id': typeof AppComprasSolicitacoesIdRoute
+  '/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
   '/producao/op/$id': typeof AppProducaoOpIdRoute
 }
 export interface FileRoutesById {
@@ -454,6 +562,12 @@ export interface FileRoutesById {
   '/_app/time-log': typeof AppTimeLogRoute
   '/_app/usuarios': typeof AppUsuariosRoute
   '/_app/variante': typeof AppVarianteRoute
+  '/_app/compras/contas-pagar': typeof AppComprasContasPagarRoute
+  '/_app/compras/cotacoes': typeof AppComprasCotacoesRouteWithChildren
+  '/_app/compras/fornecedores': typeof AppComprasFornecedoresRoute
+  '/_app/compras/pedidos': typeof AppComprasPedidosRouteWithChildren
+  '/_app/compras/recebimentos': typeof AppComprasRecebimentosRouteWithChildren
+  '/_app/compras/solicitacoes': typeof AppComprasSolicitacoesRouteWithChildren
   '/_app/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
   '/_app/fiscal/beneficios': typeof AppFiscalBeneficiosRoute
@@ -473,8 +587,15 @@ export interface FileRoutesById {
   '/_app/producao/op': typeof AppProducaoOpRouteWithChildren
   '/_app/producao/pedidos': typeof AppProducaoPedidosRoute
   '/_app/producao/qualidade': typeof AppProducaoQualidadeRoute
+  '/_app/compras/': typeof AppComprasIndexRoute
   '/_app/financeiro/': typeof AppFinanceiroIndexRoute
   '/_app/producao/': typeof AppProducaoIndexRoute
+  '/_app/compras/cotacoes/$id': typeof AppComprasCotacoesIdRoute
+  '/_app/compras/pedidos/$id': typeof AppComprasPedidosIdRoute
+  '/_app/compras/recebimentos/$id': typeof AppComprasRecebimentosIdRoute
+  '/_app/compras/recebimentos/novo': typeof AppComprasRecebimentosNovoRoute
+  '/_app/compras/solicitacoes/$id': typeof AppComprasSolicitacoesIdRoute
+  '/_app/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
   '/_app/producao/op/$id': typeof AppProducaoOpIdRoute
 }
 export interface FileRouteTypes {
@@ -508,6 +629,12 @@ export interface FileRouteTypes {
     | '/time-log'
     | '/usuarios'
     | '/variante'
+    | '/compras/contas-pagar'
+    | '/compras/cotacoes'
+    | '/compras/fornecedores'
+    | '/compras/pedidos'
+    | '/compras/recebimentos'
+    | '/compras/solicitacoes'
     | '/dashboard/industrial'
     | '/dev/cargos'
     | '/fiscal/beneficios'
@@ -527,8 +654,15 @@ export interface FileRouteTypes {
     | '/producao/op'
     | '/producao/pedidos'
     | '/producao/qualidade'
+    | '/compras/'
     | '/financeiro/'
     | '/producao/'
+    | '/compras/cotacoes/$id'
+    | '/compras/pedidos/$id'
+    | '/compras/recebimentos/$id'
+    | '/compras/recebimentos/novo'
+    | '/compras/solicitacoes/$id'
+    | '/compras/solicitacoes/nova'
     | '/producao/op/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -560,6 +694,12 @@ export interface FileRouteTypes {
     | '/time-log'
     | '/usuarios'
     | '/variante'
+    | '/compras/contas-pagar'
+    | '/compras/cotacoes'
+    | '/compras/fornecedores'
+    | '/compras/pedidos'
+    | '/compras/recebimentos'
+    | '/compras/solicitacoes'
     | '/dashboard/industrial'
     | '/dev/cargos'
     | '/fiscal/beneficios'
@@ -579,8 +719,15 @@ export interface FileRouteTypes {
     | '/producao/op'
     | '/producao/pedidos'
     | '/producao/qualidade'
+    | '/compras'
     | '/financeiro'
     | '/producao'
+    | '/compras/cotacoes/$id'
+    | '/compras/pedidos/$id'
+    | '/compras/recebimentos/$id'
+    | '/compras/recebimentos/novo'
+    | '/compras/solicitacoes/$id'
+    | '/compras/solicitacoes/nova'
     | '/producao/op/$id'
   id:
     | '__root__'
@@ -613,6 +760,12 @@ export interface FileRouteTypes {
     | '/_app/time-log'
     | '/_app/usuarios'
     | '/_app/variante'
+    | '/_app/compras/contas-pagar'
+    | '/_app/compras/cotacoes'
+    | '/_app/compras/fornecedores'
+    | '/_app/compras/pedidos'
+    | '/_app/compras/recebimentos'
+    | '/_app/compras/solicitacoes'
     | '/_app/dashboard/industrial'
     | '/_app/dev/cargos'
     | '/_app/fiscal/beneficios'
@@ -632,8 +785,15 @@ export interface FileRouteTypes {
     | '/_app/producao/op'
     | '/_app/producao/pedidos'
     | '/_app/producao/qualidade'
+    | '/_app/compras/'
     | '/_app/financeiro/'
     | '/_app/producao/'
+    | '/_app/compras/cotacoes/$id'
+    | '/_app/compras/pedidos/$id'
+    | '/_app/compras/recebimentos/$id'
+    | '/_app/compras/recebimentos/novo'
+    | '/_app/compras/solicitacoes/$id'
+    | '/_app/compras/solicitacoes/nova'
     | '/_app/producao/op/$id'
   fileRoutesById: FileRoutesById
 }
@@ -863,6 +1023,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFinanceiroIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/compras/': {
+      id: '/_app/compras/'
+      path: '/compras'
+      fullPath: '/compras/'
+      preLoaderRoute: typeof AppComprasIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/producao/qualidade': {
       id: '/_app/producao/qualidade'
       path: '/producao/qualidade'
@@ -996,6 +1163,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardIndustrialRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/compras/solicitacoes': {
+      id: '/_app/compras/solicitacoes'
+      path: '/compras/solicitacoes'
+      fullPath: '/compras/solicitacoes'
+      preLoaderRoute: typeof AppComprasSolicitacoesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/compras/recebimentos': {
+      id: '/_app/compras/recebimentos'
+      path: '/compras/recebimentos'
+      fullPath: '/compras/recebimentos'
+      preLoaderRoute: typeof AppComprasRecebimentosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/compras/pedidos': {
+      id: '/_app/compras/pedidos'
+      path: '/compras/pedidos'
+      fullPath: '/compras/pedidos'
+      preLoaderRoute: typeof AppComprasPedidosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/compras/fornecedores': {
+      id: '/_app/compras/fornecedores'
+      path: '/compras/fornecedores'
+      fullPath: '/compras/fornecedores'
+      preLoaderRoute: typeof AppComprasFornecedoresRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/compras/cotacoes': {
+      id: '/_app/compras/cotacoes'
+      path: '/compras/cotacoes'
+      fullPath: '/compras/cotacoes'
+      preLoaderRoute: typeof AppComprasCotacoesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/compras/contas-pagar': {
+      id: '/_app/compras/contas-pagar'
+      path: '/compras/contas-pagar'
+      fullPath: '/compras/contas-pagar'
+      preLoaderRoute: typeof AppComprasContasPagarRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/producao/op/$id': {
       id: '/_app/producao/op/$id'
       path: '/$id'
@@ -1003,8 +1212,104 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProducaoOpIdRouteImport
       parentRoute: typeof AppProducaoOpRoute
     }
+    '/_app/compras/solicitacoes/nova': {
+      id: '/_app/compras/solicitacoes/nova'
+      path: '/nova'
+      fullPath: '/compras/solicitacoes/nova'
+      preLoaderRoute: typeof AppComprasSolicitacoesNovaRouteImport
+      parentRoute: typeof AppComprasSolicitacoesRoute
+    }
+    '/_app/compras/solicitacoes/$id': {
+      id: '/_app/compras/solicitacoes/$id'
+      path: '/$id'
+      fullPath: '/compras/solicitacoes/$id'
+      preLoaderRoute: typeof AppComprasSolicitacoesIdRouteImport
+      parentRoute: typeof AppComprasSolicitacoesRoute
+    }
+    '/_app/compras/recebimentos/novo': {
+      id: '/_app/compras/recebimentos/novo'
+      path: '/novo'
+      fullPath: '/compras/recebimentos/novo'
+      preLoaderRoute: typeof AppComprasRecebimentosNovoRouteImport
+      parentRoute: typeof AppComprasRecebimentosRoute
+    }
+    '/_app/compras/recebimentos/$id': {
+      id: '/_app/compras/recebimentos/$id'
+      path: '/$id'
+      fullPath: '/compras/recebimentos/$id'
+      preLoaderRoute: typeof AppComprasRecebimentosIdRouteImport
+      parentRoute: typeof AppComprasRecebimentosRoute
+    }
+    '/_app/compras/pedidos/$id': {
+      id: '/_app/compras/pedidos/$id'
+      path: '/$id'
+      fullPath: '/compras/pedidos/$id'
+      preLoaderRoute: typeof AppComprasPedidosIdRouteImport
+      parentRoute: typeof AppComprasPedidosRoute
+    }
+    '/_app/compras/cotacoes/$id': {
+      id: '/_app/compras/cotacoes/$id'
+      path: '/$id'
+      fullPath: '/compras/cotacoes/$id'
+      preLoaderRoute: typeof AppComprasCotacoesIdRouteImport
+      parentRoute: typeof AppComprasCotacoesRoute
+    }
   }
 }
+
+interface AppComprasCotacoesRouteChildren {
+  AppComprasCotacoesIdRoute: typeof AppComprasCotacoesIdRoute
+}
+
+const AppComprasCotacoesRouteChildren: AppComprasCotacoesRouteChildren = {
+  AppComprasCotacoesIdRoute: AppComprasCotacoesIdRoute,
+}
+
+const AppComprasCotacoesRouteWithChildren =
+  AppComprasCotacoesRoute._addFileChildren(AppComprasCotacoesRouteChildren)
+
+interface AppComprasPedidosRouteChildren {
+  AppComprasPedidosIdRoute: typeof AppComprasPedidosIdRoute
+}
+
+const AppComprasPedidosRouteChildren: AppComprasPedidosRouteChildren = {
+  AppComprasPedidosIdRoute: AppComprasPedidosIdRoute,
+}
+
+const AppComprasPedidosRouteWithChildren =
+  AppComprasPedidosRoute._addFileChildren(AppComprasPedidosRouteChildren)
+
+interface AppComprasRecebimentosRouteChildren {
+  AppComprasRecebimentosIdRoute: typeof AppComprasRecebimentosIdRoute
+  AppComprasRecebimentosNovoRoute: typeof AppComprasRecebimentosNovoRoute
+}
+
+const AppComprasRecebimentosRouteChildren: AppComprasRecebimentosRouteChildren =
+  {
+    AppComprasRecebimentosIdRoute: AppComprasRecebimentosIdRoute,
+    AppComprasRecebimentosNovoRoute: AppComprasRecebimentosNovoRoute,
+  }
+
+const AppComprasRecebimentosRouteWithChildren =
+  AppComprasRecebimentosRoute._addFileChildren(
+    AppComprasRecebimentosRouteChildren,
+  )
+
+interface AppComprasSolicitacoesRouteChildren {
+  AppComprasSolicitacoesIdRoute: typeof AppComprasSolicitacoesIdRoute
+  AppComprasSolicitacoesNovaRoute: typeof AppComprasSolicitacoesNovaRoute
+}
+
+const AppComprasSolicitacoesRouteChildren: AppComprasSolicitacoesRouteChildren =
+  {
+    AppComprasSolicitacoesIdRoute: AppComprasSolicitacoesIdRoute,
+    AppComprasSolicitacoesNovaRoute: AppComprasSolicitacoesNovaRoute,
+  }
+
+const AppComprasSolicitacoesRouteWithChildren =
+  AppComprasSolicitacoesRoute._addFileChildren(
+    AppComprasSolicitacoesRouteChildren,
+  )
 
 interface AppProducaoOpRouteChildren {
   AppProducaoOpIdRoute: typeof AppProducaoOpIdRoute
@@ -1044,6 +1349,12 @@ interface AppRouteChildren {
   AppTimeLogRoute: typeof AppTimeLogRoute
   AppUsuariosRoute: typeof AppUsuariosRoute
   AppVarianteRoute: typeof AppVarianteRoute
+  AppComprasContasPagarRoute: typeof AppComprasContasPagarRoute
+  AppComprasCotacoesRoute: typeof AppComprasCotacoesRouteWithChildren
+  AppComprasFornecedoresRoute: typeof AppComprasFornecedoresRoute
+  AppComprasPedidosRoute: typeof AppComprasPedidosRouteWithChildren
+  AppComprasRecebimentosRoute: typeof AppComprasRecebimentosRouteWithChildren
+  AppComprasSolicitacoesRoute: typeof AppComprasSolicitacoesRouteWithChildren
   AppDashboardIndustrialRoute: typeof AppDashboardIndustrialRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
   AppFiscalBeneficiosRoute: typeof AppFiscalBeneficiosRoute
@@ -1063,6 +1374,7 @@ interface AppRouteChildren {
   AppProducaoOpRoute: typeof AppProducaoOpRouteWithChildren
   AppProducaoPedidosRoute: typeof AppProducaoPedidosRoute
   AppProducaoQualidadeRoute: typeof AppProducaoQualidadeRoute
+  AppComprasIndexRoute: typeof AppComprasIndexRoute
   AppFinanceiroIndexRoute: typeof AppFinanceiroIndexRoute
   AppProducaoIndexRoute: typeof AppProducaoIndexRoute
 }
@@ -1093,6 +1405,12 @@ const AppRouteChildren: AppRouteChildren = {
   AppTimeLogRoute: AppTimeLogRoute,
   AppUsuariosRoute: AppUsuariosRoute,
   AppVarianteRoute: AppVarianteRoute,
+  AppComprasContasPagarRoute: AppComprasContasPagarRoute,
+  AppComprasCotacoesRoute: AppComprasCotacoesRouteWithChildren,
+  AppComprasFornecedoresRoute: AppComprasFornecedoresRoute,
+  AppComprasPedidosRoute: AppComprasPedidosRouteWithChildren,
+  AppComprasRecebimentosRoute: AppComprasRecebimentosRouteWithChildren,
+  AppComprasSolicitacoesRoute: AppComprasSolicitacoesRouteWithChildren,
   AppDashboardIndustrialRoute: AppDashboardIndustrialRoute,
   AppDevCargosRoute: AppDevCargosRoute,
   AppFiscalBeneficiosRoute: AppFiscalBeneficiosRoute,
@@ -1112,6 +1430,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProducaoOpRoute: AppProducaoOpRouteWithChildren,
   AppProducaoPedidosRoute: AppProducaoPedidosRoute,
   AppProducaoQualidadeRoute: AppProducaoQualidadeRoute,
+  AppComprasIndexRoute: AppComprasIndexRoute,
   AppFinanceiroIndexRoute: AppFinanceiroIndexRoute,
   AppProducaoIndexRoute: AppProducaoIndexRoute,
 }

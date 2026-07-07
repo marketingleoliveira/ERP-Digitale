@@ -70,6 +70,14 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Certificados A1", url: "/fiscal/certificados", icon: ShieldCheck, group: "DEV" },
   { title: "Configurações", url: "/configuracoes", icon: Settings, group: "DEV" },
   { title: "Cargos", url: "/dev/cargos", icon: Briefcase, group: "DEV", locked: true },
+  // Compras
+  { title: "Dashboard Compras", url: "/compras", icon: LayoutDashboard, group: "Compras" },
+  { title: "Fornecedores (Compras)", url: "/compras/fornecedores", icon: Handshake, group: "Compras" },
+  { title: "Solicitações", url: "/compras/solicitacoes", icon: FileText, group: "Compras" },
+  { title: "Cotações", url: "/compras/cotacoes", icon: Receipt, group: "Compras" },
+  { title: "Pedidos de Compra", url: "/compras/pedidos", icon: ShoppingCart, group: "Compras" },
+  { title: "Recebimentos", url: "/compras/recebimentos", icon: PackageCheck, group: "Compras" },
+  { title: "Contas a Pagar", url: "/compras/contas-pagar", icon: Wallet, group: "Compras" },
 ];
 
 export const GROUP_ORDER = [
@@ -77,6 +85,7 @@ export const GROUP_ORDER = [
   "Cadastros",
   "Estoque",
   "Operacional",
+  "Compras",
   "Produção (PCP)",
   "Fiscal",
   "Financeiro & Logística",
