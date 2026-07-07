@@ -195,7 +195,7 @@ function MaquinaDialog({
   const [dataFab, setDataFab] = useState("");
   const [correias, setCorreias] = useState<string[]>([""]);
 
-  const { data: correiasOptions = [] } = useQuery({
+  const { data: correiasOptions = [], refetch: refetchCorreias } = useQuery({
     queryKey: ["correias", "options"],
     queryFn: async (): Promise<Array<{ id: string; correia: string }>> => {
       const { data, error } = await supabase
@@ -206,7 +206,14 @@ function MaquinaDialog({
       if (error) throw error;
       return (data ?? []) as unknown as Array<{ id: string; correia: string }>;
     },
+    staleTime: 0,
   });
+
+  // Refresca a lista de correias sempre que o diálogo abrir,
+  // garantindo sincronia com cadastros feitos em outra aba.
+  useEffect(() => {
+    if (open) refetchCorreias();
+  }, [open, refetchCorreias]);
 
   useEffect(() => {
     if (!open) return;
@@ -349,6 +356,9 @@ function MaquinaDialog({
                     {correiasOptions.map((opt) => (
                       <option key={opt.id} value={opt.correia}>{opt.correia}</option>
                     ))}
+                    {c && !correiasOptions.some((opt) => opt.correia === c) && (
+                      <option value={c}>{c} (removida)</option>
+                    )}
                   </select>
                   <Button
                     type="button"
