@@ -190,6 +190,16 @@ function FuncionarioPage() {
 function FuncionarioDialog({
   open, onOpenChange, editing, onSaved,
 }: { open: boolean; onOpenChange: (v: boolean) => void; editing: Funcionario | null; onSaved: () => void }) {
+  const { data: cargos = [] } = useQuery<{ id: string; nome: string }[]>({
+    queryKey: ["cargos-opts"],
+    queryFn: async () => {
+      const { data, error } = await sb.from("cargos").select("id,nome").order("nome");
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: open,
+  });
+
   const [f, setF] = useState({
     tipo: "", nome: "", cpf: "", rg: "", cep: "", uf: "",
     endereco: "", numero: "", complemento: "", bairro: "", cidade: "",
