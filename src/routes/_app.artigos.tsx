@@ -215,28 +215,13 @@ function ArtigosPage() {
                   >
                     <td className="p-2"><Checkbox checked={isSel} onCheckedChange={() => setSelectedId(i.id)} /></td>
                     <td className="p-2">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <button
-                            type="button"
-                            onClick={(e) => { e.stopPropagation(); setSelectedId(i.id); }}
-                            className="font-medium text-primary underline-offset-2 hover:underline"
-                          >
-                            {i.codigo || "—"}
-                          </button>
-                        </PopoverTrigger>
-                        <PopoverContent align="start" className="w-80 p-0">
-                          <table className="w-full text-sm">
-                            <tbody>
-                              <tr className="border-b"><td className="w-28 bg-muted/50 p-2 font-medium">Código:</td><td className="p-2">{i.codigo || "—"}</td></tr>
-                              <tr className="border-b"><td className="bg-muted/50 p-2 font-medium">NCM:</td><td className="p-2 font-mono">{i.ncm || "—"}</td></tr>
-                              <tr className="border-b"><td className="bg-muted/50 p-2 font-medium">Artigo:</td><td className="p-2">{i.nome}</td></tr>
-                              <tr className="border-b"><td className="bg-muted/50 p-2 font-medium">Composição:</td><td className="p-2">{i.composicao || "—"}</td></tr>
-                              <tr><td className="bg-muted/50 p-2 font-medium">Rendimento:</td><td className="p-2">{i.rendimento != null ? Number(i.rendimento).toFixed(2) : "—"}</td></tr>
-                            </tbody>
-                          </table>
-                        </PopoverContent>
-                      </Popover>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setSelectedId(i.id); setDetailId(i.id); }}
+                        className="font-medium text-primary underline-offset-2 hover:underline"
+                      >
+                        {i.codigo || "—"}
+                      </button>
                     </td>
                     <td className="p-2 font-mono text-xs">{i.ncm || "—"}</td>
                     <td className="p-2 uppercase">{i.nome}</td>
