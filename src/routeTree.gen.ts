@@ -49,6 +49,7 @@ import { Route as AppProducaoExpedicaoRouteImport } from './routes/_app.producao
 import { Route as AppLogisticaTransportadorasRouteImport } from './routes/_app.logistica.transportadoras'
 import { Route as AppLogisticaSeparacoesRouteImport } from './routes/_app.logistica.separacoes'
 import { Route as AppLogisticaRomaneiosRouteImport } from './routes/_app.logistica.romaneios'
+import { Route as AppLogisticaEntregasRouteImport } from './routes/_app.logistica.entregas'
 import { Route as AppFiscalUfIcmsRouteImport } from './routes/_app.fiscal.uf-icms'
 import { Route as AppFiscalSimuladorRouteImport } from './routes/_app.fiscal.simulador'
 import { Route as AppFiscalRegrasTributariasRouteImport } from './routes/_app.fiscal.regras-tributarias'
@@ -282,6 +283,11 @@ const AppLogisticaSeparacoesRoute = AppLogisticaSeparacoesRouteImport.update({
 const AppLogisticaRomaneiosRoute = AppLogisticaRomaneiosRouteImport.update({
   id: '/logistica/romaneios',
   path: '/logistica/romaneios',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLogisticaEntregasRoute = AppLogisticaEntregasRouteImport.update({
+  id: '/logistica/entregas',
+  path: '/logistica/entregas',
   getParentRoute: () => AppRoute,
 } as any)
 const AppFiscalUfIcmsRoute = AppFiscalUfIcmsRouteImport.update({
@@ -520,6 +526,7 @@ export interface FileRoutesByFullPath {
   '/fiscal/regras-tributarias': typeof AppFiscalRegrasTributariasRoute
   '/fiscal/simulador': typeof AppFiscalSimuladorRoute
   '/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
+  '/logistica/entregas': typeof AppLogisticaEntregasRoute
   '/logistica/romaneios': typeof AppLogisticaRomaneiosRoute
   '/logistica/separacoes': typeof AppLogisticaSeparacoesRoute
   '/logistica/transportadoras': typeof AppLogisticaTransportadorasRoute
@@ -595,6 +602,7 @@ export interface FileRoutesByTo {
   '/fiscal/regras-tributarias': typeof AppFiscalRegrasTributariasRoute
   '/fiscal/simulador': typeof AppFiscalSimuladorRoute
   '/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
+  '/logistica/entregas': typeof AppLogisticaEntregasRoute
   '/logistica/romaneios': typeof AppLogisticaRomaneiosRoute
   '/logistica/separacoes': typeof AppLogisticaSeparacoesRoute
   '/logistica/transportadoras': typeof AppLogisticaTransportadorasRoute
@@ -672,6 +680,7 @@ export interface FileRoutesById {
   '/_app/fiscal/regras-tributarias': typeof AppFiscalRegrasTributariasRoute
   '/_app/fiscal/simulador': typeof AppFiscalSimuladorRoute
   '/_app/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
+  '/_app/logistica/entregas': typeof AppLogisticaEntregasRoute
   '/_app/logistica/romaneios': typeof AppLogisticaRomaneiosRoute
   '/_app/logistica/separacoes': typeof AppLogisticaSeparacoesRoute
   '/_app/logistica/transportadoras': typeof AppLogisticaTransportadorasRoute
@@ -749,6 +758,7 @@ export interface FileRouteTypes {
     | '/fiscal/regras-tributarias'
     | '/fiscal/simulador'
     | '/fiscal/uf-icms'
+    | '/logistica/entregas'
     | '/logistica/romaneios'
     | '/logistica/separacoes'
     | '/logistica/transportadoras'
@@ -824,6 +834,7 @@ export interface FileRouteTypes {
     | '/fiscal/regras-tributarias'
     | '/fiscal/simulador'
     | '/fiscal/uf-icms'
+    | '/logistica/entregas'
     | '/logistica/romaneios'
     | '/logistica/separacoes'
     | '/logistica/transportadoras'
@@ -900,6 +911,7 @@ export interface FileRouteTypes {
     | '/_app/fiscal/regras-tributarias'
     | '/_app/fiscal/simulador'
     | '/_app/fiscal/uf-icms'
+    | '/_app/logistica/entregas'
     | '/_app/logistica/romaneios'
     | '/_app/logistica/separacoes'
     | '/_app/logistica/transportadoras'
@@ -1207,6 +1219,13 @@ declare module '@tanstack/react-router' {
       path: '/logistica/romaneios'
       fullPath: '/logistica/romaneios'
       preLoaderRoute: typeof AppLogisticaRomaneiosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/logistica/entregas': {
+      id: '/_app/logistica/entregas'
+      path: '/logistica/entregas'
+      fullPath: '/logistica/entregas'
+      preLoaderRoute: typeof AppLogisticaEntregasRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/fiscal/uf-icms': {
@@ -1569,6 +1588,7 @@ interface AppRouteChildren {
   AppFiscalRegrasTributariasRoute: typeof AppFiscalRegrasTributariasRoute
   AppFiscalSimuladorRoute: typeof AppFiscalSimuladorRoute
   AppFiscalUfIcmsRoute: typeof AppFiscalUfIcmsRoute
+  AppLogisticaEntregasRoute: typeof AppLogisticaEntregasRoute
   AppLogisticaRomaneiosRoute: typeof AppLogisticaRomaneiosRoute
   AppLogisticaSeparacoesRoute: typeof AppLogisticaSeparacoesRoute
   AppLogisticaTransportadorasRoute: typeof AppLogisticaTransportadorasRoute
@@ -1635,6 +1655,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFiscalRegrasTributariasRoute: AppFiscalRegrasTributariasRoute,
   AppFiscalSimuladorRoute: AppFiscalSimuladorRoute,
   AppFiscalUfIcmsRoute: AppFiscalUfIcmsRoute,
+  AppLogisticaEntregasRoute: AppLogisticaEntregasRoute,
   AppLogisticaRomaneiosRoute: AppLogisticaRomaneiosRoute,
   AppLogisticaSeparacoesRoute: AppLogisticaSeparacoesRoute,
   AppLogisticaTransportadorasRoute: AppLogisticaTransportadorasRoute,
