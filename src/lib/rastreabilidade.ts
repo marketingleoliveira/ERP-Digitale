@@ -48,7 +48,7 @@ export async function coletar(tipo: NodeTipo, id: string): Promise<{ centro: Ras
   const push = (n: RastroNode) => rel.push(n);
 
   if (tipo === "pedido") {
-    const p = await noneRow(supabase.from("pedidos").select("id,numero,cliente_id,customers(nome_fantasia,razao_social)").eq("id", id).maybeSingle());
+    const p = await one(supabase.from("pedidos").select("id,numero,cliente_id,customers(nome_fantasia,razao_social)").eq("id", id).maybeSingle());
     if (p) {
       const cust = p.customers as { nome_fantasia?: string | null; razao_social?: string | null } | null;
       centro = { tipo: "pedido", id, label: `Pedido #${p.numero ?? id.slice(0, 8)}` };
@@ -57,7 +57,7 @@ export async function coletar(tipo: NodeTipo, id: string): Promise<{ centro: Ras
       ops.data?.forEach(o => push({ tipo: "op", id: o.id, label: `OP #${o.numero ?? o.id.slice(0, 8)}` }));
     }
   } else if (tipo === "op") {
-    const o = await noneRow(supabase.from("ordens_producao").select("id,numero,pedido_id").eq("id", id).maybeSingle());
+    const o = await one(supabase.from("ordens_producao").select("id,numero,pedido_id").eq("id", id).maybeSingle());
     if (o) {
       centro = { tipo: "op", id, label: `OP #${o.numero ?? id.slice(0, 8)}` };
       if (o.pedido_id) push({ tipo: "pedido", id: o.pedido_id, label: `Pedido vinculado` });
@@ -74,7 +74,7 @@ export async function coletar(tipo: NodeTipo, id: string): Promise<{ centro: Ras
       mov.data?.forEach(m => push({ tipo: "movimento_estoque", id: m.id, label: `Mov. ${m.tipo}/${m.operacao} qtd ${m.quantidade}` }));
     }
   } else if (tipo === "nota_fiscal") {
-    const nf = await noneRow(supabase.from("notas_fiscais").select("id,numero,serie,op_id,cliente_id,tipo").eq("id", id).maybeSingle());
+    const nf = await one(supabase.from("notas_fiscais").select("id,numero,serie,op_id,cliente_id,tipo").eq("id", id).maybeSingle());
     if (nf) {
       centro = { tipo: "nota_fiscal", id, label: `NF ${nf.numero}/${nf.serie} (${nf.tipo})` };
       if (nf.op_id) push({ tipo: "op", id: nf.op_id, label: "OP vinculada" });
@@ -85,7 +85,7 @@ export async function coletar(tipo: NodeTipo, id: string): Promise<{ centro: Ras
       mov.data?.forEach(m => push({ tipo: "movimento_estoque", id: m.id, label: `Mov. estoque ${m.tipo} qtd ${m.quantidade}` }));
     }
   } else if (tipo === "pedido_compra") {
-    const pc = await noneRow(supabase.from("pedidos_compra").select("id,numero,fornecedor_id,fornecedores(razao_social)").eq("id", id).maybeSingle());
+    const pc = await one(supabase.from("pedidos_compra").select("id,numero,fornecedor_id,fornecedores(razao_social)").eq("id", id).maybeSingle());
     if (pc) {
       const f = pc.fornecedores as { razao_social?: string } | null;
       centro = { tipo: "pedido_compra", id, label: `Pedido Compra #${pc.numero}` };
@@ -96,7 +96,7 @@ export async function coletar(tipo: NodeTipo, id: string): Promise<{ centro: Ras
       cp.data?.forEach(c => push({ tipo: "conta_pagar", id: c.id, label: `A Pagar ${c.parcela}/${c.total_parcelas} R$ ${c.valor}` }));
     }
   } else if (tipo === "recebimento") {
-    const r = await noneRow(supabase.from("recebimentos").select("id,numero,pedido_id,status").eq("id", id).maybeSingle());
+    const r = await one(supabase.from("recebimentos").select("id,numero,pedido_id,status").eq("id", id).maybeSingle());
     if (r) {
       centro = { tipo: "recebimento", id, label: `Recebimento #${r.numero}` };
       if (r.pedido_id) push({ tipo: "pedido_compra", id: r.pedido_id, label: "Pedido de Compra" });
@@ -109,14 +109,14 @@ export async function coletar(tipo: NodeTipo, id: string): Promise<{ centro: Ras
       cp.data?.forEach(c => push({ tipo: "conta_pagar", id: c.id, label: `A Pagar ${c.parcela}/${c.total_parcelas} R$ ${c.valor}` }));
     }
   } else if (tipo === "lote") {
-    const l = await noneRow(supabase.from("lotes").select("id,numero_lote,quantidade_disponivel,item_id,tipo").eq("id", id).maybeSingle());
+    const l = await one(supabase.from("lotes").select("id,numero_lote,quantidade_disponivel,item_id,tipo").eq("id", id).maybeSingle());
     if (l) {
       centro = { tipo: "lote", id, label: `Lote ${l.numero_lote} — saldo ${l.quantidade_disponivel}` };
       const mov = await supabase.from("estoque_movimentos").select("id,tipo,operacao,quantidade,created_at").eq("lote_id", id).order("created_at", { ascending: false }).limit(100);
       mov.data?.forEach(m => push({ tipo: "movimento_estoque", id: m.id, label: `${m.tipo}/${m.operacao} qtd ${m.quantidade}` }));
     }
   } else if (tipo === "cliente") {
-    const c = await noneRow(supabase.from("customers").select("id,razao_social,nome_fantasia").eq("id", id).maybeSingle());
+    const c = await one(supabase.from("customers").select("id,razao_social,nome_fantasia").eq("id", id).maybeSingle());
     if (c) {
       centro = { tipo: "cliente", id, label: c.nome_fantasia || c.razao_social || "Cliente" };
       const peds = await supabase.from("pedidos").select("id,numero").eq("cliente_id", id).order("created_at", { ascending: false }).limit(50);
@@ -125,14 +125,14 @@ export async function coletar(tipo: NodeTipo, id: string): Promise<{ centro: Ras
       nfs.data?.forEach(n => push({ tipo: "nota_fiscal", id: n.id, label: `NF ${n.numero}/${n.serie}` }));
     }
   } else if (tipo === "fornecedor") {
-    const f = await noneRow(supabase.from("fornecedores").select("id,razao_social").eq("id", id).maybeSingle());
+    const f = await one(supabase.from("fornecedores").select("id,razao_social").eq("id", id).maybeSingle());
     if (f) {
       centro = { tipo: "fornecedor", id, label: f.razao_social };
       const pc = await supabase.from("pedidos_compra").select("id,numero").eq("fornecedor_id", id).order("created_at", { ascending: false }).limit(50);
       pc.data?.forEach(p => push({ tipo: "pedido_compra", id: p.id, label: `PC #${p.numero}` }));
     }
   } else if (tipo === "romaneio") {
-    const r = await noneRow(supabase.from("romaneios").select("id,numero,status,transportadora_id").eq("id", id).maybeSingle());
+    const r = await one(supabase.from("romaneios").select("id,numero,status,transportadora_id").eq("id", id).maybeSingle());
     if (r) {
       centro = { tipo: "romaneio", id, label: `Romaneio #${r.numero} (${r.status})` };
       const itens = await supabase.from("romaneio_itens").select("nota_fiscal_id,op_id,pedido_id").eq("romaneio_id", id);
