@@ -268,3 +268,35 @@ function CadastroCorDialog({
     </Dialog>
   );
 }
+
+function CorDetailDialog({ cor, onOpenChange }: { cor: Cor | null; onOpenChange: (v: boolean) => void }) {
+  return (
+    <Dialog open={!!cor} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl bg-sky-100 dark:bg-sky-950/40">
+        <DialogHeader>
+          <DialogTitle className="text-primary">Detalhes da Cor</DialogTitle>
+        </DialogHeader>
+        {cor && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+            <Row label="Código:" value={cor.codigo} />
+            <Row label="Tipo:" value={cor.tipo} />
+            <Row label="Cor:" value={cor.cor} className="md:col-span-2" />
+            <Row label="Tinturaria:" value="HUVISPAN TEXTIL" className="md:col-span-2" />
+            <Row label="Valor R$:" value={fmt(cor.valor)} />
+            <Row label="Valor Complementar R$:" value={fmt(cor.valorComplementar)} />
+            <Row label="Observação:" value="" className="md:col-span-2" />
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function Row({ label, value, className = "" }: { label: string; value: string; className?: string }) {
+  return (
+    <div className={`grid grid-cols-[160px_1fr] gap-2 ${className}`}>
+      <span className="font-semibold text-primary">{label}</span>
+      <span className="text-foreground">{value}</span>
+    </div>
+  );
+}
