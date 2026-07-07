@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  LayoutDashboard, Package, Warehouse,
+  LayoutDashboard, Users, Truck, UserCheck, Package, Warehouse,
   ShoppingCart, Receipt, Handshake, Wallet, Factory, Scissors,
   BadgeCheck, PackageCheck, FileText, ShieldCheck, Settings, Shirt,
   SlidersHorizontal,
@@ -16,6 +16,8 @@ export type MenuItem = {
   group: string;
   /** Cannot be disabled from the UI */
   locked?: boolean;
+  /** Off by default (legacy items) */
+  defaultHidden?: boolean;
 };
 
 /** Full catalog of available menus. Add new items here. */
