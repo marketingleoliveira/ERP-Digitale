@@ -923,8 +923,8 @@ function ArtigoDetailDialog({ id, onOpenChange }: { id: string | null; onOpenCha
                 <Row label="Diametro:" value={fmt(art.diametro, 0)} />
                 <Row label="Nº Alimentadores:" value={fmt(art.n_alimentadores, 0)} />
                 <Row label="RPM:" value={fmt(art.rpm, 0)} />
-                <Row label="R$ Malharia Compl.:" value={fmt(art.r_malharia_compl)} />
-                <Row label="R$ Venda Metros:" value={fmt(art.r_venda_metros)} />
+                <Row label="RPM:" value={fmt(art.rpm, 0)} />
+
               </div>
             </div>
 
