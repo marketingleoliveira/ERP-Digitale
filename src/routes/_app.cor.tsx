@@ -1,16 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FilePlus2, Pencil, Printer, Trash2 } from "lucide-react";
+import { FilePlus2, Loader2, Pencil, Printer, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_app/cor")({
   ssr: false,
@@ -18,75 +19,83 @@ export const Route = createFileRoute("/_app/cor")({
 });
 
 type Cor = {
+  id: string;
   codigo: string;
-  tipo: "Clara" | "Média" | "Escura" | "Especial";
+  tipo: string;
   cor: string;
-  valor: number;
-  valorComplementar: number;
+  valor: number | null;
+  valor_complementar: number | null;
+  tinturaria_id: string | null;
+  observacao: string | null;
   habilitado: boolean;
 };
 
-const TIPOS: Cor["tipo"][] = ["Clara", "Média", "Escura", "Especial"];
+type Tinturaria = { id: string; nome_fantasia: string };
 
-const DATA: Cor[] = [
-  { codigo: "863960", tipo: "Clara", cor: "ABACATE", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "47348", tipo: "Escura", cor: "ABISSAL", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "20747", tipo: "Especial", cor: "AÇAI", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "20610", tipo: "Escura", cor: "ADRENALINE", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "AF4", tipo: "Escura", cor: "ALECRIM", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "65973", tipo: "Escura", cor: "ALGA", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "20616", tipo: "Média", cor: "ALGODÃO DOCE", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "802260", tipo: "Escura", cor: "ALPINE GREEN", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "344880", tipo: "Média", cor: "ALQUIMIA", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "151353", tipo: "Média", cor: "AMBER BROWN", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "16", tipo: "Especial", cor: "AMETISTA", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "752791", tipo: "Escura", cor: "ANDORRA - GRUPO SBF", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "606580", tipo: "Clara", cor: "ARGILA", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "122", tipo: "Escura", cor: "ASPHALT", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "20749", tipo: "Especial", cor: "ASTRAL", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "19", tipo: "Especial", cor: "ATALAIA", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "20895", tipo: "Média", cor: "ATLANTA", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "939040", tipo: "Escura", cor: "ATÔMICO", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "25", tipo: "Especial", cor: "AZALEIA", valor: 0, valorComplementar: 0, habilitado: true },
-  { codigo: "20566", tipo: "Média", cor: "AZUL", valor: 0, valorComplementar: 0, habilitado: true },
-];
-
-const fmt = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const TIPOS = ["Clara", "Média", "Escura", "Especial"];
 const PAGE_SIZE = 20;
+const fmt = (n: number | null) => (n ?? 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+async function fetchCores(): Promise<Cor[]> {
+  const client = supabase as unknown as { from: (t: string) => { select: (c: string) => { order: (col: string, opts: { ascending: boolean }) => Promise<{ data: Cor[] | null; error: Error | null }> } } };
+  const { data, error } = await client.from("cores").select("*").order("cor", { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
+async function fetchTinturarias(): Promise<Tinturaria[]> {
+  const client = supabase as unknown as { from: (t: string) => { select: (c: string) => { order: (col: string, opts: { ascending: boolean }) => Promise<{ data: Tinturaria[] | null; error: Error | null }> } } };
+  const { data, error } = await client.from("tinturarias").select("id,nome_fantasia").order("nome_fantasia", { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
 
 function CorPage() {
+  const qc = useQueryClient();
+  const { data = [], isLoading } = useQuery({ queryKey: ["cores"], queryFn: fetchCores });
+  const { data: tinturarias = [] } = useQuery({ queryKey: ["tinturarias"], queryFn: fetchTinturarias });
+
   const [filter, setFilter] = useState("");
   const [applied, setApplied] = useState("");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Cor | null>(null);
-  const [detail, setDetail] = useState<Cor | null>(null);
 
   const filtered = useMemo(
-    () => DATA.filter((c) => c.cor.toLowerCase().includes(applied.toLowerCase())),
-    [applied],
+    () => data.filter((c) => c.cor.toLowerCase().includes(applied.toLowerCase())),
+    [data, applied],
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const selectedRow = data.find((c) => c.id === selected) ?? null;
 
-  const selectedCor = DATA.find((c) => c.codigo === selected) ?? null;
+  const deleteMut = useMutation({
+    mutationFn: async (row: Cor) => {
+      const client = supabase as unknown as { from: (t: string) => { delete: () => { eq: (c: string, v: string) => Promise<{ error: Error | null }> } } };
+      const { error } = await client.from("cores").delete().eq("id", row.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Cor excluída.");
+      setSelected(null);
+      qc.invalidateQueries({ queryKey: ["cores"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <h1 className="text-xl font-semibold text-primary">🎨 Listagem Cor</h1>
-      </div>
+      <h1 className="text-xl font-semibold text-primary">🎨 Listagem Cor</h1>
 
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center gap-2 border-b border-border bg-muted/30 p-2">
           <Button size="sm" variant="outline" onClick={() => { setEditing(null); setDialogOpen(true); }}>
             <FilePlus2 className="h-4 w-4 mr-1.5" />CADASTRAR
           </Button>
-          <Button size="sm" variant="outline" disabled={!selectedCor} onClick={() => { setEditing(selectedCor); setDialogOpen(true); }}>
+          <Button size="sm" variant="outline" disabled={!selectedRow} onClick={() => { setEditing(selectedRow); setDialogOpen(true); }}>
             <Pencil className="h-4 w-4 mr-1.5" />ALTERAR
           </Button>
-          <Button size="sm" variant="outline" disabled={!selectedCor} onClick={() => selectedCor && toast.success(`Cor "${selectedCor.cor}" excluída.`)}>
+          <Button size="sm" variant="outline" disabled={!selectedRow || deleteMut.isPending} onClick={() => selectedRow && deleteMut.mutate(selectedRow)}>
             <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR
           </Button>
           <Button size="sm" variant="outline" onClick={() => window.print()}>
@@ -103,30 +112,26 @@ function CorPage() {
                 <TableHead className="text-primary-foreground font-semibold">Tipo</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Cor</TableHead>
                 <TableHead className="text-primary-foreground font-semibold text-right">Valor R$</TableHead>
-                <TableHead className="text-primary-foreground font-semibold text-right">Valor R$<br />Complementar</TableHead>
+                <TableHead className="text-primary-foreground font-semibold text-right">Valor Compl.</TableHead>
                 <TableHead className="text-primary-foreground font-semibold text-center">Hab</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paged.length === 0 ? (
+              {isLoading ? (
+                <TableRow><TableCell colSpan={7} className="text-center py-10"><Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" /></TableCell></TableRow>
+              ) : paged.length === 0 ? (
                 <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-10">Nenhum registro encontrado.</TableCell></TableRow>
               ) : paged.map((c) => (
-                <TableRow key={c.codigo}>
+                <TableRow key={c.id}>
                   <TableCell>
-                    <Checkbox checked={selected === c.codigo} onCheckedChange={(v) => setSelected(v ? c.codigo : null)} />
+                    <Checkbox checked={selected === c.id} onCheckedChange={(v) => setSelected(v ? c.id : null)} />
                   </TableCell>
-                  <TableCell>
-                    <button className="text-primary hover:underline font-medium" onClick={() => setDetail(c)}>
-                      {c.codigo}
-                    </button>
-                  </TableCell>
+                  <TableCell><span className="text-primary font-medium">{c.codigo}</span></TableCell>
                   <TableCell>{c.tipo}</TableCell>
                   <TableCell>{c.cor}</TableCell>
-                  <TableCell className="text-right">{fmt(c.valor)}</TableCell>
-                  <TableCell className="text-right">{fmt(c.valorComplementar)}</TableCell>
-                  <TableCell className="text-center">
-                    <Checkbox checked={c.habilitado} disabled />
-                  </TableCell>
+                  <TableCell className="text-right tabular-nums">{fmt(c.valor)}</TableCell>
+                  <TableCell className="text-right tabular-nums">{fmt(c.valor_complementar)}</TableCell>
+                  <TableCell className="text-center"><Checkbox checked={c.habilitado} disabled /></TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -140,16 +145,6 @@ function CorPage() {
               <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>◀ ANTERIOR</Button>
               <Button size="sm" variant="outline" disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>PRÓXIMO ▶</Button>
             </div>
-            <div className="flex items-center gap-2">
-              <span>Página:</span>
-              <select
-                className="h-8 rounded border border-input bg-background px-2 text-sm"
-                value={page}
-                onChange={(e) => setPage(Number(e.target.value))}
-              >
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => <option key={n} value={n}>{n}</option>)}
-              </select>
-            </div>
             <span className="ml-auto text-muted-foreground">Total de Registros: {filtered.length}</span>
           </div>
           <div className="mt-3 flex flex-wrap items-end gap-3">
@@ -162,141 +157,137 @@ function CorPage() {
         </div>
       </Card>
 
-      <CadastroCorDialog open={dialogOpen} onOpenChange={setDialogOpen} editing={editing} />
-      <CorDetailDialog cor={detail} onOpenChange={(v) => !v && setDetail(null)} />
+      <CorDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        editing={editing}
+        tinturarias={tinturarias}
+        onSaved={() => qc.invalidateQueries({ queryKey: ["cores"] })}
+      />
     </div>
   );
 }
 
-function CadastroCorDialog({
-  open,
-  onOpenChange,
-  editing,
+function CorDialog({
+  open, onOpenChange, editing, tinturarias, onSaved,
 }: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  editing: Cor | null;
+  open: boolean; onOpenChange: (v: boolean) => void; editing: Cor | null;
+  tinturarias: Tinturaria[]; onSaved: () => void;
 }) {
-  const [form, setForm] = useState({
-    codigo: "",
-    tipo: "" as Cor["tipo"] | "",
-    cor: "",
-    tinturaria: "",
-    valor: "",
-    valorComplementar: "",
-    observacao: "",
-  });
+  const [codigo, setCodigo] = useState("");
+  const [tipo, setTipo] = useState("");
+  const [cor, setCor] = useState("");
+  const [valor, setValor] = useState("");
+  const [valorC, setValorC] = useState("");
+  const [tinturariaId, setTinturariaId] = useState("");
+  const [observacao, setObservacao] = useState("");
+  const [habilitado, setHabilitado] = useState(true);
 
-  useMemo(() => {
-    if (open) {
-      setForm({
-        codigo: editing?.codigo ?? "",
-        tipo: editing?.tipo ?? "",
-        cor: editing?.cor ?? "",
-        tinturaria: "",
-        valor: editing ? String(editing.valor) : "",
-        valorComplementar: editing ? String(editing.valorComplementar) : "",
-        observacao: "",
-      });
-    }
+  useEffect(() => {
+    if (!open) return;
+    setCodigo(editing?.codigo ?? "");
+    setTipo(editing?.tipo ?? "");
+    setCor(editing?.cor ?? "");
+    setValor(editing?.valor != null ? String(editing.valor) : "");
+    setValorC(editing?.valor_complementar != null ? String(editing.valor_complementar) : "");
+    setTinturariaId(editing?.tinturaria_id ?? "");
+    setObservacao(editing?.observacao ?? "");
+    setHabilitado(editing?.habilitado ?? true);
   }, [open, editing]);
 
-  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
-    setForm((p) => ({ ...p, [k]: v }));
-
-  const submit = () => {
-    if (!form.codigo.trim() || !form.tipo || !form.cor.trim()) {
-      toast.error("Preencha Código, Tipo e Cor.");
-      return;
-    }
-    toast.success(`Cor "${form.cor}" ${editing ? "atualizada" : "cadastrada"}.`);
-    onOpenChange(false);
+  const num = (v: string) => {
+    if (!v.trim()) return 0;
+    const n = Number(v.replace(",", "."));
+    return Number.isFinite(n) ? n : 0;
   };
+
+  const mut = useMutation({
+    mutationFn: async () => {
+      if (!codigo.trim() || !tipo || !cor.trim()) throw new Error("Preencha Código, Tipo e Cor.");
+      const payload = {
+        codigo: codigo.trim(),
+        tipo,
+        cor: cor.trim(),
+        valor: num(valor),
+        valor_complementar: num(valorC),
+        tinturaria_id: tinturariaId || null,
+        observacao: observacao.trim() || null,
+        habilitado,
+      };
+      const client = supabase as unknown as { from: (t: string) => { update: (p: unknown) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> }; insert: (p: unknown) => Promise<{ error: Error | null }> } };
+      if (editing) {
+        const { error } = await client.from("cores").update(payload).eq("id", editing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await client.from("cores").insert(payload);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      toast.success(editing ? "Cor atualizada." : "Cor cadastrada.");
+      onSaved();
+      onOpenChange(false);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild><span /></DialogTrigger>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle className="text-primary">🎨 {editing ? "Alterar" : "Cadastro"} Cor</DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded bg-muted/50 p-5">
           <div className="space-y-1.5">
-            <Label htmlFor="codigo"><span className="text-destructive">*</span> Código:</Label>
-            <Input id="codigo" value={form.codigo} onChange={(e) => set("codigo", e.target.value)} maxLength={20} />
+            <Label><span className="text-destructive">*</span> Código:</Label>
+            <Input value={codigo} onChange={(e) => setCodigo(e.target.value)} maxLength={20} />
           </div>
           <div className="space-y-1.5">
             <Label><span className="text-destructive">*</span> Tipo:</Label>
-            <Select value={form.tipo} onValueChange={(v) => set("tipo", v as Cor["tipo"])}>
-              <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-              <SelectContent>
-                {TIPOS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <select value={tipo} onChange={(e) => setTipo(e.target.value)} className="h-10 w-full rounded border border-input bg-background px-2 text-sm">
+              <option value="">[SELECIONE]</option>
+              {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
+            </select>
           </div>
           <div className="space-y-1.5 md:col-span-2">
-            <Label htmlFor="cor"><span className="text-destructive">*</span> Cor:</Label>
-            <Input id="cor" value={form.cor} onChange={(e) => set("cor", e.target.value)} maxLength={100} />
+            <Label><span className="text-destructive">*</span> Cor:</Label>
+            <Input value={cor} onChange={(e) => setCor(e.target.value)} maxLength={100} />
           </div>
           <div className="space-y-1.5 md:col-span-2">
-            <Label htmlFor="tinturaria">Tinturaria:</Label>
-            <Input
-              id="tinturaria"
-              placeholder="Digite no mínimo as três primeiras letras da Tinturaria"
-              value={form.tinturaria}
-              onChange={(e) => set("tinturaria", e.target.value)}
-            />
+            <Label>Tinturaria:</Label>
+            <select value={tinturariaId} onChange={(e) => setTinturariaId(e.target.value)} className="h-10 w-full rounded border border-input bg-background px-2 text-sm">
+              <option value="">[SELECIONE]</option>
+              {tinturarias.map((t) => <option key={t.id} value={t.id}>{t.nome_fantasia}</option>)}
+            </select>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="valor">Valor:</Label>
-            <Input id="valor" inputMode="decimal" value={form.valor} onChange={(e) => set("valor", e.target.value)} />
+            <Label>Valor R$:</Label>
+            <Input inputMode="decimal" value={valor} onChange={(e) => setValor(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="valorc">Valor Complementar:</Label>
-            <Input id="valorc" inputMode="decimal" value={form.valorComplementar} onChange={(e) => set("valorComplementar", e.target.value)} />
+            <Label>Valor Complementar R$:</Label>
+            <Input inputMode="decimal" value={valorC} onChange={(e) => setValorC(e.target.value)} />
           </div>
           <div className="space-y-1.5 md:col-span-2">
-            <Label htmlFor="obs">Observação:</Label>
-            <Textarea id="obs" rows={4} value={form.observacao} onChange={(e) => set("observacao", e.target.value)} maxLength={500} />
+            <Label>Observação:</Label>
+            <Textarea rows={3} value={observacao} onChange={(e) => setObservacao(e.target.value)} maxLength={500} />
           </div>
+          {editing && (
+            <label className="flex items-center gap-2 md:col-span-2">
+              <Checkbox checked={habilitado} onCheckedChange={(v) => setHabilitado(!!v)} />
+              <span className="text-sm">Habilitado</span>
+            </label>
+          )}
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button onClick={submit}>Salvar</Button>
+        <p className="text-center text-sm text-destructive">* Campo Obrigatório</p>
+        <DialogFooter className="sm:justify-center">
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={mut.isPending}>Cancelar</Button>
+          <Button onClick={() => mut.mutate()} disabled={mut.isPending}>
+            {mut.isPending && <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />}
+            {editing ? "SALVAR" : "CADASTRAR"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function CorDetailDialog({ cor, onOpenChange }: { cor: Cor | null; onOpenChange: (v: boolean) => void }) {
-  return (
-    <Dialog open={!!cor} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl bg-sky-100 dark:bg-sky-950/40">
-        <DialogHeader>
-          <DialogTitle className="text-primary">Detalhes da Cor</DialogTitle>
-        </DialogHeader>
-        {cor && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 text-sm">
-            <Row label="Código:" value={cor.codigo} />
-            <Row label="Tipo:" value={cor.tipo} />
-            <Row label="Cor:" value={cor.cor} className="md:col-span-2" />
-            <Row label="Tinturaria:" value="HUVISPAN TEXTIL" className="md:col-span-2" />
-            <Row label="Valor R$:" value={fmt(cor.valor)} />
-            <Row label="Valor Complementar R$:" value={fmt(cor.valorComplementar)} />
-            <Row label="Observação:" value="" className="md:col-span-2" />
-          </div>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function Row({ label, value, className = "" }: { label: string; value: string; className?: string }) {
-  return (
-    <div className={`grid grid-cols-[160px_1fr] gap-2 ${className}`}>
-      <span className="font-semibold text-primary">{label}</span>
-      <span className="text-foreground">{value}</span>
-    </div>
   );
 }

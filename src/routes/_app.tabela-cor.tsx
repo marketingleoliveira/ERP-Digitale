@@ -1,228 +1,275 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Download, Plus, Printer } from "lucide-react";
+import { FilePlus2, Loader2, Pencil, Printer, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_app/tabela-cor")({
   ssr: false,
-  component: TabelaCorPage,
+  component: TinturariasPage,
 });
 
-type Row = {
-  nome: string;
-  cnpj: string;
-  telefone: string;
-  contato: string;
-  clara: number;
-  media: number;
-  escura: number;
-  especial: number;
+type Tinturaria = {
+  id: string;
+  codigo: string;
+  nome_fantasia: string;
+  razao_social: string | null;
+  cnpj: string | null;
+  telefone: string | null;
+  contato: string | null;
+  habilitado: boolean;
 };
 
-const DATA: Row[] = [
-  { nome: "ACMC TEXTIL LTDA.", cnpj: "40.931.708/0001-80", telefone: "(11) 9169-9574", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "COFINA", cnpj: "51.685.667/0001-06", telefone: "(11) 40127-411", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "CONFECCOES ARUANDA", cnpj: "04.749.323/0001-33", telefone: "(13) 3278-5908", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "FERA AR COMPRIMIDO LTDA", cnpj: "33.090.595/0001-72", telefone: "(11) 2305-5137", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "FUTURIZE AUTOMACAO INDUSTRIAL LTDA", cnpj: "06.256.066/0001-23", telefone: "(48) 3438-2322", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "GIRACOR TEXTIL LTDA", cnpj: "07.598.373/0001-55", telefone: "(47) 3251-7800", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "HUVISPAN TEXTIL", cnpj: "05.810.004/0001-59", telefone: "(47) 2102-9900", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "IELA COMERCIO DE ROUPAS LTDA", cnpj: "02.184.046/0001-33", telefone: "(11) 3462-6949", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "KOHLER & CIA", cnpj: "82.982.307/0003-61", telefone: "(47) 33546-100", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "RIO DOS CEDROS", cnpj: "85.400.547/0001-37", telefone: "(47) 33861-029", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "SEIREN", cnpj: "43.651.066/0001-54", telefone: "(15) 32381-006", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "TDS", cnpj: "11.767.911/0001-65", telefone: "(11) 3815-7147", contato: "MARCELO", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "TEXTIL CRISTINA", cnpj: "09.571.292/0001-97", telefone: "(47) 33438-000", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "TINTURARIA WILLRICH", cnpj: "20.665.566/0001-40", telefone: "(47) 3354-0040", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "ULTRATEC", cnpj: "52.180.288/0001-27", telefone: "(19) 3455-1540/", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-  { nome: "UNITEX", cnpj: "45.455.194/0001-58", telefone: "(47) 9165-0675", contato: "", clara: 0, media: 0, escura: 0, especial: 0 },
-];
+const PAGE_SIZE = 20;
 
-const fmt = (n: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-function TabelaCorPage() {
-  const [nome, setNome] = useState("");
-  const [cnpj, setCnpj] = useState("");
-  const [values, setValues] = useState<Record<number, { clara: string; media: string; escura: string; especial: string }>>({});
-
-  const filtered = useMemo(() => {
-    return DATA.filter(
-      (r) =>
-        r.nome.toLowerCase().includes(nome.toLowerCase()) &&
-        r.cnpj.toLowerCase().includes(cnpj.toLowerCase()),
-    );
-  }, [nome, cnpj]);
-
-  const setVal = (i: number, key: "clara" | "media" | "escura" | "especial", v: string) => {
-    setValues((prev) => {
-      const base = prev[i] ?? { clara: "", media: "", escura: "", especial: "" };
-      return { ...prev, [i]: { ...base, [key]: v } };
-    });
+async function fetchTinturarias(): Promise<Tinturaria[]> {
+  const client = supabase as unknown as {
+    from: (t: string) => {
+      select: (c: string) => { order: (col: string, opts: { ascending: boolean }) => Promise<{ data: Tinturaria[] | null; error: Error | null }> };
+    };
   };
+  const { data, error } = await client
+    .from("tinturarias")
+    .select("id,codigo,nome_fantasia,razao_social,cnpj,telefone,contato,habilitado")
+    .order("nome_fantasia", { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
+
+function TinturariasPage() {
+  const qc = useQueryClient();
+  const { data = [], isLoading } = useQuery({ queryKey: ["tinturarias"], queryFn: fetchTinturarias });
+
+  const [filterNome, setFilterNome] = useState("");
+  const [filterCnpj, setFilterCnpj] = useState("");
+  const [appliedNome, setAppliedNome] = useState("");
+  const [appliedCnpj, setAppliedCnpj] = useState("");
+  const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editing, setEditing] = useState<Tinturaria | null>(null);
+
+  const filtered = useMemo(
+    () =>
+      data.filter(
+        (r) =>
+          r.nome_fantasia.toLowerCase().includes(appliedNome.toLowerCase()) &&
+          (r.cnpj ?? "").includes(appliedCnpj.trim()),
+      ),
+    [data, appliedNome, appliedCnpj],
+  );
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const selectedRow = data.find((r) => r.id === selected) ?? null;
+
+  const deleteMut = useMutation({
+    mutationFn: async (row: Tinturaria) => {
+      const client = supabase as unknown as { from: (t: string) => { delete: () => { eq: (c: string, v: string) => Promise<{ error: Error | null }> } } };
+      const { error } = await client.from("tinturarias").delete().eq("id", row.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Tinturaria excluída.");
+      setSelected(null);
+      qc.invalidateQueries({ queryKey: ["tinturarias"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <h1 className="text-xl font-semibold text-primary">🎨 Listagem Tinturarias</h1>
-        <div className="ml-auto flex gap-2">
-          <CadastroCorDialog />
-          <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1.5" />Excel</Button>
-          <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1.5" />PDF</Button>
-          <Button variant="outline" size="sm" onClick={() => window.print()}><Printer className="h-4 w-4 mr-1.5" />Imprimir</Button>
-        </div>
-      </div>
+      <h1 className="text-xl font-semibold text-primary">🎨 Listagem Tinturarias</h1>
 
       <Card className="overflow-hidden">
+        <div className="flex flex-wrap items-center justify-end gap-2 border-b border-border bg-muted/30 p-2">
+          <Button size="sm" variant="outline" onClick={() => { setEditing(null); setDialogOpen(true); }}>
+            <FilePlus2 className="h-4 w-4 mr-1.5" />CADASTRAR
+          </Button>
+          <Button size="sm" variant="outline" disabled={!selectedRow} onClick={() => { setEditing(selectedRow); setDialogOpen(true); }}>
+            <Pencil className="h-4 w-4 mr-1.5" />ALTERAR
+          </Button>
+          <Button size="sm" variant="outline" disabled={!selectedRow || deleteMut.isPending} onClick={() => selectedRow && deleteMut.mutate(selectedRow)}>
+            <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => window.print()}>
+            <Printer className="h-4 w-4 mr-1.5" />IMPRIMIR
+          </Button>
+        </div>
+
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-primary hover:bg-primary">
+                <TableHead className="w-10"></TableHead>
+                <TableHead className="text-primary-foreground font-semibold">Código</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Nome Fantasia</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">CNPJ/CPF</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Telefone</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Contato</TableHead>
-                <TableHead className="text-primary-foreground font-semibold text-right">Clara R$</TableHead>
-                <TableHead className="text-primary-foreground font-semibold text-right">Média R$</TableHead>
-                <TableHead className="text-primary-foreground font-semibold text-right">Escura R$</TableHead>
-                <TableHead className="text-primary-foreground font-semibold text-right">Especial R$</TableHead>
+                <TableHead className="text-primary-foreground font-semibold text-center w-14">Hab</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.length === 0 ? (
-                <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-10">Nenhum registro encontrado.</TableCell></TableRow>
-              ) : filtered.map((r, i) => {
-                const v = values[i] ?? { clara: "", media: "", escura: "", especial: "" };
-                return (
-                  <TableRow key={r.cnpj}>
-                    <TableCell><button className="text-primary hover:underline font-medium">{r.nome}</button></TableCell>
-                    <TableCell>{r.cnpj}</TableCell>
-                    <TableCell>{r.telefone}</TableCell>
-                    <TableCell>{r.contato}</TableCell>
-                    <TableCell className="text-right">
-                      <Input value={v.clara} onChange={(e) => setVal(i, "clara", e.target.value)} placeholder={fmt(r.clara)} className="h-8 text-right" />
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Input value={v.media} onChange={(e) => setVal(i, "media", e.target.value)} placeholder={fmt(r.media)} className="h-8 text-right" />
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Input value={v.escura} onChange={(e) => setVal(i, "escura", e.target.value)} placeholder={fmt(r.escura)} className="h-8 text-right" />
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Input value={v.especial} onChange={(e) => setVal(i, "especial", e.target.value)} placeholder={fmt(r.especial)} className="h-8 text-right" />
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+              {isLoading ? (
+                <TableRow><TableCell colSpan={7} className="text-center py-10"><Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" /></TableCell></TableRow>
+              ) : paged.length === 0 ? (
+                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-10">Nenhum registro encontrado.</TableCell></TableRow>
+              ) : paged.map((r) => (
+                <TableRow key={r.id}>
+                  <TableCell>
+                    <Checkbox checked={selected === r.id} onCheckedChange={(c) => setSelected(c ? r.id : null)} />
+                  </TableCell>
+                  <TableCell><span className="text-primary font-medium">{r.codigo}</span></TableCell>
+                  <TableCell>{r.nome_fantasia}</TableCell>
+                  <TableCell>{r.cnpj ?? "—"}</TableCell>
+                  <TableCell>{r.telefone ?? "—"}</TableCell>
+                  <TableCell>{r.contato ?? "—"}</TableCell>
+                  <TableCell className="text-center"><Checkbox checked={r.habilitado} disabled /></TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>
 
         <div className="border-t border-border p-3 bg-muted/30">
           <div className="flex flex-wrap items-center gap-4 text-sm">
-            <span className="text-muted-foreground">Página: 1 / 1</span>
-            <div className="flex items-center gap-2">
-              <span>Página:</span>
-              <select className="h-8 rounded border border-input bg-background px-2 text-sm">
-                <option>1</option>
-              </select>
+            <span className="text-muted-foreground">Página: {page} / {totalPages}</span>
+            <div className="mx-auto flex items-center gap-2">
+              <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>◀ ANTERIOR</Button>
+              <Button size="sm" variant="outline" disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>PRÓXIMO ▶</Button>
             </div>
             <span className="ml-auto text-muted-foreground">Total de Registros: {filtered.length}</span>
           </div>
           <div className="mt-3 flex flex-wrap items-end gap-3">
-            <div className="flex-1 min-w-[200px]">
-              <label className="text-xs text-muted-foreground">Nome/Razão:</label>
-              <Input value={nome} onChange={(e) => setNome(e.target.value)} className="h-9" />
+            <div className="flex-1 min-w-[240px]">
+              <Label className="text-xs text-muted-foreground">Nome/Razão:</Label>
+              <Input value={filterNome} onChange={(e) => setFilterNome(e.target.value)} className="h-9" maxLength={100} />
             </div>
-            <div className="flex-1 min-w-[200px]">
-              <label className="text-xs text-muted-foreground">CNPJ:</label>
-              <Input value={cnpj} onChange={(e) => setCnpj(e.target.value)} className="h-9" />
+            <div className="min-w-[200px]">
+              <Label className="text-xs text-muted-foreground">CNPJ:</Label>
+              <Input value={filterCnpj} onChange={(e) => setFilterCnpj(e.target.value)} className="h-9" maxLength={20} />
             </div>
-            <Button variant="secondary">FILTRAR</Button>
+            <Button variant="secondary" onClick={() => { setAppliedNome(filterNome); setAppliedCnpj(filterCnpj); setPage(1); }}>FILTRAR</Button>
           </div>
         </div>
       </Card>
+
+      <TinturariaDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        editing={editing}
+        onSaved={() => qc.invalidateQueries({ queryKey: ["tinturarias"] })}
+      />
     </div>
   );
 }
 
-function CadastroCorDialog() {
-  const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({
-    nome: "",
-    cnpj: "",
-    telefone: "",
-    contato: "",
-    clara: "",
-    media: "",
-    escura: "",
-    especial: "",
+function TinturariaDialog({
+  open, onOpenChange, editing, onSaved,
+}: {
+  open: boolean; onOpenChange: (v: boolean) => void; editing: Tinturaria | null; onSaved: () => void;
+}) {
+  const [codigo, setCodigo] = useState("");
+  const [nomeFantasia, setNomeFantasia] = useState("");
+  const [razaoSocial, setRazaoSocial] = useState("");
+  const [cnpj, setCnpj] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [contato, setContato] = useState("");
+  const [habilitado, setHabilitado] = useState(true);
+
+  useEffect(() => {
+    if (!open) return;
+    setCodigo(editing?.codigo ?? "");
+    setNomeFantasia(editing?.nome_fantasia ?? "");
+    setRazaoSocial(editing?.razao_social ?? "");
+    setCnpj(editing?.cnpj ?? "");
+    setTelefone(editing?.telefone ?? "");
+    setContato(editing?.contato ?? "");
+    setHabilitado(editing?.habilitado ?? true);
+  }, [open, editing]);
+
+  const mut = useMutation({
+    mutationFn: async () => {
+      if (!codigo.trim() || !nomeFantasia.trim()) throw new Error("Preencha Código e Nome Fantasia.");
+      const payload = {
+        codigo: codigo.trim(),
+        nome_fantasia: nomeFantasia.trim(),
+        razao_social: razaoSocial.trim() || null,
+        cnpj: cnpj.trim() || null,
+        telefone: telefone.trim() || null,
+        contato: contato.trim() || null,
+        habilitado,
+      };
+      const client = supabase as unknown as { from: (t: string) => { update: (p: unknown) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> }; insert: (p: unknown) => Promise<{ error: Error | null }> } };
+      if (editing) {
+        const { error } = await client.from("tinturarias").update(payload).eq("id", editing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await client.from("tinturarias").insert(payload);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      toast.success(editing ? "Tinturaria atualizada." : "Tinturaria cadastrada.");
+      onSaved();
+      onOpenChange(false);
+    },
+    onError: (e: Error) => toast.error(e.message),
   });
 
-  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
-    setForm((p) => ({ ...p, [k]: v }));
-
-  const submit = () => {
-    if (!form.nome.trim() || !form.cnpj.trim()) {
-      toast.error("Preencha Nome Fantasia e CNPJ/CPF.");
-      return;
-    }
-    toast.success(`Tinturaria "${form.nome}" cadastrada.`);
-    setOpen(false);
-    setForm({ nome: "", cnpj: "", telefone: "", contato: "", clara: "", media: "", escura: "", especial: "" });
-  };
-
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm"><Plus className="h-4 w-4 mr-1.5" />Nova Tinturaria</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle className="text-primary">🎨 Cadastro Tinturaria</DialogTitle>
+          <DialogTitle className="text-primary">🎨 {editing ? "Alterar" : "Cadastro"} Tinturaria</DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5 md:col-span-2">
-            <Label htmlFor="nome"><span className="text-destructive">*</span> Nome Fantasia:</Label>
-            <Input id="nome" value={form.nome} onChange={(e) => set("nome", e.target.value)} maxLength={120} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded bg-muted/50 p-5">
+          <div className="space-y-1.5">
+            <Label><span className="text-destructive">*</span> Código:</Label>
+            <Input value={codigo} onChange={(e) => setCodigo(e.target.value)} maxLength={20} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="cnpj"><span className="text-destructive">*</span> CNPJ/CPF:</Label>
-            <Input id="cnpj" value={form.cnpj} onChange={(e) => set("cnpj", e.target.value)} maxLength={20} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="telefone">Telefone:</Label>
-            <Input id="telefone" value={form.telefone} onChange={(e) => set("telefone", e.target.value)} maxLength={20} />
+            <Label>CNPJ/CPF:</Label>
+            <Input value={cnpj} onChange={(e) => setCnpj(e.target.value)} maxLength={20} />
           </div>
           <div className="space-y-1.5 md:col-span-2">
-            <Label htmlFor="contato">Contato:</Label>
-            <Input id="contato" value={form.contato} onChange={(e) => set("contato", e.target.value)} maxLength={80} />
+            <Label><span className="text-destructive">*</span> Nome Fantasia:</Label>
+            <Input value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} maxLength={120} />
+          </div>
+          <div className="space-y-1.5 md:col-span-2">
+            <Label>Razão Social:</Label>
+            <Input value={razaoSocial} onChange={(e) => setRazaoSocial(e.target.value)} maxLength={160} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="clara">Clara R$:</Label>
-            <Input id="clara" inputMode="decimal" value={form.clara} onChange={(e) => set("clara", e.target.value)} />
+            <Label>Telefone:</Label>
+            <Input value={telefone} onChange={(e) => setTelefone(e.target.value)} maxLength={30} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="media">Média R$:</Label>
-            <Input id="media" inputMode="decimal" value={form.media} onChange={(e) => set("media", e.target.value)} />
+            <Label>Contato:</Label>
+            <Input value={contato} onChange={(e) => setContato(e.target.value)} maxLength={80} />
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="escura">Escura R$:</Label>
-            <Input id="escura" inputMode="decimal" value={form.escura} onChange={(e) => set("escura", e.target.value)} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="especial">Especial R$:</Label>
-            <Input id="especial" inputMode="decimal" value={form.especial} onChange={(e) => set("especial", e.target.value)} />
-          </div>
+          {editing && (
+            <label className="flex items-center gap-2 md:col-span-2">
+              <Checkbox checked={habilitado} onCheckedChange={(v) => setHabilitado(!!v)} />
+              <span className="text-sm">Habilitado</span>
+            </label>
+          )}
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-          <Button onClick={submit}>Salvar</Button>
+        <p className="text-center text-sm text-destructive">* Campo Obrigatório</p>
+        <DialogFooter className="sm:justify-center">
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={mut.isPending}>Cancelar</Button>
+          <Button onClick={() => mut.mutate()} disabled={mut.isPending}>
+            {mut.isPending && <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />}
+            {editing ? "SALVAR" : "CADASTRAR"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -38,7 +38,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Rep. Meta R$", url: "/rep-meta", icon: Target, group: "Cadastros" },
   { title: "Clientes", url: "/clientes", icon: Users, group: "Cadastros" },
   { title: "Fornecedores", url: "/fornecedores", icon: Truck, group: "Cadastros" },
-  { title: "Representantes", url: "/representantes", icon: UserCheck, group: "Cadastros" },
+  { title: "Representantes (legado)", url: "/representantes", icon: UserCheck, group: "Cadastros", defaultHidden: true },
   { title: "Estoque", url: "/estoque", icon: Warehouse, group: "Operacional" },
   { title: "Compras", url: "/compras", icon: ShoppingCart, group: "Operacional" },
   { title: "Vendas", url: "/vendas", icon: Receipt, group: "Operacional" },
@@ -63,7 +63,7 @@ export const GROUP_ORDER = [
   "Administração",
 ];
 
-const STORAGE_KEY = "digitale.menu.visibility.v4";
+const STORAGE_KEY = "digitale.menu.visibility.v5";
 
 /** New/current items default visible; legacy items marked defaultHidden stay off. */
 function getDefaults(): Record<string, boolean> {

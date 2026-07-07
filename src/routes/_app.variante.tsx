@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FilePlus2, Loader2, Pencil } from "lucide-react";
+import { FilePlus2, Loader2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -53,6 +53,19 @@ function VariantePage() {
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const selectedRow = data.find((v) => v.id === selected) ?? null;
 
+  const deleteMut = useMutation({
+    mutationFn: async (row: Variante) => {
+      const { error } = await supabase.from("variantes").delete().eq("id", row.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Variante excluída.");
+      setSelected(null);
+      qc.invalidateQueries({ queryKey: ["variantes"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold text-primary">🌸 Listagem Variante</h1>
@@ -64,6 +77,9 @@ function VariantePage() {
           </Button>
           <Button size="sm" variant="outline" disabled={!selectedRow} onClick={() => { setEditing(selectedRow); setDialogOpen(true); }}>
             <Pencil className="h-4 w-4 mr-1.5" />ALTERAR
+          </Button>
+          <Button size="sm" variant="outline" disabled={!selectedRow || deleteMut.isPending} onClick={() => selectedRow && deleteMut.mutate(selectedRow)}>
+            <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR
           </Button>
         </div>
 
