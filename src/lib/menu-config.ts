@@ -65,6 +65,7 @@ export const GROUP_ORDER = [
   "Estoque",
   "Operacional",
   "Produção (PCP)",
+  "Fiscal",
   "Financeiro & Logística",
   "Administração",
   "DEV",
