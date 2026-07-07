@@ -15,6 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { emitirNFe } from "@/lib/nfe.functions";
 import { openDanfe, type DanfeData } from "@/lib/danfe";
+import { NfeEventosDrawer } from "@/components/fiscal/nfe-eventos-drawer";
 
 export type NF = {
   id: string; tipo: "saida" | "entrada" | "importacao"; numero: string; serie: string;
@@ -90,6 +91,7 @@ export function NotaFiscalList({ tipo, title, emoji }: { tipo: NF["tipo"]; title
                   <TableCell><Badge variant="outline" className="capitalize">{n.status}</Badge></TableCell>
                   <TableCell className="text-right space-x-1">
                     <NFActions nf={n} />
+                    <NfeEventosDrawer notaId={n.id} numero={n.numero} />
                     <Button size="sm" variant="ghost" onClick={() => { setEditingId(n.id); setOpen(true); }}><Pencil className="h-4 w-4" /></Button>
                     <Button size="sm" variant="ghost" onClick={() => del.mutate(n.id)}><Trash2 className="h-4 w-4" /></Button>
                   </TableCell>
