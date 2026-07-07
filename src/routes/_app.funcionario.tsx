@@ -350,5 +350,3 @@ function FuncionarioDialog({
     </Dialog>
   );
 }
-
-}
