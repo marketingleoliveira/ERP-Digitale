@@ -194,6 +194,7 @@ function TinturariaDialog({
   const [telefone, setTelefone] = useState("");
   const [contato, setContato] = useState("");
   const [habilitado, setHabilitado] = useState(true);
+  const [categoria, setCategoria] = useState<Categoria>("Tinturaria");
 
   useEffect(() => {
     if (!open) return;
@@ -204,6 +205,7 @@ function TinturariaDialog({
     setTelefone(editing?.telefone ?? "");
     setContato(editing?.contato ?? "");
     setHabilitado(editing?.habilitado ?? true);
+    setCategoria(editing?.categoria ?? "Tinturaria");
   }, [open, editing]);
 
   const mut = useMutation({
