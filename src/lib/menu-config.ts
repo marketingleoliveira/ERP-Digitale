@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import {
-  LayoutDashboard, Users, Truck, UserCheck, Package, Warehouse,
+  LayoutDashboard, Package, Warehouse,
   ShoppingCart, Receipt, Handshake, Wallet, Factory, Scissors,
   BadgeCheck, PackageCheck, FileText, ShieldCheck, Settings, Shirt,
   SlidersHorizontal,
+  Building2, FlaskConical, Spool, UserSquare2, Palette, Droplet,
+  Sparkles, Layers, Wrench, Syringe, Target,
   type LucideIcon,
 } from "lucide-react";
 
@@ -19,11 +21,19 @@ export type MenuItem = {
 /** Full catalog of available menus. Add new items here. */
 export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, group: "Visão Geral" },
-  { title: "Clientes", url: "/clientes", icon: Users, group: "Cadastros" },
-  { title: "Fornecedores", url: "/fornecedores", icon: Truck, group: "Cadastros" },
-  { title: "Representantes", url: "/representantes", icon: UserCheck, group: "Cadastros" },
-  { title: "Artigos", url: "/artigos", icon: Shirt, group: "Cadastros" },
-  { title: "Produtos (Insumos)", url: "/produtos", icon: Package, group: "Cadastros" },
+  { title: "Empresa", url: "/empresa", icon: Building2, group: "Cadastros" },
+  { title: "Composição", url: "/composicao", icon: FlaskConical, group: "Cadastros" },
+  { title: "Fio", url: "/fio", icon: Spool, group: "Cadastros" },
+  { title: "Artigo", url: "/artigos", icon: Shirt, group: "Cadastros" },
+  { title: "Cliente Artigo", url: "/cliente-artigo", icon: UserSquare2, group: "Cadastros" },
+  { title: "Tabela Cor", url: "/tabela-cor", icon: Palette, group: "Cadastros" },
+  { title: "Cor", url: "/cor", icon: Droplet, group: "Cadastros" },
+  { title: "Estampa", url: "/estampa", icon: Sparkles, group: "Cadastros" },
+  { title: "Variante", url: "/variante", icon: Layers, group: "Cadastros" },
+  { title: "Produto", url: "/produtos", icon: Package, group: "Cadastros" },
+  { title: "Máquina", url: "/maquina", icon: Wrench, group: "Cadastros" },
+  { title: "Agulha", url: "/agulha", icon: Syringe, group: "Cadastros" },
+  { title: "Rep. Meta R$", url: "/rep-meta", icon: Target, group: "Cadastros" },
   { title: "Estoque", url: "/estoque", icon: Warehouse, group: "Operacional" },
   { title: "Compras", url: "/compras", icon: ShoppingCart, group: "Operacional" },
   { title: "Vendas", url: "/vendas", icon: Receipt, group: "Operacional" },
