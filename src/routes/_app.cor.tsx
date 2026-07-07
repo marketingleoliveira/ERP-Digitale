@@ -127,7 +127,7 @@ function CorPage() {
               ) : paged.map((c) => (
                 <TableRow key={c.id}>
                   <TableCell>
-                    <Checkbox checked={selected === c.id} onCheckedChange={(v) => setSelected(v ? c.id : null)} />
+                    <Checkbox checked={sel.isSelected(c.id)} onCheckedChange={(v) => sel.toggleOne(c.id, !!v)} />
                   </TableCell>
                   <TableCell><span className="text-primary font-medium">{c.codigo}</span></TableCell>
                   <TableCell>{c.tipo}</TableCell>
