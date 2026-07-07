@@ -182,8 +182,118 @@ function InicioPage() {
   }, [rows, counts, now]);
 
 
+  const KPI_ICONS = [Users, Briefcase, Package, TrendingUp];
+  const PIE_COLORS = ["hsl(var(--primary))", "hsl(var(--muted-foreground))"];
+
   return (
     <div className="space-y-6">
+      {/* Dashboard KPIs */}
+      <section>
+        <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">
+          <TrendingUp className="h-4 w-4" />
+          Dashboard em Tempo Real
+          <span className="ml-2 inline-flex items-center gap-1 text-[10px] font-normal text-muted-foreground">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" /> live
+          </span>
+        </h2>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {chartData.kpis.map((k, i) => {
+            const Icon = KPI_ICONS[i];
+            return (
+              <div key={k.name} className="rounded-md border bg-card p-4 shadow-sm transition hover:shadow-md">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-muted-foreground">{k.name}</span>
+                  <Icon className="h-4 w-4 text-primary" />
+                </div>
+                <div className="mt-2 text-3xl font-semibold text-primary">{fmtInt(k.value)}</div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-3">
+          <div className="rounded-md border bg-card p-4 lg:col-span-2">
+            <h3 className="mb-2 text-xs font-semibold text-muted-foreground">Cadastros e Atividade — últimos 6 meses</h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData.monthly}>
+                  <defs>
+                    <linearGradient id="gNovos" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.5} />
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="gAtivos" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.5} />
+                      <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="mes" className="text-xs" stroke="hsl(var(--muted-foreground))" />
+                  <YAxis className="text-xs" stroke="hsl(var(--muted-foreground))" />
+                  <Tooltip
+                    contentStyle={{
+                      background: "hsl(var(--popover))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: 6,
+                      fontSize: 12,
+                    }}
+                  />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Area type="monotone" dataKey="novos" name="Novos" stroke="hsl(var(--primary))" fill="url(#gNovos)" />
+                  <Area type="monotone" dataKey="ativos" name="Ativos" stroke="hsl(var(--accent))" fill="url(#gAtivos)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="rounded-md border bg-card p-4">
+            <h3 className="mb-2 text-xs font-semibold text-muted-foreground">Status Clientes</h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={chartData.pie} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80} paddingAngle={3}>
+                    {chartData.pie.map((_, i) => (
+                      <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      background: "hsl(var(--popover))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: 6,
+                      fontSize: 12,
+                    }}
+                  />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="rounded-md border bg-card p-4 lg:col-span-3">
+            <h3 className="mb-2 text-xs font-semibold text-muted-foreground">Novos Clientes por Mês</h3>
+            <div className="h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData.monthly}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="mes" className="text-xs" stroke="hsl(var(--muted-foreground))" />
+                  <YAxis className="text-xs" stroke="hsl(var(--muted-foreground))" />
+                  <Tooltip
+                    contentStyle={{
+                      background: "hsl(var(--popover))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: 6,
+                      fontSize: 12,
+                    }}
+                  />
+                  <Bar dataKey="novos" name="Novos" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Resumo Vendas */}
       <section>
         <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">
