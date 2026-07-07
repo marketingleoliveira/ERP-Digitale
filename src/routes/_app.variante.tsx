@@ -89,7 +89,9 @@ function VariantePage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-primary hover:bg-primary">
-                <TableHead className="w-10"></TableHead>
+                <TableHead className="w-10 text-center">
+                  <Checkbox checked={sel.allSelected} onCheckedChange={(c) => sel.toggleAll(!!c)} aria-label="Selecionar todas" />
+                </TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Variante</TableHead>
                 <TableHead className="text-primary-foreground font-semibold text-center w-16">Hab</TableHead>
               </TableRow>
