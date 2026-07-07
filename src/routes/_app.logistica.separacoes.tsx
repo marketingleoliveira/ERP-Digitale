@@ -36,7 +36,7 @@ function Page() {
 
   const trans = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const patch: Record<string, unknown> = { status };
+      const patch: { status: string; iniciada_em?: string; finalizada_em?: string; conferida_em?: string } = { status };
       if (status === "em_separacao") patch.iniciada_em = new Date().toISOString();
       if (status === "separada") patch.finalizada_em = new Date().toISOString();
       if (status === "conferida") patch.conferida_em = new Date().toISOString();
