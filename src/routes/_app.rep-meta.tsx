@@ -52,6 +52,7 @@ function RepMetaPage() {
   const [appliedCnpj, setAppliedCnpj] = useState("");
   const [page, setPage] = useState(1);
   const [edits, setEdits] = useState<Record<string, string>>({});
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     const next: Record<string, string> = {};
