@@ -15,13 +15,16 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppVarianteRouteImport } from './routes/_app.variante'
 import { Route as AppUsuariosRouteImport } from './routes/_app.usuarios'
+import { Route as AppTimeLogRouteImport } from './routes/_app.time-log'
 import { Route as AppTabelaCorRouteImport } from './routes/_app.tabela-cor'
+import { Route as AppSenhaRouteImport } from './routes/_app.senha'
 import { Route as AppRepresentantesRouteImport } from './routes/_app.representantes'
 import { Route as AppRepMetaRouteImport } from './routes/_app.rep-meta'
 import { Route as AppProdutosRouteImport } from './routes/_app.produtos'
 import { Route as AppMenusRouteImport } from './routes/_app.menus'
 import { Route as AppMaquinaRouteImport } from './routes/_app.maquina'
 import { Route as AppInicioRouteImport } from './routes/_app.inicio'
+import { Route as AppFuncionarioRouteImport } from './routes/_app.funcionario'
 import { Route as AppFiscalRouteImport } from './routes/_app.fiscal'
 import { Route as AppFioRouteImport } from './routes/_app.fio'
 import { Route as AppEstampaRouteImport } from './routes/_app.estampa'
@@ -63,9 +66,19 @@ const AppUsuariosRoute = AppUsuariosRouteImport.update({
   path: '/usuarios',
   getParentRoute: () => AppRoute,
 } as any)
+const AppTimeLogRoute = AppTimeLogRouteImport.update({
+  id: '/time-log',
+  path: '/time-log',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTabelaCorRoute = AppTabelaCorRouteImport.update({
   id: '/tabela-cor',
   path: '/tabela-cor',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSenhaRoute = AppSenhaRouteImport.update({
+  id: '/senha',
+  path: '/senha',
   getParentRoute: () => AppRoute,
 } as any)
 const AppRepresentantesRoute = AppRepresentantesRouteImport.update({
@@ -96,6 +109,11 @@ const AppMaquinaRoute = AppMaquinaRouteImport.update({
 const AppInicioRoute = AppInicioRouteImport.update({
   id: '/inicio',
   path: '/inicio',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFuncionarioRoute = AppFuncionarioRouteImport.update({
+  id: '/funcionario',
+  path: '/funcionario',
   getParentRoute: () => AppRoute,
 } as any)
 const AppFiscalRoute = AppFiscalRouteImport.update({
@@ -168,13 +186,16 @@ export interface FileRoutesByFullPath {
   '/estampa': typeof AppEstampaRoute
   '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
+  '/funcionario': typeof AppFuncionarioRoute
   '/inicio': typeof AppInicioRoute
   '/maquina': typeof AppMaquinaRoute
   '/menus': typeof AppMenusRoute
   '/produtos': typeof AppProdutosRoute
   '/rep-meta': typeof AppRepMetaRoute
   '/representantes': typeof AppRepresentantesRoute
+  '/senha': typeof AppSenhaRoute
   '/tabela-cor': typeof AppTabelaCorRoute
+  '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
   '/dev/cargos': typeof AppDevCargosRoute
@@ -193,13 +214,16 @@ export interface FileRoutesByTo {
   '/estampa': typeof AppEstampaRoute
   '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
+  '/funcionario': typeof AppFuncionarioRoute
   '/inicio': typeof AppInicioRoute
   '/maquina': typeof AppMaquinaRoute
   '/menus': typeof AppMenusRoute
   '/produtos': typeof AppProdutosRoute
   '/rep-meta': typeof AppRepMetaRoute
   '/representantes': typeof AppRepresentantesRoute
+  '/senha': typeof AppSenhaRoute
   '/tabela-cor': typeof AppTabelaCorRoute
+  '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
   '/dev/cargos': typeof AppDevCargosRoute
@@ -220,13 +244,16 @@ export interface FileRoutesById {
   '/_app/estampa': typeof AppEstampaRoute
   '/_app/fio': typeof AppFioRoute
   '/_app/fiscal': typeof AppFiscalRoute
+  '/_app/funcionario': typeof AppFuncionarioRoute
   '/_app/inicio': typeof AppInicioRoute
   '/_app/maquina': typeof AppMaquinaRoute
   '/_app/menus': typeof AppMenusRoute
   '/_app/produtos': typeof AppProdutosRoute
   '/_app/rep-meta': typeof AppRepMetaRoute
   '/_app/representantes': typeof AppRepresentantesRoute
+  '/_app/senha': typeof AppSenhaRoute
   '/_app/tabela-cor': typeof AppTabelaCorRoute
+  '/_app/time-log': typeof AppTimeLogRoute
   '/_app/usuarios': typeof AppUsuariosRoute
   '/_app/variante': typeof AppVarianteRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
@@ -247,13 +274,16 @@ export interface FileRouteTypes {
     | '/estampa'
     | '/fio'
     | '/fiscal'
+    | '/funcionario'
     | '/inicio'
     | '/maquina'
     | '/menus'
     | '/produtos'
     | '/rep-meta'
     | '/representantes'
+    | '/senha'
     | '/tabela-cor'
+    | '/time-log'
     | '/usuarios'
     | '/variante'
     | '/dev/cargos'
@@ -272,13 +302,16 @@ export interface FileRouteTypes {
     | '/estampa'
     | '/fio'
     | '/fiscal'
+    | '/funcionario'
     | '/inicio'
     | '/maquina'
     | '/menus'
     | '/produtos'
     | '/rep-meta'
     | '/representantes'
+    | '/senha'
     | '/tabela-cor'
+    | '/time-log'
     | '/usuarios'
     | '/variante'
     | '/dev/cargos'
@@ -298,13 +331,16 @@ export interface FileRouteTypes {
     | '/_app/estampa'
     | '/_app/fio'
     | '/_app/fiscal'
+    | '/_app/funcionario'
     | '/_app/inicio'
     | '/_app/maquina'
     | '/_app/menus'
     | '/_app/produtos'
     | '/_app/rep-meta'
     | '/_app/representantes'
+    | '/_app/senha'
     | '/_app/tabela-cor'
+    | '/_app/time-log'
     | '/_app/usuarios'
     | '/_app/variante'
     | '/_app/dev/cargos'
@@ -361,11 +397,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppUsuariosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/time-log': {
+      id: '/_app/time-log'
+      path: '/time-log'
+      fullPath: '/time-log'
+      preLoaderRoute: typeof AppTimeLogRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/tabela-cor': {
       id: '/_app/tabela-cor'
       path: '/tabela-cor'
       fullPath: '/tabela-cor'
       preLoaderRoute: typeof AppTabelaCorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/senha': {
+      id: '/_app/senha'
+      path: '/senha'
+      fullPath: '/senha'
+      preLoaderRoute: typeof AppSenhaRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/representantes': {
@@ -408,6 +458,13 @@ declare module '@tanstack/react-router' {
       path: '/inicio'
       fullPath: '/inicio'
       preLoaderRoute: typeof AppInicioRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/funcionario': {
+      id: '/_app/funcionario'
+      path: '/funcionario'
+      fullPath: '/funcionario'
+      preLoaderRoute: typeof AppFuncionarioRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/fiscal': {
@@ -501,13 +558,16 @@ interface AppRouteChildren {
   AppEstampaRoute: typeof AppEstampaRoute
   AppFioRoute: typeof AppFioRoute
   AppFiscalRoute: typeof AppFiscalRoute
+  AppFuncionarioRoute: typeof AppFuncionarioRoute
   AppInicioRoute: typeof AppInicioRoute
   AppMaquinaRoute: typeof AppMaquinaRoute
   AppMenusRoute: typeof AppMenusRoute
   AppProdutosRoute: typeof AppProdutosRoute
   AppRepMetaRoute: typeof AppRepMetaRoute
   AppRepresentantesRoute: typeof AppRepresentantesRoute
+  AppSenhaRoute: typeof AppSenhaRoute
   AppTabelaCorRoute: typeof AppTabelaCorRoute
+  AppTimeLogRoute: typeof AppTimeLogRoute
   AppUsuariosRoute: typeof AppUsuariosRoute
   AppVarianteRoute: typeof AppVarianteRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
@@ -524,13 +584,16 @@ const AppRouteChildren: AppRouteChildren = {
   AppEstampaRoute: AppEstampaRoute,
   AppFioRoute: AppFioRoute,
   AppFiscalRoute: AppFiscalRoute,
+  AppFuncionarioRoute: AppFuncionarioRoute,
   AppInicioRoute: AppInicioRoute,
   AppMaquinaRoute: AppMaquinaRoute,
   AppMenusRoute: AppMenusRoute,
   AppProdutosRoute: AppProdutosRoute,
   AppRepMetaRoute: AppRepMetaRoute,
   AppRepresentantesRoute: AppRepresentantesRoute,
+  AppSenhaRoute: AppSenhaRoute,
   AppTabelaCorRoute: AppTabelaCorRoute,
+  AppTimeLogRoute: AppTimeLogRoute,
   AppUsuariosRoute: AppUsuariosRoute,
   AppVarianteRoute: AppVarianteRoute,
   AppDevCargosRoute: AppDevCargosRoute,

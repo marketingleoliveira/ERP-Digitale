@@ -6,6 +6,7 @@ import {
   SlidersHorizontal,
   Building2, FlaskConical, Spool, UserSquare2, Palette, Droplet,
   Sparkles, Layers, Wrench, Syringe, Target, Code2, Briefcase,
+  Server, IdCard, KeyRound, Clock,
   type LucideIcon,
 } from "lucide-react";
 
@@ -24,7 +25,11 @@ export type MenuItem = {
 /** Full catalog of available menus. Add new items here. */
 export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Início", url: "/inicio", icon: LayoutDashboard, group: "", locked: true },
-  { title: "Empresa", url: "/empresa", icon: Building2, group: "Cadastros" },
+  { title: "Empresa", url: "/empresa", icon: Building2, group: "Sistema" },
+  { title: "Funcionário", url: "/funcionario", icon: IdCard, group: "Sistema" },
+  { title: "Usuário", url: "/usuarios", icon: ShieldCheck, group: "Sistema" },
+  { title: "Senha", url: "/senha", icon: KeyRound, group: "Sistema" },
+  { title: "Time Log", url: "/time-log", icon: Clock, group: "Sistema" },
   { title: "Composição", url: "/composicao", icon: FlaskConical, group: "Cadastros" },
   { title: "Fio", url: "/fio", icon: Spool, group: "Cadastros" },
   { title: "Artigo", url: "/artigos", icon: Shirt, group: "Cadastros" },
@@ -39,13 +44,13 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Rep. Meta R$", url: "/rep-meta", icon: Target, group: "Cadastros" },
   { title: "Representantes (legado)", url: "/representantes", icon: UserCheck, group: "Cadastros", defaultHidden: true },
   { title: "Fiscal", url: "/fiscal", icon: FileText, group: "Financeiro & Logística", defaultHidden: true },
-  { title: "Usuários", url: "/usuarios", icon: ShieldCheck, group: "Administração", defaultHidden: true },
   { title: "Configurações", url: "/configuracoes", icon: Settings, group: "Administração", defaultHidden: true },
   { title: "Gerenciar Menus", url: "/menus", icon: SlidersHorizontal, group: "Administração", locked: true },
   { title: "Cargos", url: "/dev/cargos", icon: Briefcase, group: "DEV", locked: true },
 ];
 
 export const GROUP_ORDER = [
+  "Sistema",
   "Cadastros",
   "Operacional",
   "Produção (PCP)",
@@ -53,6 +58,7 @@ export const GROUP_ORDER = [
   "Administração",
   "DEV",
 ];
+
 
 
 const STORAGE_KEY = "digitale.menu.visibility.v9";
