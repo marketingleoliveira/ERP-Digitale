@@ -277,7 +277,7 @@ function MaquinaDialog({
         </DialogHeader>
         <div className="rounded bg-muted/50 p-5 space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-            <Row label="Número" required>
+            <Row label="Código" required>
               <Input value={numero} onChange={(e) => setNumero(e.target.value)} className="max-w-[160px]" />
             </Row>
             <Row label="Tipo" required>
@@ -293,7 +293,9 @@ function MaquinaDialog({
             <Row label="Máquina" required>
               <Input value={maquina} onChange={(e) => setMaquina(e.target.value)} maxLength={100} />
             </Row>
-            <div />
+            <Row label="Data Fabricação">
+              <Input type="date" value={dataFab} onChange={(e) => setDataFab(e.target.value)} className="max-w-[200px]" />
+            </Row>
             <Row label="Modelo">
               <Input value={modelo} onChange={(e) => setModelo(e.target.value)} maxLength={100} />
             </Row>
@@ -312,68 +314,36 @@ function MaquinaDialog({
             <Row label="Produção Média">
               <Input value={prodMedia} onChange={(e) => setProdMedia(e.target.value)} className="max-w-[160px]" />
             </Row>
-            <Row label="Fio">
-              <select
-                value={fioId}
-                onChange={(e) => setFioId(e.target.value)}
-                className="h-9 w-full max-w-[320px] rounded border border-input bg-background px-2 text-sm"
-              >
-                <option value="">[SELECIONE]</option>
-                {fiosOptions.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.codigo}{f.composicao ? ` — ${f.composicao}` : ""}
-                  </option>
-                ))}
-              </select>
-            </Row>
           </div>
 
 
           <div className="pt-3">
-            <h3 className="text-center text-destructive font-semibold mb-3">CARGA AGULHAS</h3>
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_180px_auto] gap-3 items-end">
-              <div>
-                <Label className="text-sm"><span className="text-destructive mr-1">*</span>Agulha:</Label>
-                <select
-                  value={agulha}
-                  onChange={(e) => setAgulha(e.target.value)}
-                  className="h-9 w-full rounded border border-input bg-background px-2 text-sm"
-                >
-                  <option value="">[SELECIONE]</option>
-                  {agulhasOptions.map((a) => <option key={a} value={a}>{a}</option>)}
-                </select>
-              </div>
-              <div>
-                <Label className="text-sm"><span className="text-destructive mr-1">*</span>Quantidade:</Label>
-                <Input value={qtd} onChange={(e) => setQtd(e.target.value)} />
-              </div>
-              <Button type="button" variant="secondary" onClick={addCarga}>INSERIR</Button>
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <h3 className="text-center text-destructive font-semibold">CORREIAS</h3>
+              <Button type="button" size="sm" variant="secondary" onClick={addCorreiaRow}>
+                + ADICIONAR CORREIA
+              </Button>
             </div>
-            <div className="mt-3 overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted-foreground/70 hover:bg-muted-foreground/70">
-                    <TableHead className="text-white">Agulha</TableHead>
-                    <TableHead className="text-white text-right w-32">Quantidade</TableHead>
-                    <TableHead className="text-white text-center w-24">Remover</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {carga.length === 0 ? (
-                    <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-4">Nenhum item.</TableCell></TableRow>
-                  ) : carga.map((c, i) => (
-                    <TableRow key={i}>
-                      <TableCell>{c.agulha}</TableCell>
-                      <TableCell className="text-right">{c.quantidade}</TableCell>
-                      <TableCell className="text-center">
-                        <Button size="icon" variant="ghost" onClick={() => setCarga((p) => p.filter((_, k) => k !== i))}>
-                          <X className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            <div className="space-y-2">
+              {correias.map((c, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <Input
+                    value={c}
+                    onChange={(e) => updateCorreia(i, e.target.value)}
+                    placeholder={`Correia ${i + 1}`}
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => removeCorreia(i)}
+                    disabled={correias.length === 1 && !c}
+                  >
+                    <X className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+              ))}
             </div>
           </div>
 
