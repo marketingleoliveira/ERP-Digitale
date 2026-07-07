@@ -751,34 +751,6 @@ function ArtigoDialog({
           </table>
         </div>
 
-        {/* VALORES */}
-        <h3 className="mt-3 text-center text-sm font-semibold text-destructive">VALORES</h3>
-        <div className="grid gap-3 md:grid-cols-4">
-          <div>
-            <Label className={lbl}>R$ Malharia</Label>
-            <Input className={inp} type="number" step="0.01" value={form.r_malharia ?? ""} onChange={(e) => set("r_malharia", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>R$ Malharia Comp.</Label>
-            <Input className={inp} type="number" step="0.01" value={form.r_malharia_compl ?? ""} onChange={(e) => set("r_malharia_compl", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>R$ Custo</Label>
-            <Input className={inp} type="number" step="0.01" value={form.r_custo ?? ""} onChange={(e) => set("r_custo", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>% Lucro</Label>
-            <Input className={inp} type="number" step="0.01" value={form.r_lucro ?? ""} onChange={(e) => set("r_lucro", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>R$ Venda Kg</Label>
-            <Input className={inp} type="number" step="0.01" value={form.r_venda ?? ""} onChange={(e) => set("r_venda", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-          <div>
-            <Label className={lbl}>R$ Venda Metros</Label>
-            <Input className={inp} type="number" step="0.01" value={form.r_venda_metros ?? ""} onChange={(e) => set("r_venda_metros", e.target.value === "" ? null : Number(e.target.value))} />
-          </div>
-        </div>
 
         {/* INSTRUÇÕES DE LAVAGEM */}
         <h3 className="mt-3 text-center text-sm font-semibold text-destructive">INSTRUÇÕES DE LAVAGEM</h3>
@@ -937,9 +909,7 @@ function ArtigoDetailDialog({ id, onOpenChange }: { id: string | null; onOpenCha
                 <Row label="Finura:" value={fmt(art.finura, 0)} />
                 <Row label="Disposição Agulhas:" value={art.disposicao_agulhas} />
                 <Row label="Nº Voltas:" value={fmt(art.n_voltas, 0)} />
-                <Row label="R$ Malharia:" value={fmt(art.r_malharia)} />
-                <Row label="R$ Custo:" value={fmt(art.r_custo)} />
-                <Row label="R$ Venda:" value={fmt(art.r_venda)} />
+
               </div>
               <div>
                 <Row label="Tipo:" value={art.tipo} />
@@ -953,8 +923,8 @@ function ArtigoDetailDialog({ id, onOpenChange }: { id: string | null; onOpenCha
                 <Row label="Diametro:" value={fmt(art.diametro, 0)} />
                 <Row label="Nº Alimentadores:" value={fmt(art.n_alimentadores, 0)} />
                 <Row label="RPM:" value={fmt(art.rpm, 0)} />
-                <Row label="R$ Malharia Compl.:" value={fmt(art.r_malharia_compl)} />
-                <Row label="R$ Venda Metros:" value={fmt(art.r_venda_metros)} />
+
+
               </div>
             </div>
 
