@@ -39,6 +39,7 @@ import { Route as AppClienteArtigoRouteImport } from './routes/_app.cliente-arti
 import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
 import { Route as AppAgulhaRouteImport } from './routes/_app.agulha'
 import { Route as AppFiscalUfIcmsRouteImport } from './routes/_app.fiscal.uf-icms'
+import { Route as AppFiscalRNotaFiscalRouteImport } from './routes/_app.fiscal.r-nota-fiscal'
 import { Route as AppFiscalNotaFiscalImportacaoRouteImport } from './routes/_app.fiscal.nota-fiscal-importacao'
 import { Route as AppFiscalNotaFiscalRouteImport } from './routes/_app.fiscal.nota-fiscal'
 import { Route as AppFiscalImpostosRouteImport } from './routes/_app.fiscal.impostos'
@@ -194,6 +195,11 @@ const AppFiscalUfIcmsRoute = AppFiscalUfIcmsRouteImport.update({
   path: '/fiscal/uf-icms',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFiscalRNotaFiscalRoute = AppFiscalRNotaFiscalRouteImport.update({
+  id: '/fiscal/r-nota-fiscal',
+  path: '/fiscal/r-nota-fiscal',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFiscalNotaFiscalImportacaoRoute =
   AppFiscalNotaFiscalImportacaoRouteImport.update({
     id: '/fiscal/nota-fiscal-importacao',
@@ -255,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/fiscal/impostos': typeof AppFiscalImpostosRoute
   '/fiscal/nota-fiscal': typeof AppFiscalNotaFiscalRoute
   '/fiscal/nota-fiscal-importacao': typeof AppFiscalNotaFiscalImportacaoRoute
+  '/fiscal/r-nota-fiscal': typeof AppFiscalRNotaFiscalRoute
   '/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
 }
 export interface FileRoutesByTo {
@@ -291,6 +298,7 @@ export interface FileRoutesByTo {
   '/fiscal/impostos': typeof AppFiscalImpostosRoute
   '/fiscal/nota-fiscal': typeof AppFiscalNotaFiscalRoute
   '/fiscal/nota-fiscal-importacao': typeof AppFiscalNotaFiscalImportacaoRoute
+  '/fiscal/r-nota-fiscal': typeof AppFiscalRNotaFiscalRoute
   '/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
 }
 export interface FileRoutesById {
@@ -329,6 +337,7 @@ export interface FileRoutesById {
   '/_app/fiscal/impostos': typeof AppFiscalImpostosRoute
   '/_app/fiscal/nota-fiscal': typeof AppFiscalNotaFiscalRoute
   '/_app/fiscal/nota-fiscal-importacao': typeof AppFiscalNotaFiscalImportacaoRoute
+  '/_app/fiscal/r-nota-fiscal': typeof AppFiscalRNotaFiscalRoute
   '/_app/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
 }
 export interface FileRouteTypes {
@@ -367,6 +376,7 @@ export interface FileRouteTypes {
     | '/fiscal/impostos'
     | '/fiscal/nota-fiscal'
     | '/fiscal/nota-fiscal-importacao'
+    | '/fiscal/r-nota-fiscal'
     | '/fiscal/uf-icms'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -403,6 +413,7 @@ export interface FileRouteTypes {
     | '/fiscal/impostos'
     | '/fiscal/nota-fiscal'
     | '/fiscal/nota-fiscal-importacao'
+    | '/fiscal/r-nota-fiscal'
     | '/fiscal/uf-icms'
   id:
     | '__root__'
@@ -440,6 +451,7 @@ export interface FileRouteTypes {
     | '/_app/fiscal/impostos'
     | '/_app/fiscal/nota-fiscal'
     | '/_app/fiscal/nota-fiscal-importacao'
+    | '/_app/fiscal/r-nota-fiscal'
     | '/_app/fiscal/uf-icms'
   fileRoutesById: FileRoutesById
 }
@@ -662,6 +674,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFiscalUfIcmsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/fiscal/r-nota-fiscal': {
+      id: '/_app/fiscal/r-nota-fiscal'
+      path: '/fiscal/r-nota-fiscal'
+      fullPath: '/fiscal/r-nota-fiscal'
+      preLoaderRoute: typeof AppFiscalRNotaFiscalRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/fiscal/nota-fiscal-importacao': {
       id: '/_app/fiscal/nota-fiscal-importacao'
       path: '/fiscal/nota-fiscal-importacao'
@@ -731,6 +750,7 @@ interface AppRouteChildren {
   AppFiscalImpostosRoute: typeof AppFiscalImpostosRoute
   AppFiscalNotaFiscalRoute: typeof AppFiscalNotaFiscalRoute
   AppFiscalNotaFiscalImportacaoRoute: typeof AppFiscalNotaFiscalImportacaoRoute
+  AppFiscalRNotaFiscalRoute: typeof AppFiscalRNotaFiscalRoute
   AppFiscalUfIcmsRoute: typeof AppFiscalUfIcmsRoute
 }
 
@@ -765,6 +785,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFiscalImpostosRoute: AppFiscalImpostosRoute,
   AppFiscalNotaFiscalRoute: AppFiscalNotaFiscalRoute,
   AppFiscalNotaFiscalImportacaoRoute: AppFiscalNotaFiscalImportacaoRoute,
+  AppFiscalRNotaFiscalRoute: AppFiscalRNotaFiscalRoute,
   AppFiscalUfIcmsRoute: AppFiscalUfIcmsRoute,
 }
 
