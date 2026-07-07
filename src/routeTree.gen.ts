@@ -39,6 +39,7 @@ import { Route as AppClienteArtigoRouteImport } from './routes/_app.cliente-arti
 import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
 import { Route as AppAgulhaRouteImport } from './routes/_app.agulha'
 import { Route as AppFiscalUfIcmsRouteImport } from './routes/_app.fiscal.uf-icms'
+import { Route as AppFiscalImpostosRouteImport } from './routes/_app.fiscal.impostos'
 import { Route as AppFiscalCfopRouteImport } from './routes/_app.fiscal.cfop'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 
@@ -191,6 +192,11 @@ const AppFiscalUfIcmsRoute = AppFiscalUfIcmsRouteImport.update({
   path: '/fiscal/uf-icms',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFiscalImpostosRoute = AppFiscalImpostosRouteImport.update({
+  id: '/fiscal/impostos',
+  path: '/fiscal/impostos',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFiscalCfopRoute = AppFiscalCfopRouteImport.update({
   id: '/fiscal/cfop',
   path: '/fiscal/cfop',
@@ -233,6 +239,7 @@ export interface FileRoutesByFullPath {
   '/variante': typeof AppVarianteRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/fiscal/cfop': typeof AppFiscalCfopRoute
+  '/fiscal/impostos': typeof AppFiscalImpostosRoute
   '/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
 }
 export interface FileRoutesByTo {
@@ -266,6 +273,7 @@ export interface FileRoutesByTo {
   '/variante': typeof AppVarianteRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/fiscal/cfop': typeof AppFiscalCfopRoute
+  '/fiscal/impostos': typeof AppFiscalImpostosRoute
   '/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
 }
 export interface FileRoutesById {
@@ -301,6 +309,7 @@ export interface FileRoutesById {
   '/_app/variante': typeof AppVarianteRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
   '/_app/fiscal/cfop': typeof AppFiscalCfopRoute
+  '/_app/fiscal/impostos': typeof AppFiscalImpostosRoute
   '/_app/fiscal/uf-icms': typeof AppFiscalUfIcmsRoute
 }
 export interface FileRouteTypes {
@@ -336,6 +345,7 @@ export interface FileRouteTypes {
     | '/variante'
     | '/dev/cargos'
     | '/fiscal/cfop'
+    | '/fiscal/impostos'
     | '/fiscal/uf-icms'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -369,6 +379,7 @@ export interface FileRouteTypes {
     | '/variante'
     | '/dev/cargos'
     | '/fiscal/cfop'
+    | '/fiscal/impostos'
     | '/fiscal/uf-icms'
   id:
     | '__root__'
@@ -403,6 +414,7 @@ export interface FileRouteTypes {
     | '/_app/variante'
     | '/_app/dev/cargos'
     | '/_app/fiscal/cfop'
+    | '/_app/fiscal/impostos'
     | '/_app/fiscal/uf-icms'
   fileRoutesById: FileRoutesById
 }
@@ -625,6 +637,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFiscalUfIcmsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/fiscal/impostos': {
+      id: '/_app/fiscal/impostos'
+      path: '/fiscal/impostos'
+      fullPath: '/fiscal/impostos'
+      preLoaderRoute: typeof AppFiscalImpostosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/fiscal/cfop': {
       id: '/_app/fiscal/cfop'
       path: '/fiscal/cfop'
@@ -670,6 +689,7 @@ interface AppRouteChildren {
   AppVarianteRoute: typeof AppVarianteRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
   AppFiscalCfopRoute: typeof AppFiscalCfopRoute
+  AppFiscalImpostosRoute: typeof AppFiscalImpostosRoute
   AppFiscalUfIcmsRoute: typeof AppFiscalUfIcmsRoute
 }
 
@@ -701,6 +721,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppVarianteRoute: AppVarianteRoute,
   AppDevCargosRoute: AppDevCargosRoute,
   AppFiscalCfopRoute: AppFiscalCfopRoute,
+  AppFiscalImpostosRoute: AppFiscalImpostosRoute,
   AppFiscalUfIcmsRoute: AppFiscalUfIcmsRoute,
 }
 
