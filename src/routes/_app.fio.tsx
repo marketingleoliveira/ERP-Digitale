@@ -67,7 +67,7 @@ function FioPage() {
     queryKey: ["fios"],
     queryFn: async () => {
       const { data, error } = await (supabase.from("fios" as any) as any)
-        .select("id, codigo, ncm, tipo, titulo, n_filamentos, n_cabos, composicao, habilitado")
+        .select("id, codigo, ncm, tipo, titulo, n_filamentos, n_cabos, composicao, composicao_id, cest, origem, quebra_percent, custo, cor, habilitado")
         .order("titulo", { ascending: true, nullsFirst: true })
         .order("codigo", { ascending: true });
       if (error) throw error;
