@@ -22,7 +22,6 @@ import { Route as AppProdutosRouteImport } from './routes/_app.produtos'
 import { Route as AppMenusRouteImport } from './routes/_app.menus'
 import { Route as AppMaquinaRouteImport } from './routes/_app.maquina'
 import { Route as AppInicioRouteImport } from './routes/_app.inicio'
-import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
 import { Route as AppFiscalRouteImport } from './routes/_app.fiscal'
 import { Route as AppFioRouteImport } from './routes/_app.fio'
 import { Route as AppEstampaRouteImport } from './routes/_app.estampa'
@@ -30,7 +29,6 @@ import { Route as AppEmpresaRouteImport } from './routes/_app.empresa'
 import { Route as AppCorRouteImport } from './routes/_app.cor'
 import { Route as AppConfiguracoesRouteImport } from './routes/_app.configuracoes'
 import { Route as AppComposicaoRouteImport } from './routes/_app.composicao'
-import { Route as AppClientesRouteImport } from './routes/_app.clientes'
 import { Route as AppClienteArtigoRouteImport } from './routes/_app.cliente-artigo'
 import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
 import { Route as AppAgulhaRouteImport } from './routes/_app.agulha'
@@ -99,11 +97,6 @@ const AppInicioRoute = AppInicioRouteImport.update({
   path: '/inicio',
   getParentRoute: () => AppRoute,
 } as any)
-const AppFornecedoresRoute = AppFornecedoresRouteImport.update({
-  id: '/fornecedores',
-  path: '/fornecedores',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppFiscalRoute = AppFiscalRouteImport.update({
   id: '/fiscal',
   path: '/fiscal',
@@ -139,11 +132,6 @@ const AppComposicaoRoute = AppComposicaoRouteImport.update({
   path: '/composicao',
   getParentRoute: () => AppRoute,
 } as any)
-const AppClientesRoute = AppClientesRouteImport.update({
-  id: '/clientes',
-  path: '/clientes',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppClienteArtigoRoute = AppClienteArtigoRouteImport.update({
   id: '/cliente-artigo',
   path: '/cliente-artigo',
@@ -167,7 +155,6 @@ export interface FileRoutesByFullPath {
   '/agulha': typeof AppAgulhaRoute
   '/artigos': typeof AppArtigosRoute
   '/cliente-artigo': typeof AppClienteArtigoRoute
-  '/clientes': typeof AppClientesRoute
   '/composicao': typeof AppComposicaoRoute
   '/configuracoes': typeof AppConfiguracoesRoute
   '/cor': typeof AppCorRoute
@@ -175,7 +162,6 @@ export interface FileRoutesByFullPath {
   '/estampa': typeof AppEstampaRoute
   '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
-  '/fornecedores': typeof AppFornecedoresRoute
   '/inicio': typeof AppInicioRoute
   '/maquina': typeof AppMaquinaRoute
   '/menus': typeof AppMenusRoute
@@ -193,7 +179,6 @@ export interface FileRoutesByTo {
   '/agulha': typeof AppAgulhaRoute
   '/artigos': typeof AppArtigosRoute
   '/cliente-artigo': typeof AppClienteArtigoRoute
-  '/clientes': typeof AppClientesRoute
   '/composicao': typeof AppComposicaoRoute
   '/configuracoes': typeof AppConfiguracoesRoute
   '/cor': typeof AppCorRoute
@@ -201,7 +186,6 @@ export interface FileRoutesByTo {
   '/estampa': typeof AppEstampaRoute
   '/fio': typeof AppFioRoute
   '/fiscal': typeof AppFiscalRoute
-  '/fornecedores': typeof AppFornecedoresRoute
   '/inicio': typeof AppInicioRoute
   '/maquina': typeof AppMaquinaRoute
   '/menus': typeof AppMenusRoute
@@ -221,7 +205,6 @@ export interface FileRoutesById {
   '/_app/agulha': typeof AppAgulhaRoute
   '/_app/artigos': typeof AppArtigosRoute
   '/_app/cliente-artigo': typeof AppClienteArtigoRoute
-  '/_app/clientes': typeof AppClientesRoute
   '/_app/composicao': typeof AppComposicaoRoute
   '/_app/configuracoes': typeof AppConfiguracoesRoute
   '/_app/cor': typeof AppCorRoute
@@ -229,7 +212,6 @@ export interface FileRoutesById {
   '/_app/estampa': typeof AppEstampaRoute
   '/_app/fio': typeof AppFioRoute
   '/_app/fiscal': typeof AppFiscalRoute
-  '/_app/fornecedores': typeof AppFornecedoresRoute
   '/_app/inicio': typeof AppInicioRoute
   '/_app/maquina': typeof AppMaquinaRoute
   '/_app/menus': typeof AppMenusRoute
@@ -249,7 +231,6 @@ export interface FileRouteTypes {
     | '/agulha'
     | '/artigos'
     | '/cliente-artigo'
-    | '/clientes'
     | '/composicao'
     | '/configuracoes'
     | '/cor'
@@ -257,7 +238,6 @@ export interface FileRouteTypes {
     | '/estampa'
     | '/fio'
     | '/fiscal'
-    | '/fornecedores'
     | '/inicio'
     | '/maquina'
     | '/menus'
@@ -275,7 +255,6 @@ export interface FileRouteTypes {
     | '/agulha'
     | '/artigos'
     | '/cliente-artigo'
-    | '/clientes'
     | '/composicao'
     | '/configuracoes'
     | '/cor'
@@ -283,7 +262,6 @@ export interface FileRouteTypes {
     | '/estampa'
     | '/fio'
     | '/fiscal'
-    | '/fornecedores'
     | '/inicio'
     | '/maquina'
     | '/menus'
@@ -302,7 +280,6 @@ export interface FileRouteTypes {
     | '/_app/agulha'
     | '/_app/artigos'
     | '/_app/cliente-artigo'
-    | '/_app/clientes'
     | '/_app/composicao'
     | '/_app/configuracoes'
     | '/_app/cor'
@@ -310,7 +287,6 @@ export interface FileRouteTypes {
     | '/_app/estampa'
     | '/_app/fio'
     | '/_app/fiscal'
-    | '/_app/fornecedores'
     | '/_app/inicio'
     | '/_app/maquina'
     | '/_app/menus'
@@ -422,13 +398,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInicioRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/fornecedores': {
-      id: '/_app/fornecedores'
-      path: '/fornecedores'
-      fullPath: '/fornecedores'
-      preLoaderRoute: typeof AppFornecedoresRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/fiscal': {
       id: '/_app/fiscal'
       path: '/fiscal'
@@ -478,13 +447,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppComposicaoRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/clientes': {
-      id: '/_app/clientes'
-      path: '/clientes'
-      fullPath: '/clientes'
-      preLoaderRoute: typeof AppClientesRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/cliente-artigo': {
       id: '/_app/cliente-artigo'
       path: '/cliente-artigo'
@@ -513,7 +475,6 @@ interface AppRouteChildren {
   AppAgulhaRoute: typeof AppAgulhaRoute
   AppArtigosRoute: typeof AppArtigosRoute
   AppClienteArtigoRoute: typeof AppClienteArtigoRoute
-  AppClientesRoute: typeof AppClientesRoute
   AppComposicaoRoute: typeof AppComposicaoRoute
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppCorRoute: typeof AppCorRoute
@@ -521,7 +482,6 @@ interface AppRouteChildren {
   AppEstampaRoute: typeof AppEstampaRoute
   AppFioRoute: typeof AppFioRoute
   AppFiscalRoute: typeof AppFiscalRoute
-  AppFornecedoresRoute: typeof AppFornecedoresRoute
   AppInicioRoute: typeof AppInicioRoute
   AppMaquinaRoute: typeof AppMaquinaRoute
   AppMenusRoute: typeof AppMenusRoute
@@ -537,7 +497,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppAgulhaRoute: AppAgulhaRoute,
   AppArtigosRoute: AppArtigosRoute,
   AppClienteArtigoRoute: AppClienteArtigoRoute,
-  AppClientesRoute: AppClientesRoute,
   AppComposicaoRoute: AppComposicaoRoute,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppCorRoute: AppCorRoute,
@@ -545,7 +504,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppEstampaRoute: AppEstampaRoute,
   AppFioRoute: AppFioRoute,
   AppFiscalRoute: AppFiscalRoute,
-  AppFornecedoresRoute: AppFornecedoresRoute,
   AppInicioRoute: AppInicioRoute,
   AppMaquinaRoute: AppMaquinaRoute,
   AppMenusRoute: AppMenusRoute,

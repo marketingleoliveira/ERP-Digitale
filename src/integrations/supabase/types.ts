@@ -880,60 +880,6 @@ export type Database = {
         }
         Relationships: []
       }
-      suppliers: {
-        Row: {
-          categoria: string | null
-          cep: string | null
-          cidade: string | null
-          cnpj: string | null
-          contato_principal: string | null
-          created_at: string
-          email: string | null
-          endereco: string | null
-          id: string
-          nome_fantasia: string | null
-          razao_social: string
-          status: string
-          telefone: string | null
-          uf: string | null
-          updated_at: string
-        }
-        Insert: {
-          categoria?: string | null
-          cep?: string | null
-          cidade?: string | null
-          cnpj?: string | null
-          contato_principal?: string | null
-          created_at?: string
-          email?: string | null
-          endereco?: string | null
-          id?: string
-          nome_fantasia?: string | null
-          razao_social: string
-          status?: string
-          telefone?: string | null
-          uf?: string | null
-          updated_at?: string
-        }
-        Update: {
-          categoria?: string | null
-          cep?: string | null
-          cidade?: string | null
-          cnpj?: string | null
-          contato_principal?: string | null
-          created_at?: string
-          email?: string | null
-          endereco?: string | null
-          id?: string
-          nome_fantasia?: string | null
-          razao_social?: string
-          status?: string
-          telefone?: string | null
-          uf?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
       tinturarias: {
         Row: {
           cnpj: string | null
