@@ -41,6 +41,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Produto", url: "/produtos", icon: Package, group: "Cadastros" },
   { title: "Máquina", url: "/maquina", icon: Wrench, group: "Cadastros" },
   { title: "Agulha", url: "/agulha", icon: Syringe, group: "Cadastros" },
+  { title: "Correias", url: "/correia", icon: Wrench, group: "Cadastros" },
   { title: "Rep. Meta R$", url: "/rep-meta", icon: Target, group: "Cadastros" },
   { title: "Representantes (legado)", url: "/representantes", icon: UserCheck, group: "Cadastros", defaultHidden: true },
   { title: "Fiscal", url: "/fiscal", icon: FileText, group: "Financeiro & Logística", defaultHidden: true },
