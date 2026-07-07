@@ -176,6 +176,9 @@ function NFActions({ nf }: { nf: NF }) {
       </Button>
     </>
   );
+}
+
+
 
 /* =============== Dialog completo =============== */
 
