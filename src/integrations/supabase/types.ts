@@ -2997,6 +2997,51 @@ export type Database = {
         }
         Relationships: []
       }
+      uf_aliquotas: {
+        Row: {
+          ativo: boolean
+          codigo: string
+          created_at: string
+          fundo_pobreza_pct: number
+          icms_interestadual_pct: number
+          icms_interno_pct: number
+          icms_pct: number
+          icms_st_pct: number
+          id: string
+          sigla: string
+          uf: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          codigo: string
+          created_at?: string
+          fundo_pobreza_pct?: number
+          icms_interestadual_pct?: number
+          icms_interno_pct?: number
+          icms_pct?: number
+          icms_st_pct?: number
+          id?: string
+          sigla: string
+          uf: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          codigo?: string
+          created_at?: string
+          fundo_pobreza_pct?: number
+          icms_interestadual_pct?: number
+          icms_interno_pct?: number
+          icms_pct?: number
+          icms_st_pct?: number
+          id?: string
+          sigla?: string
+          uf?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       uf_icms: {
         Row: {
           aliquota: number
