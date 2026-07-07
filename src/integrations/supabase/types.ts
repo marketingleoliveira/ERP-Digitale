@@ -442,6 +442,62 @@ export type Database = {
         }
         Relationships: []
       }
+      certificados_digitais: {
+        Row: {
+          ativo: boolean
+          cnpj: string
+          created_at: string
+          created_by: string | null
+          empresa_id: string | null
+          id: string
+          nome: string
+          pfx_storage_path: string
+          senha_cifrada: string
+          senha_iv: string
+          updated_at: string
+          valido_ate: string
+          valido_de: string
+        }
+        Insert: {
+          ativo?: boolean
+          cnpj: string
+          created_at?: string
+          created_by?: string | null
+          empresa_id?: string | null
+          id?: string
+          nome: string
+          pfx_storage_path: string
+          senha_cifrada: string
+          senha_iv: string
+          updated_at?: string
+          valido_ate: string
+          valido_de: string
+        }
+        Update: {
+          ativo?: boolean
+          cnpj?: string
+          created_at?: string
+          created_by?: string | null
+          empresa_id?: string | null
+          id?: string
+          nome?: string
+          pfx_storage_path?: string
+          senha_cifrada?: string
+          senha_iv?: string
+          updated_at?: string
+          valido_ate?: string
+          valido_de?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificados_digitais_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresa"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cfop: {
         Row: {
           ativo: boolean
@@ -1587,12 +1643,14 @@ export type Database = {
       }
       notas_fiscais: {
         Row: {
+          ambiente: string | null
           base_icms: number
           cfop_id: string | null
           chave_acesso: string | null
           chave_ref: string | null
           cliente_id: string | null
           created_at: string
+          danfe_storage_path: string | null
           danfe_url: string | null
           data_autorizacao: string | null
           data_emissao: string
@@ -1630,15 +1688,18 @@ export type Database = {
           valor_outros: number
           valor_pis: number
           valor_total: number
+          xml_storage_path: string | null
           xml_url: string | null
         }
         Insert: {
+          ambiente?: string | null
           base_icms?: number
           cfop_id?: string | null
           chave_acesso?: string | null
           chave_ref?: string | null
           cliente_id?: string | null
           created_at?: string
+          danfe_storage_path?: string | null
           danfe_url?: string | null
           data_autorizacao?: string | null
           data_emissao?: string
@@ -1676,15 +1737,18 @@ export type Database = {
           valor_outros?: number
           valor_pis?: number
           valor_total?: number
+          xml_storage_path?: string | null
           xml_url?: string | null
         }
         Update: {
+          ambiente?: string | null
           base_icms?: number
           cfop_id?: string | null
           chave_acesso?: string | null
           chave_ref?: string | null
           cliente_id?: string | null
           created_at?: string
+          danfe_storage_path?: string | null
           danfe_url?: string | null
           data_autorizacao?: string | null
           data_emissao?: string
@@ -1722,6 +1786,7 @@ export type Database = {
           valor_outros?: number
           valor_pis?: number
           valor_total?: number
+          xml_storage_path?: string | null
           xml_url?: string | null
         }
         Relationships: [
