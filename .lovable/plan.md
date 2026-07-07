@@ -1,165 +1,139 @@
 
-# FASE 1 REVISADA — Motor Fiscal Direto SEFAZ (A1)
+# Motor Tributário — Fase de Inteligência Fiscal
 
-## AVISO CRÍTICO — LEIA ANTES DE APROVAR
+## 1. Auditoria do que já existe
 
-O runtime deste projeto é **Cloudflare Workers** (edge). SEFAZ NFe exige duas coisas que o Workers **não suporta nativamente**:
+**Presente e utilizável (reaproveitar):**
+- `empresa` → `regime_tributario`, `uf`, `codigo_municipio`
+- `customers` → `uf`, `entrega_uf`, `contribuinte_icms`, `regime_especial`, `suframa`, `icms`
+- `products` → `ncm`, `cest`, `origem`, `cfop_padrao`, `cst_icms`, `csosn`, `aliq_icms`, `cst_ipi`, `aliq_ipi`, `cst_pis`, `aliq_pis`, `cst_cofins`, `aliq_cofins`
+- `cfop` → catálogo (48 registros populados)
+- `uf_aliquotas` → 28 UFs com ICMS interno, interestadual, ICMS ST, FCP
+- `notas_fiscais_itens` → `ncm`, `cfop`, `base_icms`, `aliquota_icms`, `valor_icms`
+- `impostos` → tabela genérica pouco estruturada (será deprecada; mantida por compatibilidade)
 
-1. **mTLS de saída** (fetch com certificado cliente) — Workers não expõe API para anexar cert/chave PFX em chamadas `fetch()` para os webservices SEFAZ. SEFAZ exige mTLS obrigatório em todos os endpoints (NfeAutorizacao4, NfeConsultaProtocolo4, RecepcaoEvento4, NfeInutilizacao4).
-2. **SOAP/XML-DSig com PFX** — bibliotecas maduras (`node-forge`, `xml-crypto`, `xmldsigjs`) rodam parcialmente, mas assinatura enveloped RSA-SHA1 com certificado extraído de PFX depende de operações que o WebCrypto do Workers restringe (importKey PKCS12).
+**Ausente (a criar):**
+- Tabela mestre de **NCM** com CST/CSOSN/alíquotas padrão por regime
+- **Regras tributárias** parametrizáveis (por UF orig/dest, tipo cliente, regime, operação, tipo produto)
+- **Benefícios fiscais** (redução base, isenção, diferimento) por UF/NCM
+- **MVA/IVA-ST** por NCM e UF
+- Motor de cálculo unificado (service TypeScript)
 
-**Conclusão honesta:** transmitir direto para SEFAZ **de dentro do Worker é inviável hoje**. Precisamos de um pequeno serviço externo que faça a ponte assinada.
-
-## Opções arquiteturais reais
-
-| Opção | Custo/mês | Complexidade | Recomendação |
-|---|---|---|---|
-| **A) Microserviço Node.js self-hosted** (VPS Hetzner/Contabo €4-5, Node + node-forge + xml-crypto + soap) | ~R$25/mês | Média | ✅ **Recomendada** — atende ao objetivo "custo próximo de zero" |
-| B) Cloudflare Container (beta) rodando Node | ~US$5/mês | Média-alta | Alternativa se preferir tudo na Cloudflare |
-| C) Voltar para Focus NFe / eNotas | R$0,08-0,15/NFe | Baixa | Rejeitada pelo usuário |
-| D) Reescrever runtime do ERP (sair do Workers) | Alto | Muito alta | Não recomendada |
-
-**Plano abaixo assume Opção A.**
-
-## 1. Componentes reaproveitados (preservados 100%)
-
-- `nfe.builder.ts` — construção de payload (será adaptado para gerar XML nfeProc em vez de JSON Focus)
-- `nfe_logs`, `nfe_eventos`, `nfe_sequencias`, `notas_fiscais`, `notas_fiscais_itens`
-- `FiscalService` (`src/lib/nfe.functions.ts`) — assinaturas de server fns e contratos mantidos
-- Pré-faturamento (`pre-faturamento.functions.ts`)
-- Triggers: `on_nfe_autorizada`, `on_nfe_autorizada_op`, `on_nfe_autorizada_financeiro`
-- Bucket `fiscal` (storage)
-- Dashboard fiscal, integrações OP/estoque/financeiro
-
-## 2. Componentes removidos
-
-- `src/services/fiscal/focus.adapter.ts` (deletado)
-- Secret `FOCUS_NFE_TOKEN` (não usado)
-- Campos `provedor_nfe`, `provedor_ref` deixam de ser usados (mantidos para histórico)
-
-## 3. Componentes novos
-
-**No ERP (Worker):**
-- `src/services/fiscal/sefaz.adapter.ts` — cliente HTTP do microserviço (fetch com HMAC)
-- `src/services/fiscal/certificado.functions.ts` — server fns: upload PFX, listar, marcar ativo, alerta vencimento
-- `src/components/fiscal/certificado-a1-upload.tsx` — UI upload
-- `src/routes/_app.fiscal.certificados.tsx` — página gestão
-
-**Microserviço externo (`sefaz-bridge/`):**
-- Node 20 + Express + `node-forge` + `xml-crypto` + `strong-soap` + `pdfkit`
-- Endpoints: `POST /nfe/emitir`, `/nfe/consultar`, `/nfe/cancelar`, `/nfe/cce`, `/nfe/inutilizar`, `/danfe/gerar`
-- Autenticação: HMAC-SHA256 compartilhado (`SEFAZ_BRIDGE_SECRET`)
-- Carrega PFX vindo do ERP (base64 + senha), assina XML, transmite SEFAZ, retorna XML autorizado
-- Dockerfile pronto para VPS (Hetzner/Contabo/Oracle Free Tier)
-
-## 4. Bibliotecas recomendadas
-
-**Microserviço:**
-- `node-forge` — parse PFX, extrair chave/cert
-- `xml-crypto` — assinatura XMLDSig enveloped
-- `xml2js` / `fast-xml-parser` — parse/serialize XML
-- `strong-soap` ou `axios` + envelope manual — SOAP SEFAZ
-- `pdfkit` + `bwip-js` — DANFE PDF + código de barras
-- `xsd-schema-validator` (opcional) — validação XSD antes de enviar
-
-**ERP:** nada novo — só `fetch` nativo + HMAC via WebCrypto.
-
-## 5. Alterações no banco
-
-Migration única:
-
-```sql
-CREATE TABLE public.certificados_digitais (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  empresa_id uuid NOT NULL REFERENCES public.empresa(id) ON DELETE CASCADE,
-  nome text NOT NULL,
-  cnpj text NOT NULL,
-  pfx_storage_path text NOT NULL,   -- fiscal/certificados/{id}.pfx
-  senha_cifrada text NOT NULL,      -- AES-GCM com CERT_ENC_KEY
-  senha_iv text NOT NULL,
-  valido_de timestamptz NOT NULL,
-  valido_ate timestamptz NOT NULL,
-  ativo boolean NOT NULL DEFAULT false,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
-);
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.certificados_digitais TO authenticated;
-GRANT ALL ON public.certificados_digitais TO service_role;
-ALTER TABLE public.certificados_digitais ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "cert admin" ON public.certificados_digitais FOR ALL TO authenticated
-  USING (public.has_role(auth.uid(), 'desenvolvedor') OR public.has_role(auth.uid(), 'gerente'))
-  WITH CHECK (public.has_role(auth.uid(), 'desenvolvedor') OR public.has_role(auth.uid(), 'gerente'));
-
-ALTER TABLE public.notas_fiscais
-  ADD COLUMN IF NOT EXISTS xml_storage_path text,
-  ADD COLUMN IF NOT EXISTS danfe_storage_path text,
-  ADD COLUMN IF NOT EXISTS ambiente text CHECK (ambiente IN ('homologacao','producao'));
-```
-
-Bucket `fiscal` já existe (privado). Novos prefixos: `certificados/`, `xml/{chave}.xml`, `pdf/{chave}.pdf`.
-
-## 6. Alterações no backend (ERP)
-
-- `nfe.builder.ts`: adicionar `buildNfeXml(nota, itens, empresa, dest)` retornando XML string (schema PL_010). Focus payload builder é removido.
-- `nfe.functions.ts`: `emitir/cancelar/cce/consultar/inutilizar` chamam `sefazAdapter.*` em vez de `focusAdapter.*`. Assinaturas de entrada/saída preservadas — nenhuma tela React muda.
-- `sefaz.adapter.ts` (novo): `fetch(${SEFAZ_BRIDGE_URL}/nfe/emitir, { headers HMAC, body: {xml, certId} })`.
-- Após autorização: baixar XML+PDF do bridge, salvar em `storage.fiscal/xml/{chave}.xml` e `pdf/{chave}.pdf` via `supabaseAdmin` (dentro do handler).
-
-## 7. Alterações no frontend
-
-- Nova rota `/fiscal/certificados` — upload PFX (drag&drop), senha, listar validade, badge vencimento < 30 dias.
-- Menu fiscal ganha item "Certificados Digitais".
-- Componente `NfeAcoesMenu` já existente continua chamando os mesmos server fns (contrato preservado).
-
-## 8. Secrets necessários
-
-- `SEFAZ_BRIDGE_URL` — URL do microserviço (ex.: `https://sefaz.digitaletextil.com.br`)
-- `SEFAZ_BRIDGE_HMAC_SECRET` — segredo compartilhado (gerado)
-- `CERT_ENC_KEY` — chave AES-256 para cifrar senha do PFX no banco (gerado)
-
-## 9. Riscos técnicos
-
-| Risco | Severidade | Mitigação |
-|---|---|---|
-| Precisar de VPS externa | Alta | Aceito pelo usuário; Hetzner CX11 €4/mês |
-| SEFAZ muda schema (PL_010→PL_011) | Média | Versionar `nfe.builder.ts`; monitorar Portal NFe |
-| Certificado A1 expira | Alta | Alerta 30/15/7 dias por email + banner |
-| Bridge cai → ERP não emite | Alta | Systemd + healthcheck + fallback manual |
-| Senha PFX vazar | Crítica | AES-GCM no banco, chave em secret Worker, nunca logar |
-| Assinatura XML inválida (namespaces) | Alta | Suite de testes com XMLs de referência SEFAZ |
-| Rate limit SEFAZ | Baixa | Retry exponencial no bridge |
-
-## 10. Complexidade e manutenção
-
-- **Complexidade inicial:** ALTA (SOAP SEFAZ, XMLDSig, XSD, DANFE — 3-5 semanas de dev experiente)
-- **Manutenção anual estimada:** 20-40h/ano (atualizações de schema NFe, renovação certificado, correções SEFAZ)
-- **Custo operacional:** ~R$25/mês (VPS) vs R$0,08-0,15/NFe do Focus. Break-even: ~200 NFe/mês.
-
-## Plano de execução (fases)
+## 2. Novas tabelas (migration)
 
 ```text
-FASE 1a — Infra e certificado (esta entrega)
-  1. Migration certificados_digitais + colunas notas_fiscais
-  2. Server fns upload/list/ativar certificado
-  3. UI /fiscal/certificados
-  4. Secrets CERT_ENC_KEY, SEFAZ_BRIDGE_URL, SEFAZ_BRIDGE_HMAC_SECRET
+ncm_catalogo
+  codigo (PK), descricao, cest_sugerido, ex_tipi,
+  aliq_ipi_padrao, cst_ipi_padrao, cst_pis_padrao, aliq_pis_padrao,
+  cst_cofins_padrao, aliq_cofins_padrao
 
-FASE 1b — Microserviço bridge (repositório separado)
-  5. Scaffold Node 20 + Express + node-forge + xml-crypto
-  6. Endpoints emitir/consultar/cancelar/cce/inutilizar
-  7. Geração DANFE PDF
-  8. Dockerfile + docs deploy VPS
+regras_tributarias  (motor principal)
+  id, nome, prioridade INT, ativo,
+  # escopo (todos opcionais → NULL = curinga)
+  uf_origem, uf_destino,
+  regime_tributario_emitente,        -- simples|presumido|real
+  tipo_cliente,                       -- pj_contribuinte|pj_nao_contrib|pf|orgao_publico|exterior
+  tipo_operacao,                      -- venda|devolucao|remessa|retorno|bonif|amostra|industrializacao|exportacao
+  ncm_prefix,                         -- ex. "6006" casa qualquer NCM que começa com
+  cest,
+  finalidade,                         -- consumo|revenda|industrializacao|ativo
+  # saída
+  cfop TEXT NOT NULL,
+  cst_icms, csosn,
+  aliq_icms, red_base_icms_pct,
+  calcula_st BOOLEAN, mva_pct, aliq_icms_st,
+  aliq_fcp, aliq_fcp_st,
+  cst_ipi, aliq_ipi,
+  cst_pis, aliq_pis,
+  cst_cofins, aliq_cofins,
+  calcula_difal BOOLEAN,
+  observacao
 
-FASE 1c — Substituir adapter no ERP
-  9. sefaz.adapter.ts + nfe.builder.ts (XML) + refatorar nfe.functions.ts
-  10. Deletar focus.adapter.ts
-  11. Persistir XML/DANFE em storage.fiscal
-  12. Testes E2E homologação (T1-T12 do plano anterior)
+beneficios_fiscais
+  id, uf, ncm_prefix, tipo (reducao|isencao|diferimento|suspensao),
+  percentual, base_legal, vigencia_inicio, vigencia_fim, ativo
 ```
 
-## Decisões que preciso confirmar antes de começar
+Colunas adicionadas em `customers`: `consumidor_final BOOLEAN`, `indicador_ie TEXT` (1|2|9).
+Colunas adicionadas em `empresa`: `crt INT` (1 Simples, 2 Simples excesso, 3 Regime Normal).
 
-1. **Aceita rodar um microserviço externo (Opção A, ~R$25/mês)?** Se não, precisamos revisar a estratégia — não há caminho puramente Worker/edge para SEFAZ direto hoje.
-2. **Quem hospedará o bridge?** (VPS que você contrata / Oracle Cloud Free Tier / posso te entregar o Dockerfile + instruções).
-3. **Autoriza começar pela FASE 1a** (certificado + UI + migration) enquanto o bridge é desenvolvido em paralelo? Isso destrava a UI sem quebrar o fluxo atual (Focus continua funcionando até o cutover).
-4. **Certificado A1 disponível para upload em homologação?** Precisa ser um PFX válido (mesmo que expirado serve para dev).
+RLS: leitura autenticados; escrita `desenvolvedor`/`gerente`.
+
+## 3. Motor de cálculo (TypeScript puro, sem I/O)
+
+`src/services/fiscal/tax-engine/`
+```text
+types.ts              # TaxContext, TaxResult, ItemInput
+resolver.ts           # resolveRegra(ctx) — busca regra na tabela com maior prioridade compatível
+calculators/
+  icms.ts             # base, redução, alíquota, valor, DIFAL, FCP
+  icms-st.ts          # MVA, base ST, valor ST, FCP-ST
+  ipi.ts
+  pis-cofins.ts
+index.ts              # calcularItem(ctx, item) → { cfop, cst, csosn, bases, valores, totais }
+                      # calcularNota(ctx, itens) → agregação
+```
+
+O engine recebe **snapshot** (dados já carregados) — nada de queries dentro dos cálculos. Puro, testável.
+
+## 4. Camada de dados (server functions)
+
+`src/services/fiscal/tax-rules.functions.ts`
+- `listRegras`, `upsertRegra`, `removeRegra`
+- `listBeneficios`, `upsertBeneficio`
+- `listNcms`, `upsertNcm`
+- `previewCalculoItem(pedido_item_id)` — carrega contexto e devolve resultado do engine (para UI de simulação)
+
+## 5. Integração com Pré-Faturamento
+
+Novo hook `useCalculoTributario(pedidoId)`:
+- Carrega empresa emitente, cliente, itens (com NCM/CFOP padrão) e regras.
+- Aplica engine.
+- Retorna totais e por item: base/valor ICMS, ST, IPI, PIS, COFINS, FCP, DIFAL.
+
+Tela `/fiscal/pre-faturamento/:pedidoId` (já existe? verificar; caso contrário, criar somente a **prévia de cálculo** — sem emissão).
+
+## 6. Telas de administração (grupo Fiscal)
+
+- `/fiscal/ncm` — CRUD NCM com CST/alíquotas padrão
+- `/fiscal/regras-tributarias` — CRUD de regras com filtros por escopo, ordenação por prioridade, botão "Simular"
+- `/fiscal/beneficios` — CRUD benefícios fiscais
+- `/fiscal/simulador` — simulador manual (escolhe cliente + produto + qtd → mostra cálculo detalhado)
+
+## 7. Testes
+
+`src/services/fiscal/tax-engine/__tests__/`
+- Venda SP→SP consumidor final PF (ICMS interno, sem DIFAL, sem ST)
+- Venda SP→MG contribuinte revenda (interestadual 12%, sem DIFAL)
+- Venda SP→RJ não contribuinte (interestadual + DIFAL + FCP 2%)
+- Venda com ST (MVA aplicada)
+- Simples Nacional (CSOSN 102, sem destacar ICMS)
+- Devolução (CFOP invertido, mesmo CST)
+- Exportação (CFOP 7xxx, isenção)
+
+## 8. Fora de escopo desta fase
+
+- Geração XML da NF-e
+- Assinatura digital / SEFAZ
+- DANFE
+- Cancelamento / CCe / Inutilização
+
+Essas etapas consumirão o motor via `calcularNota()` na fase seguinte, sem duplicar regras.
+
+## Arquivos a criar/alterar
+
+- Migration: `ncm_catalogo`, `regras_tributarias`, `beneficios_fiscais` + colunas em `customers`/`empresa`
+- `src/services/fiscal/tax-engine/*` (engine puro + testes)
+- `src/services/fiscal/tax-rules.functions.ts` (server fns)
+- `src/routes/_app.fiscal.ncm.tsx`
+- `src/routes/_app.fiscal.regras-tributarias.tsx`
+- `src/routes/_app.fiscal.beneficios.tsx`
+- `src/routes/_app.fiscal.simulador.tsx`
+- `src/hooks/use-calculo-tributario.ts`
+- `src/lib/menu-config.ts` (novos itens no grupo Fiscal)
+
+## Riscos
+
+- Cobertura fiscal é infinita — o motor cobre o comum; regras excepcionais entram como novas linhas em `regras_tributarias` sem alterar código.
+- Tabela `impostos` legada permanecerá para não quebrar telas existentes; será marcada como deprecada.
+- MVA e benefícios são estaduais e mudam por convênio; entrada manual até integrar fonte externa.
