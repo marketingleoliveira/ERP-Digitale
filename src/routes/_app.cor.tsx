@@ -116,7 +116,7 @@ function CorPage() {
                     <Checkbox checked={selected === c.codigo} onCheckedChange={(v) => setSelected(v ? c.codigo : null)} />
                   </TableCell>
                   <TableCell>
-                    <button className="text-primary hover:underline font-medium" onClick={() => { setEditing(c); setDialogOpen(true); }}>
+                    <button className="text-primary hover:underline font-medium" onClick={() => setDetail(c)}>
                       {c.codigo}
                     </button>
                   </TableCell>
