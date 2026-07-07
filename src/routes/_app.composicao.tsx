@@ -24,6 +24,7 @@ import { useAuth, useUserRoles } from "@/hooks/use-auth";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import logoAsset from "@/assets/digitale-logo.png.asset.json";
+import { StatusDot } from "@/components/status-dot";
 
 export const Route = createFileRoute("/_app/composicao")({
   ssr: false,
@@ -107,6 +108,15 @@ function ComposicaoPage() {
       toast.success("Composição excluída");
     },
     onError: (e: any) => toast.error(e.message ?? "Erro ao excluir"),
+  });
+
+  const toggleHabMut = useMutation({
+    mutationFn: async ({ id, habilitado }: { id: string; habilitado: boolean }) => {
+      const { error } = await (supabase.from("composicoes" as any) as any).update({ habilitado }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["composicoes"] }),
+    onError: (e: any) => toast.error(e.message ?? "Erro ao atualizar"),
   });
 
   const openNew = () => { setEditing(null); setDialogOpen(true); };
@@ -201,7 +211,7 @@ function ComposicaoPage() {
                     key={i.id}
                     onClick={() => setSelectedId(i.id)}
                     onDoubleClick={() => { setEditing(i); setDialogOpen(true); }}
-                    className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""}`}
+                    className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""} ${!i.habilitado ? "bg-destructive/10" : ""}`}
                   >
                     <td className="p-2"><Checkbox checked={isSel} onCheckedChange={() => setSelectedId(i.id)} /></td>
                     <td className="p-2">{i.tipo}</td>
@@ -230,7 +240,7 @@ function ComposicaoPage() {
                     <td className="p-2 font-mono text-xs">{i.ncm || "—"}</td>
                     <td className="p-2">{i.composicao}</td>
                     <td className="p-2 text-center">
-                      <span className={`inline-block h-3 w-3 rounded-full ${i.habilitado ? "bg-emerald-500" : "bg-rose-400"}`} />
+                      <StatusDot checked={!!i.habilitado} onToggle={(v: boolean) => toggleHabMut.mutate({ id: i.id, habilitado: v })} />
                     </td>
                   </tr>
                 );

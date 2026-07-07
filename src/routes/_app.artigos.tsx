@@ -24,6 +24,7 @@ import { useAuth, useUserRoles } from "@/hooks/use-auth";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import logoAsset from "@/assets/digitale-logo.png.asset.json";
+import { StatusDot } from "@/components/status-dot";
 
 export const Route = createFileRoute("/_app/artigos")({
   ssr: false,
@@ -109,6 +110,15 @@ function ArtigosPage() {
       toast.success("Artigo excluído");
     },
     onError: (e: any) => toast.error(e.message ?? "Erro ao excluir"),
+  });
+
+  const toggleAtivoMut = useMutation({
+    mutationFn: async ({ id, ativo }: { id: string; ativo: boolean }) => {
+      const { error } = await supabase.from("articles").update({ ativo }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["articles"] }),
+    onError: (e: any) => toast.error(e.message ?? "Erro ao atualizar"),
   });
 
   const openNew = () => { setEditing(null); setDialogOpen(true); };
@@ -209,7 +219,7 @@ function ArtigosPage() {
                     key={i.id}
                     onClick={() => setSelectedId(i.id)}
                     onDoubleClick={() => { setEditing(i); setDialogOpen(true); }}
-                    className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""}`}
+                    className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""} ${!i.ativo ? "bg-destructive/10" : ""}`}
                   >
                     <td className="p-2"><Checkbox checked={isSel} onCheckedChange={() => setSelectedId(i.id)} /></td>
                     <td className="p-2">
@@ -225,7 +235,7 @@ function ArtigosPage() {
                     <td className="p-2 uppercase">{i.nome}</td>
                     <td className="p-2 text-right">{i.rendimento != null ? Number(i.rendimento).toFixed(2) : "—"}</td>
                     <td className="p-2 text-center">
-                      <span className={`inline-block h-3 w-3 rounded-full ${i.ativo ? "bg-emerald-500" : "bg-rose-400"}`} />
+                      <StatusDot checked={i.ativo} onToggle={(v: boolean) => toggleAtivoMut.mutate({ id: i.id, ativo: v })} />
                     </td>
                   </tr>
                 );

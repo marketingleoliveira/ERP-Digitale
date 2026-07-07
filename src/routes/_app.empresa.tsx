@@ -21,6 +21,7 @@ import { useAuth, useUserRoles } from "@/hooks/use-auth";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import logoAsset from "@/assets/digitale-logo.png.asset.json";
+import { StatusDot } from "@/components/status-dot";
 
 export const Route = createFileRoute("/_app/empresa")({
   ssr: false,
@@ -162,6 +163,15 @@ function EmpresaPage() {
     onError: (e: any) => toast.error(e.message ?? "Erro ao excluir"),
   });
 
+  const toggleFlagMut = useMutation({
+    mutationFn: async ({ id, key, value }: { id: string; key: string; value: boolean }) => {
+      const { error } = await (supabase.from("customers") as any).update({ [key]: value }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["empresas"] }),
+    onError: (e: any) => toast.error(e.message ?? "Erro ao atualizar"),
+  });
+
   const openNew = () => { setEditing(null); setDialogOpen(true); };
   const openEdit = () => {
     if (!selected) return toast.info("Selecione exatamente uma empresa para alterar");
@@ -280,7 +290,7 @@ function EmpresaPage() {
                   <tr
                     key={e.id}
                     onDoubleClick={() => setViewingId(e.id)}
-                    className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""}`}
+                    className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""} ${!e.flag_habilitado ? "bg-destructive/10" : ""}`}
                   >
                     <td className="p-2" onClick={(ev) => ev.stopPropagation()}>
                       <Checkbox checked={isSel} onCheckedChange={(v) => toggleOne(e.id, !!v)} />
@@ -292,8 +302,11 @@ function EmpresaPage() {
                     <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.telefone || "—"}</td>
                     <td className="p-2" onClick={() => toggleOne(e.id, !isSel)}>{e.contato || "—"}</td>
                     {FLAG_COLS.map((c) => (
-                      <td key={c.key} className="p-2 text-center" onClick={() => toggleOne(e.id, !isSel)}>
-                        <span className={`inline-block h-3 w-3 rounded-full ${e[c.key] ? "bg-emerald-500" : "bg-rose-400"}`} />
+                      <td key={c.key} className="p-2 text-center">
+                        <StatusDot
+                          checked={!!e[c.key]}
+                          onToggle={(v: boolean) => toggleFlagMut.mutate({ id: e.id, key: c.key as string, value: v })}
+                        />
                       </td>
                     ))}
                   </tr>
