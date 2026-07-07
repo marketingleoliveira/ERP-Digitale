@@ -9,9 +9,12 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { FilePlus2, Loader2, Pencil, Trash2, Plus, X } from "lucide-react";
+import { FilePlus2, Loader2, Pencil, Trash2, Plus, X, Send, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { emitirNFe } from "@/lib/nfe.functions";
+import { openDanfe, type DanfeData } from "@/lib/danfe";
 
 export type NF = {
   id: string; tipo: "saida" | "entrada" | "importacao"; numero: string; serie: string;
