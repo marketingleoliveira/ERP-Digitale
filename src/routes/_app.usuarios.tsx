@@ -288,16 +288,6 @@ function UsuarioDialog({
   });
 
 
-  const Field = ({ label, req, children }: { label: string; req?: 1 | 2; children: React.ReactNode }) => (
-    <div className="grid grid-cols-[140px_1fr] items-center gap-3">
-      <Label className="text-right text-sm">
-        {req ? <span className="text-destructive mr-0.5">{"*".repeat(req)}</span> : null}
-        {label}:
-      </Label>
-      <div>{children}</div>
-    </div>
-  );
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl">
