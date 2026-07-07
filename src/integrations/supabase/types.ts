@@ -925,6 +925,39 @@ export type Database = {
           },
         ]
       }
+      maquinas: {
+        Row: {
+          created_at: string
+          habilitado: boolean
+          id: string
+          maquina: string
+          modelo: string | null
+          numero: number
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          maquina: string
+          modelo?: string | null
+          numero: number
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          maquina?: string
+          modelo?: string | null
+          numero?: number
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_variants: {
         Row: {
           cor: string | null
