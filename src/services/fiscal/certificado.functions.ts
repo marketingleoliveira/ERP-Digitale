@@ -78,9 +78,13 @@ export const uploadCertificado = createServerFn({ method: "POST" })
     return {
       ok: true as const,
       certificado: {
-        ...(row as Record<string, unknown>),
+        id: certId,
+        nome: data.nome,
+        cnpj: info.cnpj,
         titular: info.titular,
         emissor: info.emissor,
+        valido_de: info.validoDe.toISOString(),
+        valido_ate: info.validoAte.toISOString(),
       },
     };
   });
