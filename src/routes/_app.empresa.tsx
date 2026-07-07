@@ -71,7 +71,7 @@ function EmpresaPage() {
   const isDev = roles.includes("desenvolvedor");
 
   const [filters, setFilters] = useState({ nome: "", cnpj: "", cpf: "", tipo: "" });
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Empresa | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -97,7 +97,20 @@ function EmpresaPage() {
     });
   }, [empresas, filters]);
 
-  const selected = filtered.find((e) => e.id === selectedId) ?? null;
+  const selectedList = filtered.filter((e) => selectedIds.has(e.id));
+  const selected = selectedList.length === 1 ? selectedList[0] : null;
+  const allSelected = filtered.length > 0 && filtered.every((e) => selectedIds.has(e.id));
+
+  const toggleOne = (id: string, checked: boolean) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(id); else next.delete(id);
+      return next;
+    });
+  };
+  const toggleAll = (checked: boolean) => {
+    setSelectedIds(checked ? new Set(filtered.map((e) => e.id)) : new Set());
+  };
 
   const saveMut = useMutation({
     mutationFn: async (payload: Record<string, unknown>) => {
@@ -122,27 +135,39 @@ function EmpresaPage() {
   });
 
   const deleteMut = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("customers").delete().eq("id", id);
+    mutationFn: async (ids: string[]) => {
+      const { data, error } = await supabase
+        .from("customers")
+        .delete()
+        .in("id", ids)
+        .select("id");
       if (error) throw error;
+      const deleted = (data ?? []).length;
+      if (deleted === 0) {
+        throw new Error("Nenhuma empresa foi excluída. Verifique suas permissões.");
+      }
+      return { deleted, requested: ids.length };
     },
-    onSuccess: () => {
+    onSuccess: ({ deleted, requested }) => {
       qc.invalidateQueries({ queryKey: ["empresas"] });
-      setSelectedId(null);
+      setSelectedIds(new Set());
       setDeleteOpen(false);
-      toast.success("Empresa excluída");
+      toast.success(
+        deleted === requested
+          ? `${deleted} empresa(s) excluída(s)`
+          : `${deleted} de ${requested} excluída(s) — demais bloqueadas por permissão`,
+      );
     },
     onError: (e: any) => toast.error(e.message ?? "Erro ao excluir"),
   });
 
   const openNew = () => { setEditing(null); setDialogOpen(true); };
   const openEdit = () => {
-    if (!selected) return toast.info("Selecione uma empresa");
+    if (!selected) return toast.info("Selecione exatamente uma empresa para alterar");
     setEditing(selected); setDialogOpen(true);
   };
   const askDelete = () => {
-    if (!selected) return toast.info("Selecione uma empresa");
-    if (!isDev) return toast.error("Apenas o Desenvolvedor pode excluir");
+    if (selectedList.length === 0) return toast.info("Selecione ao menos uma empresa");
     setDeleteOpen(true);
   };
 
