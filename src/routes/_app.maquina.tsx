@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FilePlus2, Loader2, Pencil, Trash2 } from "lucide-react";
+import { FilePlus2, Loader2, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -17,6 +17,7 @@ export const Route = createFileRoute("/_app/maquina")({
   component: MaquinaPage,
 });
 
+type CargaAgulha = { agulha: string; quantidade: number };
 type Maquina = {
   id: string;
   numero: number;
@@ -24,6 +25,12 @@ type Maquina = {
   maquina: string;
   modelo: string | null;
   habilitado: boolean;
+  n_alimentadores?: number | null;
+  diametro?: number | null;
+  finura?: number | null;
+  disposicao_agulhas?: string | null;
+  producao_media?: number | null;
+  carga_agulhas?: CargaAgulha[] | null;
 };
 
 const PAGE_SIZE = 20;
@@ -179,7 +186,15 @@ function MaquinaDialog({
   const [tipo, setTipo] = useState("");
   const [maquina, setMaquina] = useState("");
   const [modelo, setModelo] = useState("");
+  const [nAlim, setNAlim] = useState("");
+  const [diametro, setDiametro] = useState("");
+  const [finura, setFinura] = useState("");
+  const [disposicao, setDisposicao] = useState("");
+  const [prodMedia, setProdMedia] = useState("");
   const [habilitado, setHabilitado] = useState(true);
+  const [carga, setCarga] = useState<CargaAgulha[]>([]);
+  const [agulha, setAgulha] = useState("");
+  const [qtd, setQtd] = useState("");
 
   useEffect(() => {
     if (!open) return;
@@ -187,14 +202,45 @@ function MaquinaDialog({
     setTipo(editing?.tipo ?? "");
     setMaquina(editing?.maquina ?? "");
     setModelo(editing?.modelo ?? "");
+    setNAlim(editing?.n_alimentadores?.toString() ?? "");
+    setDiametro(editing?.diametro?.toString() ?? "");
+    setFinura(editing?.finura?.toString() ?? "");
+    setDisposicao(editing?.disposicao_agulhas ?? "");
+    setProdMedia(editing?.producao_media?.toString() ?? "");
     setHabilitado(editing?.habilitado ?? true);
+    setCarga(Array.isArray(editing?.carga_agulhas) ? editing!.carga_agulhas! : []);
+    setAgulha(""); setQtd("");
   }, [open, editing]);
+
+  const numOrNull = (v: string): number | null => {
+    if (!v.trim()) return null;
+    const n = Number(v.replace(",", "."));
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const addCarga = () => {
+    const q = numOrNull(qtd);
+    if (!agulha.trim()) return toast.error("Informe a agulha.");
+    if (q == null || q <= 0) return toast.error("Informe a quantidade.");
+    setCarga((p) => [...p, { agulha: agulha.trim(), quantidade: q }]);
+    setAgulha(""); setQtd("");
+  };
 
   const mut = useMutation({
     mutationFn: async () => {
       const n = Number(numero);
       if (!Number.isInteger(n) || n <= 0) throw new Error("Número inválido.");
-      const payload = { numero: n, tipo, maquina: maquina.trim(), modelo: modelo.trim() || null, habilitado };
+      const nAlimN = numOrNull(nAlim);
+      const payload = {
+        numero: n, tipo, maquina: maquina.trim(), modelo: modelo.trim() || null,
+        n_alimentadores: nAlimN != null ? Math.trunc(nAlimN) : null,
+        diametro: numOrNull(diametro),
+        finura: numOrNull(finura),
+        disposicao_agulhas: disposicao.trim() || null,
+        producao_media: numOrNull(prodMedia),
+        carga_agulhas: carga,
+        habilitado,
+      };
       const client = supabase as unknown as { from: (t: string) => { update: (p: unknown) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> }; insert: (p: unknown) => Promise<{ error: Error | null }> } };
       if (editing) {
         const { error } = await client.from("maquinas").update(payload).eq("id", editing.id);
@@ -220,41 +266,105 @@ function MaquinaDialog({
     mut.mutate();
   };
 
+  const Row = ({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
+    <div className="grid grid-cols-[150px_1fr] items-center gap-3">
+      <Label className="justify-self-end text-sm">
+        {required && <span className="text-destructive mr-1">*</span>}{label}:
+      </Label>
+      <div>{children}</div>
+    </div>
+  );
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-primary">🌸 {editing ? "Alterar" : "Cadastro"} Máquina</DialogTitle>
         </DialogHeader>
-        <div className="rounded bg-muted/50 p-5 space-y-4">
-          <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-            <Label className="justify-self-end text-sm"><span className="text-destructive mr-1">*</span>Número:</Label>
-            <Input value={numero} onChange={(e) => setNumero(e.target.value)} className="max-w-[160px]" />
+        <div className="rounded bg-muted/50 p-5 space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+            <Row label="Número" required>
+              <Input value={numero} onChange={(e) => setNumero(e.target.value)} className="max-w-[160px]" />
+            </Row>
+            <Row label="Tipo" required>
+              <select
+                value={tipo}
+                onChange={(e) => setTipo(e.target.value)}
+                className="h-9 rounded border border-input bg-background px-2 text-sm max-w-[220px]"
+              >
+                <option value="">[SELECIONE]</option>
+                {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </Row>
+            <Row label="Máquina" required>
+              <Input value={maquina} onChange={(e) => setMaquina(e.target.value)} maxLength={100} />
+            </Row>
+            <div />
+            <Row label="Modelo">
+              <Input value={modelo} onChange={(e) => setModelo(e.target.value)} maxLength={100} />
+            </Row>
+            <Row label="N° Alimentadores">
+              <Input value={nAlim} onChange={(e) => setNAlim(e.target.value)} className="max-w-[160px]" />
+            </Row>
+            <Row label="Diametro">
+              <Input value={diametro} onChange={(e) => setDiametro(e.target.value)} className="max-w-[160px]" />
+            </Row>
+            <Row label="Finura">
+              <Input value={finura} onChange={(e) => setFinura(e.target.value)} className="max-w-[160px]" />
+            </Row>
+            <Row label="Disposição Agulhas">
+              <Input value={disposicao} onChange={(e) => setDisposicao(e.target.value)} maxLength={100} />
+            </Row>
+            <Row label="Produção Média">
+              <Input value={prodMedia} onChange={(e) => setProdMedia(e.target.value)} className="max-w-[160px]" />
+            </Row>
           </div>
-          <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-            <Label className="justify-self-end text-sm"><span className="text-destructive mr-1">*</span>Tipo:</Label>
-            <select
-              value={tipo}
-              onChange={(e) => setTipo(e.target.value)}
-              className="h-9 rounded border border-input bg-background px-2 text-sm max-w-[280px]"
-            >
-              <option value="">[SELECIONE]</option>
-              {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
-          <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-            <Label className="justify-self-end text-sm"><span className="text-destructive mr-1">*</span>Máquina:</Label>
-            <Input value={maquina} onChange={(e) => setMaquina(e.target.value)} maxLength={100} />
-          </div>
-          <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-            <Label className="justify-self-end text-sm">Modelo:</Label>
-            <Input value={modelo} onChange={(e) => setModelo(e.target.value)} maxLength={100} />
-          </div>
-          {editing && (
-            <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-              <Label className="justify-self-end text-sm">Habilitado:</Label>
-              <Checkbox checked={habilitado} onCheckedChange={(v) => setHabilitado(!!v)} />
+
+          <div className="pt-3">
+            <h3 className="text-center text-destructive font-semibold mb-3">CARGA AGULHAS</h3>
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_180px_auto] gap-3 items-end">
+              <div>
+                <Label className="text-sm"><span className="text-destructive mr-1">*</span>Agulha:</Label>
+                <Input value={agulha} onChange={(e) => setAgulha(e.target.value)} maxLength={80} />
+              </div>
+              <div>
+                <Label className="text-sm"><span className="text-destructive mr-1">*</span>Quantidade:</Label>
+                <Input value={qtd} onChange={(e) => setQtd(e.target.value)} />
+              </div>
+              <Button type="button" variant="secondary" onClick={addCarga}>INSERIR</Button>
             </div>
+            <div className="mt-3 overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted-foreground/70 hover:bg-muted-foreground/70">
+                    <TableHead className="text-white">Agulha</TableHead>
+                    <TableHead className="text-white text-right w-32">Quantidade</TableHead>
+                    <TableHead className="text-white text-center w-24">Remover</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {carga.length === 0 ? (
+                    <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-4">Nenhum item.</TableCell></TableRow>
+                  ) : carga.map((c, i) => (
+                    <TableRow key={i}>
+                      <TableCell>{c.agulha}</TableCell>
+                      <TableCell className="text-right">{c.quantidade}</TableCell>
+                      <TableCell className="text-center">
+                        <Button size="icon" variant="ghost" onClick={() => setCarga((p) => p.filter((_, k) => k !== i))}>
+                          <X className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+
+          {editing && (
+            <Row label="Habilitado">
+              <Checkbox checked={habilitado} onCheckedChange={(v) => setHabilitado(!!v)} />
+            </Row>
           )}
         </div>
         <p className="text-center text-sm text-destructive">* Campo Obrigatório</p>
