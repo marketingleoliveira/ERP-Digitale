@@ -347,7 +347,22 @@ function MaquinaDialog({
             <Row label="Produção Média">
               <Input value={prodMedia} onChange={(e) => setProdMedia(e.target.value)} className="max-w-[160px]" />
             </Row>
+            <Row label="Fio">
+              <select
+                value={fioId}
+                onChange={(e) => setFioId(e.target.value)}
+                className="h-9 w-full max-w-[320px] rounded border border-input bg-background px-2 text-sm"
+              >
+                <option value="">[SELECIONE]</option>
+                {fiosOptions.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.codigo}{f.composicao ? ` — ${f.composicao}` : ""}
+                  </option>
+                ))}
+              </select>
+            </Row>
           </div>
+
 
           <div className="pt-3">
             <h3 className="text-center text-destructive font-semibold mb-3">CARGA AGULHAS</h3>
