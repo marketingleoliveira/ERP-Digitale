@@ -334,7 +334,7 @@ function ArtigoDialog({
       return (data ?? []) as Array<{ id: string; codigo: string; tipo: string; composicao: string }>;
     },
   });
-  const composicaoOpts = composicoes.filter((c) => c.tipo === "Artigo");
+  const fioOpts = composicoes.filter((c) => c.tipo === "Fio");
   const fioOpts = composicoes.filter((c) => c.tipo === "Fio");
 
   const { data: coresLookup = [] } = useQuery({
