@@ -240,8 +240,24 @@ function UsuarioDialog({
     return editing?.nome ?? "";
   }, [funcionarioId, representanteId, funcionarios, representantes, editing]);
 
+  const createUser = useServerFn(adminCreateUser);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Pré-checagem de email duplicado enquanto digita
+  const emailTrim = email.trim().toLowerCase();
+  const { data: dupCheck } = useQuery({
+    queryKey: ["profile-email-check", emailTrim],
+    enabled: !editing && open && emailTrim.length > 3 && emailTrim.includes("@"),
+    queryFn: async () => {
+      const { data } = await sb.from("profiles").select("id").ilike("email", emailTrim).maybeSingle();
+      return !!data;
+    },
+  });
+  const emailJaExiste = !editing && dupCheck === true;
+
   const saveMut = useMutation({
     mutationFn: async () => {
+      setErrorMsg(null);
       if (!cargoId) throw new Error("Selecione o Tipo (cargo).");
       if (editing) {
         const { error } = await sb.from("profiles").update({ nome: nomeSelecionado.trim() || editing.nome, ativo }).eq("id", editing.id);
@@ -250,26 +266,26 @@ function UsuarioDialog({
         const { error: e2 } = await sb.from("user_cargos").insert({ user_id: editing.id, cargo_id: cargoId });
         if (e2) throw e2;
         return "Usuário atualizado.";
-      } else {
-        if (!funcionarioId && !representanteId) throw new Error("Selecione um Funcionário ou Representante.");
-        if (!email || !senha) throw new Error("Email e senha são obrigatórios.");
-        if (senha !== confirma) throw new Error("As senhas não conferem.");
-        const { data, error } = await supabase.auth.signUp({
+      }
+      if (!funcionarioId && !representanteId) throw new Error("Selecione um Funcionário ou Representante.");
+      if (!email || !senha) throw new Error("E-mail e senha são obrigatórios.");
+      if (senha.length < 6) throw new Error("A senha deve ter ao menos 6 caracteres.");
+      if (senha !== confirma) throw new Error("As senhas não conferem.");
+      if (emailJaExiste) throw new Error("Já existe um usuário cadastrado com este e-mail.");
+      await createUser({
+        data: {
           email: email.trim(),
           password: senha,
-          options: { data: { nome: nomeSelecionado.trim() } },
-        });
-        if (error) throw error;
-        const uid = data.user?.id;
-        if (uid) {
-          await sb.from("user_cargos").insert({ user_id: uid, cargo_id: cargoId });
-        }
-        return "Usuário cadastrado.";
-      }
+          nome: nomeSelecionado.trim(),
+          cargo_id: cargoId,
+        },
+      });
+      return "Usuário cadastrado.";
     },
     onSuccess: (msg) => { toast.success(msg); onOpenChange(false); onSaved(); },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => { const m = friendlyDbError(e); setErrorMsg(m); toast.error(m); },
   });
+
 
   const Field = ({ label, req, children }: { label: string; req?: 1 | 2; children: React.ReactNode }) => (
     <div className="grid grid-cols-[140px_1fr] items-center gap-3">
