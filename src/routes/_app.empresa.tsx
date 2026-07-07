@@ -50,18 +50,22 @@ type Empresa = {
   flag_habilitado: boolean;
 };
 
-const FLAG_COLS: Array<{ key: keyof Empresa; label: string; title: string }> = [
-  { key: "flag_cliente", label: "Cli", title: "Cliente" },
-  { key: "flag_fiador", label: "Fia", title: "Fiador" },
-  { key: "flag_malha", label: "Mal", title: "Malharia" },
-  { key: "flag_acabamento", label: "Aca", title: "Acabamento" },
-  { key: "flag_confeccao", label: "Con", title: "Confecção" },
-  { key: "flag_importador", label: "Imp", title: "Importador" },
-  { key: "flag_fornecedor", label: "For", title: "Fornecedor" },
-  { key: "flag_transportadora", label: "Tra", title: "Transportadora" },
-  { key: "flag_representante", label: "Rep", title: "Representante" },
-  { key: "flag_habilitado", label: "Hab", title: "Habilitado" },
+const TIPO_FLAGS: Array<{ key: keyof Empresa; label: string }> = [
+  { key: "flag_cliente", label: "Cliente" },
+  { key: "flag_fiador", label: "Fiação" },
+  { key: "flag_malha", label: "Malharia" },
+  { key: "flag_acabamento", label: "Acabamento" },
+  { key: "flag_confeccao", label: "Confecção" },
+  { key: "flag_importador", label: "Importador" },
+  { key: "flag_fornecedor", label: "Fornecedor" },
+  { key: "flag_transportadora", label: "Transportadora" },
+  { key: "flag_representante", label: "Representante" },
 ];
+
+function getTipoLabel(e: Empresa): string {
+  const found = TIPO_FLAGS.find((t) => e[t.key]);
+  return found?.label ?? "—";
+}
 
 const SELECT_COLS =
   "id, razao_social, nome_fantasia, cnpj, cpf, telefone, contato, tipo_cliente, flag_cliente, flag_fiador, flag_malha, flag_acabamento, flag_confeccao, flag_importador, flag_fornecedor, flag_transportadora, flag_representante, flag_habilitado";
