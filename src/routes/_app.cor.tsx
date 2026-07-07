@@ -57,10 +57,10 @@ function CorPage() {
   }, [nome, cnpj]);
 
   const setVal = (i: number, key: "clara" | "media" | "escura" | "especial", v: string) => {
-    setValues((prev) => ({
-      ...prev,
-      [i]: { clara: "", media: "", escura: "", especial: "", ...(prev[i] ?? {}), [key]: v },
-    }));
+    setValues((prev) => {
+      const base = prev[i] ?? { clara: "", media: "", escura: "", especial: "" };
+      return { ...prev, [i]: { ...base, [key]: v } };
+    });
   };
 
   return (
