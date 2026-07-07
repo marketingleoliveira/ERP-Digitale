@@ -556,6 +556,7 @@ export type Database = {
           intervalo: number | null
           limite_credito: number | null
           matriz: string | null
+          meta_valor: number | null
           nome_fantasia: string | null
           numero: string | null
           observacao: string | null
@@ -620,6 +621,7 @@ export type Database = {
           intervalo?: number | null
           limite_credito?: number | null
           matriz?: string | null
+          meta_valor?: number | null
           nome_fantasia?: string | null
           numero?: string | null
           observacao?: string | null
@@ -684,6 +686,7 @@ export type Database = {
           intervalo?: number | null
           limite_credito?: number | null
           matriz?: string | null
+          meta_valor?: number | null
           nome_fantasia?: string | null
           numero?: string | null
           observacao?: string | null
