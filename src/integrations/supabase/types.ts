@@ -169,12 +169,15 @@ export type Database = {
       articles: {
         Row: {
           alim_fio_1_ativo: boolean
+          alim_fio_1_fio_id: string | null
           alim_fio_1_lfa: number | null
           alim_fio_1_tensao: number | null
           alim_fio_2_ativo: boolean
+          alim_fio_2_fio_id: string | null
           alim_fio_2_lfa: number | null
           alim_fio_2_tensao: number | null
           alim_fio_3_ativo: boolean
+          alim_fio_3_fio_id: string | null
           alim_fio_3_lfa: number | null
           alim_fio_3_tensao: number | null
           alimentador_fio_1: string | null
@@ -236,12 +239,15 @@ export type Database = {
         }
         Insert: {
           alim_fio_1_ativo?: boolean
+          alim_fio_1_fio_id?: string | null
           alim_fio_1_lfa?: number | null
           alim_fio_1_tensao?: number | null
           alim_fio_2_ativo?: boolean
+          alim_fio_2_fio_id?: string | null
           alim_fio_2_lfa?: number | null
           alim_fio_2_tensao?: number | null
           alim_fio_3_ativo?: boolean
+          alim_fio_3_fio_id?: string | null
           alim_fio_3_lfa?: number | null
           alim_fio_3_tensao?: number | null
           alimentador_fio_1?: string | null
@@ -303,12 +309,15 @@ export type Database = {
         }
         Update: {
           alim_fio_1_ativo?: boolean
+          alim_fio_1_fio_id?: string | null
           alim_fio_1_lfa?: number | null
           alim_fio_1_tensao?: number | null
           alim_fio_2_ativo?: boolean
+          alim_fio_2_fio_id?: string | null
           alim_fio_2_lfa?: number | null
           alim_fio_2_tensao?: number | null
           alim_fio_3_ativo?: boolean
+          alim_fio_3_fio_id?: string | null
           alim_fio_3_lfa?: number | null
           alim_fio_3_tensao?: number | null
           alimentador_fio_1?: string | null
