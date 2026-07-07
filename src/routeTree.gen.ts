@@ -58,6 +58,11 @@ import { Route as AppFiscalDashboardRouteImport } from './routes/_app.fiscal.das
 import { Route as AppFiscalCfopRouteImport } from './routes/_app.fiscal.cfop'
 import { Route as AppFiscalCertificadosRouteImport } from './routes/_app.fiscal.certificados'
 import { Route as AppFiscalBeneficiosRouteImport } from './routes/_app.fiscal.beneficios'
+import { Route as AppFinanceiroMovimentosRouteImport } from './routes/_app.financeiro.movimentos'
+import { Route as AppFinanceiroFluxoCaixaRouteImport } from './routes/_app.financeiro.fluxo-caixa'
+import { Route as AppFinanceiroDashboardRouteImport } from './routes/_app.financeiro.dashboard'
+import { Route as AppFinanceiroContasBancariasRouteImport } from './routes/_app.financeiro.contas-bancarias'
+import { Route as AppFinanceiroCentrosCustoRouteImport } from './routes/_app.financeiro.centros-custo'
 import { Route as AppEstoqueKardexRouteImport } from './routes/_app.estoque.kardex'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 import { Route as AppDashboardIndustrialRouteImport } from './routes/_app.dashboard.industrial'
@@ -322,6 +327,33 @@ const AppFiscalBeneficiosRoute = AppFiscalBeneficiosRouteImport.update({
   path: '/fiscal/beneficios',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFinanceiroMovimentosRoute = AppFinanceiroMovimentosRouteImport.update({
+  id: '/financeiro/movimentos',
+  path: '/financeiro/movimentos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFinanceiroFluxoCaixaRoute = AppFinanceiroFluxoCaixaRouteImport.update({
+  id: '/financeiro/fluxo-caixa',
+  path: '/financeiro/fluxo-caixa',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFinanceiroDashboardRoute = AppFinanceiroDashboardRouteImport.update({
+  id: '/financeiro/dashboard',
+  path: '/financeiro/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFinanceiroContasBancariasRoute =
+  AppFinanceiroContasBancariasRouteImport.update({
+    id: '/financeiro/contas-bancarias',
+    path: '/financeiro/contas-bancarias',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppFinanceiroCentrosCustoRoute =
+  AppFinanceiroCentrosCustoRouteImport.update({
+    id: '/financeiro/centros-custo',
+    path: '/financeiro/centros-custo',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppEstoqueKardexRoute = AppEstoqueKardexRouteImport.update({
   id: '/estoque/kardex',
   path: '/estoque/kardex',
@@ -445,6 +477,11 @@ export interface FileRoutesByFullPath {
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/estoque/kardex': typeof AppEstoqueKardexRoute
+  '/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
+  '/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
+  '/financeiro/dashboard': typeof AppFinanceiroDashboardRoute
+  '/financeiro/fluxo-caixa': typeof AppFinanceiroFluxoCaixaRoute
+  '/financeiro/movimentos': typeof AppFinanceiroMovimentosRoute
   '/fiscal/beneficios': typeof AppFiscalBeneficiosRoute
   '/fiscal/certificados': typeof AppFiscalCertificadosRoute
   '/fiscal/cfop': typeof AppFiscalCfopRoute
@@ -511,6 +548,11 @@ export interface FileRoutesByTo {
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/estoque/kardex': typeof AppEstoqueKardexRoute
+  '/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
+  '/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
+  '/financeiro/dashboard': typeof AppFinanceiroDashboardRoute
+  '/financeiro/fluxo-caixa': typeof AppFinanceiroFluxoCaixaRoute
+  '/financeiro/movimentos': typeof AppFinanceiroMovimentosRoute
   '/fiscal/beneficios': typeof AppFiscalBeneficiosRoute
   '/fiscal/certificados': typeof AppFiscalCertificadosRoute
   '/fiscal/cfop': typeof AppFiscalCfopRoute
@@ -579,6 +621,11 @@ export interface FileRoutesById {
   '/_app/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
   '/_app/estoque/kardex': typeof AppEstoqueKardexRoute
+  '/_app/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
+  '/_app/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
+  '/_app/financeiro/dashboard': typeof AppFinanceiroDashboardRoute
+  '/_app/financeiro/fluxo-caixa': typeof AppFinanceiroFluxoCaixaRoute
+  '/_app/financeiro/movimentos': typeof AppFinanceiroMovimentosRoute
   '/_app/fiscal/beneficios': typeof AppFiscalBeneficiosRoute
   '/_app/fiscal/certificados': typeof AppFiscalCertificadosRoute
   '/_app/fiscal/cfop': typeof AppFiscalCfopRoute
@@ -647,6 +694,11 @@ export interface FileRouteTypes {
     | '/dashboard/industrial'
     | '/dev/cargos'
     | '/estoque/kardex'
+    | '/financeiro/centros-custo'
+    | '/financeiro/contas-bancarias'
+    | '/financeiro/dashboard'
+    | '/financeiro/fluxo-caixa'
+    | '/financeiro/movimentos'
     | '/fiscal/beneficios'
     | '/fiscal/certificados'
     | '/fiscal/cfop'
@@ -713,6 +765,11 @@ export interface FileRouteTypes {
     | '/dashboard/industrial'
     | '/dev/cargos'
     | '/estoque/kardex'
+    | '/financeiro/centros-custo'
+    | '/financeiro/contas-bancarias'
+    | '/financeiro/dashboard'
+    | '/financeiro/fluxo-caixa'
+    | '/financeiro/movimentos'
     | '/fiscal/beneficios'
     | '/fiscal/certificados'
     | '/fiscal/cfop'
@@ -780,6 +837,11 @@ export interface FileRouteTypes {
     | '/_app/dashboard/industrial'
     | '/_app/dev/cargos'
     | '/_app/estoque/kardex'
+    | '/_app/financeiro/centros-custo'
+    | '/_app/financeiro/contas-bancarias'
+    | '/_app/financeiro/dashboard'
+    | '/_app/financeiro/fluxo-caixa'
+    | '/_app/financeiro/movimentos'
     | '/_app/fiscal/beneficios'
     | '/_app/fiscal/certificados'
     | '/_app/fiscal/cfop'
@@ -1161,6 +1223,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFiscalBeneficiosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/financeiro/movimentos': {
+      id: '/_app/financeiro/movimentos'
+      path: '/financeiro/movimentos'
+      fullPath: '/financeiro/movimentos'
+      preLoaderRoute: typeof AppFinanceiroMovimentosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/financeiro/fluxo-caixa': {
+      id: '/_app/financeiro/fluxo-caixa'
+      path: '/financeiro/fluxo-caixa'
+      fullPath: '/financeiro/fluxo-caixa'
+      preLoaderRoute: typeof AppFinanceiroFluxoCaixaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/financeiro/dashboard': {
+      id: '/_app/financeiro/dashboard'
+      path: '/financeiro/dashboard'
+      fullPath: '/financeiro/dashboard'
+      preLoaderRoute: typeof AppFinanceiroDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/financeiro/contas-bancarias': {
+      id: '/_app/financeiro/contas-bancarias'
+      path: '/financeiro/contas-bancarias'
+      fullPath: '/financeiro/contas-bancarias'
+      preLoaderRoute: typeof AppFinanceiroContasBancariasRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/financeiro/centros-custo': {
+      id: '/_app/financeiro/centros-custo'
+      path: '/financeiro/centros-custo'
+      fullPath: '/financeiro/centros-custo'
+      preLoaderRoute: typeof AppFinanceiroCentrosCustoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/estoque/kardex': {
       id: '/_app/estoque/kardex'
       path: '/estoque/kardex'
@@ -1377,6 +1474,11 @@ interface AppRouteChildren {
   AppDashboardIndustrialRoute: typeof AppDashboardIndustrialRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
   AppEstoqueKardexRoute: typeof AppEstoqueKardexRoute
+  AppFinanceiroCentrosCustoRoute: typeof AppFinanceiroCentrosCustoRoute
+  AppFinanceiroContasBancariasRoute: typeof AppFinanceiroContasBancariasRoute
+  AppFinanceiroDashboardRoute: typeof AppFinanceiroDashboardRoute
+  AppFinanceiroFluxoCaixaRoute: typeof AppFinanceiroFluxoCaixaRoute
+  AppFinanceiroMovimentosRoute: typeof AppFinanceiroMovimentosRoute
   AppFiscalBeneficiosRoute: typeof AppFiscalBeneficiosRoute
   AppFiscalCertificadosRoute: typeof AppFiscalCertificadosRoute
   AppFiscalCfopRoute: typeof AppFiscalCfopRoute
@@ -1434,6 +1536,11 @@ const AppRouteChildren: AppRouteChildren = {
   AppDashboardIndustrialRoute: AppDashboardIndustrialRoute,
   AppDevCargosRoute: AppDevCargosRoute,
   AppEstoqueKardexRoute: AppEstoqueKardexRoute,
+  AppFinanceiroCentrosCustoRoute: AppFinanceiroCentrosCustoRoute,
+  AppFinanceiroContasBancariasRoute: AppFinanceiroContasBancariasRoute,
+  AppFinanceiroDashboardRoute: AppFinanceiroDashboardRoute,
+  AppFinanceiroFluxoCaixaRoute: AppFinanceiroFluxoCaixaRoute,
+  AppFinanceiroMovimentosRoute: AppFinanceiroMovimentosRoute,
   AppFiscalBeneficiosRoute: AppFiscalBeneficiosRoute,
   AppFiscalCertificadosRoute: AppFiscalCertificadosRoute,
   AppFiscalCfopRoute: AppFiscalCfopRoute,

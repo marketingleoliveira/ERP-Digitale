@@ -1,0 +1,1 @@
+ALTER VIEW public.vw_fluxo_caixa SET (security_invoker = true);
