@@ -804,36 +804,66 @@ export type Database = {
       }
       funcionarios: {
         Row: {
+          bairro: string | null
           celular: string | null
+          cep: string | null
+          cidade: string | null
+          complemento: string | null
           cpf: string | null
           created_at: string
+          email: string | null
+          endereco: string | null
           habilitado: boolean
           id: string
           nome: string
+          numero: string | null
+          observacao: string | null
+          rg: string | null
           telefone: string | null
           tipo: string | null
+          uf: string | null
           updated_at: string
         }
         Insert: {
+          bairro?: string | null
           celular?: string | null
+          cep?: string | null
+          cidade?: string | null
+          complemento?: string | null
           cpf?: string | null
           created_at?: string
+          email?: string | null
+          endereco?: string | null
           habilitado?: boolean
           id?: string
           nome: string
+          numero?: string | null
+          observacao?: string | null
+          rg?: string | null
           telefone?: string | null
           tipo?: string | null
+          uf?: string | null
           updated_at?: string
         }
         Update: {
+          bairro?: string | null
           celular?: string | null
+          cep?: string | null
+          cidade?: string | null
+          complemento?: string | null
           cpf?: string | null
           created_at?: string
+          email?: string | null
+          endereco?: string | null
           habilitado?: boolean
           id?: string
           nome?: string
+          numero?: string | null
+          observacao?: string | null
+          rg?: string | null
           telefone?: string | null
           tipo?: string | null
+          uf?: string | null
           updated_at?: string
         }
         Relationships: []
