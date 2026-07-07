@@ -706,48 +706,74 @@ export type Database = {
       }
       fios: {
         Row: {
+          cest: string | null
           codigo: string
           composicao: string | null
+          composicao_id: string | null
+          cor: string | null
           created_at: string
+          custo: number | null
           habilitado: boolean
           id: string
           n_cabos: number | null
           n_filamentos: number | null
           ncm: string | null
+          origem: string | null
           owner_id: string | null
+          quebra_percent: number | null
           tipo: string | null
           titulo: number | null
           updated_at: string
         }
         Insert: {
+          cest?: string | null
           codigo: string
           composicao?: string | null
+          composicao_id?: string | null
+          cor?: string | null
           created_at?: string
+          custo?: number | null
           habilitado?: boolean
           id?: string
           n_cabos?: number | null
           n_filamentos?: number | null
           ncm?: string | null
+          origem?: string | null
           owner_id?: string | null
+          quebra_percent?: number | null
           tipo?: string | null
           titulo?: number | null
           updated_at?: string
         }
         Update: {
+          cest?: string | null
           codigo?: string
           composicao?: string | null
+          composicao_id?: string | null
+          cor?: string | null
           created_at?: string
+          custo?: number | null
           habilitado?: boolean
           id?: string
           n_cabos?: number | null
           n_filamentos?: number | null
           ncm?: string | null
+          origem?: string | null
           owner_id?: string | null
+          quebra_percent?: number | null
           tipo?: string | null
           titulo?: number | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fios_composicao_id_fkey"
+            columns: ["composicao_id"]
+            isOneToOne: false
+            referencedRelation: "composicoes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       product_variants: {
         Row: {

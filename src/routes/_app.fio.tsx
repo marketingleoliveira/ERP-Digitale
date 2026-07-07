@@ -39,6 +39,12 @@ type Fio = {
   n_filamentos: number | null;
   n_cabos: number | null;
   composicao: string | null;
+  composicao_id: string | null;
+  cest: string | null;
+  origem: string | null;
+  quebra_percent: number | null;
+  custo: number | null;
+  cor: string | null;
   habilitado: boolean;
 };
 
@@ -61,7 +67,7 @@ function FioPage() {
     queryKey: ["fios"],
     queryFn: async () => {
       const { data, error } = await (supabase.from("fios" as any) as any)
-        .select("id, codigo, ncm, tipo, titulo, n_filamentos, n_cabos, composicao, habilitado")
+        .select("id, codigo, ncm, tipo, titulo, n_filamentos, n_cabos, composicao, composicao_id, cest, origem, quebra_percent, custo, cor, habilitado")
         .order("titulo", { ascending: true, nullsFirst: true })
         .order("codigo", { ascending: true });
       if (error) throw error;
@@ -320,68 +326,153 @@ function FioDialog({
 }) {
   const [form, setForm] = useState<Partial<Fio>>({});
 
+  const { data: composicoes = [] } = useQuery({
+    queryKey: ["composicoes-lookup"],
+    queryFn: async () => {
+      const { data, error } = await (supabase.from("composicoes" as any) as any)
+        .select("id, composicao, tipo")
+        .eq("habilitado", true)
+        .order("composicao");
+      if (error) throw error;
+      return (data ?? []) as Array<{ id: string; composicao: string; tipo: string }>;
+    },
+  });
+
   useEffect(() => {
     if (!open) return;
-    setForm(item ?? { habilitado: true });
+    setForm(item ?? { habilitado: true, n_cabos: 1 });
   }, [open, item]);
 
   const set = <K extends keyof Fio>(k: K, v: Fio[K]) => setForm((f) => ({ ...f, [k]: v }));
 
   const submit = () => {
-    if (!form.codigo) {
-      toast.error("Preencha o Código");
-      return;
+    const required: Array<[keyof Fio, string]> = [
+      ["composicao_id", "Composição"], ["tipo", "Tipo"], ["codigo", "Código"],
+      ["ncm", "NCM"], ["origem", "Origem"], ["n_cabos", "Nº Cabos"],
+      ["titulo", "Título"], ["n_filamentos", "Nº Filamentos"], ["quebra_percent", "Quebra %"],
+    ];
+    for (const [k, label] of required) {
+      const v = form[k];
+      if (v === undefined || v === null || v === "") { toast.error(`Preencha ${label}`); return; }
     }
-    onSave(form);
+    const comp = composicoes.find((c) => c.id === form.composicao_id);
+    onSave({ ...form, composicao: comp?.composicao ?? form.composicao ?? null });
   };
 
   const num = (v: string) => (v === "" ? null : Number(v));
 
+  const ORIGEM = [
+    "0 - Nacional",
+    "1 - Estrangeira (Importação direta)",
+    "2 - Estrangeira (Adquirida no mercado interno)",
+    "3 - Nacional (conteúdo importação > 40%)",
+    "4 - Nacional (processos básicos)",
+    "5 - Nacional (conteúdo importação <= 40%)",
+    "6 - Estrangeira (Importação direta, sem similar nacional)",
+    "7 - Estrangeira (Adquirida no mercado interno, sem similar nacional)",
+    "8 - Nacional (conteúdo importação > 70%)",
+  ];
+  const TIPOS = ["liso", "tx.", "elast.", "trilobal"];
+
+  const req = <span className="text-destructive">*</span>;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-primary">
             <Scissors className="h-4 w-4" />
             {item ? "Alterar Fio" : "Cadastrar Fio"}
           </DialogTitle>
         </DialogHeader>
-        <div className="rounded-md bg-muted/40 p-6">
-          <div className="mx-auto grid max-w-md gap-3">
-            <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-              <Label className="text-right text-sm"><span className="text-destructive">*</span> Código:</Label>
+        <div className="rounded-md bg-muted/40 p-4">
+          <div className="grid gap-3 md:grid-cols-2">
+            {/* Composição */}
+            <div className="grid grid-cols-[130px_1fr] items-center gap-2">
+              <Label className="text-right text-sm">{req} Composição:</Label>
+              <Select value={form.composicao_id ?? ""} onValueChange={(v) => set("composicao_id", v)}>
+                <SelectTrigger className="h-8"><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+                <SelectContent>
+                  {composicoes.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.composicao}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {/* Tipo */}
+            <div className="grid grid-cols-[130px_1fr] items-center gap-2">
+              <Label className="text-right text-sm">{req} Tipo:</Label>
+              <Select value={form.tipo ?? ""} onValueChange={(v) => set("tipo", v)}>
+                <SelectTrigger className="h-8 w-40"><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+                <SelectContent>
+                  {TIPOS.map((t) => (<SelectItem key={t} value={t}>{t}</SelectItem>))}
+                </SelectContent>
+              </Select>
+            </div>
+            {/* Código */}
+            <div className="grid grid-cols-[130px_1fr] items-center gap-2">
+              <Label className="text-right text-sm">{req} Código:</Label>
               <Input className="h-8 w-40" value={form.codigo ?? ""} onChange={(e) => set("codigo", e.target.value)} />
             </div>
-            <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-              <Label className="text-right text-sm">NCM:</Label>
+            {/* CEST */}
+            <div className="grid grid-cols-[130px_1fr] items-center gap-2">
+              <Label className="text-right text-sm">CEST:</Label>
+              <Input className="h-8 w-40" value={form.cest ?? ""} onChange={(e) => set("cest", e.target.value)} />
+            </div>
+            {/* NCM */}
+            <div className="grid grid-cols-[130px_1fr] items-center gap-2">
+              <Label className="text-right text-sm">{req} NCM:</Label>
               <Input className="h-8 w-40" value={form.ncm ?? ""} onChange={(e) => set("ncm", e.target.value)} />
             </div>
-            <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-              <Label className="text-right text-sm">Tipo:</Label>
-              <Input className="h-8 w-40" value={form.tipo ?? ""} onChange={(e) => set("tipo", e.target.value)} placeholder="ex: liso, tx., elast." />
+            {/* Nº Cabos */}
+            <div className="grid grid-cols-[130px_1fr] items-center gap-2">
+              <Label className="text-right text-sm">{req} Nº Cabos:</Label>
+              <Input className="h-8 w-24 text-right" type="number" value={form.n_cabos ?? ""} onChange={(e) => set("n_cabos", num(e.target.value))} />
             </div>
-            <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-              <Label className="text-right text-sm">Título:</Label>
-              <Input className="h-8 w-40" type="number" step="0.01" value={form.titulo ?? ""} onChange={(e) => set("titulo", num(e.target.value))} />
+            {/* Origem */}
+            <div className="grid grid-cols-[130px_1fr] items-center gap-2">
+              <Label className="text-right text-sm">{req} Origem:</Label>
+              <Select value={form.origem ?? ""} onValueChange={(v) => set("origem", v)}>
+                <SelectTrigger className="h-8"><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+                <SelectContent>
+                  {ORIGEM.map((o) => (<SelectItem key={o} value={o}>{o}</SelectItem>))}
+                </SelectContent>
+              </Select>
             </div>
-            <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-              <Label className="text-right text-sm">Nº Filamentos:</Label>
-              <Input className="h-8 w-40" type="number" value={form.n_filamentos ?? ""} onChange={(e) => set("n_filamentos", num(e.target.value))} />
+            {/* Nº Filamentos */}
+            <div className="grid grid-cols-[130px_1fr] items-center gap-2">
+              <Label className="text-right text-sm">{req} Nº Filamentos:</Label>
+              <Input className="h-8 w-24 text-right" type="number" value={form.n_filamentos ?? ""} onChange={(e) => set("n_filamentos", num(e.target.value))} />
             </div>
-            <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-              <Label className="text-right text-sm">Nº Cabos:</Label>
-              <Input className="h-8 w-40" type="number" value={form.n_cabos ?? ""} onChange={(e) => set("n_cabos", num(e.target.value))} />
+            {/* Título */}
+            <div className="grid grid-cols-[130px_1fr] items-center gap-2">
+              <Label className="text-right text-sm">{req} Título:</Label>
+              <Input className="h-8 w-24 text-right" type="number" step="0.01" value={form.titulo ?? ""} onChange={(e) => set("titulo", num(e.target.value))} />
             </div>
-            <div className="grid grid-cols-[130px_1fr] items-center gap-3">
-              <Label className="text-right text-sm">Composição:</Label>
-              <Input className="h-8" value={form.composicao ?? ""} onChange={(e) => set("composicao", e.target.value)} placeholder="Ex: 100%PES" />
+            {/* Cor */}
+            <div className="grid grid-cols-[130px_1fr] items-center gap-2">
+              <Label className="text-right text-sm">Cor:</Label>
+              <Input className="h-8 w-40" value={form.cor ?? ""} onChange={(e) => set("cor", e.target.value)} placeholder="[SELECIONE]" />
             </div>
-            <label className="ml-[142px] flex items-center gap-2 text-sm">
-              <Checkbox checked={Boolean(form.habilitado)} onCheckedChange={(v) => set("habilitado", Boolean(v))} />
-              Habilitado
-            </label>
+            {/* Quebra % */}
+            <div className="grid grid-cols-[130px_1fr] items-center gap-2">
+              <Label className="text-right text-sm">{req} Quebra %:</Label>
+              <Input className="h-8 w-24 text-right" type="number" step="0.01" value={form.quebra_percent ?? ""} onChange={(e) => set("quebra_percent", num(e.target.value))} />
+            </div>
+            <div />
+            {/* R$ Custo */}
+            <div className="grid grid-cols-[130px_1fr] items-center gap-2">
+              <Label className="text-right text-sm">R$ Custo:</Label>
+              <Input className="h-8 w-32 text-right" type="number" step="0.01" value={form.custo ?? 0} onChange={(e) => set("custo", num(e.target.value))} />
+            </div>
+            <div />
           </div>
+          <label className="mt-3 flex items-center gap-2 pl-[138px] text-sm">
+            <Checkbox checked={Boolean(form.habilitado)} onCheckedChange={(v) => set("habilitado", Boolean(v))} />
+            Habilitado
+          </label>
         </div>
+        <p className="text-center text-xs text-destructive">* Campo Obrigatório</p>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
           <Button onClick={submit} disabled={saving}>{saving ? "Salvando…" : (item ? "Salvar" : "Cadastrar")}</Button>
