@@ -1,319 +1,383 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader } from "@/components/page-header";
-import { DataTable, type Column } from "@/components/data-table";
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useMemo, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card } from "@/components/ui/card";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
-import { Plus, Loader2, Shirt, Trash2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { EmptyState } from "@/components/empty-state";
+import { Plus, Pencil, Trash2, Printer, Shirt } from "lucide-react";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
-import { RecordDetailDialog } from "@/components/record-detail-dialog";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import logoAsset from "@/assets/digitale-logo.png.asset.json";
 
-export const Route = createFileRoute("/_app/artigos")({ component: ArtigosPage });
+export const Route = createFileRoute("/_app/artigos")({
+  ssr: false,
+  component: ArtigosPage,
+});
 
 type Article = {
   id: string;
   codigo: string | null;
+  ncm: string | null;
   nome: string;
-  slug: string | null;
-  categoria: string | null;
   composicao: string | null;
-  gramatura: number | null;
-  largura: number | null;
-  tecnologias: string[] | null;
-  descricao_curta: string | null;
-  descricao: string | null;
-  imagem_url: string | null;
-  preco_venda: number | null;
+  rendimento: number | null;
   ativo: boolean;
 };
 
-const fmtBRL = (v: number | null) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v ?? 0);
-
-const CATEGORIAS = [
-  "Poliamida", "Supermicrofibra", "Moda Praia", "Moda Praia ECO",
-  "Fitness", "Suplex", "Malha Técnica", "Emana", "Outros",
-];
-
-const emptyForm = {
-  codigo: "", nome: "", slug: "", categoria: "", composicao: "",
-  gramatura: "", largura: "", tecnologias: "", descricao_curta: "",
-  descricao: "", imagem_url: "", preco_venda: "",
-};
+const PAGE_SIZE = 20;
 
 function ArtigosPage() {
+  const qc = useQueryClient();
   const { user } = useAuth();
   const roles = useUserRoles(user?.id);
-  const canDelete = roles.includes("desenvolvedor");
+  const isDev = roles.includes("desenvolvedor");
 
-  const [rows, setRows] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState(emptyForm);
-  const [toDelete, setToDelete] = useState<Article | null>(null);
-  const [selected, setSelected] = useState<Record<string, unknown> | null>(null);
+  const [filter, setFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editing, setEditing] = useState<Article | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const load = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.from("articles").select("*").order("nome");
-    if (error) toast.error(error.message);
-    else setRows((data ?? []) as Article[]);
-    setLoading(false);
+  const { data: items = [], isLoading } = useQuery({
+    queryKey: ["articles"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("articles")
+        .select("id, codigo, ncm, nome, composicao, rendimento, ativo")
+        .order("nome", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as Article[];
+    },
+  });
+
+  const filtered = useMemo(() => {
+    if (!filter.trim()) return items;
+    const f = filter.toLowerCase();
+    return items.filter((i) => i.nome.toLowerCase().includes(f));
+  }, [items, filter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const selected = filtered.find((i) => i.id === selectedId) ?? null;
+
+  useEffect(() => { if (page > totalPages) setPage(1); }, [totalPages, page]);
+
+  const saveMut = useMutation({
+    mutationFn: async (payload: Partial<Article>) => {
+      if (editing?.id) {
+        const { error } = await supabase.from("articles").update(payload).eq("id", editing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("articles").insert(payload as any);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["articles"] });
+      setDialogOpen(false); setEditing(null);
+      toast.success("Artigo salvo");
+    },
+    onError: (e: any) => toast.error(e.message ?? "Erro ao salvar"),
+  });
+
+  const deleteMut = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("articles").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["articles"] });
+      setSelectedId(null); setDeleteOpen(false);
+      toast.success("Artigo excluído");
+    },
+    onError: (e: any) => toast.error(e.message ?? "Erro ao excluir"),
+  });
+
+  const openNew = () => { setEditing(null); setDialogOpen(true); };
+  const openEdit = () => {
+    if (!selected) return toast.info("Selecione um artigo");
+    setEditing(selected); setDialogOpen(true);
   };
-  useEffect(() => { load(); }, []);
-
-  const save = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    const payload = {
-      codigo: form.codigo.trim() || null,
-      nome: form.nome.trim(),
-      slug: form.slug.trim() || form.nome.trim().toLowerCase().replace(/\s+/g, "-"),
-      categoria: form.categoria || null,
-      composicao: form.composicao || null,
-      gramatura: form.gramatura ? Number(form.gramatura) : null,
-      largura: form.largura ? Number(form.largura) : null,
-      tecnologias: form.tecnologias
-        ? form.tecnologias.split(",").map((t) => t.trim()).filter(Boolean)
-        : null,
-      descricao_curta: form.descricao_curta || null,
-      descricao: form.descricao || null,
-      imagem_url: form.imagem_url || null,
-      preco_venda: form.preco_venda ? Number(form.preco_venda) : null,
-      ativo: true,
-    };
-    const { error } = await supabase.from("articles").insert(payload);
-    setSaving(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Artigo cadastrado");
-    setOpen(false);
-    setForm(emptyForm);
-    load();
+  const askDelete = () => {
+    if (!selected) return toast.info("Selecione um artigo");
+    if (!isDev) return toast.error("Apenas o Desenvolvedor pode excluir");
+    setDeleteOpen(true);
   };
 
-  const handleDelete = async () => {
-    if (!toDelete) return;
-    const { error } = await supabase.from("articles").delete().eq("id", toDelete.id);
-    if (error) { toast.error(error.message); return; }
-    toast.success(`Artigo "${toDelete.nome}" excluído`);
-    setToDelete(null);
-    load();
-  };
-
-  const columns: Column<Article>[] = useMemo(() => {
-    const base: Column<Article>[] = [
-      { key: "codigo", header: "Código", className: "font-mono text-xs" },
-      {
-        key: "nome", header: "Artigo", sortable: true, render: (r) => (
-          <div>
-            <p className="font-medium">{r.nome}</p>
-            <p className="text-xs text-muted-foreground">
-              {[r.composicao, r.gramatura ? `${r.gramatura}g/m²` : null,
-                r.largura ? `${r.largura}m` : null].filter(Boolean).join(" • ") ||
-                r.descricao_curta || "—"}
-            </p>
-          </div>
-        ),
-      },
-      {
-        key: "categoria", header: "Categoria",
-        render: (r) => r.categoria ? <Badge variant="outline">{r.categoria}</Badge> : "—",
-      },
-      {
-        key: "tecnologias", header: "Tecnologias", render: (r) => (
-          <div className="flex flex-wrap gap-1">
-            {(r.tecnologias ?? []).slice(0, 3).map((t) => (
-              <Badge key={t} className="bg-accent/15 text-accent-foreground">{t}</Badge>
-            ))}
-            {(r.tecnologias?.length ?? 0) > 3 && (
-              <Badge variant="outline">+{(r.tecnologias?.length ?? 0) - 3}</Badge>
-            )}
-          </div>
-        ),
-      },
-      {
-        key: "preco_venda", header: "Preço", className: "text-right tabular-nums",
-        render: (r) => fmtBRL(r.preco_venda),
-      },
-      {
-        key: "ativo", header: "Status", render: (r) => (
-          <Badge className={r.ativo ? "bg-success/15 text-success" : "bg-muted text-muted-foreground"}>
-            {r.ativo ? "Ativo" : "Inativo"}
-          </Badge>
-        ),
-      },
-    ];
-    if (canDelete) {
-      base.push({
-        key: "actions", header: "", className: "text-right w-16",
-        render: (r) => (
-          <Button
-            variant="ghost" size="sm"
-            className="text-destructive hover:text-destructive"
-            onClick={() => setToDelete(r)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        ),
+  const handlePrint = async () => {
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+    try {
+      const res = await fetch(logoAsset.url);
+      const blob = await res.blob();
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const r = new FileReader();
+        r.onloadend = () => resolve(String(r.result));
+        r.onerror = reject;
+        r.readAsDataURL(blob);
       });
-    }
-    return base;
-  }, [canDelete]);
+      doc.addImage(dataUrl, "PNG", 40, 25, 90, 35);
+    } catch { /* logo optional */ }
+
+    doc.setFontSize(14);
+    doc.text("Listagem de Artigos", 150, 45);
+    doc.setFontSize(9);
+    doc.setTextColor(120);
+    doc.text(`Emitido em ${new Date().toLocaleString("pt-BR")}`, 150, 60);
+    doc.setTextColor(0);
+
+    autoTable(doc, {
+      startY: 80,
+      head: [["Código", "NCM", "Artigo", "Composição", "Rendimento", "Hab"]],
+      body: filtered.map((i) => [
+        i.codigo ?? "-",
+        i.ncm ?? "-",
+        i.nome,
+        i.composicao ?? "-",
+        i.rendimento != null ? Number(i.rendimento).toFixed(2) : "-",
+        i.ativo ? "Sim" : "Não",
+      ]),
+      styles: { fontSize: 9, cellPadding: 4 },
+      headStyles: { fillColor: [30, 58, 138], textColor: 255 },
+      alternateRowStyles: { fillColor: [243, 244, 246] },
+      didDrawPage: () => {
+        const pageCount = doc.getNumberOfPages();
+        doc.setFontSize(8);
+        doc.setTextColor(120);
+        doc.text(
+          `Página ${doc.getCurrentPageInfo().pageNumber} / ${pageCount}  •  Total: ${filtered.length}`,
+          40,
+          doc.internal.pageSize.getHeight() - 20,
+        );
+      },
+    });
+    doc.save(`artigos-${new Date().toISOString().slice(0, 10)}.pdf`);
+  };
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Artigos"
-        description="Tecidos prontos da Digitale Têxtil — Milano, Lyon, Aerodry, Veneza e demais malhas técnicas."
-        actions={
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-1.5" />Novo artigo</Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader><DialogTitle>Novo artigo</DialogTitle></DialogHeader>
-              <form onSubmit={save} className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Código</Label>
-                  <Input value={form.codigo}
-                    onChange={(e) => setForm({ ...form, codigo: e.target.value })} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Slug</Label>
-                  <Input placeholder="milano" value={form.slug}
-                    onChange={(e) => setForm({ ...form, slug: e.target.value })} />
-                </div>
-                <div className="col-span-2 space-y-2">
-                  <Label>Nome do artigo *</Label>
-                  <Input required value={form.nome}
-                    onChange={(e) => setForm({ ...form, nome: e.target.value })} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Categoria</Label>
-                  <Select value={form.categoria} onValueChange={(v) => setForm({ ...form, categoria: v })}>
-                    <SelectTrigger><SelectValue placeholder="Selecione…" /></SelectTrigger>
-                    <SelectContent>
-                      {CATEGORIAS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Preço de venda</Label>
-                  <Input type="number" step="0.01" value={form.preco_venda}
-                    onChange={(e) => setForm({ ...form, preco_venda: e.target.value })} />
-                </div>
-                <div className="col-span-2 space-y-2">
-                  <Label>Composição</Label>
-                  <Input placeholder="87% PA / 13% EL" value={form.composicao}
-                    onChange={(e) => setForm({ ...form, composicao: e.target.value })} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Gramatura (g/m²)</Label>
-                  <Input type="number" step="0.01" value={form.gramatura}
-                    onChange={(e) => setForm({ ...form, gramatura: e.target.value })} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Largura (m)</Label>
-                  <Input type="number" step="0.01" value={form.largura}
-                    onChange={(e) => setForm({ ...form, largura: e.target.value })} />
-                </div>
-                <div className="col-span-2 space-y-2">
-                  <Label>Tecnologias (separadas por vírgula)</Label>
-                  <Input placeholder="Aloe Vera, Proteção UV 50+, 4 Way Stretch" value={form.tecnologias}
-                    onChange={(e) => setForm({ ...form, tecnologias: e.target.value })} />
-                </div>
-                <div className="col-span-2 space-y-2">
-                  <Label>Descrição curta</Label>
-                  <Input value={form.descricao_curta}
-                    onChange={(e) => setForm({ ...form, descricao_curta: e.target.value })} />
-                </div>
-                <div className="col-span-2 space-y-2">
-                  <Label>Descrição completa</Label>
-                  <Textarea rows={3} value={form.descricao}
-                    onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
-                </div>
-                <div className="col-span-2 space-y-2">
-                  <Label>URL da imagem</Label>
-                  <Input value={form.imagem_url}
-                    onChange={(e) => setForm({ ...form, imagem_url: e.target.value })} />
-                </div>
-                <DialogFooter className="col-span-2">
-                  <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-                  <Button type="submit" disabled={saving}>
-                    {saving && <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />}Salvar
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-        }
-      />
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Shirt className="h-5 w-5 text-primary" />
+        <h1 className="text-lg font-semibold">Listagem Artigo</h1>
+      </div>
 
-      {loading ? (
-        <div className="flex justify-center py-16">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      <Card className="overflow-hidden">
+        <div className="flex flex-wrap items-center justify-end gap-2 border-b bg-muted/40 p-2">
+          <Button size="sm" variant="outline" onClick={openNew}><Plus className="h-4 w-4" /> Cadastrar</Button>
+          <Button size="sm" variant="outline" onClick={openEdit} disabled={!selected}><Pencil className="h-4 w-4" /> Alterar</Button>
+          <Button size="sm" variant="outline" onClick={askDelete} disabled={!selected}><Trash2 className="h-4 w-4" /> Excluir</Button>
+          <Button size="sm" onClick={handlePrint}><Printer className="h-4 w-4" /> Imprimir</Button>
         </div>
-      ) : rows.length === 0 ? (
-        <EmptyState
-          icon={<Shirt className="h-5 w-5" />}
-          title="Nenhum artigo cadastrado"
-          description="Clique em “Novo artigo” para cadastrar seus tecidos prontos."
-        />
-      ) : (
-        <DataTable
-          data={rows}
-          columns={columns}
-          searchKeys={["codigo", "nome", "categoria", "composicao", "descricao_curta"]}
-          onRowClick={(r) => setSelected(r as unknown as Record<string, unknown>)}
-        />
-      )}
 
-      <RecordDetailDialog
-        open={!!selected}
-        onOpenChange={(v) => !v && setSelected(null)}
-        title={(selected?.nome as string) ?? "Artigo"}
-        tableName="articles"
-        record={selected}
-        textareas={["descricao"]}
-        onSaved={load}
+        <div className="overflow-auto">
+          <table className="w-full border-collapse text-sm">
+            <thead className="bg-primary text-primary-foreground">
+              <tr>
+                <th className="w-8 p-2"></th>
+                <th className="p-2 text-left">Código</th>
+                <th className="p-2 text-left">NCM</th>
+                <th className="p-2 text-left">Artigo</th>
+                <th className="p-2 text-left">Composição</th>
+                <th className="p-2 text-right w-24">Rendimento</th>
+                <th className="p-2 text-center w-16">Hab</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Carregando…</td></tr>
+              ) : pageItems.length === 0 ? (
+                <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Nenhum artigo encontrado</td></tr>
+              ) : pageItems.map((i) => {
+                const isSel = i.id === selectedId;
+                return (
+                  <tr
+                    key={i.id}
+                    onClick={() => setSelectedId(i.id)}
+                    onDoubleClick={() => { setEditing(i); setDialogOpen(true); }}
+                    className={`cursor-pointer border-b hover:bg-muted/50 ${isSel ? "bg-primary/10" : ""}`}
+                  >
+                    <td className="p-2"><Checkbox checked={isSel} onCheckedChange={() => setSelectedId(i.id)} /></td>
+                    <td className="p-2">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); setSelectedId(i.id); }}
+                            className="font-medium text-primary underline-offset-2 hover:underline"
+                          >
+                            {i.codigo || "—"}
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className="w-80 p-0">
+                          <table className="w-full text-sm">
+                            <tbody>
+                              <tr className="border-b"><td className="w-28 bg-muted/50 p-2 font-medium">Código:</td><td className="p-2">{i.codigo || "—"}</td></tr>
+                              <tr className="border-b"><td className="bg-muted/50 p-2 font-medium">NCM:</td><td className="p-2 font-mono">{i.ncm || "—"}</td></tr>
+                              <tr className="border-b"><td className="bg-muted/50 p-2 font-medium">Artigo:</td><td className="p-2">{i.nome}</td></tr>
+                              <tr className="border-b"><td className="bg-muted/50 p-2 font-medium">Composição:</td><td className="p-2">{i.composicao || "—"}</td></tr>
+                              <tr><td className="bg-muted/50 p-2 font-medium">Rendimento:</td><td className="p-2">{i.rendimento != null ? Number(i.rendimento).toFixed(2) : "—"}</td></tr>
+                            </tbody>
+                          </table>
+                        </PopoverContent>
+                      </Popover>
+                    </td>
+                    <td className="p-2 font-mono text-xs">{i.ncm || "—"}</td>
+                    <td className="p-2 uppercase">{i.nome}</td>
+                    <td className="p-2">{i.composicao || "—"}</td>
+                    <td className="p-2 text-right">{i.rendimento != null ? Number(i.rendimento).toFixed(2) : "—"}</td>
+                    <td className="p-2 text-center">
+                      <span className={`inline-block h-3 w-3 rounded-full ${i.ativo ? "bg-emerald-500" : "bg-rose-400"}`} />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t bg-muted/40 p-2 text-sm">
+          <div>Página: {page} / {totalPages}</div>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}>Anterior</Button>
+            <Button size="sm" variant="outline" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>Próximo</Button>
+            <span>Ir para:</span>
+            <Select value={String(page)} onValueChange={(v) => setPage(Number(v))}>
+              <SelectTrigger className="h-8 w-20"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+                  <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>Total de Registros: {filtered.length}</div>
+        </div>
+
+        <div className="flex flex-wrap items-end gap-2 border-t bg-muted/20 p-3">
+          <div className="flex-1 min-w-[200px]">
+            <Label className="text-xs">Artigo</Label>
+            <Input value={filter} onChange={(e) => setFilter(e.target.value)} />
+          </div>
+          <Button variant="secondary" onClick={() => setPage(1)}>Filtrar</Button>
+        </div>
+      </Card>
+
+      <ArtigoDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        item={editing}
+        onSave={(p) => saveMut.mutate(p)}
+        saving={saveMut.isPending}
       />
 
-      <AlertDialog open={!!toDelete} onOpenChange={(v) => !v && setToDelete(null)}>
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir artigo?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação é permanente. O artigo <b>{toDelete?.nome}</b> será removido do sistema.
+              {selected?.codigo} — {selected?.nome}. Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={handleDelete}
-            >
-              Excluir
-            </AlertDialogAction>
+            <AlertDialogAction onClick={() => selected && deleteMut.mutate(selected.id)}>Excluir</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>
+  );
+}
+
+function ArtigoDialog({
+  open, onOpenChange, item, onSave, saving,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+  item: Article | null;
+  onSave: (p: Partial<Article>) => void;
+  saving: boolean;
+}) {
+  const [form, setForm] = useState<Partial<Article>>({});
+
+  useEffect(() => {
+    if (!open) return;
+    setForm(item ?? { ativo: true });
+  }, [open, item]);
+
+  const set = <K extends keyof Article>(k: K, v: Article[K]) => setForm((f) => ({ ...f, [k]: v }));
+
+  const submit = () => {
+    if (!form.codigo || !form.nome) {
+      toast.error("Preencha Código e Artigo");
+      return;
+    }
+    onSave(form);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-primary">
+            <Shirt className="h-4 w-4" />
+            {item ? "Alterar Artigo" : "Cadastrar Artigo"}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="rounded-md bg-muted/40 p-6">
+          <div className="mx-auto grid max-w-md gap-3">
+            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+              <Label className="text-right text-sm"><span className="text-destructive">*</span> Código:</Label>
+              <Input className="h-8 w-40" value={form.codigo ?? ""} onChange={(e) => set("codigo", e.target.value)} />
+            </div>
+            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+              <Label className="text-right text-sm">NCM:</Label>
+              <Input className="h-8 w-40" value={form.ncm ?? ""} onChange={(e) => set("ncm", e.target.value)} />
+            </div>
+            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+              <Label className="text-right text-sm"><span className="text-destructive">*</span> Artigo:</Label>
+              <Input className="h-8" value={form.nome ?? ""} onChange={(e) => set("nome", e.target.value)} placeholder="Ex: TECIDO CORSEGA" />
+            </div>
+            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+              <Label className="text-right text-sm">Composição:</Label>
+              <Input className="h-8" value={form.composicao ?? ""} onChange={(e) => set("composicao", e.target.value)} placeholder="Ex: 78%PES 22%PUE" />
+            </div>
+            <div className="grid grid-cols-[110px_1fr] items-center gap-3">
+              <Label className="text-right text-sm">Rendimento:</Label>
+              <Input
+                type="number"
+                step="0.01"
+                className="h-8 w-32"
+                value={form.rendimento ?? ""}
+                onChange={(e) => set("rendimento", e.target.value === "" ? null : Number(e.target.value))}
+              />
+            </div>
+            <label className="ml-[122px] flex items-center gap-2 text-sm">
+              <Checkbox checked={Boolean(form.ativo)} onCheckedChange={(v) => set("ativo", Boolean(v))} />
+              Habilitado
+            </label>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <Button onClick={submit} disabled={saving}>{saving ? "Salvando…" : (item ? "Salvar" : "Cadastrar")}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
