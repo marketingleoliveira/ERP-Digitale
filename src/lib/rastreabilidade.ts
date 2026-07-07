@@ -37,8 +37,8 @@ const tipoLabel: Record<NodeTipo, string> = {
 
 export function labelDe(t: NodeTipo) { return tipoLabel[t]; }
 
-async function noneRow<T>(p: Promise<{ data: T | null; error: unknown }>): Promise<T | null> {
-  const { data } = await p; return data ?? null;
+async function one<T>(q: PromiseLike<{ data: T | null; error: unknown }>): Promise<T | null> {
+  const r = await q; return r.data ?? null;
 }
 
 /** Coleta vínculos em ambas as direções. Retorna nós vazios em caso de FK ausente. */
