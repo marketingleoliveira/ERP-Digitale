@@ -399,7 +399,7 @@ function ArtigoDialog({
       delete payload.id; delete payload.created_at; delete payload.updated_at;
       let id = articleId;
       if (id) {
-        const { error } = await supabase.from("articles").update(payload).eq("id", id);
+        const { error } = await (supabase.from("articles") as any).update(payload).eq("id", id);
         if (error) throw error;
       } else {
         const { data, error } = await supabase.from("articles")
