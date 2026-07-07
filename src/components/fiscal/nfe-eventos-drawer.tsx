@@ -50,7 +50,7 @@ export function NfeEventosDrawer({ notaId, numero }: { notaId: string; numero: s
 
   const doConsult = useMutation({
     mutationFn: () => consultFn({ data: { notaId } }),
-    onSuccess: (r) => { toast.success("Consulta: " + JSON.stringify((r as { body: { status?: string } }).body?.status ?? "ok")); },
+    onSuccess: (r) => { const rr = r as { mensagem?: string }; toast.success("Consulta: " + (rr.mensagem || "ok")); },
     onError: (e: Error) => toast.error(e.message),
   });
 
