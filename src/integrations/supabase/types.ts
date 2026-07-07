@@ -704,6 +704,51 @@ export type Database = {
         }
         Relationships: []
       }
+      fios: {
+        Row: {
+          codigo: string
+          composicao: string | null
+          created_at: string
+          habilitado: boolean
+          id: string
+          n_cabos: number | null
+          n_filamentos: number | null
+          ncm: string | null
+          owner_id: string | null
+          tipo: string | null
+          titulo: number | null
+          updated_at: string
+        }
+        Insert: {
+          codigo: string
+          composicao?: string | null
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          n_cabos?: number | null
+          n_filamentos?: number | null
+          ncm?: string | null
+          owner_id?: string | null
+          tipo?: string | null
+          titulo?: number | null
+          updated_at?: string
+        }
+        Update: {
+          codigo?: string
+          composicao?: string | null
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          n_cabos?: number | null
+          n_filamentos?: number | null
+          ncm?: string | null
+          owner_id?: string | null
+          tipo?: string | null
+          titulo?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_variants: {
         Row: {
           cor: string | null
