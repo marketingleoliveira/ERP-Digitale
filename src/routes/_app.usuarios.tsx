@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,10 +10,15 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FilePlus2, Loader2, Pencil } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, FilePlus2, Loader2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+
 import { useMultiSelection } from "@/hooks/use-multi-selection";
+import { adminCreateUser } from "@/lib/admin-users.functions";
+import { friendlyDbError } from "@/lib/db-errors";
+
 
 export const Route = createFileRoute("/_app/usuarios")({
   ssr: false,
@@ -235,8 +241,24 @@ function UsuarioDialog({
     return editing?.nome ?? "";
   }, [funcionarioId, representanteId, funcionarios, representantes, editing]);
 
+  const createUser = useServerFn(adminCreateUser);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Pré-checagem de email duplicado enquanto digita
+  const emailTrim = email.trim().toLowerCase();
+  const { data: dupCheck } = useQuery({
+    queryKey: ["profile-email-check", emailTrim],
+    enabled: !editing && open && emailTrim.length > 3 && emailTrim.includes("@"),
+    queryFn: async () => {
+      const { data } = await sb.from("profiles").select("id").ilike("email", emailTrim).maybeSingle();
+      return !!data;
+    },
+  });
+  const emailJaExiste = !editing && dupCheck === true;
+
   const saveMut = useMutation({
     mutationFn: async () => {
+      setErrorMsg(null);
       if (!cargoId) throw new Error("Selecione o Tipo (cargo).");
       if (editing) {
         const { error } = await sb.from("profiles").update({ nome: nomeSelecionado.trim() || editing.nome, ativo }).eq("id", editing.id);
@@ -245,26 +267,26 @@ function UsuarioDialog({
         const { error: e2 } = await sb.from("user_cargos").insert({ user_id: editing.id, cargo_id: cargoId });
         if (e2) throw e2;
         return "Usuário atualizado.";
-      } else {
-        if (!funcionarioId && !representanteId) throw new Error("Selecione um Funcionário ou Representante.");
-        if (!email || !senha) throw new Error("Email e senha são obrigatórios.");
-        if (senha !== confirma) throw new Error("As senhas não conferem.");
-        const { data, error } = await supabase.auth.signUp({
+      }
+      if (!funcionarioId && !representanteId) throw new Error("Selecione um Funcionário ou Representante.");
+      if (!email || !senha) throw new Error("E-mail e senha são obrigatórios.");
+      if (senha.length < 6) throw new Error("A senha deve ter ao menos 6 caracteres.");
+      if (senha !== confirma) throw new Error("As senhas não conferem.");
+      if (emailJaExiste) throw new Error("Já existe um usuário cadastrado com este e-mail.");
+      await createUser({
+        data: {
           email: email.trim(),
           password: senha,
-          options: { data: { nome: nomeSelecionado.trim() } },
-        });
-        if (error) throw error;
-        const uid = data.user?.id;
-        if (uid) {
-          await sb.from("user_cargos").insert({ user_id: uid, cargo_id: cargoId });
-        }
-        return "Usuário cadastrado.";
-      }
+          nome: nomeSelecionado.trim(),
+          cargo_id: cargoId,
+        },
+      });
+      return "Usuário cadastrado.";
     },
     onSuccess: (msg) => { toast.success(msg); onOpenChange(false); onSaved(); },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => { const m = friendlyDbError(e); setErrorMsg(m); toast.error(m); },
   });
+
 
   const Field = ({ label, req, children }: { label: string; req?: 1 | 2; children: React.ReactNode }) => (
     <div className="grid grid-cols-[140px_1fr] items-center gap-3">
@@ -282,7 +304,14 @@ function UsuarioDialog({
         <DialogHeader>
           <DialogTitle>{editing ? "Alterar Usuário" : "Cadastro Usuário"}</DialogTitle>
         </DialogHeader>
+        {errorMsg && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{errorMsg}</AlertDescription>
+          </Alert>
+        )}
         <div className="space-y-3 rounded-md bg-muted/40 p-4">
+
           <Field label="Tipo" req={1}>
             <Select value={cargoId} onValueChange={setCargoId}>
               <SelectTrigger className="h-8"><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
@@ -311,8 +340,14 @@ function UsuarioDialog({
           </Field>
 
           <Field label="Email" req={1}>
-            <Input className="h-8" type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={!!editing} />
+            <div className="space-y-1">
+              <Input className="h-8" type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={!!editing} />
+              {emailJaExiste && (
+                <p className="text-xs text-destructive">Este e-mail já está cadastrado.</p>
+              )}
+            </div>
           </Field>
+
 
           {!editing && (
             <>
