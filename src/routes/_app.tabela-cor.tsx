@@ -231,7 +231,7 @@ function TinturariaDialog({
       }
     },
     onSuccess: () => {
-      toast.success(editing ? "Tinturaria atualizada." : "Tinturaria cadastrada.");
+      toast.success(editing ? "Fornecedor atualizado." : "Fornecedor cadastrado.");
       onSaved();
       onOpenChange(false);
     },
