@@ -333,80 +333,344 @@ function EmpresaPage() {
   );
 }
 
+type ArtigoVenda = { artigo: string; valor: number };
+
 function EmpresaDialog({
   open, onOpenChange, empresa, onSave, saving,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   empresa: Empresa | null;
-  onSave: (p: Partial<Empresa>) => void;
+  onSave: (p: Record<string, unknown>) => void;
   saving: boolean;
 }) {
-  const [form, setForm] = useState<Partial<Empresa>>({});
+  const [form, setForm] = useState<Record<string, any>>({});
+  const [artigos, setArtigos] = useState<ArtigoVenda[]>([]);
+  const [novoArtigo, setNovoArtigo] = useState<ArtigoVenda>({ artigo: "", valor: 0 });
 
   useEffect(() => {
-    if (open) {
-      setForm(empresa ?? {
+    if (!open) return;
+    if (empresa) {
+      setForm(empresa as any);
+      setArtigos(Array.isArray((empresa as any).artigos_venda) ? (empresa as any).artigos_venda : []);
+    } else {
+      setForm({
+        pais: "BRASIL",
         flag_cliente: true, flag_habilitado: true,
         flag_fiador: false, flag_malha: false, flag_acabamento: false,
         flag_confeccao: false, flag_importador: false, flag_fornecedor: false,
         flag_transportadora: false, flag_representante: false,
       });
+      setArtigos([]);
     }
+    setNovoArtigo({ artigo: "", valor: 0 });
   }, [open, empresa]);
 
-  const set = <K extends keyof Empresa>(k: K, v: Empresa[K]) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
+
+  const TIPO_EMPRESA: Array<{ key: keyof Empresa; label: string }> = [
+    { key: "flag_cliente", label: "Cliente" },
+    { key: "flag_malha", label: "Fiação" },
+    { key: "flag_malha", label: "Malharia" },
+    { key: "flag_acabamento", label: "Acabamento" },
+    { key: "flag_confeccao", label: "Confecção" },
+    { key: "flag_importador", label: "Importador" },
+    { key: "flag_fornecedor", label: "Fornecedor" },
+    { key: "flag_transportadora", label: "Transportadora" },
+    { key: "flag_representante", label: "Representante" },
+  ];
+
+  const handleSubmit = () => {
+    onSave({ ...form, artigos_venda: artigos });
+  };
+
+  const addArtigo = () => {
+    if (!novoArtigo.artigo) return;
+    setArtigos((a) => [...a, novoArtigo]);
+    setNovoArtigo({ artigo: "", valor: 0 });
+  };
+
+  const inp = "h-8 text-sm";
+  const lbl = "text-xs font-medium";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{empresa ? "Alterar Empresa" : "Cadastrar Empresa"}</DialogTitle>
+          <DialogTitle className="flex items-center gap-2 text-primary">
+            <Building2 className="h-4 w-4" />
+            {empresa ? "Alterar Empresa" : "Cadastrar Empresa"}
+          </DialogTitle>
         </DialogHeader>
-        <div className="grid gap-3 md:grid-cols-2">
+
+        {/* Dados principais */}
+        <div className="grid gap-3 md:grid-cols-6">
+          <div className="md:col-span-3">
+            <Label className={lbl}>* Nome Fantasia</Label>
+            <Input className={inp} value={form.nome_fantasia ?? ""} onChange={(e) => set("nome_fantasia", e.target.value)} />
+          </div>
+          <div className="md:col-span-3">
+            <Label className={lbl}>* Razão Social</Label>
+            <Input className={inp} value={form.razao_social ?? ""} onChange={(e) => set("razao_social", e.target.value)} />
+          </div>
+          <div className="md:col-span-6">
+            <Label className={lbl}>Matriz</Label>
+            <Input className={inp} placeholder="Digite no mínimo as três primeiras letras do matriz" value={form.matriz ?? ""} onChange={(e) => set("matriz", e.target.value)} />
+          </div>
+
           <div className="md:col-span-2">
-            <Label>Razão Social</Label>
-            <Input value={form.razao_social ?? ""} onChange={(e) => set("razao_social", e.target.value)} />
-          </div>
-          <div className="md:col-span-2">
-            <Label>Nome Fantasia</Label>
-            <Input value={form.nome_fantasia ?? ""} onChange={(e) => set("nome_fantasia", e.target.value)} />
-          </div>
-          <div>
-            <Label>CNPJ</Label>
-            <Input value={form.cnpj ?? ""} onChange={(e) => set("cnpj", e.target.value)} />
-          </div>
-          <div>
-            <Label>CPF</Label>
-            <Input value={form.cpf ?? ""} onChange={(e) => set("cpf", e.target.value)} />
-          </div>
-          <div>
-            <Label>Telefone</Label>
-            <Input value={form.telefone ?? ""} onChange={(e) => set("telefone", e.target.value)} />
-          </div>
-          <div>
-            <Label>Contato</Label>
-            <Input value={form.contato ?? ""} onChange={(e) => set("contato", e.target.value)} />
+            <Label className={lbl}>CNPJ</Label>
+            <Input className={inp} value={form.cnpj ?? ""} onChange={(e) => set("cnpj", e.target.value)} />
           </div>
           <div className="md:col-span-2">
-            <Label className="mb-2 block">Categorias</Label>
-            <div className="grid grid-cols-2 gap-2 rounded-md border p-3 sm:grid-cols-3 md:grid-cols-5">
-              {FLAG_COLS.map((c) => (
-                <label key={c.key} className="flex items-center gap-2 text-sm">
-                  <Checkbox
-                    checked={Boolean(form[c.key])}
-                    onCheckedChange={(v) => set(c.key, Boolean(v) as never)}
-                  />
-                  {c.title}
-                </label>
-              ))}
+            <Label className={lbl}>IE</Label>
+            <Input className={inp} value={form.inscricao_estadual ?? ""} onChange={(e) => set("inscricao_estadual", e.target.value)} />
+          </div>
+          <div className="md:col-span-1">
+            <Label className={lbl}>CPF</Label>
+            <Input className={inp} value={form.cpf ?? ""} onChange={(e) => set("cpf", e.target.value)} />
+          </div>
+          <div className="md:col-span-1">
+            <Label className={lbl}>RG</Label>
+            <Input className={inp} value={form.rg ?? ""} onChange={(e) => set("rg", e.target.value)} />
+          </div>
+
+          <div className="md:col-span-2">
+            <Label className={lbl}>SUFRAMA</Label>
+            <Input className={inp} value={form.suframa ?? ""} onChange={(e) => set("suframa", e.target.value)} />
+          </div>
+          <div className="md:col-span-2">
+            <Label className={lbl}>* CEP</Label>
+            <Input className={inp} value={form.cep ?? ""} onChange={(e) => set("cep", e.target.value)} />
+          </div>
+          <div className="md:col-span-2">
+            <Label className={lbl}>Bairro</Label>
+            <Input className={inp} value={form.bairro ?? ""} onChange={(e) => set("bairro", e.target.value)} />
+          </div>
+
+          <div className="md:col-span-4">
+            <Label className={lbl}>* Endereço</Label>
+            <Input className={inp} value={form.endereco ?? ""} onChange={(e) => set("endereco", e.target.value)} />
+          </div>
+          <div className="md:col-span-1">
+            <Label className={lbl}>Número</Label>
+            <Input className={inp} value={form.numero ?? ""} onChange={(e) => set("numero", e.target.value)} />
+          </div>
+          <div className="md:col-span-1">
+            <Label className={lbl}>Complemento</Label>
+            <Input className={inp} value={form.complemento ?? ""} onChange={(e) => set("complemento", e.target.value)} />
+          </div>
+
+          <div className="md:col-span-2">
+            <Label className={lbl}>* Cidade</Label>
+            <Input className={inp} value={form.cidade ?? ""} onChange={(e) => set("cidade", e.target.value)} />
+          </div>
+          <div className="md:col-span-1">
+            <Label className={lbl}>** Cid. Cód.</Label>
+            <Input className={inp} value={form.cidade_codigo ?? ""} onChange={(e) => set("cidade_codigo", e.target.value)} />
+          </div>
+          <div className="md:col-span-1">
+            <Label className={lbl}>* UF</Label>
+            <Input className={inp} value={form.uf ?? ""} onChange={(e) => set("uf", e.target.value.toUpperCase())} maxLength={2} />
+          </div>
+          <div className="md:col-span-2">
+            <Label className={lbl}>* País</Label>
+            <Input className={inp} value={form.pais ?? "BRASIL"} onChange={(e) => set("pais", e.target.value)} />
+          </div>
+
+          <div className="md:col-span-2">
+            <Label className={lbl}>** Telefone</Label>
+            <Input className={inp} value={form.telefone ?? ""} onChange={(e) => set("telefone", e.target.value)} />
+          </div>
+          <div className="md:col-span-2">
+            <Label className={lbl}>Celular</Label>
+            <Input className={inp} value={form.celular ?? ""} onChange={(e) => set("celular", e.target.value)} />
+          </div>
+          <div className="md:col-span-2">
+            <Label className={lbl}>Email</Label>
+            <Input className={inp} type="email" value={form.email ?? ""} onChange={(e) => set("email", e.target.value)} />
+          </div>
+
+          <div className="md:col-span-3">
+            <Label className={lbl}>Contato</Label>
+            <Input className={inp} value={form.contato ?? ""} onChange={(e) => set("contato", e.target.value)} />
+          </div>
+          <div className="md:col-span-3">
+            <Label className={lbl}>Representante</Label>
+            <Input className={inp} value={form.sales_rep_id ?? ""} onChange={(e) => set("sales_rep_id", e.target.value || null)} placeholder="[SELECIONE]" />
+          </div>
+
+          <div className="md:col-span-2">
+            <Label className={lbl}>Comissão (%)</Label>
+            <Input className={inp} type="number" step="0.01" value={form.comissao ?? ""} onChange={(e) => set("comissao", e.target.value ? Number(e.target.value) : null)} />
+          </div>
+          <div className="md:col-span-3">
+            <Label className={lbl}>Transportadora</Label>
+            <Input className={inp} value={form.transportadora_id ?? ""} onChange={(e) => set("transportadora_id", e.target.value || null)} placeholder="[SELECIONE]" />
+          </div>
+          <div className="md:col-span-1">
+            <Label className={lbl}>Peça Tara Kg</Label>
+            <Input className={inp} type="number" step="0.01" value={form.peca_tara_kg ?? ""} onChange={(e) => set("peca_tara_kg", e.target.value ? Number(e.target.value) : null)} />
+          </div>
+
+          <div className="md:col-span-6">
+            <Label className={lbl}>Observação</Label>
+            <textarea className="min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={form.observacao ?? ""} onChange={(e) => set("observacao", e.target.value)} />
+          </div>
+        </div>
+
+        {/* Endereço Entrega */}
+        <div className="mt-2">
+          <h3 className="mb-2 text-center text-sm font-semibold text-primary">Endereço Entrega</h3>
+          <div className="grid gap-3 md:grid-cols-6">
+            <div className="md:col-span-2">
+              <Label className={lbl}>CEP</Label>
+              <Input className={inp} value={form.entrega_cep ?? ""} onChange={(e) => set("entrega_cep", e.target.value)} />
+            </div>
+            <div className="md:col-span-1">
+              <Label className={lbl}>UF</Label>
+              <Input className={inp} value={form.entrega_uf ?? ""} onChange={(e) => set("entrega_uf", e.target.value.toUpperCase())} maxLength={2} />
+            </div>
+            <div className="md:col-span-3" />
+            <div className="md:col-span-4">
+              <Label className={lbl}>Endereço</Label>
+              <Input className={inp} value={form.entrega_endereco ?? ""} onChange={(e) => set("entrega_endereco", e.target.value)} />
+            </div>
+            <div className="md:col-span-1">
+              <Label className={lbl}>Número</Label>
+              <Input className={inp} value={form.entrega_numero ?? ""} onChange={(e) => set("entrega_numero", e.target.value)} />
+            </div>
+            <div className="md:col-span-1">
+              <Label className={lbl}>Complemento</Label>
+              <Input className={inp} value={form.entrega_complemento ?? ""} onChange={(e) => set("entrega_complemento", e.target.value)} />
+            </div>
+            <div className="md:col-span-2">
+              <Label className={lbl}>Bairro</Label>
+              <Input className={inp} value={form.entrega_bairro ?? ""} onChange={(e) => set("entrega_bairro", e.target.value)} />
+            </div>
+            <div className="md:col-span-2">
+              <Label className={lbl}>Cidade</Label>
+              <Input className={inp} value={form.entrega_cidade ?? ""} onChange={(e) => set("entrega_cidade", e.target.value)} />
+            </div>
+            <div className="md:col-span-2">
+              <Label className={lbl}>Cidade Código</Label>
+              <Input className={inp} value={form.entrega_cidade_codigo ?? ""} onChange={(e) => set("entrega_cidade_codigo", e.target.value)} />
+            </div>
+            <div className="md:col-span-6">
+              <Label className={lbl}>Observação Financeiro</Label>
+              <textarea className="min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={form.observacao_financeiro ?? ""} onChange={(e) => set("observacao_financeiro", e.target.value)} />
             </div>
           </div>
         </div>
+
+        {/* Tipo Empresa */}
+        <div className="mt-2">
+          <h3 className="mb-2 text-center text-sm font-semibold text-primary">TIPO EMPRESA</h3>
+          <div className="flex flex-wrap justify-center gap-4 rounded-md border p-3">
+            {TIPO_EMPRESA.map((t, i) => (
+              <label key={i} className="flex items-center gap-2 text-sm">
+                <Checkbox checked={Boolean(form[t.key])} onCheckedChange={(v) => set(t.key as string, Boolean(v))} />
+                {t.label}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Dados Cliente */}
+        <div className="mt-2">
+          <h3 className="mb-2 text-center text-sm font-semibold text-primary">DADOS CLIENTE</h3>
+          <div className="grid gap-3 md:grid-cols-4">
+            <div>
+              <Label className={lbl}>Tipo Cliente</Label>
+              <Input className={inp} value={form.tipo_cliente ?? ""} onChange={(e) => set("tipo_cliente", e.target.value)} placeholder="[SELECIONE]" />
+            </div>
+            <div>
+              <Label className={lbl}>Segmento Cliente</Label>
+              <Input className={inp} value={form.segmento_cliente ?? ""} onChange={(e) => set("segmento_cliente", e.target.value)} placeholder="[SELECIONE]" />
+            </div>
+            <div>
+              <Label className={lbl}>CRT</Label>
+              <Input className={inp} value={form.crt ?? ""} onChange={(e) => set("crt", e.target.value)} placeholder="[SELECIONE]" />
+            </div>
+            <div>
+              <Label className={lbl}>ICMS</Label>
+              <Input className={inp} type="number" step="0.01" value={form.icms ?? ""} onChange={(e) => set("icms", e.target.value ? Number(e.target.value) : null)} />
+            </div>
+            <div>
+              <Label className={lbl}>Tipo Pagamento</Label>
+              <Input className={inp} value={form.tipo_pagamento ?? ""} onChange={(e) => set("tipo_pagamento", e.target.value)} placeholder="[SELECIONE]" />
+            </div>
+            <div>
+              <Label className={lbl}>R$ Limite</Label>
+              <Input className={inp} type="number" step="0.01" value={form.limite_credito ?? ""} onChange={(e) => set("limite_credito", e.target.value ? Number(e.target.value) : null)} />
+            </div>
+            <div>
+              <Label className={lbl}>Tabela Prazo</Label>
+              <Input className={inp} value={form.tabela_prazo ?? ""} onChange={(e) => set("tabela_prazo", e.target.value)} placeholder="[SELECIONE]" />
+            </div>
+            <div>
+              <Label className={lbl}>Prazo</Label>
+              <Input className={inp} type="number" value={form.prazo ?? ""} onChange={(e) => set("prazo", e.target.value ? Number(e.target.value) : null)} />
+            </div>
+            <div>
+              <Label className={lbl}>Intervalo</Label>
+              <Input className={inp} type="number" value={form.intervalo ?? ""} onChange={(e) => set("intervalo", e.target.value ? Number(e.target.value) : null)} />
+            </div>
+            <div>
+              <Label className={lbl}>Parcelas</Label>
+              <Input className={inp} type="number" value={form.parcelas ?? ""} onChange={(e) => set("parcelas", e.target.value ? Number(e.target.value) : null)} />
+            </div>
+          </div>
+        </div>
+
+        {/* Artigo Valor Venda */}
+        <div className="mt-2">
+          <h3 className="mb-2 text-center text-sm font-semibold text-primary">ARTIGO VALOR VENDA</h3>
+          <div className="grid gap-3 md:grid-cols-6">
+            <div className="md:col-span-3">
+              <Label className={lbl}>* Artigo</Label>
+              <Input className={inp} value={novoArtigo.artigo} onChange={(e) => setNovoArtigo({ ...novoArtigo, artigo: e.target.value })} placeholder="[SELECIONE]" />
+            </div>
+            <div className="md:col-span-2">
+              <Label className={lbl}>* Valor R$</Label>
+              <Input className={inp} type="number" step="0.01" value={novoArtigo.valor || ""} onChange={(e) => setNovoArtigo({ ...novoArtigo, valor: Number(e.target.value) })} />
+            </div>
+            <div className="md:col-span-1 flex items-end">
+              <Button type="button" size="sm" variant="secondary" className="w-full" onClick={addArtigo}>Inserir</Button>
+            </div>
+          </div>
+          <table className="mt-2 w-full border-collapse text-sm">
+            <thead className="bg-muted">
+              <tr>
+                <th className="p-2 text-left">Artigo</th>
+                <th className="p-2 text-right">Valor</th>
+                <th className="p-2 text-center w-16">Remover</th>
+              </tr>
+            </thead>
+            <tbody>
+              {artigos.length === 0 ? (
+                <tr><td colSpan={3} className="p-3 text-center text-muted-foreground">Nenhum artigo</td></tr>
+              ) : artigos.map((a, i) => (
+                <tr key={i} className="border-b">
+                  <td className="p-2">{a.artigo}</td>
+                  <td className="p-2 text-right">R$ {Number(a.valor).toFixed(2)}</td>
+                  <td className="p-2 text-center">
+                    <button type="button" onClick={() => setArtigos(artigos.filter((_, j) => j !== i))} className="text-destructive hover:underline">
+                      <Trash2 className="inline h-4 w-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p className="mt-2 text-center text-xs text-destructive">* Campo Obrigatório</p>
+
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button onClick={() => onSave(form)} disabled={saving}>
-            {saving ? "Salvando…" : "Salvar"}
+          <Button onClick={handleSubmit} disabled={saving}>
+            {saving ? "Salvando…" : (empresa ? "Salvar" : "Cadastrar")}
           </Button>
         </DialogFooter>
       </DialogContent>
