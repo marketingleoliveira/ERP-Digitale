@@ -45,6 +45,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Tecidos", url: "/estoque-tecidos", icon: Shirt, group: "Estoque" },
   { title: "Fios", url: "/estoque-fios", icon: Spool, group: "Estoque" },
   { title: "Lotes", url: "/lotes", icon: PackageCheck, group: "Estoque" },
+  { title: "Kardex", url: "/estoque/kardex", icon: FileText, group: "Estoque" },
   { title: "Rep. Meta R$", url: "/rep-meta", icon: Target, group: "Cadastros" },
   { title: "Representantes (legado)", url: "/representantes", icon: UserCheck, group: "Cadastros", defaultHidden: true },
   { title: "Painel OP", url: "/producao", icon: Factory, group: "Produção (PCP)" },
