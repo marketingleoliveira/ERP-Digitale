@@ -104,7 +104,7 @@ function VariantePage() {
               ) : paged.map((v) => (
                 <TableRow key={v.id}>
                   <TableCell>
-                    <Checkbox checked={selected === v.id} onCheckedChange={(c) => setSelected(c ? v.id : null)} />
+                    <Checkbox checked={sel.isSelected(v.id)} onCheckedChange={(c) => sel.toggleOne(v.id, !!c)} />
                   </TableCell>
                   <TableCell>{v.nome}</TableCell>
                   <TableCell className="text-center">
