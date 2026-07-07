@@ -1188,11 +1188,17 @@ export type Database = {
           codigo: string
           contato: string | null
           created_at: string
+          estoque_minimo: number | null
           habilitado: boolean
           id: string
+          ncm: string | null
           nome_fantasia: string
+          observacao: string | null
+          preco_custo: number | null
+          preco_venda: number | null
           razao_social: string | null
           telefone: string | null
+          unidade: string | null
           updated_at: string
         }
         Insert: {
@@ -1201,11 +1207,17 @@ export type Database = {
           codigo: string
           contato?: string | null
           created_at?: string
+          estoque_minimo?: number | null
           habilitado?: boolean
           id?: string
+          ncm?: string | null
           nome_fantasia: string
+          observacao?: string | null
+          preco_custo?: number | null
+          preco_venda?: number | null
           razao_social?: string | null
           telefone?: string | null
+          unidade?: string | null
           updated_at?: string
         }
         Update: {
@@ -1214,11 +1226,17 @@ export type Database = {
           codigo?: string
           contato?: string | null
           created_at?: string
+          estoque_minimo?: number | null
           habilitado?: boolean
           id?: string
+          ncm?: string | null
           nome_fantasia?: string
+          observacao?: string | null
+          preco_custo?: number | null
+          preco_venda?: number | null
           razao_social?: string | null
           telefone?: string | null
+          unidade?: string | null
           updated_at?: string
         }
         Relationships: []
