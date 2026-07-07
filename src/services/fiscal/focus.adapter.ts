@@ -19,19 +19,21 @@ function authHeader(cfg: FocusConfig): string {
   return "Basic " + Buffer.from(`${cfg.token}:`).toString("base64");
 }
 
-export type FocusResponse<T = unknown> = {
+export type JsonRecord = Record<string, unknown>;
+
+export type FocusResponse = {
   ok: boolean;
   status: number;
-  body: T;
+  body: JsonRecord;
   durationMs: number;
 };
 
-async function request<T = unknown>(
+async function request(
   cfg: FocusConfig,
   method: "GET" | "POST" | "PUT" | "DELETE",
   path: string,
   body?: unknown
-): Promise<FocusResponse<T>> {
+): Promise<FocusResponse> {
   const start = Date.now();
   const res = await fetch(`${baseUrl(cfg)}${path}`, {
     method,
@@ -41,13 +43,8 @@ async function request<T = unknown>(
     },
     body: body ? JSON.stringify(body) : undefined,
   });
-  const parsed = await res.json().catch(() => ({}));
-  return {
-    ok: res.ok,
-    status: res.status,
-    body: parsed as T,
-    durationMs: Date.now() - start,
-  };
+  const parsed = (await res.json().catch(() => ({}))) as JsonRecord;
+  return { ok: res.ok, status: res.status, body: parsed, durationMs: Date.now() - start };
 }
 
 export const focusAdapter = {
