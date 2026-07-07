@@ -78,6 +78,9 @@ function VariantePage() {
           <Button size="sm" variant="outline" disabled={!selectedRow} onClick={() => { setEditing(selectedRow); setDialogOpen(true); }}>
             <Pencil className="h-4 w-4 mr-1.5" />ALTERAR
           </Button>
+          <Button size="sm" variant="outline" disabled={!selectedRow || deleteMut.isPending} onClick={() => selectedRow && deleteMut.mutate(selectedRow)}>
+            <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR
+          </Button>
         </div>
 
         <div className="overflow-x-auto">
