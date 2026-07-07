@@ -194,7 +194,7 @@ function FuncionarioDialog({
   });
 
   const [f, setF] = useState({
-    tipo: "", nome: "", cpf: "", rg: "", cep: "", uf: "",
+    cargo_id: "", nome: "", cpf: "", rg: "", cep: "", uf: "",
     endereco: "", numero: "", complemento: "", bairro: "", cidade: "",
     telefone: "", celular: "", email: "", observacao: "",
     habilitado: true,
@@ -203,7 +203,7 @@ function FuncionarioDialog({
   useEffect(() => {
     if (!open) return;
     setF({
-      tipo: editing?.tipo ?? "",
+      cargo_id: editing?.cargo_id ?? "",
       nome: editing?.nome ?? "",
       cpf: editing?.cpf ?? "",
       rg: editing?.rg ?? "",
@@ -227,8 +227,10 @@ function FuncionarioDialog({
   const mut = useMutation({
     mutationFn: async () => {
       const clean = (s: string) => s.trim() || null;
+      const cargoNome = cargos.find((c) => c.id === f.cargo_id)?.nome ?? null;
       const payload = {
-        tipo: clean(f.tipo),
+        cargo_id: f.cargo_id || null,
+        tipo: cargoNome, // mantém "tipo" sincronizado como cache legível
         nome: f.nome.trim(),
         cpf: clean(f.cpf),
         rg: clean(f.rg),
@@ -262,10 +264,11 @@ function FuncionarioDialog({
   });
 
   const submit = () => {
-    if (!f.tipo.trim()) { toast.error("Selecione o tipo."); return; }
+    if (!f.cargo_id) { toast.error("Selecione o cargo."); return; }
     if (!f.nome.trim()) { toast.error("Informe o nome."); return; }
     mut.mutate();
   };
+
 
   const Field = ({ label, required, children, className }: { label: string; required?: boolean; children: React.ReactNode; className?: string }) => (
     <div className={className}>
