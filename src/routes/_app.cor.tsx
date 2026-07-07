@@ -93,11 +93,11 @@ function CorPage() {
           <Button size="sm" variant="outline" onClick={() => { setEditing(null); setDialogOpen(true); }}>
             <FilePlus2 className="h-4 w-4 mr-1.5" />CADASTRAR
           </Button>
-          <Button size="sm" variant="outline" disabled={!selectedRow} onClick={() => { setEditing(selectedRow); setDialogOpen(true); }}>
+          <Button size="sm" variant="outline" disabled={!singleRow} onClick={() => { setEditing(singleRow); setDialogOpen(true); }}>
             <Pencil className="h-4 w-4 mr-1.5" />ALTERAR
           </Button>
-          <Button size="sm" variant="outline" disabled={!selectedRow || deleteMut.isPending} onClick={() => selectedRow && deleteMut.mutate(selectedRow)}>
-            <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR
+          <Button size="sm" variant="outline" disabled={sel.count === 0 || deleteMut.isPending} onClick={() => deleteMut.mutate([...sel.selectedIds])}>
+            <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR{sel.count > 1 ? ` (${sel.count})` : ""}
           </Button>
           <Button size="sm" variant="outline" onClick={() => window.print()}>
             <Printer className="h-4 w-4 mr-1.5" />IMPRIMIR
