@@ -288,11 +288,12 @@ function FuncionarioDialog({
 
         <div className="rounded bg-muted/40 p-5 space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Field label="Tipo" required>
-              <Select value={f.tipo} onValueChange={(v) => upd("tipo", v)}>
+            <Field label="Cargo" required>
+              <Select value={f.cargo_id} onValueChange={(v) => upd("cargo_id", v)}>
                 <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-                <SelectContent>{cargos.map((c) => <SelectItem key={c.id} value={c.nome}>{c.nome}</SelectItem>)}</SelectContent>
+                <SelectContent>{cargos.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent>
               </Select>
+
             </Field>
             <Field label="Habilitado">
               <div className="h-9 flex items-center">
