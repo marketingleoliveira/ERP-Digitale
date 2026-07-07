@@ -155,7 +155,7 @@ function MaquinaPage() {
           </div>
           <div className="mt-3 flex flex-wrap items-end gap-3">
             <div className="min-w-[140px]">
-              <Label className="text-xs text-muted-foreground">Número:</Label>
+              <Label className="text-xs text-muted-foreground">Código:</Label>
               <Input value={filterNumero} onChange={(e) => setFilterNumero(e.target.value)} className="h-9" maxLength={10} />
             </div>
             <div className="flex-1 min-w-[240px]">
