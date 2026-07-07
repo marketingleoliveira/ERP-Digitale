@@ -1043,52 +1043,85 @@ export type Database = {
       }
       products: {
         Row: {
+          area_peca: number | null
           ativo: boolean
           categoria: string | null
+          cest: string | null
           codigo: string
           composicao: string | null
           created_at: string
+          estoque_minimo: number | null
+          ficha_tecnica: Json
           gramatura: number | null
           id: string
+          img1_path: string | null
+          img2_path: string | null
           largura: number | null
           ncm: string | null
           nome: string
+          observacao: string | null
+          origem: string | null
+          peso_padrao_peca: number | null
           preco_custo: number | null
           preco_venda: number | null
+          qtd_pecas_kg: number | null
+          rendimento: number | null
           tipo: string | null
           unidade: string | null
           updated_at: string
         }
         Insert: {
+          area_peca?: number | null
           ativo?: boolean
           categoria?: string | null
+          cest?: string | null
           codigo: string
           composicao?: string | null
           created_at?: string
+          estoque_minimo?: number | null
+          ficha_tecnica?: Json
           gramatura?: number | null
           id?: string
+          img1_path?: string | null
+          img2_path?: string | null
           largura?: number | null
           ncm?: string | null
           nome: string
+          observacao?: string | null
+          origem?: string | null
+          peso_padrao_peca?: number | null
           preco_custo?: number | null
           preco_venda?: number | null
+          qtd_pecas_kg?: number | null
+          rendimento?: number | null
           tipo?: string | null
           unidade?: string | null
           updated_at?: string
         }
         Update: {
+          area_peca?: number | null
           ativo?: boolean
           categoria?: string | null
+          cest?: string | null
           codigo?: string
           composicao?: string | null
           created_at?: string
+          estoque_minimo?: number | null
+          ficha_tecnica?: Json
           gramatura?: number | null
           id?: string
+          img1_path?: string | null
+          img2_path?: string | null
           largura?: number | null
           ncm?: string | null
           nome?: string
+          observacao?: string | null
+          origem?: string | null
+          peso_padrao_peca?: number | null
           preco_custo?: number | null
           preco_venda?: number | null
+          qtd_pecas_kg?: number | null
+          rendimento?: number | null
           tipo?: string | null
           unidade?: string | null
           updated_at?: string
