@@ -50,6 +50,27 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
+        {standalone.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {standalone.map((item) => {
+                  const active = pathname === item.url || pathname.startsWith(item.url + "/");
+                  return (
+                    <SidebarMenuItem key={item.url}>
+                      <SidebarMenuButton asChild tooltip={item.title} isActive={active}>
+                        <Link to={item.url}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
         {groups.map((g) => {
           const GroupIcon = GROUP_ICONS[g.label] ?? Users;
           const hasActive = g.items.some(
