@@ -239,7 +239,7 @@ function EmpresaPage() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Building2 className="h-5 w-5 text-primary" />
-        <h1 className="text-lg font-semibold">Listagem Empresa</h1>
+        <h1 className="text-lg font-semibold">Listagem Clientes</h1>
       </div>
 
       <Card className="overflow-hidden">
