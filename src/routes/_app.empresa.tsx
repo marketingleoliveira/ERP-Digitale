@@ -348,14 +348,17 @@ function EmpresaPage() {
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Excluir empresa?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Excluir {selectedList.length} empresa(s)?
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {selected?.nome_fantasia || selected?.razao_social} — esta ação não pode ser desfeita.
+              {selectedList.slice(0, 5).map((e) => e.nome_fantasia || e.razao_social).join(", ")}
+              {selectedList.length > 5 ? "…" : ""} — esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => selected && deleteMut.mutate(selected.id)}>
+            <AlertDialogAction onClick={() => deleteMut.mutate(selectedList.map((e) => e.id))}>
               Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
