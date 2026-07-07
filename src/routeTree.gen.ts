@@ -32,6 +32,7 @@ import { Route as AppComposicaoRouteImport } from './routes/_app.composicao'
 import { Route as AppClienteArtigoRouteImport } from './routes/_app.cliente-artigo'
 import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
 import { Route as AppAgulhaRouteImport } from './routes/_app.agulha'
+import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -147,6 +148,11 @@ const AppAgulhaRoute = AppAgulhaRouteImport.update({
   path: '/agulha',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDevCargosRoute = AppDevCargosRouteImport.update({
+  id: '/dev/cargos',
+  path: '/dev/cargos',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/tabela-cor': typeof AppTabelaCorRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
+  '/dev/cargos': typeof AppDevCargosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByTo {
   '/tabela-cor': typeof AppTabelaCorRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
+  '/dev/cargos': typeof AppDevCargosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -221,6 +229,7 @@ export interface FileRoutesById {
   '/_app/tabela-cor': typeof AppTabelaCorRoute
   '/_app/usuarios': typeof AppUsuariosRoute
   '/_app/variante': typeof AppVarianteRoute
+  '/_app/dev/cargos': typeof AppDevCargosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/tabela-cor'
     | '/usuarios'
     | '/variante'
+    | '/dev/cargos'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/tabela-cor'
     | '/usuarios'
     | '/variante'
+    | '/dev/cargos'
   id:
     | '__root__'
     | '/'
@@ -296,6 +307,7 @@ export interface FileRouteTypes {
     | '/_app/tabela-cor'
     | '/_app/usuarios'
     | '/_app/variante'
+    | '/_app/dev/cargos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -468,6 +480,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAgulhaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/dev/cargos': {
+      id: '/_app/dev/cargos'
+      path: '/dev/cargos'
+      fullPath: '/dev/cargos'
+      preLoaderRoute: typeof AppDevCargosRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -491,6 +510,7 @@ interface AppRouteChildren {
   AppTabelaCorRoute: typeof AppTabelaCorRoute
   AppUsuariosRoute: typeof AppUsuariosRoute
   AppVarianteRoute: typeof AppVarianteRoute
+  AppDevCargosRoute: typeof AppDevCargosRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -513,6 +533,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppTabelaCorRoute: AppTabelaCorRoute,
   AppUsuariosRoute: AppUsuariosRoute,
   AppVarianteRoute: AppVarianteRoute,
+  AppDevCargosRoute: AppDevCargosRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
