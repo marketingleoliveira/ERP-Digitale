@@ -219,6 +219,7 @@ function TinturariaDialog({
         telefone: telefone.trim() || null,
         contato: contato.trim() || null,
         habilitado,
+        categoria,
       };
       const client = supabase as unknown as { from: (t: string) => { update: (p: unknown) => { eq: (c: string, v: string) => Promise<{ error: Error | null }> }; insert: (p: unknown) => Promise<{ error: Error | null }> } };
       if (editing) {
