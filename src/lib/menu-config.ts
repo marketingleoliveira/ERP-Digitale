@@ -22,7 +22,7 @@ export type MenuItem = {
 
 /** Full catalog of available menus. Add new items here. */
 export const ALL_MENU_ITEMS: MenuItem[] = [
-  { title: "Início", url: "/inicio", icon: LayoutDashboard, group: "Visão Geral", locked: true },
+  { title: "Início", url: "/inicio", icon: LayoutDashboard, group: "", locked: true },
   { title: "Empresa", url: "/empresa", icon: Building2, group: "Cadastros" },
   { title: "Composição", url: "/composicao", icon: FlaskConical, group: "Cadastros" },
   { title: "Fio", url: "/fio", icon: Spool, group: "Cadastros" },
