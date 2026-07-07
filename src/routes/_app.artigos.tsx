@@ -567,6 +567,56 @@ function ArtigoDialog({
 
           <Section title="REGULAGEM MÁQUINA" />
 
+          <div className="md:col-span-4 rounded border overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-muted">
+                <tr>
+                  <th className="p-2 text-left w-8"></th>
+                  <th className="p-2 text-left">Alimentador</th>
+                  <th className="p-2 text-left">LFA</th>
+                  <th className="p-2 text-left">Tensão</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[1, 2, 3].map((n) => {
+                  const ativo = !!form[`alim_fio_${n}_ativo`];
+                  return (
+                    <tr key={n} className="border-t">
+                      <td className="p-2">
+                        <Checkbox
+                          checked={ativo}
+                          onCheckedChange={(v) => set(`alim_fio_${n}_ativo`, !!v)}
+                        />
+                      </td>
+                      <td className="p-2">Fio alimentador {n}</td>
+                      <td className="p-2">
+                        <Input
+                          className={inp}
+                          type="number"
+                          step="0.01"
+                          disabled={!ativo}
+                          value={form[`alim_fio_${n}_lfa`] ?? ""}
+                          onChange={(e) => set(`alim_fio_${n}_lfa`, e.target.value === "" ? null : Number(e.target.value))}
+                        />
+                      </td>
+                      <td className="p-2">
+                        <Input
+                          className={inp}
+                          type="number"
+                          step="0.01"
+                          disabled={!ativo}
+                          value={form[`alim_fio_${n}_tensao`] ?? ""}
+                          onChange={(e) => set(`alim_fio_${n}_tensao`, e.target.value === "" ? null : Number(e.target.value))}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+
           <div>
             <Label className={lbl}>Ponto Disco</Label>
             <Select value={form.ponto_disco ?? ""} onValueChange={(v) => set("ponto_disco", v)}>
