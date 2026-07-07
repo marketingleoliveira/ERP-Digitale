@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Home, Search, TrendingUp, Users, Package, Briefcase } from "lucide-react";
+import { Home, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,21 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  Legend,
-} from "recharts";
 
 export const Route = createFileRoute("/_app/inicio")({ component: InicioPage });
 
@@ -56,25 +41,13 @@ function InicioPage() {
   const [fCnpj, setFCnpj] = useState("");
   const [fTipo, setFTipo] = useState<string>("all");
 
-  const [counts, setCounts] = useState({ funcionarios: 0, produtos: 0, artigos: 0 });
-
   const fetchAll = async () => {
     setLoading(true);
-    const [{ data: cust }, fCount, pCount, aCount] = await Promise.all([
-      supabase
-        .from("customers")
-        .select("id, razao_social, nome_fantasia, cnpj, status, updated_at, created_at")
-        .order("razao_social"),
-      supabase.from("funcionarios").select("id", { count: "exact", head: true }),
-      supabase.from("products").select("id", { count: "exact", head: true }),
-      supabase.from("articles").select("id", { count: "exact", head: true }),
-    ]);
-    setRows((cust as Customer[]) ?? []);
-    setCounts({
-      funcionarios: fCount.count ?? 0,
-      produtos: pCount.count ?? 0,
-      artigos: aCount.count ?? 0,
-    });
+    const { data } = await supabase
+      .from("customers")
+      .select("id, razao_social, nome_fantasia, cnpj, status, updated_at, created_at")
+      .order("razao_social");
+    setRows((data as Customer[]) ?? []);
     setLoading(false);
   };
 
@@ -83,16 +56,11 @@ function InicioPage() {
     const ch = supabase
       .channel("inicio-realtime")
       .on("postgres_changes", { event: "*", schema: "public", table: "customers" }, fetchAll)
-      .on("postgres_changes", { event: "*", schema: "public", table: "funcionarios" }, fetchAll)
-      .on("postgres_changes", { event: "*", schema: "public", table: "products" }, fetchAll)
-      .on("postgres_changes", { event: "*", schema: "public", table: "articles" }, fetchAll)
       .subscribe();
     return () => {
       supabase.removeChannel(ch);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   const now = new Date();
   const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate());
@@ -108,7 +76,7 @@ function InicioPage() {
     const inativos2M = rows.filter((r) => !updatedAfter(r, twoMonthsAgo)).length;
     const ativosMes = rows.filter((r) => isAtivo(r) && updatedAfter(r, monthStart)).length;
     const pct = total > 0 ? (ativosMes / total) * 100 : 0;
-    const ticket = 14815.25; // placeholder — sem módulo de faturamento
+    const ticket = 14815.25;
     return { total, ativos2M, inativos2M, ativosMes, pct, ticket };
   }, [rows, twoMonthsAgo, monthStart]);
 
@@ -139,161 +107,8 @@ function InicioPage() {
     { label: "R$ Ticket Médio Mês", value: fmtBRL(stats.ticket) },
   ];
 
-  // Dados para gráficos (últimos 6 meses)
-  const chartData = useMemo(() => {
-    const months: { key: string; label: string; date: Date }[] = [];
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      months.push({
-        key: `${d.getFullYear()}-${d.getMonth()}`,
-        label: d.toLocaleDateString("pt-BR", { month: "short" }).replace(".", ""),
-        date: d,
-      });
-    }
-    const monthly = months.map((m, idx) => {
-      const next = idx + 1 < months.length ? months[idx + 1].date : new Date(now.getFullYear(), now.getMonth() + 1, 1);
-      const novos = rows.filter((r) => {
-        if (!r.created_at) return false;
-        const c = new Date(r.created_at);
-        return c >= m.date && c < next;
-      }).length;
-      const ativos = rows.filter((r) => {
-        if (!r.updated_at) return false;
-        const u = new Date(r.updated_at);
-        return u >= m.date && u < next && r.status?.toLowerCase() === "ativo";
-      }).length;
-      return { mes: m.label, novos, ativos };
-    });
-
-    const ativosCount = rows.filter((r) => r.status?.toLowerCase() === "ativo").length;
-    const pie = [
-      { name: "Ativos", value: ativosCount },
-      { name: "Inativos", value: Math.max(0, rows.length - ativosCount) },
-    ];
-
-    const kpis = [
-      { name: "Clientes", value: rows.length },
-      { name: "Funcionários", value: counts.funcionarios },
-      { name: "Produtos", value: counts.produtos },
-      { name: "Artigos", value: counts.artigos },
-    ];
-
-    return { monthly, pie, kpis };
-  }, [rows, counts, now]);
-
-
-  const KPI_ICONS = [Users, Briefcase, Package, TrendingUp];
-  const PIE_COLORS = ["hsl(var(--primary))", "hsl(var(--muted-foreground))"];
-
   return (
     <div className="space-y-6">
-      {/* Dashboard KPIs */}
-      <section>
-        <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">
-          <TrendingUp className="h-4 w-4" />
-          Dashboard em Tempo Real
-          <span className="ml-2 inline-flex items-center gap-1 text-[10px] font-normal text-muted-foreground">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" /> live
-          </span>
-        </h2>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          {chartData.kpis.map((k, i) => {
-            const Icon = KPI_ICONS[i];
-            return (
-              <div key={k.name} className="rounded-md border bg-card p-4 shadow-sm transition hover:shadow-md">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-muted-foreground">{k.name}</span>
-                  <Icon className="h-4 w-4 text-primary" />
-                </div>
-                <div className="mt-2 text-3xl font-semibold text-primary">{fmtInt(k.value)}</div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-3">
-          <div className="rounded-md border bg-card p-4 lg:col-span-2">
-            <h3 className="mb-2 text-xs font-semibold text-muted-foreground">Cadastros e Atividade — últimos 6 meses</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData.monthly}>
-                  <defs>
-                    <linearGradient id="gNovos" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.5} />
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="gAtivos" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.5} />
-                      <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                  <XAxis dataKey="mes" className="text-xs" stroke="hsl(var(--muted-foreground))" />
-                  <YAxis className="text-xs" stroke="hsl(var(--muted-foreground))" />
-                  <Tooltip
-                    contentStyle={{
-                      background: "hsl(var(--popover))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: 6,
-                      fontSize: 12,
-                    }}
-                  />
-                  <Legend wrapperStyle={{ fontSize: 12 }} />
-                  <Area type="monotone" dataKey="novos" name="Novos" stroke="hsl(var(--primary))" fill="url(#gNovos)" />
-                  <Area type="monotone" dataKey="ativos" name="Ativos" stroke="hsl(var(--accent))" fill="url(#gAtivos)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div className="rounded-md border bg-card p-4">
-            <h3 className="mb-2 text-xs font-semibold text-muted-foreground">Status Clientes</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={chartData.pie} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80} paddingAngle={3}>
-                    {chartData.pie.map((_, i) => (
-                      <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      background: "hsl(var(--popover))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: 6,
-                      fontSize: 12,
-                    }}
-                  />
-                  <Legend wrapperStyle={{ fontSize: 12 }} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div className="rounded-md border bg-card p-4 lg:col-span-3">
-            <h3 className="mb-2 text-xs font-semibold text-muted-foreground">Novos Clientes por Mês</h3>
-            <div className="h-56">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData.monthly}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                  <XAxis dataKey="mes" className="text-xs" stroke="hsl(var(--muted-foreground))" />
-                  <YAxis className="text-xs" stroke="hsl(var(--muted-foreground))" />
-                  <Tooltip
-                    contentStyle={{
-                      background: "hsl(var(--popover))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: 6,
-                      fontSize: 12,
-                    }}
-                  />
-                  <Bar dataKey="novos" name="Novos" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Resumo Vendas */}
       <section>
         <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">
@@ -364,7 +179,6 @@ function InicioPage() {
             </tbody>
           </table>
 
-          {/* Paginação + filtros */}
           <div className="flex flex-wrap items-center justify-between gap-3 border-t bg-muted/50 px-3 py-2 text-xs">
             <span>
               Página: {pageSafe} / {totalPages}
