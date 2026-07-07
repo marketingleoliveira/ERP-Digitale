@@ -124,6 +124,39 @@ export type Database = {
           },
         ]
       }
+      agulhas: {
+        Row: {
+          agulha: string
+          created_at: string
+          habilitado: boolean
+          id: string
+          marca: string | null
+          modelo: string | null
+          pe: number | null
+          updated_at: string
+        }
+        Insert: {
+          agulha: string
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          marca?: string | null
+          modelo?: string | null
+          pe?: number | null
+          updated_at?: string
+        }
+        Update: {
+          agulha?: string
+          created_at?: string
+          habilitado?: boolean
+          id?: string
+          marca?: string | null
+          modelo?: string | null
+          pe?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       article_fios: {
         Row: {
           article_id: string
