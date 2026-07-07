@@ -17,7 +17,6 @@ export const Route = createFileRoute("/_app/maquina")({
   component: MaquinaPage,
 });
 
-type CargaAgulha = { agulha: string; quantidade: number };
 type Maquina = {
   id: string;
   numero: number;
@@ -30,8 +29,8 @@ type Maquina = {
   finura?: number | null;
   disposicao_agulhas?: string | null;
   producao_media?: number | null;
-  carga_agulhas?: CargaAgulha[] | null;
-  fio_id?: string | null;
+  data_fabricacao?: string | null;
+  correias?: string[] | null;
 };
 
 const PAGE_SIZE = 20;
