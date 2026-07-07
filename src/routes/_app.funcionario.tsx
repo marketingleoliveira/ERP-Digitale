@@ -295,7 +295,7 @@ function FuncionarioDialog({
             <Field label="Tipo" required>
               <Select value={f.tipo} onValueChange={(v) => upd("tipo", v)}>
                 <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-                <SelectContent>{TIPOS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                <SelectContent>{cargos.map((c) => <SelectItem key={c.id} value={c.nome}>{c.nome}</SelectItem>)}</SelectContent>
               </Select>
             </Field>
             <Field label="Habilitado">
