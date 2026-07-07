@@ -89,6 +89,7 @@ export function NotaFiscalList({ tipo, title, emoji }: { tipo: NF["tipo"]; title
                   <TableCell>R$ {Number(n.valor_total).toFixed(2)}</TableCell>
                   <TableCell><Badge variant="outline" className="capitalize">{n.status}</Badge></TableCell>
                   <TableCell className="text-right space-x-1">
+                    <NFActions nf={n} />
                     <Button size="sm" variant="ghost" onClick={() => { setEditingId(n.id); setOpen(true); }}><Pencil className="h-4 w-4" /></Button>
                     <Button size="sm" variant="ghost" onClick={() => del.mutate(n.id)}><Trash2 className="h-4 w-4" /></Button>
                   </TableCell>
