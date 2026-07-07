@@ -15,6 +15,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppVarianteRouteImport } from './routes/_app.variante'
 import { Route as AppUsuariosRouteImport } from './routes/_app.usuarios'
+import { Route as AppTimeLogRouteImport } from './routes/_app.time-log'
 import { Route as AppTabelaCorRouteImport } from './routes/_app.tabela-cor'
 import { Route as AppSenhaRouteImport } from './routes/_app.senha'
 import { Route as AppRepresentantesRouteImport } from './routes/_app.representantes'
@@ -63,6 +64,11 @@ const AppVarianteRoute = AppVarianteRouteImport.update({
 const AppUsuariosRoute = AppUsuariosRouteImport.update({
   id: '/usuarios',
   path: '/usuarios',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTimeLogRoute = AppTimeLogRouteImport.update({
+  id: '/time-log',
+  path: '/time-log',
   getParentRoute: () => AppRoute,
 } as any)
 const AppTabelaCorRoute = AppTabelaCorRouteImport.update({
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/representantes': typeof AppRepresentantesRoute
   '/senha': typeof AppSenhaRoute
   '/tabela-cor': typeof AppTabelaCorRoute
+  '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
   '/dev/cargos': typeof AppDevCargosRoute
@@ -216,6 +223,7 @@ export interface FileRoutesByTo {
   '/representantes': typeof AppRepresentantesRoute
   '/senha': typeof AppSenhaRoute
   '/tabela-cor': typeof AppTabelaCorRoute
+  '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
   '/dev/cargos': typeof AppDevCargosRoute
@@ -245,6 +253,7 @@ export interface FileRoutesById {
   '/_app/representantes': typeof AppRepresentantesRoute
   '/_app/senha': typeof AppSenhaRoute
   '/_app/tabela-cor': typeof AppTabelaCorRoute
+  '/_app/time-log': typeof AppTimeLogRoute
   '/_app/usuarios': typeof AppUsuariosRoute
   '/_app/variante': typeof AppVarianteRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
@@ -274,6 +283,7 @@ export interface FileRouteTypes {
     | '/representantes'
     | '/senha'
     | '/tabela-cor'
+    | '/time-log'
     | '/usuarios'
     | '/variante'
     | '/dev/cargos'
@@ -301,6 +311,7 @@ export interface FileRouteTypes {
     | '/representantes'
     | '/senha'
     | '/tabela-cor'
+    | '/time-log'
     | '/usuarios'
     | '/variante'
     | '/dev/cargos'
@@ -329,6 +340,7 @@ export interface FileRouteTypes {
     | '/_app/representantes'
     | '/_app/senha'
     | '/_app/tabela-cor'
+    | '/_app/time-log'
     | '/_app/usuarios'
     | '/_app/variante'
     | '/_app/dev/cargos'
@@ -383,6 +395,13 @@ declare module '@tanstack/react-router' {
       path: '/usuarios'
       fullPath: '/usuarios'
       preLoaderRoute: typeof AppUsuariosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/time-log': {
+      id: '/_app/time-log'
+      path: '/time-log'
+      fullPath: '/time-log'
+      preLoaderRoute: typeof AppTimeLogRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/tabela-cor': {
@@ -548,6 +567,7 @@ interface AppRouteChildren {
   AppRepresentantesRoute: typeof AppRepresentantesRoute
   AppSenhaRoute: typeof AppSenhaRoute
   AppTabelaCorRoute: typeof AppTabelaCorRoute
+  AppTimeLogRoute: typeof AppTimeLogRoute
   AppUsuariosRoute: typeof AppUsuariosRoute
   AppVarianteRoute: typeof AppVarianteRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
@@ -573,6 +593,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppRepresentantesRoute: AppRepresentantesRoute,
   AppSenhaRoute: AppSenhaRoute,
   AppTabelaCorRoute: AppTabelaCorRoute,
+  AppTimeLogRoute: AppTimeLogRoute,
   AppUsuariosRoute: AppUsuariosRoute,
   AppVarianteRoute: AppVarianteRoute,
   AppDevCargosRoute: AppDevCargosRoute,
