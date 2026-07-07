@@ -286,6 +286,8 @@ function ArtigosPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ArtigoDetailDialog id={detailId} onOpenChange={(o) => !o && setDetailId(null)} />
     </div>
   );
 }
