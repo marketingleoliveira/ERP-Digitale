@@ -626,13 +626,15 @@ function EmpresaDialog({
         {/* Tipo Empresa */}
         <div className="mt-2">
           <h3 className="mb-2 text-center text-sm font-semibold text-primary">TIPO EMPRESA</h3>
-          <div className="flex flex-wrap justify-center gap-4 rounded-md border p-3">
-            {TIPO_EMPRESA.map((t, i) => (
-              <label key={i} className="flex items-center gap-2 text-sm">
-                <Checkbox checked={Boolean(form[t.key])} onCheckedChange={(v) => set(t.key as string, Boolean(v))} />
-                {t.label}
-              </label>
-            ))}
+          <div className="mx-auto max-w-sm">
+            <Select value={tipoAtual} onValueChange={setTipo}>
+              <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectContent>
+                {TIPO_FLAGS.map((t) => (
+                  <SelectItem key={t.key as string} value={t.key as string}>{t.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
