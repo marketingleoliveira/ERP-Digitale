@@ -83,12 +83,36 @@ export const emitirNFe = createServerFn({ method: "POST" })
     const dataEmissao = body.data_emissao as string | null | undefined;
     const statusStr = String(body.status ?? "processando");
 
+    const autorizada = statusStr === "autorizado";
+    let xmlUrl = caminhoXml ? `${focusAdapter.baseUrl(cfg)}${caminhoXml}` : null;
+    let danfeUrl = caminhoDanfe ? `${focusAdapter.baseUrl(cfg)}${caminhoDanfe}` : null;
+
+    if (autorizada && chave) {
+      try {
+        const arq = await arquivarDocumentosFiscais(
+          supabase as unknown as Parameters<typeof arquivarDocumentosFiscais>[0],
+          cfg, chave, { xml: caminhoXml, danfe: caminhoDanfe }
+        );
+        xmlUrl = arq.xmlSignedUrl ?? xmlUrl;
+        danfeUrl = arq.pdfSignedUrl ?? danfeUrl;
+        await logNfeAction(supabase, {
+          notaFiscalId: notaRec.id as string, acao: "arquivar",
+          response: { xmlPath: arq.xmlPath, pdfPath: arq.pdfPath }, httpStatus: 200, duracaoMs: 0, userId,
+        });
+      } catch (e) {
+        await logNfeAction(supabase, {
+          notaFiscalId: notaRec.id as string, acao: "arquivar",
+          response: { erro: String(e instanceof Error ? e.message : e) }, httpStatus: 500, duracaoMs: 0, userId,
+        });
+      }
+    }
+
     await supabase.from("notas_fiscais").update({
-      status_sefaz: statusStr === "autorizado" ? "autorizada" : "processando",
+      status_sefaz: autorizada ? "autorizada" : "processando",
       chave_acesso: chave ?? null,
       protocolo_autorizacao: protocolo ?? null,
-      xml_url: caminhoXml ? `${focusAdapter.baseUrl(cfg)}${caminhoXml}` : null,
-      danfe_url: caminhoDanfe ? `${focusAdapter.baseUrl(cfg)}${caminhoDanfe}` : null,
+      xml_url: xmlUrl,
+      danfe_url: danfeUrl,
       provedor_ref: ref,
       data_autorizacao: dataEmissao ?? null,
     }).eq("id", data.notaId);
