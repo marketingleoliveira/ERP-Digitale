@@ -51,24 +51,54 @@ export function buildFocusNfePayload(empresa: AnyRec, nota: AnyRec, itens: AnyRe
     valor_desconto: Number(nota.valor_desconto ?? 0),
     modalidade_frete: nota.modalidade_frete ?? 9,
 
-    items: itens.map((i, idx) => ({
-      numero_item: idx + 1,
-      codigo_produto: i.produto_codigo ?? i.produto_id ?? `ITEM${idx + 1}`,
-      descricao: i.descricao ?? "",
-      codigo_ncm: i.ncm ?? "00000000",
-      cfop: i.cfop ?? "5102",
-      unidade_comercial: i.unidade ?? "UN",
-      quantidade_comercial: Number(i.qtd_saida ?? i.quantidade ?? 1),
-      valor_unitario_comercial: Number(i.valor_unitario ?? 0),
-      valor_bruto: Number(i.valor_total ?? 0),
-      unidade_tributavel: i.unidade_tributavel ?? i.unidade ?? "UN",
-      quantidade_tributavel: Number(i.qtd_saida ?? i.quantidade ?? 1),
-      valor_unitario_tributavel: Number(i.valor_unitario ?? 0),
-      icms_origem: i.origem ?? 0,
-      icms_situacao_tributaria: i.cst_icms ?? i.csosn ?? "102",
-      icms_aliquota: Number(i.aliq_icms ?? 0),
-      pis_situacao_tributaria: i.cst_pis ?? "07",
-      cofins_situacao_tributaria: i.cst_cofins ?? "07",
-    })),
+    items: itens.map((i, idx) => {
+      const cstIcms = i.cst_icms ?? null;
+      const csosn = i.csosn ?? null;
+      const item: AnyRec = {
+        numero_item: idx + 1,
+        codigo_produto: i.produto_codigo ?? i.produto_id ?? `ITEM${idx + 1}`,
+        descricao: i.descricao ?? "",
+        codigo_ncm: i.ncm ?? "00000000",
+        cfop: i.cfop ?? "5102",
+        unidade_comercial: i.unidade ?? "UN",
+        quantidade_comercial: Number(i.quantidade_saida ?? i.quantidade ?? 1),
+        valor_unitario_comercial: Number(i.valor_unitario ?? 0),
+        valor_bruto: Number(i.valor_total ?? 0),
+        unidade_tributavel: i.unidade_tributavel ?? i.unidade ?? "UN",
+        quantidade_tributavel: Number(i.quantidade_saida ?? i.quantidade ?? 1),
+        valor_unitario_tributavel: Number(i.valor_unitario ?? 0),
+
+        icms_origem: i.origem ?? 0,
+        icms_situacao_tributaria: cstIcms ?? csosn ?? "102",
+        icms_aliquota: Number(i.aliq_icms ?? 0),
+        icms_base_calculo: Number(i.base_icms ?? 0),
+        icms_valor: Number(i.valor_icms ?? 0),
+
+        pis_situacao_tributaria: i.cst_pis ?? "07",
+        pis_aliquota_porcentual: Number(i.aliq_pis ?? 0),
+        pis_base_calculo: Number(i.base_pis ?? 0),
+        pis_valor: Number(i.valor_pis ?? 0),
+
+        cofins_situacao_tributaria: i.cst_cofins ?? "07",
+        cofins_aliquota_porcentual: Number(i.aliq_cofins ?? 0),
+        cofins_base_calculo: Number(i.base_cofins ?? 0),
+        cofins_valor: Number(i.valor_cofins ?? 0),
+      };
+      if (i.cst_ipi) {
+        item.ipi_situacao_tributaria = i.cst_ipi;
+        item.ipi_aliquota = Number(i.aliq_ipi ?? 0);
+        item.ipi_base_calculo = Number(i.base_ipi ?? 0);
+        item.ipi_valor = Number(i.valor_ipi ?? 0);
+      }
+      if (Number(i.valor_icms_st ?? 0) > 0) {
+        item.icms_base_calculo_st = Number(i.base_icms_st ?? 0);
+        item.icms_aliquota_st = Number(i.aliq_icms_st ?? 0);
+        item.icms_valor_st = Number(i.valor_icms_st ?? 0);
+      }
+      if (Number(i.valor_fcp ?? 0) > 0) item.icms_valor_fcp = Number(i.valor_fcp);
+      if (Number(i.valor_fcp_st ?? 0) > 0) item.icms_valor_fcp_st = Number(i.valor_fcp_st);
+      if (Number(i.valor_difal ?? 0) > 0) item.icms_valor_difal_destino = Number(i.valor_difal);
+      return item;
+    }),
   };
 }
