@@ -9,6 +9,7 @@ import { buildFocusNfePayload } from "@/services/fiscal/nfe.builder";
 import { logNfeAction } from "@/services/fiscal/logs.repository";
 import { validarEmissao, formatarErrosParaUsuario } from "@/services/fiscal/nfe.validator";
 import { arquivarDocumentosFiscais } from "@/services/fiscal/nfe.arquivo";
+import { calcularTributosDaNota } from "@/services/fiscal/tax.integration";
 
 async function getFocusConfig(supabase: {
   from: (t: string) => { select: (c: string) => { limit: (n: number) => { maybeSingle: () => Promise<{ data: unknown; error: unknown }> } } }
@@ -58,7 +59,27 @@ export const emitirNFe = createServerFn({ method: "POST" })
     }
 
     const ref = `nfe-${notaRec.id as string}`;
-    const payload = buildFocusNfePayload(empresa, notaRec, (itens ?? []) as Record<string, unknown>[], dest as Record<string, unknown> | null);
+    const itensBase = (itens ?? []) as Record<string, unknown>[];
+    const destRec = (dest as Record<string, unknown> | null) ?? null;
+
+    // Motor tributário — calcula CFOP/CST/CSOSN/ICMS/ST/IPI/PIS/COFINS/FCP/DIFAL/origem.
+    // Bloqueia emissão se faltar regra fiscal aplicável.
+    const { itensCalculados, totais } = await calcularTributosDaNota(
+      supabase, empresa, notaRec, itensBase, destRec,
+    );
+
+    // Persiste totais recalculados na nota (fonte da verdade fiscal)
+    await supabase.from("notas_fiscais").update({
+      valor_produtos: totais.valor_produtos,
+      valor_icms: totais.valor_icms,
+      valor_icms_st: totais.valor_icms_st,
+      valor_ipi: totais.valor_ipi,
+      valor_pis: totais.valor_pis,
+      valor_cofins: totais.valor_cofins,
+      valor_total: totais.valor_total,
+    } as never).eq("id", data.notaId);
+
+    const payload = buildFocusNfePayload(empresa, { ...notaRec, ...totais }, itensCalculados, destRec);
     const res = await focusAdapter.emitir(cfg, ref, payload);
 
     await logNfeAction(supabase, {
