@@ -8,6 +8,7 @@ import { focusAdapter, type FocusConfig } from "@/services/fiscal/focus.adapter"
 import { buildFocusNfePayload } from "@/services/fiscal/nfe.builder";
 import { logNfeAction } from "@/services/fiscal/logs.repository";
 import { validarEmissao, formatarErrosParaUsuario } from "@/services/fiscal/nfe.validator";
+import { arquivarDocumentosFiscais } from "@/services/fiscal/nfe.arquivo";
 
 async function getFocusConfig(supabase: {
   from: (t: string) => { select: (c: string) => { limit: (n: number) => { maybeSingle: () => Promise<{ data: unknown; error: unknown }> } } }
