@@ -202,12 +202,37 @@ export const consultarNFe = createServerFn({ method: "POST" })
       const caminhoXml = body.caminho_xml_nota_fiscal as string | null | undefined;
       const caminhoDanfe = body.caminho_danfe as string | null | undefined;
       const dataEmissao = body.data_emissao as string | null | undefined;
+
+      let xmlUrl = caminhoXml ? `${focusAdapter.baseUrl(cfg)}${caminhoXml}` : (notaRec.xml_url as string | null) ?? null;
+      let danfeUrl = caminhoDanfe ? `${focusAdapter.baseUrl(cfg)}${caminhoDanfe}` : (notaRec.danfe_url as string | null) ?? null;
+
+      const jaArquivado = String((notaRec.xml_url as string | null) ?? "").includes("/storage/");
+      if (novoStatus === "autorizada" && chave && !jaArquivado && (caminhoXml || caminhoDanfe)) {
+        try {
+          const arq = await arquivarDocumentosFiscais(
+            supabase as unknown as Parameters<typeof arquivarDocumentosFiscais>[0],
+            cfg, chave, { xml: caminhoXml, danfe: caminhoDanfe }
+          );
+          xmlUrl = arq.xmlSignedUrl ?? xmlUrl;
+          danfeUrl = arq.pdfSignedUrl ?? danfeUrl;
+          await logNfeAction(supabase, {
+            notaFiscalId: notaRec.id as string, acao: "arquivar",
+            response: { xmlPath: arq.xmlPath, pdfPath: arq.pdfPath }, httpStatus: 200, duracaoMs: 0, userId,
+          });
+        } catch (e) {
+          await logNfeAction(supabase, {
+            notaFiscalId: notaRec.id as string, acao: "arquivar",
+            response: { erro: String(e instanceof Error ? e.message : e) }, httpStatus: 500, duracaoMs: 0, userId,
+          });
+        }
+      }
+
       await supabase.from("notas_fiscais").update({
         status_sefaz: novoStatus,
         chave_acesso: chave ?? (notaRec.chave_acesso as string | null) ?? null,
         protocolo_autorizacao: protocolo ?? (notaRec.protocolo_autorizacao as string | null) ?? null,
-        xml_url: caminhoXml ? `${focusAdapter.baseUrl(cfg)}${caminhoXml}` : (notaRec.xml_url as string | null) ?? null,
-        danfe_url: caminhoDanfe ? `${focusAdapter.baseUrl(cfg)}${caminhoDanfe}` : (notaRec.danfe_url as string | null) ?? null,
+        xml_url: xmlUrl,
+        danfe_url: danfeUrl,
         data_autorizacao: dataEmissao ?? (notaRec.data_autorizacao as string | null) ?? null,
         mensagem_sefaz: (body.mensagem_sefaz ?? body.mensagem) as string ?? null,
       }).eq("id", data.notaId);
