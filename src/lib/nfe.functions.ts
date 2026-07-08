@@ -46,6 +46,16 @@ export const emitirNFe = createServerFn({ method: "POST" })
       ? await supabase.from("customers").select("*").eq("id", notaRec.cliente_id as string).maybeSingle()
       : { data: null };
 
+    const errs = validarEmissao({
+      empresa,
+      cliente: (dest as Record<string, unknown> | null) ?? null,
+      itens: (itens ?? []) as Record<string, unknown>[],
+      hasToken: Boolean(process.env.FOCUS_NFE_TOKEN),
+    });
+    if (errs.length > 0) {
+      throw new Error("NF-e bloqueada — dados incompletos:\n\n" + formatarErrosParaUsuario(errs));
+    }
+
     const ref = `nfe-${notaRec.id as string}`;
     const payload = buildFocusNfePayload(empresa, notaRec, (itens ?? []) as Record<string, unknown>[], dest as Record<string, unknown> | null);
     const res = await focusAdapter.emitir(cfg, ref, payload);
