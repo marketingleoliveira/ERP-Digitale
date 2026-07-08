@@ -163,7 +163,36 @@ export const consultarNFe = createServerFn({ method: "POST" })
     const ref = (notaRec.provedor_ref as string) ?? `nfe-${notaRec.id as string}`;
     const res = await focusAdapter.consultar(cfg, ref);
     await logNfeAction(supabase, { notaFiscalId: notaRec.id as string, acao: "consultar", response: res.body, httpStatus: res.status, duracaoMs: res.durationMs, userId });
-    return { ok: res.ok, status: res.status, mensagem: String((res.body as Record<string,unknown>).mensagem ?? "") };
+
+    const body = res.body as Record<string, unknown>;
+    const statusStr = String(body.status ?? "");
+    const mapStatus: Record<string, string> = {
+      autorizado: "autorizada", cancelado: "cancelada",
+      denegado: "denegada", erro_autorizacao: "rejeitada", processando_autorizacao: "processando",
+    };
+    const novoStatus = mapStatus[statusStr];
+    if (res.ok && novoStatus) {
+      const chave = body.chave_nfe as string | null | undefined;
+      const protocolo = body.protocolo as string | null | undefined;
+      const caminhoXml = body.caminho_xml_nota_fiscal as string | null | undefined;
+      const caminhoDanfe = body.caminho_danfe as string | null | undefined;
+      const dataEmissao = body.data_emissao as string | null | undefined;
+      await supabase.from("notas_fiscais").update({
+        status_sefaz: novoStatus,
+        chave_acesso: chave ?? (notaRec.chave_acesso as string | null) ?? null,
+        protocolo_autorizacao: protocolo ?? (notaRec.protocolo_autorizacao as string | null) ?? null,
+        xml_url: caminhoXml ? `${focusAdapter.baseUrl(cfg)}${caminhoXml}` : (notaRec.xml_url as string | null) ?? null,
+        danfe_url: caminhoDanfe ? `${focusAdapter.baseUrl(cfg)}${caminhoDanfe}` : (notaRec.danfe_url as string | null) ?? null,
+        data_autorizacao: dataEmissao ?? (notaRec.data_autorizacao as string | null) ?? null,
+        mensagem_sefaz: (body.mensagem_sefaz ?? body.mensagem) as string ?? null,
+      }).eq("id", data.notaId);
+    } else if (!res.ok) {
+      await supabase.from("notas_fiscais").update({
+        mensagem_sefaz: String(body.mensagem ?? body.erros ?? res.status),
+      }).eq("id", data.notaId);
+    }
+
+    return { ok: res.ok, status: res.status, situacao: novoStatus ?? statusStr, mensagem: String(body.mensagem ?? "") };
   });
 
 /* ==================== INUTILIZAR ==================== */
