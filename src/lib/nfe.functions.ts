@@ -77,7 +77,7 @@ export const emitirNFe = createServerFn({ method: "POST" })
       valor_pis: totais.valor_pis,
       valor_cofins: totais.valor_cofins,
       valor_total: totais.valor_total,
-    }).eq("id", data.notaId);
+    } as never).eq("id", data.notaId);
 
     const payload = buildFocusNfePayload(empresa, { ...notaRec, ...totais }, itensCalculados, destRec);
     const res = await focusAdapter.emitir(cfg, ref, payload);
