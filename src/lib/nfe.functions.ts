@@ -8,6 +8,7 @@ import { focusAdapter, type FocusConfig } from "@/services/fiscal/focus.adapter"
 import { buildFocusNfePayload } from "@/services/fiscal/nfe.builder";
 import { logNfeAction } from "@/services/fiscal/logs.repository";
 import { validarEmissao, formatarErrosParaUsuario } from "@/services/fiscal/nfe.validator";
+import { arquivarDocumentosFiscais } from "@/services/fiscal/nfe.arquivo";
 
 async function getFocusConfig(supabase: {
   from: (t: string) => { select: (c: string) => { limit: (n: number) => { maybeSingle: () => Promise<{ data: unknown; error: unknown }> } } }
@@ -82,12 +83,36 @@ export const emitirNFe = createServerFn({ method: "POST" })
     const dataEmissao = body.data_emissao as string | null | undefined;
     const statusStr = String(body.status ?? "processando");
 
+    const autorizada = statusStr === "autorizado";
+    let xmlUrl = caminhoXml ? `${focusAdapter.baseUrl(cfg)}${caminhoXml}` : null;
+    let danfeUrl = caminhoDanfe ? `${focusAdapter.baseUrl(cfg)}${caminhoDanfe}` : null;
+
+    if (autorizada && chave) {
+      try {
+        const arq = await arquivarDocumentosFiscais(
+          supabase as unknown as Parameters<typeof arquivarDocumentosFiscais>[0],
+          cfg, chave, { xml: caminhoXml, danfe: caminhoDanfe }
+        );
+        xmlUrl = arq.xmlSignedUrl ?? xmlUrl;
+        danfeUrl = arq.pdfSignedUrl ?? danfeUrl;
+        await logNfeAction(supabase, {
+          notaFiscalId: notaRec.id as string, acao: "arquivar",
+          response: { xmlPath: arq.xmlPath, pdfPath: arq.pdfPath }, httpStatus: 200, duracaoMs: 0, userId,
+        });
+      } catch (e) {
+        await logNfeAction(supabase, {
+          notaFiscalId: notaRec.id as string, acao: "arquivar",
+          response: { erro: String(e instanceof Error ? e.message : e) }, httpStatus: 500, duracaoMs: 0, userId,
+        });
+      }
+    }
+
     await supabase.from("notas_fiscais").update({
-      status_sefaz: statusStr === "autorizado" ? "autorizada" : "processando",
+      status_sefaz: autorizada ? "autorizada" : "processando",
       chave_acesso: chave ?? null,
       protocolo_autorizacao: protocolo ?? null,
-      xml_url: caminhoXml ? `${focusAdapter.baseUrl(cfg)}${caminhoXml}` : null,
-      danfe_url: caminhoDanfe ? `${focusAdapter.baseUrl(cfg)}${caminhoDanfe}` : null,
+      xml_url: xmlUrl,
+      danfe_url: danfeUrl,
       provedor_ref: ref,
       data_autorizacao: dataEmissao ?? null,
     }).eq("id", data.notaId);
@@ -177,12 +202,37 @@ export const consultarNFe = createServerFn({ method: "POST" })
       const caminhoXml = body.caminho_xml_nota_fiscal as string | null | undefined;
       const caminhoDanfe = body.caminho_danfe as string | null | undefined;
       const dataEmissao = body.data_emissao as string | null | undefined;
+
+      let xmlUrl = caminhoXml ? `${focusAdapter.baseUrl(cfg)}${caminhoXml}` : (notaRec.xml_url as string | null) ?? null;
+      let danfeUrl = caminhoDanfe ? `${focusAdapter.baseUrl(cfg)}${caminhoDanfe}` : (notaRec.danfe_url as string | null) ?? null;
+
+      const jaArquivado = String((notaRec.xml_url as string | null) ?? "").includes("/storage/");
+      if (novoStatus === "autorizada" && chave && !jaArquivado && (caminhoXml || caminhoDanfe)) {
+        try {
+          const arq = await arquivarDocumentosFiscais(
+            supabase as unknown as Parameters<typeof arquivarDocumentosFiscais>[0],
+            cfg, chave, { xml: caminhoXml, danfe: caminhoDanfe }
+          );
+          xmlUrl = arq.xmlSignedUrl ?? xmlUrl;
+          danfeUrl = arq.pdfSignedUrl ?? danfeUrl;
+          await logNfeAction(supabase, {
+            notaFiscalId: notaRec.id as string, acao: "arquivar",
+            response: { xmlPath: arq.xmlPath, pdfPath: arq.pdfPath }, httpStatus: 200, duracaoMs: 0, userId,
+          });
+        } catch (e) {
+          await logNfeAction(supabase, {
+            notaFiscalId: notaRec.id as string, acao: "arquivar",
+            response: { erro: String(e instanceof Error ? e.message : e) }, httpStatus: 500, duracaoMs: 0, userId,
+          });
+        }
+      }
+
       await supabase.from("notas_fiscais").update({
         status_sefaz: novoStatus,
         chave_acesso: chave ?? (notaRec.chave_acesso as string | null) ?? null,
         protocolo_autorizacao: protocolo ?? (notaRec.protocolo_autorizacao as string | null) ?? null,
-        xml_url: caminhoXml ? `${focusAdapter.baseUrl(cfg)}${caminhoXml}` : (notaRec.xml_url as string | null) ?? null,
-        danfe_url: caminhoDanfe ? `${focusAdapter.baseUrl(cfg)}${caminhoDanfe}` : (notaRec.danfe_url as string | null) ?? null,
+        xml_url: xmlUrl,
+        danfe_url: danfeUrl,
         data_autorizacao: dataEmissao ?? (notaRec.data_autorizacao as string | null) ?? null,
         mensagem_sefaz: (body.mensagem_sefaz ?? body.mensagem) as string ?? null,
       }).eq("id", data.notaId);
