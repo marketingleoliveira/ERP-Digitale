@@ -7,6 +7,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { focusAdapter, type FocusConfig } from "@/services/fiscal/focus.adapter";
 import { buildFocusNfePayload } from "@/services/fiscal/nfe.builder";
 import { logNfeAction } from "@/services/fiscal/logs.repository";
+import { validarEmissao, formatarErrosParaUsuario } from "@/services/fiscal/nfe.validator";
 
 async function getFocusConfig(supabase: {
   from: (t: string) => { select: (c: string) => { limit: (n: number) => { maybeSingle: () => Promise<{ data: unknown; error: unknown }> } } }
@@ -44,6 +45,16 @@ export const emitirNFe = createServerFn({ method: "POST" })
     const { data: dest } = notaRec.cliente_id
       ? await supabase.from("customers").select("*").eq("id", notaRec.cliente_id as string).maybeSingle()
       : { data: null };
+
+    const errs = validarEmissao({
+      empresa,
+      cliente: (dest as Record<string, unknown> | null) ?? null,
+      itens: (itens ?? []) as Record<string, unknown>[],
+      hasToken: Boolean(process.env.FOCUS_NFE_TOKEN),
+    });
+    if (errs.length > 0) {
+      throw new Error("NF-e bloqueada — dados incompletos:\n\n" + formatarErrosParaUsuario(errs));
+    }
 
     const ref = `nfe-${notaRec.id as string}`;
     const payload = buildFocusNfePayload(empresa, notaRec, (itens ?? []) as Record<string, unknown>[], dest as Record<string, unknown> | null);
