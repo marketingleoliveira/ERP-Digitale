@@ -49,6 +49,7 @@ import { Route as AppProducaoIndustrialRouteImport } from './routes/_app.produca
 import { Route as AppProducaoExpedicaoRouteImport } from './routes/_app.producao.expedicao'
 import { Route as AppPcpTurnosRouteImport } from './routes/_app.pcp.turnos'
 import { Route as AppPcpMaquinaTurnosRouteImport } from './routes/_app.pcp.maquina-turnos'
+import { Route as AppPcpCapacidadeRouteImport } from './routes/_app.pcp.capacidade'
 import { Route as AppPcpCalendarioRouteImport } from './routes/_app.pcp.calendario'
 import { Route as AppLogisticaTransportadorasRouteImport } from './routes/_app.logistica.transportadoras'
 import { Route as AppLogisticaSeparacoesRouteImport } from './routes/_app.logistica.separacoes'
@@ -288,6 +289,11 @@ const AppPcpTurnosRoute = AppPcpTurnosRouteImport.update({
 const AppPcpMaquinaTurnosRoute = AppPcpMaquinaTurnosRouteImport.update({
   id: '/pcp/maquina-turnos',
   path: '/pcp/maquina-turnos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpCapacidadeRoute = AppPcpCapacidadeRouteImport.update({
+  id: '/pcp/capacidade',
+  path: '/pcp/capacidade',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPcpCalendarioRoute = AppPcpCalendarioRouteImport.update({
@@ -569,6 +575,7 @@ export interface FileRoutesByFullPath {
   '/logistica/separacoes': typeof AppLogisticaSeparacoesRoute
   '/logistica/transportadoras': typeof AppLogisticaTransportadorasRoute
   '/pcp/calendario': typeof AppPcpCalendarioRoute
+  '/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
   '/pcp/turnos': typeof AppPcpTurnosRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
@@ -651,6 +658,7 @@ export interface FileRoutesByTo {
   '/logistica/separacoes': typeof AppLogisticaSeparacoesRoute
   '/logistica/transportadoras': typeof AppLogisticaTransportadorasRoute
   '/pcp/calendario': typeof AppPcpCalendarioRoute
+  '/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
   '/pcp/turnos': typeof AppPcpTurnosRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
@@ -735,6 +743,7 @@ export interface FileRoutesById {
   '/_app/logistica/separacoes': typeof AppLogisticaSeparacoesRoute
   '/_app/logistica/transportadoras': typeof AppLogisticaTransportadorasRoute
   '/_app/pcp/calendario': typeof AppPcpCalendarioRoute
+  '/_app/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/_app/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
   '/_app/pcp/turnos': typeof AppPcpTurnosRoute
   '/_app/producao/expedicao': typeof AppProducaoExpedicaoRoute
@@ -819,6 +828,7 @@ export interface FileRouteTypes {
     | '/logistica/separacoes'
     | '/logistica/transportadoras'
     | '/pcp/calendario'
+    | '/pcp/capacidade'
     | '/pcp/maquina-turnos'
     | '/pcp/turnos'
     | '/producao/expedicao'
@@ -901,6 +911,7 @@ export interface FileRouteTypes {
     | '/logistica/separacoes'
     | '/logistica/transportadoras'
     | '/pcp/calendario'
+    | '/pcp/capacidade'
     | '/pcp/maquina-turnos'
     | '/pcp/turnos'
     | '/producao/expedicao'
@@ -984,6 +995,7 @@ export interface FileRouteTypes {
     | '/_app/logistica/separacoes'
     | '/_app/logistica/transportadoras'
     | '/_app/pcp/calendario'
+    | '/_app/pcp/capacidade'
     | '/_app/pcp/maquina-turnos'
     | '/_app/pcp/turnos'
     | '/_app/producao/expedicao'
@@ -1292,6 +1304,13 @@ declare module '@tanstack/react-router' {
       path: '/pcp/maquina-turnos'
       fullPath: '/pcp/maquina-turnos'
       preLoaderRoute: typeof AppPcpMaquinaTurnosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/capacidade': {
+      id: '/_app/pcp/capacidade'
+      path: '/pcp/capacidade'
+      fullPath: '/pcp/capacidade'
+      preLoaderRoute: typeof AppPcpCapacidadeRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/pcp/calendario': {
@@ -1709,6 +1728,7 @@ interface AppRouteChildren {
   AppLogisticaSeparacoesRoute: typeof AppLogisticaSeparacoesRoute
   AppLogisticaTransportadorasRoute: typeof AppLogisticaTransportadorasRoute
   AppPcpCalendarioRoute: typeof AppPcpCalendarioRoute
+  AppPcpCapacidadeRoute: typeof AppPcpCapacidadeRoute
   AppPcpMaquinaTurnosRoute: typeof AppPcpMaquinaTurnosRoute
   AppPcpTurnosRoute: typeof AppPcpTurnosRoute
   AppProducaoExpedicaoRoute: typeof AppProducaoExpedicaoRoute
@@ -1782,6 +1802,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppLogisticaSeparacoesRoute: AppLogisticaSeparacoesRoute,
   AppLogisticaTransportadorasRoute: AppLogisticaTransportadorasRoute,
   AppPcpCalendarioRoute: AppPcpCalendarioRoute,
+  AppPcpCapacidadeRoute: AppPcpCapacidadeRoute,
   AppPcpMaquinaTurnosRoute: AppPcpMaquinaTurnosRoute,
   AppPcpTurnosRoute: AppPcpTurnosRoute,
   AppProducaoExpedicaoRoute: AppProducaoExpedicaoRoute,
