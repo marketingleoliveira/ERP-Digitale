@@ -92,6 +92,8 @@ import { Route as AppComprasPedidosRouteImport } from './routes/_app.compras.ped
 import { Route as AppComprasFornecedoresRouteImport } from './routes/_app.compras.fornecedores'
 import { Route as AppComprasCotacoesRouteImport } from './routes/_app.compras.cotacoes'
 import { Route as AppComprasContasPagarRouteImport } from './routes/_app.compras.contas-pagar'
+import { Route as AppClienteArtigoSimuladorRouteImport } from './routes/_app.cliente-artigo.simulador'
+import { Route as AppClienteArtigoIdRouteImport } from './routes/_app.cliente-artigo.$id'
 import { Route as AppRastreabilidadeTipoIdRouteImport } from './routes/_app.rastreabilidade.$tipo.$id'
 import { Route as AppProducaoPedidosIdRouteImport } from './routes/_app.producao.pedidos.$id'
 import { Route as AppProducaoOpIdRouteImport } from './routes/_app.producao.op.$id'
@@ -523,6 +525,17 @@ const AppComprasContasPagarRoute = AppComprasContasPagarRouteImport.update({
   path: '/compras/contas-pagar',
   getParentRoute: () => AppRoute,
 } as any)
+const AppClienteArtigoSimuladorRoute =
+  AppClienteArtigoSimuladorRouteImport.update({
+    id: '/simulador',
+    path: '/simulador',
+    getParentRoute: () => AppClienteArtigoRoute,
+  } as any)
+const AppClienteArtigoIdRoute = AppClienteArtigoIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppClienteArtigoRoute,
+} as any)
 const AppRastreabilidadeTipoIdRoute =
   AppRastreabilidadeTipoIdRouteImport.update({
     id: '/rastreabilidade/$tipo/$id',
@@ -585,7 +598,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/agulha': typeof AppAgulhaRoute
   '/artigos': typeof AppArtigosRoute
-  '/cliente-artigo': typeof AppClienteArtigoRoute
+  '/cliente-artigo': typeof AppClienteArtigoRouteWithChildren
   '/composicao': typeof AppComposicaoRoute
   '/configuracoes': typeof AppConfiguracoesRoute
   '/cor': typeof AppCorRoute
@@ -608,6 +621,8 @@ export interface FileRoutesByFullPath {
   '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
+  '/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
+  '/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
   '/compras/contas-pagar': typeof AppComprasContasPagarRoute
   '/compras/cotacoes': typeof AppComprasCotacoesRouteWithChildren
   '/compras/fornecedores': typeof AppComprasFornecedoresRoute
@@ -679,7 +694,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/agulha': typeof AppAgulhaRoute
   '/artigos': typeof AppArtigosRoute
-  '/cliente-artigo': typeof AppClienteArtigoRoute
+  '/cliente-artigo': typeof AppClienteArtigoRouteWithChildren
   '/composicao': typeof AppComposicaoRoute
   '/configuracoes': typeof AppConfiguracoesRoute
   '/cor': typeof AppCorRoute
@@ -702,6 +717,8 @@ export interface FileRoutesByTo {
   '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
+  '/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
+  '/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
   '/compras/contas-pagar': typeof AppComprasContasPagarRoute
   '/compras/cotacoes': typeof AppComprasCotacoesRouteWithChildren
   '/compras/fornecedores': typeof AppComprasFornecedoresRoute
@@ -775,7 +792,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_app/agulha': typeof AppAgulhaRoute
   '/_app/artigos': typeof AppArtigosRoute
-  '/_app/cliente-artigo': typeof AppClienteArtigoRoute
+  '/_app/cliente-artigo': typeof AppClienteArtigoRouteWithChildren
   '/_app/composicao': typeof AppComposicaoRoute
   '/_app/configuracoes': typeof AppConfiguracoesRoute
   '/_app/cor': typeof AppCorRoute
@@ -798,6 +815,8 @@ export interface FileRoutesById {
   '/_app/time-log': typeof AppTimeLogRoute
   '/_app/usuarios': typeof AppUsuariosRoute
   '/_app/variante': typeof AppVarianteRoute
+  '/_app/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
+  '/_app/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
   '/_app/compras/contas-pagar': typeof AppComprasContasPagarRoute
   '/_app/compras/cotacoes': typeof AppComprasCotacoesRouteWithChildren
   '/_app/compras/fornecedores': typeof AppComprasFornecedoresRoute
@@ -894,6 +913,8 @@ export interface FileRouteTypes {
     | '/time-log'
     | '/usuarios'
     | '/variante'
+    | '/cliente-artigo/$id'
+    | '/cliente-artigo/simulador'
     | '/compras/contas-pagar'
     | '/compras/cotacoes'
     | '/compras/fornecedores'
@@ -988,6 +1009,8 @@ export interface FileRouteTypes {
     | '/time-log'
     | '/usuarios'
     | '/variante'
+    | '/cliente-artigo/$id'
+    | '/cliente-artigo/simulador'
     | '/compras/contas-pagar'
     | '/compras/cotacoes'
     | '/compras/fornecedores'
@@ -1083,6 +1106,8 @@ export interface FileRouteTypes {
     | '/_app/time-log'
     | '/_app/usuarios'
     | '/_app/variante'
+    | '/_app/cliente-artigo/$id'
+    | '/_app/cliente-artigo/simulador'
     | '/_app/compras/contas-pagar'
     | '/_app/compras/cotacoes'
     | '/_app/compras/fornecedores'
@@ -1739,6 +1764,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppComprasContasPagarRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/cliente-artigo/simulador': {
+      id: '/_app/cliente-artigo/simulador'
+      path: '/simulador'
+      fullPath: '/cliente-artigo/simulador'
+      preLoaderRoute: typeof AppClienteArtigoSimuladorRouteImport
+      parentRoute: typeof AppClienteArtigoRoute
+    }
+    '/_app/cliente-artigo/$id': {
+      id: '/_app/cliente-artigo/$id'
+      path: '/$id'
+      fullPath: '/cliente-artigo/$id'
+      preLoaderRoute: typeof AppClienteArtigoIdRouteImport
+      parentRoute: typeof AppClienteArtigoRoute
+    }
     '/_app/rastreabilidade/$tipo/$id': {
       id: '/_app/rastreabilidade/$tipo/$id'
       path: '/rastreabilidade/$tipo/$id'
@@ -1811,6 +1850,19 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AppClienteArtigoRouteChildren {
+  AppClienteArtigoIdRoute: typeof AppClienteArtigoIdRoute
+  AppClienteArtigoSimuladorRoute: typeof AppClienteArtigoSimuladorRoute
+}
+
+const AppClienteArtigoRouteChildren: AppClienteArtigoRouteChildren = {
+  AppClienteArtigoIdRoute: AppClienteArtigoIdRoute,
+  AppClienteArtigoSimuladorRoute: AppClienteArtigoSimuladorRoute,
+}
+
+const AppClienteArtigoRouteWithChildren =
+  AppClienteArtigoRoute._addFileChildren(AppClienteArtigoRouteChildren)
 
 interface AppComprasCotacoesRouteChildren {
   AppComprasCotacoesIdRoute: typeof AppComprasCotacoesIdRoute
@@ -1904,7 +1956,7 @@ const AppProducaoPedidosRouteWithChildren =
 interface AppRouteChildren {
   AppAgulhaRoute: typeof AppAgulhaRoute
   AppArtigosRoute: typeof AppArtigosRoute
-  AppClienteArtigoRoute: typeof AppClienteArtigoRoute
+  AppClienteArtigoRoute: typeof AppClienteArtigoRouteWithChildren
   AppComposicaoRoute: typeof AppComposicaoRoute
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppCorRoute: typeof AppCorRoute
@@ -1987,7 +2039,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAgulhaRoute: AppAgulhaRoute,
   AppArtigosRoute: AppArtigosRoute,
-  AppClienteArtigoRoute: AppClienteArtigoRoute,
+  AppClienteArtigoRoute: AppClienteArtigoRouteWithChildren,
   AppComposicaoRoute: AppComposicaoRoute,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppCorRoute: AppCorRoute,
