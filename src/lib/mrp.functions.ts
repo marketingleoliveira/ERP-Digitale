@@ -116,6 +116,14 @@ export const computeMrp = createServerFn({ method: "POST" })
       .select("id, fornecedor_id, prazo_entrega").in("status", ["enviado", "confirmado", "parcial", "aprovado"]);
     const openPcIds = new Set((pcOpen ?? []).map(p => p.id));
 
+    // Também considera solicitações de compra abertas (evita duplicidade de sugestão)
+    const { data: solItensAbertas } = refIds.length
+      ? await supabase.from("solicitacoes_compra_itens")
+          .select("ref_id, quantidade, solicitacoes_compra!inner(status)")
+          .in("ref_id", refIds)
+          .in("solicitacoes_compra.status" as never, ["aberta", "em_cotacao", "aprovada"])
+      : { data: [] as { ref_id: string; quantidade: number }[] };
+
     const saldoMap = new Map<string, number>();
     for (const l of (lotes ?? [])) {
       saldoMap.set(l.item_id, (saldoMap.get(l.item_id) ?? 0) + Number(l.quantidade_disponivel || 0));
@@ -126,6 +134,11 @@ export const computeMrp = createServerFn({ method: "POST" })
       const pend = Math.max(0, Number(p.quantidade || 0) - Number(p.quantidade_recebida || 0));
       transitoMap.set(p.ref_id, (transitoMap.get(p.ref_id) ?? 0) + pend);
     }
+    for (const s of ((solItensAbertas ?? []) as { ref_id: string; quantidade: number }[])) {
+      if (!s.ref_id) continue;
+      transitoMap.set(s.ref_id, (transitoMap.get(s.ref_id) ?? 0) + Number(s.quantidade || 0));
+    }
+
 
     // 4) Fornecedor preferencial: último lote recebido do item
     const { data: lastLotes } = refIds.length
