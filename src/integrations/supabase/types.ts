@@ -4079,39 +4079,60 @@ export type Database = {
       }
       op_qualidade: {
         Row: {
+          causa: string | null
           created_at: string
           data: string
+          defeito: string | null
+          evidencias: Json
           id: string
           inspetor_id: string | null
           motivo: string | null
+          observacao: string | null
           op_id: string
           quantidade_aprovada: number
+          quantidade_reprocesso: number | null
           quantidade_reprovada: number
           resultado: string
+          status: string
+          updated_at: string
           user_id: string | null
         }
         Insert: {
+          causa?: string | null
           created_at?: string
           data?: string
+          defeito?: string | null
+          evidencias?: Json
           id?: string
           inspetor_id?: string | null
           motivo?: string | null
+          observacao?: string | null
           op_id: string
           quantidade_aprovada?: number
+          quantidade_reprocesso?: number | null
           quantidade_reprovada?: number
           resultado: string
+          status?: string
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
+          causa?: string | null
           created_at?: string
           data?: string
+          defeito?: string | null
+          evidencias?: Json
           id?: string
           inspetor_id?: string | null
           motivo?: string | null
+          observacao?: string | null
           op_id?: string
           quantidade_aprovada?: number
+          quantidade_reprocesso?: number | null
           quantidade_reprovada?: number
           resultado?: string
+          status?: string
+          updated_at?: string
           user_id?: string | null
         }
         Relationships: [
@@ -6434,6 +6455,116 @@ export type Database = {
       }
     }
     Views: {
+      v_qualidade_indicadores: {
+        Row: {
+          article_id: string | null
+          causa: string | null
+          data: string | null
+          defeito: string | null
+          id: string | null
+          maquina_id: string | null
+          op_id: string | null
+          op_numero: number | null
+          product_id: string | null
+          quantidade_aprovada: number | null
+          quantidade_reprocesso: number | null
+          quantidade_reprovada: number | null
+          status: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_itens_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_itens_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_artigo"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "op_itens_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "op_qualidade_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_qualidade_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "op_qualidade_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custos_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "ordens_producao_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ordens_producao_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "ordens_producao_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "ordens_producao_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "products_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "products_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
+          },
+        ]
+      }
       vw_capacidade_semanal: {
         Row: {
           capacidade_efetiva_semana_kg: number | null
@@ -6914,6 +7045,19 @@ export type Database = {
       }
       op_liberar_reserva: {
         Args: { _quantidade?: number; _reserva_id: string }
+        Returns: string
+      }
+      op_registrar_inspecao: {
+        Args: {
+          _causa?: string
+          _defeito?: string
+          _evidencias?: Json
+          _observacao?: string
+          _op_id: string
+          _qtd_aprovada: number
+          _qtd_reprocesso: number
+          _qtd_reprovada: number
+        }
         Returns: string
       }
       op_reservar_materiais: { Args: { _op_id: string }; Returns: Json }
