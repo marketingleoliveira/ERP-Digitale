@@ -122,7 +122,7 @@ export const computeOpSuggestions = createServerFn({ method: "POST" })
       : { data: [] as { roteiro_id: string; maquina_preferencial_id: string | null; tempo_padrao_min: number }[] };
     const maquinaIds = [...new Set((etapas ?? []).map(e => e.maquina_preferencial_id).filter(Boolean) as string[])];
     const [{ data: maquinas }, { data: capacidades }] = await Promise.all([
-      maquinaIds.length ? supabase.from("maquinas").select("id, nome").in("id", maquinaIds) : Promise.resolve({ data: [] as { id: string; nome: string }[] }),
+      maquinaIds.length ? supabase.from("maquinas").select("id, maquina").in("id", maquinaIds) : Promise.resolve({ data: [] as { id: string; maquina: string }[] }),
       maquinaIds.length ? supabase.from("maquina_capacidade").select("*").in("maquina_id", maquinaIds) : Promise.resolve({ data: [] as { maquina_id: string; kg_por_hora: number; horas_por_turno: number; turnos_por_dia: number; dias_uteis_semana: number; eficiencia_alvo_pct: number }[] }),
     ]);
     const capMap = new Map(capacidades?.map(c => [c.maquina_id, c]) ?? []);
