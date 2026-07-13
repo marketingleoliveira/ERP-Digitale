@@ -19,10 +19,10 @@ async function getFocusConfig(supabase: {
   if (!empresa) throw new Error("Configure a Empresa em Configurações antes de operar NF-e.");
   const emp = empresa as Record<string, unknown>;
   if (emp.provedor_nfe !== "focus_nfe") {
-    throw new Error("Provedor SEFAZ diferente de Focus NFe. Ajuste em Configurações → Empresa.");
+    throw new Error("Provedor SEFAZ diferente de Focus NFe. Ajuste em DEV → Focus NFe.");
   }
-  const token = process.env.FOCUS_NFE_TOKEN;
-  if (!token) throw new Error("Secret FOCUS_NFE_TOKEN não configurado.");
+  const token = (emp.focus_nfe_token as string | null) || process.env.FOCUS_NFE_TOKEN;
+  if (!token) throw new Error("Token Focus NFe não configurado. Configure em DEV → Focus NFe.");
   return {
     empresa: emp,
     cfg: { token, ambiente: (emp.ambiente_nfe as "homologacao" | "producao") ?? "homologacao" },
