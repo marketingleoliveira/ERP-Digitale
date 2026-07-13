@@ -134,7 +134,7 @@ export const getPedido = createServerFn({ method: "POST" })
         .order("created_at", { ascending: false }),
     ]);
     if (pedRes.error) throw new Error(pedRes.error.message);
-    const pedido = pedRes.data as Record<string, unknown> | null;
+    const pedido = pedRes.data as unknown as Record<string, string | number | boolean | null> | null;
     if (!pedido) throw new Error("Pedido não encontrado.");
 
     const opIds = ((opsRes.data ?? []) as { id: string }[]).map(o => o.id);
@@ -148,7 +148,7 @@ export const getPedido = createServerFn({ method: "POST" })
         ? supabase.from("op_expedicoes").select("*").in("op_id", opIds)
         : Promise.resolve({ data: [] }),
       pedido.cliente_id
-        ? supabase.from("customers").select("id, nome, email, telefone, endereco, cidade, uf")
+        ? supabase.from("customers").select("id, razao_social, nome_fantasia, email, telefone, endereco, cidade, uf")
             .eq("id", pedido.cliente_id as string).maybeSingle()
         : Promise.resolve({ data: null }),
       pedido.vendedor_id
