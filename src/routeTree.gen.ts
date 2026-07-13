@@ -48,6 +48,8 @@ import { Route as AppProducaoOpRouteImport } from './routes/_app.producao.op'
 import { Route as AppProducaoIndustrialRouteImport } from './routes/_app.producao.industrial'
 import { Route as AppProducaoExpedicaoRouteImport } from './routes/_app.producao.expedicao'
 import { Route as AppPcpTurnosRouteImport } from './routes/_app.pcp.turnos'
+import { Route as AppPcpRoteirosRouteImport } from './routes/_app.pcp.roteiros'
+import { Route as AppPcpOperacoesRouteImport } from './routes/_app.pcp.operacoes'
 import { Route as AppPcpMaquinaTurnosRouteImport } from './routes/_app.pcp.maquina-turnos'
 import { Route as AppPcpCapacidadeRouteImport } from './routes/_app.pcp.capacidade'
 import { Route as AppPcpCalendarioRouteImport } from './routes/_app.pcp.calendario'
@@ -86,6 +88,7 @@ import { Route as AppComprasCotacoesRouteImport } from './routes/_app.compras.co
 import { Route as AppComprasContasPagarRouteImport } from './routes/_app.compras.contas-pagar'
 import { Route as AppRastreabilidadeTipoIdRouteImport } from './routes/_app.rastreabilidade.$tipo.$id'
 import { Route as AppProducaoOpIdRouteImport } from './routes/_app.producao.op.$id'
+import { Route as AppPcpRoteirosIdRouteImport } from './routes/_app.pcp.roteiros.$id'
 import { Route as AppComprasSolicitacoesNovaRouteImport } from './routes/_app.compras.solicitacoes.nova'
 import { Route as AppComprasSolicitacoesIdRouteImport } from './routes/_app.compras.solicitacoes.$id'
 import { Route as AppComprasRecebimentosNovoRouteImport } from './routes/_app.compras.recebimentos.novo'
@@ -287,6 +290,16 @@ const AppPcpTurnosRoute = AppPcpTurnosRouteImport.update({
   path: '/pcp/turnos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPcpRoteirosRoute = AppPcpRoteirosRouteImport.update({
+  id: '/pcp/roteiros',
+  path: '/pcp/roteiros',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpOperacoesRoute = AppPcpOperacoesRouteImport.update({
+  id: '/pcp/operacoes',
+  path: '/pcp/operacoes',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPcpMaquinaTurnosRoute = AppPcpMaquinaTurnosRouteImport.update({
   id: '/pcp/maquina-turnos',
   path: '/pcp/maquina-turnos',
@@ -484,6 +497,11 @@ const AppProducaoOpIdRoute = AppProducaoOpIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AppProducaoOpRoute,
 } as any)
+const AppPcpRoteirosIdRoute = AppPcpRoteirosIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppPcpRoteirosRoute,
+} as any)
 const AppComprasSolicitacoesNovaRoute =
   AppComprasSolicitacoesNovaRouteImport.update({
     id: '/nova',
@@ -584,6 +602,8 @@ export interface FileRoutesByFullPath {
   '/pcp/calendario': typeof AppPcpCalendarioRoute
   '/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/pcp/operacoes': typeof AppPcpOperacoesRoute
+  '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/producao/industrial': typeof AppProducaoIndustrialRoute
@@ -600,6 +620,7 @@ export interface FileRoutesByFullPath {
   '/compras/recebimentos/novo': typeof AppComprasRecebimentosNovoRoute
   '/compras/solicitacoes/$id': typeof AppComprasSolicitacoesIdRoute
   '/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
+  '/pcp/roteiros/$id': typeof AppPcpRoteirosIdRoute
   '/producao/op/$id': typeof AppProducaoOpIdRoute
   '/rastreabilidade/$tipo/$id': typeof AppRastreabilidadeTipoIdRoute
 }
@@ -668,6 +689,8 @@ export interface FileRoutesByTo {
   '/pcp/calendario': typeof AppPcpCalendarioRoute
   '/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/pcp/operacoes': typeof AppPcpOperacoesRoute
+  '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/producao/industrial': typeof AppProducaoIndustrialRoute
@@ -684,6 +707,7 @@ export interface FileRoutesByTo {
   '/compras/recebimentos/novo': typeof AppComprasRecebimentosNovoRoute
   '/compras/solicitacoes/$id': typeof AppComprasSolicitacoesIdRoute
   '/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
+  '/pcp/roteiros/$id': typeof AppPcpRoteirosIdRoute
   '/producao/op/$id': typeof AppProducaoOpIdRoute
   '/rastreabilidade/$tipo/$id': typeof AppRastreabilidadeTipoIdRoute
 }
@@ -754,6 +778,8 @@ export interface FileRoutesById {
   '/_app/pcp/calendario': typeof AppPcpCalendarioRoute
   '/_app/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/_app/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/_app/pcp/operacoes': typeof AppPcpOperacoesRoute
+  '/_app/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/_app/pcp/turnos': typeof AppPcpTurnosRoute
   '/_app/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/_app/producao/industrial': typeof AppProducaoIndustrialRoute
@@ -770,6 +796,7 @@ export interface FileRoutesById {
   '/_app/compras/recebimentos/novo': typeof AppComprasRecebimentosNovoRoute
   '/_app/compras/solicitacoes/$id': typeof AppComprasSolicitacoesIdRoute
   '/_app/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
+  '/_app/pcp/roteiros/$id': typeof AppPcpRoteirosIdRoute
   '/_app/producao/op/$id': typeof AppProducaoOpIdRoute
   '/_app/rastreabilidade/$tipo/$id': typeof AppRastreabilidadeTipoIdRoute
 }
@@ -840,6 +867,8 @@ export interface FileRouteTypes {
     | '/pcp/calendario'
     | '/pcp/capacidade'
     | '/pcp/maquina-turnos'
+    | '/pcp/operacoes'
+    | '/pcp/roteiros'
     | '/pcp/turnos'
     | '/producao/expedicao'
     | '/producao/industrial'
@@ -856,6 +885,7 @@ export interface FileRouteTypes {
     | '/compras/recebimentos/novo'
     | '/compras/solicitacoes/$id'
     | '/compras/solicitacoes/nova'
+    | '/pcp/roteiros/$id'
     | '/producao/op/$id'
     | '/rastreabilidade/$tipo/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -924,6 +954,8 @@ export interface FileRouteTypes {
     | '/pcp/calendario'
     | '/pcp/capacidade'
     | '/pcp/maquina-turnos'
+    | '/pcp/operacoes'
+    | '/pcp/roteiros'
     | '/pcp/turnos'
     | '/producao/expedicao'
     | '/producao/industrial'
@@ -940,6 +972,7 @@ export interface FileRouteTypes {
     | '/compras/recebimentos/novo'
     | '/compras/solicitacoes/$id'
     | '/compras/solicitacoes/nova'
+    | '/pcp/roteiros/$id'
     | '/producao/op/$id'
     | '/rastreabilidade/$tipo/$id'
   id:
@@ -1009,6 +1042,8 @@ export interface FileRouteTypes {
     | '/_app/pcp/calendario'
     | '/_app/pcp/capacidade'
     | '/_app/pcp/maquina-turnos'
+    | '/_app/pcp/operacoes'
+    | '/_app/pcp/roteiros'
     | '/_app/pcp/turnos'
     | '/_app/producao/expedicao'
     | '/_app/producao/industrial'
@@ -1025,6 +1060,7 @@ export interface FileRouteTypes {
     | '/_app/compras/recebimentos/novo'
     | '/_app/compras/solicitacoes/$id'
     | '/_app/compras/solicitacoes/nova'
+    | '/_app/pcp/roteiros/$id'
     | '/_app/producao/op/$id'
     | '/_app/rastreabilidade/$tipo/$id'
   fileRoutesById: FileRoutesById
@@ -1311,6 +1347,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPcpTurnosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/pcp/roteiros': {
+      id: '/_app/pcp/roteiros'
+      path: '/pcp/roteiros'
+      fullPath: '/pcp/roteiros'
+      preLoaderRoute: typeof AppPcpRoteirosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/operacoes': {
+      id: '/_app/pcp/operacoes'
+      path: '/pcp/operacoes'
+      fullPath: '/pcp/operacoes'
+      preLoaderRoute: typeof AppPcpOperacoesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/pcp/maquina-turnos': {
       id: '/_app/pcp/maquina-turnos'
       path: '/pcp/maquina-turnos'
@@ -1577,6 +1627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProducaoOpIdRouteImport
       parentRoute: typeof AppProducaoOpRoute
     }
+    '/_app/pcp/roteiros/$id': {
+      id: '/_app/pcp/roteiros/$id'
+      path: '/$id'
+      fullPath: '/pcp/roteiros/$id'
+      preLoaderRoute: typeof AppPcpRoteirosIdRouteImport
+      parentRoute: typeof AppPcpRoteirosRoute
+    }
     '/_app/compras/solicitacoes/nova': {
       id: '/_app/compras/solicitacoes/nova'
       path: '/nova'
@@ -1676,6 +1733,18 @@ const AppComprasSolicitacoesRouteWithChildren =
     AppComprasSolicitacoesRouteChildren,
   )
 
+interface AppPcpRoteirosRouteChildren {
+  AppPcpRoteirosIdRoute: typeof AppPcpRoteirosIdRoute
+}
+
+const AppPcpRoteirosRouteChildren: AppPcpRoteirosRouteChildren = {
+  AppPcpRoteirosIdRoute: AppPcpRoteirosIdRoute,
+}
+
+const AppPcpRoteirosRouteWithChildren = AppPcpRoteirosRoute._addFileChildren(
+  AppPcpRoteirosRouteChildren,
+)
+
 interface AppProducaoOpRouteChildren {
   AppProducaoOpIdRoute: typeof AppProducaoOpIdRoute
 }
@@ -1750,6 +1819,8 @@ interface AppRouteChildren {
   AppPcpCalendarioRoute: typeof AppPcpCalendarioRoute
   AppPcpCapacidadeRoute: typeof AppPcpCapacidadeRoute
   AppPcpMaquinaTurnosRoute: typeof AppPcpMaquinaTurnosRoute
+  AppPcpOperacoesRoute: typeof AppPcpOperacoesRoute
+  AppPcpRoteirosRoute: typeof AppPcpRoteirosRouteWithChildren
   AppPcpTurnosRoute: typeof AppPcpTurnosRoute
   AppProducaoExpedicaoRoute: typeof AppProducaoExpedicaoRoute
   AppProducaoIndustrialRoute: typeof AppProducaoIndustrialRoute
@@ -1825,6 +1896,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppPcpCalendarioRoute: AppPcpCalendarioRoute,
   AppPcpCapacidadeRoute: AppPcpCapacidadeRoute,
   AppPcpMaquinaTurnosRoute: AppPcpMaquinaTurnosRoute,
+  AppPcpOperacoesRoute: AppPcpOperacoesRoute,
+  AppPcpRoteirosRoute: AppPcpRoteirosRouteWithChildren,
   AppPcpTurnosRoute: AppPcpTurnosRoute,
   AppProducaoExpedicaoRoute: AppProducaoExpedicaoRoute,
   AppProducaoIndustrialRoute: AppProducaoIndustrialRoute,
