@@ -47,6 +47,7 @@ import { Route as AppProducaoPedidosRouteImport } from './routes/_app.producao.p
 import { Route as AppProducaoOpRouteImport } from './routes/_app.producao.op'
 import { Route as AppProducaoIndustrialRouteImport } from './routes/_app.producao.industrial'
 import { Route as AppProducaoExpedicaoRouteImport } from './routes/_app.producao.expedicao'
+import { Route as AppPcpVinculosArtigoRouteImport } from './routes/_app.pcp.vinculos-artigo'
 import { Route as AppPcpTurnosRouteImport } from './routes/_app.pcp.turnos'
 import { Route as AppPcpRoteirosRouteImport } from './routes/_app.pcp.roteiros'
 import { Route as AppPcpOperacoesRouteImport } from './routes/_app.pcp.operacoes'
@@ -286,6 +287,11 @@ const AppProducaoIndustrialRoute = AppProducaoIndustrialRouteImport.update({
 const AppProducaoExpedicaoRoute = AppProducaoExpedicaoRouteImport.update({
   id: '/producao/expedicao',
   path: '/producao/expedicao',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpVinculosArtigoRoute = AppPcpVinculosArtigoRouteImport.update({
+  id: '/pcp/vinculos-artigo',
+  path: '/pcp/vinculos-artigo',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPcpTurnosRoute = AppPcpTurnosRouteImport.update({
@@ -626,6 +632,7 @@ export interface FileRoutesByFullPath {
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
+  '/pcp/vinculos-artigo': typeof AppPcpVinculosArtigoRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/producao/industrial': typeof AppProducaoIndustrialRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
@@ -716,6 +723,7 @@ export interface FileRoutesByTo {
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
+  '/pcp/vinculos-artigo': typeof AppPcpVinculosArtigoRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/producao/industrial': typeof AppProducaoIndustrialRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
@@ -808,6 +816,7 @@ export interface FileRoutesById {
   '/_app/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/_app/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/_app/pcp/turnos': typeof AppPcpTurnosRoute
+  '/_app/pcp/vinculos-artigo': typeof AppPcpVinculosArtigoRoute
   '/_app/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/_app/producao/industrial': typeof AppProducaoIndustrialRoute
   '/_app/producao/op': typeof AppProducaoOpRouteWithChildren
@@ -900,6 +909,7 @@ export interface FileRouteTypes {
     | '/pcp/operacoes'
     | '/pcp/roteiros'
     | '/pcp/turnos'
+    | '/pcp/vinculos-artigo'
     | '/producao/expedicao'
     | '/producao/industrial'
     | '/producao/op'
@@ -990,6 +1000,7 @@ export interface FileRouteTypes {
     | '/pcp/operacoes'
     | '/pcp/roteiros'
     | '/pcp/turnos'
+    | '/pcp/vinculos-artigo'
     | '/producao/expedicao'
     | '/producao/industrial'
     | '/producao/op'
@@ -1081,6 +1092,7 @@ export interface FileRouteTypes {
     | '/_app/pcp/operacoes'
     | '/_app/pcp/roteiros'
     | '/_app/pcp/turnos'
+    | '/_app/pcp/vinculos-artigo'
     | '/_app/producao/expedicao'
     | '/_app/producao/industrial'
     | '/_app/producao/op'
@@ -1374,6 +1386,13 @@ declare module '@tanstack/react-router' {
       path: '/producao/expedicao'
       fullPath: '/producao/expedicao'
       preLoaderRoute: typeof AppProducaoExpedicaoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/vinculos-artigo': {
+      id: '/_app/pcp/vinculos-artigo'
+      path: '/pcp/vinculos-artigo'
+      fullPath: '/pcp/vinculos-artigo'
+      preLoaderRoute: typeof AppPcpVinculosArtigoRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/pcp/turnos': {
@@ -1882,6 +1901,7 @@ interface AppRouteChildren {
   AppPcpOperacoesRoute: typeof AppPcpOperacoesRoute
   AppPcpRoteirosRoute: typeof AppPcpRoteirosRouteWithChildren
   AppPcpTurnosRoute: typeof AppPcpTurnosRoute
+  AppPcpVinculosArtigoRoute: typeof AppPcpVinculosArtigoRoute
   AppProducaoExpedicaoRoute: typeof AppProducaoExpedicaoRoute
   AppProducaoIndustrialRoute: typeof AppProducaoIndustrialRoute
   AppProducaoOpRoute: typeof AppProducaoOpRouteWithChildren
@@ -1962,6 +1982,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPcpOperacoesRoute: AppPcpOperacoesRoute,
   AppPcpRoteirosRoute: AppPcpRoteirosRouteWithChildren,
   AppPcpTurnosRoute: AppPcpTurnosRoute,
+  AppPcpVinculosArtigoRoute: AppPcpVinculosArtigoRoute,
   AppProducaoExpedicaoRoute: AppProducaoExpedicaoRoute,
   AppProducaoIndustrialRoute: AppProducaoIndustrialRoute,
   AppProducaoOpRoute: AppProducaoOpRouteWithChildren,

@@ -39,28 +39,40 @@ export const computeMrp = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase } = context;
 
-    // 1) Se não vieram demandas, agrega das OPs em aberto
+    // 1) Se não vieram demandas, agrega das OPs em aberto.
+    //    Prioridade: op_itens.product_id → products.article_id (estrutural).
+    //    Fallback (legado): matching textual op_itens.descricao ↔ articles.codigo/nome.
     let demandas = data.demandas;
     if (demandas.length === 0) {
-      const [{ data: arts }, { data: opits }] = await Promise.all([
+      const [{ data: arts }, { data: opits }, { data: prods }] = await Promise.all([
         supabase.from("articles").select("id, codigo, nome").eq("ativo", true),
-        supabase.from("op_itens").select("op_id, descricao, quantidade_planejada, quantidade_produzida"),
+        supabase.from("op_itens").select("op_id, product_id, descricao, quantidade_planejada, quantidade_produzida"),
+        supabase.from("products").select("id, article_id"),
       ]);
       const { data: openOps } = await supabase.from("ordens_producao")
         .select("id, status").in("status", ["planejada", "programada", "em_producao", "parcial"]);
       const openIds = new Set((openOps ?? []).map(o => o.id));
+      const prodArt = new Map<string, string>();
+      for (const p of (prods ?? [])) if (p.article_id) prodArt.set(p.id, p.article_id);
       const agg = new Map<string, number>();
       for (const it of (opits ?? [])) {
         if (!openIds.has(it.op_id)) continue;
         const restante = Math.max(0, Number(it.quantidade_planejada || 0) - Number(it.quantidade_produzida || 0));
         if (restante <= 0) continue;
-        const desc = (it.descricao || "").toUpperCase();
-        const art = (arts ?? []).find(a => desc.includes((a.codigo || "").toUpperCase()) || desc.includes((a.nome || "").toUpperCase()));
-        if (!art) continue;
-        agg.set(art.id, (agg.get(art.id) ?? 0) + restante);
+        // 1a) preferir vínculo estrutural
+        let artId: string | undefined = it.product_id ? prodArt.get(it.product_id) : undefined;
+        // 1b) fallback textual (legado)
+        if (!artId) {
+          const desc = (it.descricao || "").toUpperCase();
+          const art = (arts ?? []).find(a => desc.includes((a.codigo || "").toUpperCase()) || desc.includes((a.nome || "").toUpperCase()));
+          artId = art?.id;
+        }
+        if (!artId) continue;
+        agg.set(artId, (agg.get(artId) ?? 0) + restante);
       }
       demandas = [...agg.entries()].map(([article_id, quantidade_kg]) => ({ article_id, quantidade_kg }));
     }
+
 
     if (demandas.length === 0) return { linhas: [] as MrpLinha[], demandas };
 

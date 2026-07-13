@@ -98,6 +98,20 @@ export type Database = {
             referencedRelation: "articles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "article_bom_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "article_bom_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
+          },
         ]
       }
       article_cores: {
@@ -129,6 +143,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "articles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_cores_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "article_cores_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
           },
           {
             foreignKeyName: "article_cores_cor_id_fkey"
@@ -179,6 +207,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "article_fios_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "article_fios_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
+          },
+          {
             foreignKeyName: "article_fios_fio_id_fkey"
             columns: ["fio_id"]
             isOneToOne: false
@@ -216,6 +258,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "articles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_lavagens_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "article_lavagens_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
           },
         ]
       }
@@ -3398,6 +3454,13 @@ export type Database = {
             referencedColumns: ["product_id"]
           },
           {
+            foreignKeyName: "op_entradas_estoque_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["product_id"]
+          },
+          {
             foreignKeyName: "op_entradas_estoque_variante_id_fkey"
             columns: ["variante_id"]
             isOneToOne: false
@@ -3702,6 +3765,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "vw_oee_artigo"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "op_itens_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
             referencedColumns: ["product_id"]
           },
           {
@@ -4188,6 +4258,13 @@ export type Database = {
             referencedColumns: ["product_id"]
           },
           {
+            foreignKeyName: "pedido_itens_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["product_id"]
+          },
+          {
             foreignKeyName: "pedido_itens_variante_id_fkey"
             columns: ["variante_id"]
             isOneToOne: false
@@ -4493,6 +4570,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "plano_producao_itens_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "plano_producao_itens_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
+          },
+          {
             foreignKeyName: "plano_producao_itens_maquina_id_fkey"
             columns: ["maquina_id"]
             isOneToOne: false
@@ -4602,6 +4693,13 @@ export type Database = {
             referencedRelation: "vw_oee_artigo"
             referencedColumns: ["product_id"]
           },
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["product_id"]
+          },
         ]
       }
       products: {
@@ -4611,6 +4709,7 @@ export type Database = {
           aliq_ipi: number | null
           aliq_pis: number | null
           area_peca: number | null
+          article_id: string | null
           ativo: boolean
           categoria: string | null
           cest: string | null
@@ -4656,6 +4755,7 @@ export type Database = {
           aliq_ipi?: number | null
           aliq_pis?: number | null
           area_peca?: number | null
+          article_id?: string | null
           ativo?: boolean
           categoria?: string | null
           cest?: string | null
@@ -4701,6 +4801,7 @@ export type Database = {
           aliq_ipi?: number | null
           aliq_pis?: number | null
           area_peca?: number | null
+          article_id?: string | null
           ativo?: boolean
           categoria?: string | null
           cest?: string | null
@@ -4740,7 +4841,29 @@ export type Database = {
           unidade_tributavel?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "products_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -5374,6 +5497,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "articles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roteiros_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "roteiros_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
           },
         ]
       }
@@ -6160,6 +6297,13 @@ export type Database = {
             referencedRelation: "vw_oee_artigo"
             referencedColumns: ["product_id"]
           },
+          {
+            foreignKeyName: "op_itens_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["product_id"]
+          },
         ]
       }
       vw_fluxo_caixa: {
@@ -6258,6 +6402,42 @@ export type Database = {
           turno: string | null
         }
         Relationships: []
+      }
+      vw_produtos_sugestao_artigo: {
+        Row: {
+          article_id_atual: string | null
+          product_codigo: string | null
+          product_id: string | null
+          product_nome: string | null
+          status: string | null
+          sugestao_por_codigo: string | null
+          sugestao_por_codigo_id: string | null
+          sugestao_por_nome: string | null
+          sugestao_por_nome_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_article_id_fkey"
+            columns: ["article_id_atual"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_article_id_fkey"
+            columns: ["article_id_atual"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "products_article_id_fkey"
+            columns: ["article_id_atual"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
+          },
+        ]
       }
     }
     Functions: {
