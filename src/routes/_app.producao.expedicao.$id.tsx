@@ -86,7 +86,7 @@ type DataShape = {
   op_itens: Array<{ id: string; descricao: string | null; quantidade_planejada: number }>;
   pedido_itens: Array<{ id: string; descricao: string | null; quantidade: number }>;
   eventos: Array<{ id: string; data: string; evento: string; descricao: string | null; local: string | null }>;
-  transportadoras: Array<{ id: string; nome: string }>;
+  transportadoras: Array<{ id: string; razao_social: string; nome_fantasia: string | null }>;
 };
 
 function SeparacaoTab({ data, onChange }: { data: DataShape; onChange: () => void }) {
@@ -257,7 +257,7 @@ function RomaneioTab({ data, onChange }: { data: DataShape; onChange: () => void
           <Select value={tid} onValueChange={setTid}>
             <SelectTrigger><SelectValue placeholder="Selecionar..." /></SelectTrigger>
             <SelectContent>
-              {data.transportadoras.map(t => <SelectItem key={t.id} value={t.id}>{t.nome}</SelectItem>)}
+              {data.transportadoras.map(t => <SelectItem key={t.id} value={t.id}>{t.nome_fantasia ?? t.razao_social}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
