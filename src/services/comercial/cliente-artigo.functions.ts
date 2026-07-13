@@ -50,8 +50,8 @@ export const listarClienteArtigo = createServerFn({ method: "POST" })
       supabase.from("customers").select("id, razao_social, nome_fantasia").in("id", clientes),
       supabase.from("articles").select("id, codigo, descricao").in("id", artigos),
     ]);
-    const cMap = new Map((cs ?? []).map((c: { id: string; razao_social?: string; nome_fantasia?: string }) => [c.id, c.nome_fantasia || c.razao_social || ""]));
-    const aMap = new Map((as ?? []).map((a: { id: string; codigo?: string; descricao?: string }) => [a.id, `${a.codigo ?? ""} — ${a.descricao ?? ""}`.trim()]));
+    const cMap = new Map(((cs ?? []) as Array<{ id: string; razao_social: string | null; nome_fantasia: string | null }>).map(c => [c.id, c.nome_fantasia || c.razao_social || ""] as [string, string]));
+    const aMap = new Map(((as ?? []) as Array<{ id: string; codigo: string | null; descricao: string | null }>).map(a => [a.id, `${a.codigo ?? ""} — ${a.descricao ?? ""}`.trim()] as [string, string]));
     return list.map(r => ({
       ...r,
       cliente_nome: cMap.get(r.cliente_id as string) ?? "-",
