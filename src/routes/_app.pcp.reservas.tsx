@@ -145,7 +145,7 @@ function Page() {
     enabled: !!substDialog?.itemId,
     queryFn: async () => {
       const { data, error } = await supabase.from("vw_lotes_saldos" as never)
-        .select("*").eq("item_id", substDialog!.itemId).gt("saldo_disponivel", 0);
+        .select("*").eq("item_id", substDialog!.itemId as string).gt("saldo_disponivel", 0);
       if (error) throw error;
       return (data ?? []) as SaldoRow[];
     },
