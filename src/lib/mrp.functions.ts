@@ -123,7 +123,7 @@ export const computeMrp = createServerFn({ method: "POST" })
     for (const l of (lastLotes ?? [])) {
       if (l.fornecedor_id && !fornecMap.has(l.item_id)) fornecMap.set(l.item_id, l.fornecedor_id);
     }
-    const fornIds = [...new Set([...fornecMap.values()])];
+    const fornIds = [...new Set([...fornecMap.values()])].filter((x): x is string => !!x);
     const { data: forns } = fornIds.length
       ? await supabase.from("fornecedores").select("id, razao_social, nome_fantasia, prazo_entrega_dias").in("id", fornIds)
       : { data: [] as { id: string; razao_social: string; nome_fantasia: string | null; prazo_entrega_dias: number | null }[] };
