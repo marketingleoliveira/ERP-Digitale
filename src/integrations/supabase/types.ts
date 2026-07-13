@@ -750,6 +750,180 @@ export type Database = {
         }
         Relationships: []
       }
+      cliente_artigo: {
+        Row: {
+          artigo_id: string
+          ativo: boolean
+          cliente_id: string
+          codigo_cliente: string | null
+          condicao_pagamento: string | null
+          created_at: string
+          created_by: string | null
+          desconto_maximo_pct: number | null
+          descricao_comercial: string | null
+          id: string
+          observacoes: string | null
+          prazo_entrega_dias: number | null
+          preco_negociado: number
+          produto_id: string | null
+          quantidade_minima: number | null
+          representante_id: string | null
+          unidade: string | null
+          updated_at: string
+          variante_id: string | null
+          vigencia_fim: string | null
+          vigencia_inicio: string
+        }
+        Insert: {
+          artigo_id: string
+          ativo?: boolean
+          cliente_id: string
+          codigo_cliente?: string | null
+          condicao_pagamento?: string | null
+          created_at?: string
+          created_by?: string | null
+          desconto_maximo_pct?: number | null
+          descricao_comercial?: string | null
+          id?: string
+          observacoes?: string | null
+          prazo_entrega_dias?: number | null
+          preco_negociado: number
+          produto_id?: string | null
+          quantidade_minima?: number | null
+          representante_id?: string | null
+          unidade?: string | null
+          updated_at?: string
+          variante_id?: string | null
+          vigencia_fim?: string | null
+          vigencia_inicio?: string
+        }
+        Update: {
+          artigo_id?: string
+          ativo?: boolean
+          cliente_id?: string
+          codigo_cliente?: string | null
+          condicao_pagamento?: string | null
+          created_at?: string
+          created_by?: string | null
+          desconto_maximo_pct?: number | null
+          descricao_comercial?: string | null
+          id?: string
+          observacoes?: string | null
+          prazo_entrega_dias?: number | null
+          preco_negociado?: number
+          produto_id?: string | null
+          quantidade_minima?: number | null
+          representante_id?: string | null
+          unidade?: string | null
+          updated_at?: string
+          variante_id?: string | null
+          vigencia_fim?: string | null
+          vigencia_inicio?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cliente_artigo_artigo_id_fkey"
+            columns: ["artigo_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cliente_artigo_artigo_id_fkey"
+            columns: ["artigo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "cliente_artigo_artigo_id_fkey"
+            columns: ["artigo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
+          },
+          {
+            foreignKeyName: "cliente_artigo_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cliente_artigo_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cliente_artigo_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_artigo"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "cliente_artigo_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "cliente_artigo_representante_id_fkey"
+            columns: ["representante_id"]
+            isOneToOne: false
+            referencedRelation: "sales_reps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cliente_artigo_variante_id_fkey"
+            columns: ["variante_id"]
+            isOneToOne: false
+            referencedRelation: "variantes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cliente_artigo_historico: {
+        Row: {
+          alterado_em: string
+          alterado_por: string | null
+          campo: string
+          cliente_artigo_id: string
+          id: string
+          valor_anterior: string | null
+          valor_novo: string | null
+        }
+        Insert: {
+          alterado_em?: string
+          alterado_por?: string | null
+          campo: string
+          cliente_artigo_id: string
+          id?: string
+          valor_anterior?: string | null
+          valor_novo?: string | null
+        }
+        Update: {
+          alterado_em?: string
+          alterado_por?: string | null
+          campo?: string
+          cliente_artigo_id?: string
+          id?: string
+          valor_anterior?: string | null
+          valor_novo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cliente_artigo_historico_cliente_artigo_id_fkey"
+            columns: ["cliente_artigo_id"]
+            isOneToOne: false
+            referencedRelation: "cliente_artigo"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comissoes: {
         Row: {
           base_calculo: number
@@ -4313,9 +4487,11 @@ export type Database = {
           descricao: string | null
           estampa_id: string | null
           id: string
+          origem_preco: string | null
           pedido_id: string
           product_id: string | null
           quantidade: number
+          regra_cliente_artigo_id: string | null
           unidade: string
           valor_total: number | null
           valor_unitario: number
@@ -4327,9 +4503,11 @@ export type Database = {
           descricao?: string | null
           estampa_id?: string | null
           id?: string
+          origem_preco?: string | null
           pedido_id: string
           product_id?: string | null
           quantidade?: number
+          regra_cliente_artigo_id?: string | null
           unidade?: string
           valor_total?: number | null
           valor_unitario?: number
@@ -4341,9 +4519,11 @@ export type Database = {
           descricao?: string | null
           estampa_id?: string | null
           id?: string
+          origem_preco?: string | null
           pedido_id?: string
           product_id?: string | null
           quantidade?: number
+          regra_cliente_artigo_id?: string | null
           unidade?: string
           valor_total?: number | null
           valor_unitario?: number
@@ -4391,6 +4571,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vw_produtos_sugestao_artigo"
             referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "pedido_itens_regra_cliente_artigo_id_fkey"
+            columns: ["regra_cliente_artigo_id"]
+            isOneToOne: false
+            referencedRelation: "cliente_artigo"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pedido_itens_variante_id_fkey"
@@ -6759,6 +6946,23 @@ export type Database = {
         Returns: number
       }
       proximo_numero_op: { Args: never; Returns: number }
+      resolver_preco_cliente_artigo: {
+        Args: {
+          _artigo_id?: string
+          _cliente_id: string
+          _data?: string
+          _produto_id?: string
+          _variante_id?: string
+        }
+        Returns: {
+          condicao_pagamento: string
+          desconto_maximo_pct: number
+          origem: string
+          prazo_entrega_dias: number
+          preco: number
+          regra_id: string
+        }[]
+      }
       romaneio_transicionar: {
         Args: { _novo_status: string; _romaneio_id: string }
         Returns: string
