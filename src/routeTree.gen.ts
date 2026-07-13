@@ -50,6 +50,7 @@ import { Route as AppProducaoExpedicaoRouteImport } from './routes/_app.producao
 import { Route as AppPcpTurnosRouteImport } from './routes/_app.pcp.turnos'
 import { Route as AppPcpRoteirosRouteImport } from './routes/_app.pcp.roteiros'
 import { Route as AppPcpOperacoesRouteImport } from './routes/_app.pcp.operacoes'
+import { Route as AppPcpOeeRouteImport } from './routes/_app.pcp.oee'
 import { Route as AppPcpMaquinaTurnosRouteImport } from './routes/_app.pcp.maquina-turnos'
 import { Route as AppPcpCapacidadeRouteImport } from './routes/_app.pcp.capacidade'
 import { Route as AppPcpCalendarioRouteImport } from './routes/_app.pcp.calendario'
@@ -298,6 +299,11 @@ const AppPcpRoteirosRoute = AppPcpRoteirosRouteImport.update({
 const AppPcpOperacoesRoute = AppPcpOperacoesRouteImport.update({
   id: '/pcp/operacoes',
   path: '/pcp/operacoes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpOeeRoute = AppPcpOeeRouteImport.update({
+  id: '/pcp/oee',
+  path: '/pcp/oee',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPcpMaquinaTurnosRoute = AppPcpMaquinaTurnosRouteImport.update({
@@ -602,6 +608,7 @@ export interface FileRoutesByFullPath {
   '/pcp/calendario': typeof AppPcpCalendarioRoute
   '/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/pcp/oee': typeof AppPcpOeeRoute
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
@@ -689,6 +696,7 @@ export interface FileRoutesByTo {
   '/pcp/calendario': typeof AppPcpCalendarioRoute
   '/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/pcp/oee': typeof AppPcpOeeRoute
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
@@ -778,6 +786,7 @@ export interface FileRoutesById {
   '/_app/pcp/calendario': typeof AppPcpCalendarioRoute
   '/_app/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/_app/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/_app/pcp/oee': typeof AppPcpOeeRoute
   '/_app/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/_app/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/_app/pcp/turnos': typeof AppPcpTurnosRoute
@@ -867,6 +876,7 @@ export interface FileRouteTypes {
     | '/pcp/calendario'
     | '/pcp/capacidade'
     | '/pcp/maquina-turnos'
+    | '/pcp/oee'
     | '/pcp/operacoes'
     | '/pcp/roteiros'
     | '/pcp/turnos'
@@ -954,6 +964,7 @@ export interface FileRouteTypes {
     | '/pcp/calendario'
     | '/pcp/capacidade'
     | '/pcp/maquina-turnos'
+    | '/pcp/oee'
     | '/pcp/operacoes'
     | '/pcp/roteiros'
     | '/pcp/turnos'
@@ -1042,6 +1053,7 @@ export interface FileRouteTypes {
     | '/_app/pcp/calendario'
     | '/_app/pcp/capacidade'
     | '/_app/pcp/maquina-turnos'
+    | '/_app/pcp/oee'
     | '/_app/pcp/operacoes'
     | '/_app/pcp/roteiros'
     | '/_app/pcp/turnos'
@@ -1359,6 +1371,13 @@ declare module '@tanstack/react-router' {
       path: '/pcp/operacoes'
       fullPath: '/pcp/operacoes'
       preLoaderRoute: typeof AppPcpOperacoesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/oee': {
+      id: '/_app/pcp/oee'
+      path: '/pcp/oee'
+      fullPath: '/pcp/oee'
+      preLoaderRoute: typeof AppPcpOeeRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/pcp/maquina-turnos': {
@@ -1819,6 +1838,7 @@ interface AppRouteChildren {
   AppPcpCalendarioRoute: typeof AppPcpCalendarioRoute
   AppPcpCapacidadeRoute: typeof AppPcpCapacidadeRoute
   AppPcpMaquinaTurnosRoute: typeof AppPcpMaquinaTurnosRoute
+  AppPcpOeeRoute: typeof AppPcpOeeRoute
   AppPcpOperacoesRoute: typeof AppPcpOperacoesRoute
   AppPcpRoteirosRoute: typeof AppPcpRoteirosRouteWithChildren
   AppPcpTurnosRoute: typeof AppPcpTurnosRoute
@@ -1896,6 +1916,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPcpCalendarioRoute: AppPcpCalendarioRoute,
   AppPcpCapacidadeRoute: AppPcpCapacidadeRoute,
   AppPcpMaquinaTurnosRoute: AppPcpMaquinaTurnosRoute,
+  AppPcpOeeRoute: AppPcpOeeRoute,
   AppPcpOperacoesRoute: AppPcpOperacoesRoute,
   AppPcpRoteirosRoute: AppPcpRoteirosRouteWithChildren,
   AppPcpTurnosRoute: AppPcpTurnosRoute,
