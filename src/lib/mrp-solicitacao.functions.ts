@@ -8,6 +8,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { normalizeRefTipo } from "@/lib/ref-tipo";
 
 const linhaSchema = z.object({
   ref_tipo: z.string(),
@@ -144,7 +145,7 @@ export const criarSolicitacaoDoMrp = createServerFn({ method: "POST" })
 
       const itensPayload = itens.map(l => ({
         solicitacao_id: solRow.id,
-        tipo_ref: l.ref_tipo,
+        tipo_ref: normalizeRefTipo(l.ref_tipo) ?? "produto",
         ref_id: l.ref_id,
         descricao: l.descricao,
         quantidade: l.quantidade_final,

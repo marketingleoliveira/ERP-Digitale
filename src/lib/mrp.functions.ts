@@ -6,6 +6,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { normalizeRefTipo } from "@/lib/ref-tipo";
 
 const inputSchema = z.object({
   demandas: z.array(z.object({
@@ -92,14 +93,15 @@ export const computeMrp = createServerFn({ method: "POST" })
       const boms = (bomAll ?? []).filter(b => b.article_id === d.article_id);
       const art = (articlesData ?? []).find(a => a.id === d.article_id);
       for (const b of boms) {
+        const refTipo = normalizeRefTipo(b.ref_tipo) ?? "produto";
         const perda = Number(b.fator_perda_pct || 0) / 100;
         const qtdKg = Number(b.qtd_por_kg || 0) * d.quantidade_kg * (1 + perda);
-        const key = b.ref_id ? `${b.ref_tipo}:${b.ref_id}` : `desc:${b.descricao}`;
+        const key = b.ref_id ? `${refTipo}:${b.ref_id}` : `desc:${b.descricao}`;
         const cur = brutas.get(key);
         const origem = { article_id: d.article_id, codigo: art?.codigo ?? "", nome: art?.nome ?? "", qtd_kg: d.quantidade_kg };
         if (cur) { cur.qtd += qtdKg; cur.origem.push(origem); }
         else brutas.set(key, {
-          key, ref_tipo: b.ref_tipo || b.tipo || "componente", ref_id: b.ref_id,
+          key, ref_tipo: refTipo, ref_id: b.ref_id,
           descricao: b.descricao || "—", unidade: b.unidade || "kg",
           qtd: qtdKg, origem: [origem],
         });
