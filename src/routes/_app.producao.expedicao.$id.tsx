@@ -78,11 +78,13 @@ function ExpedicaoDetail() {
   );
 }
 
-type ItemLote = { id: string; quantidade: number; lotes?: { numero_lote: string } | null; op_itens?: { descricao: string } | null };
+type ItemLote = { id: string; quantidade: number; lotes?: { numero_lote: string } | null; op_itens?: { descricao: string | null } | null };
 type Expedicao = { id: string; op_id?: string | null; status: string };
 type DataShape = {
-  expedicao: unknown; itens_lote: ItemLote[]; op_itens: Array<{ id: string; descricao: string; quantidade_planejada: number }>;
-  pedido_itens: Array<{ id: string; descricao: string; quantidade: number }>;
+  expedicao: unknown;
+  itens_lote: ItemLote[];
+  op_itens: Array<{ id: string; descricao: string | null; quantidade_planejada: number }>;
+  pedido_itens: Array<{ id: string; descricao: string | null; quantidade: number }>;
   eventos: Array<{ id: string; data: string; evento: string; descricao: string | null; local: string | null }>;
   transportadoras: Array<{ id: string; nome: string }>;
 };
