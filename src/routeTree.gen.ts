@@ -53,6 +53,7 @@ import { Route as AppPcpRoteirosRouteImport } from './routes/_app.pcp.roteiros'
 import { Route as AppPcpReservasRouteImport } from './routes/_app.pcp.reservas'
 import { Route as AppPcpOperacoesRouteImport } from './routes/_app.pcp.operacoes'
 import { Route as AppPcpOeeRouteImport } from './routes/_app.pcp.oee'
+import { Route as AppPcpMrpOpRouteImport } from './routes/_app.pcp.mrp-op'
 import { Route as AppPcpMrpRouteImport } from './routes/_app.pcp.mrp'
 import { Route as AppPcpMaquinaTurnosRouteImport } from './routes/_app.pcp.maquina-turnos'
 import { Route as AppPcpCustosRouteImport } from './routes/_app.pcp.custos'
@@ -318,6 +319,11 @@ const AppPcpOperacoesRoute = AppPcpOperacoesRouteImport.update({
 const AppPcpOeeRoute = AppPcpOeeRouteImport.update({
   id: '/pcp/oee',
   path: '/pcp/oee',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpMrpOpRoute = AppPcpMrpOpRouteImport.update({
+  id: '/pcp/mrp-op',
+  path: '/pcp/mrp-op',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPcpMrpRoute = AppPcpMrpRouteImport.update({
@@ -634,6 +640,7 @@ export interface FileRoutesByFullPath {
   '/pcp/custos': typeof AppPcpCustosRoute
   '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
   '/pcp/mrp': typeof AppPcpMrpRoute
+  '/pcp/mrp-op': typeof AppPcpMrpOpRoute
   '/pcp/oee': typeof AppPcpOeeRoute
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/pcp/reservas': typeof AppPcpReservasRoute
@@ -726,6 +733,7 @@ export interface FileRoutesByTo {
   '/pcp/custos': typeof AppPcpCustosRoute
   '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
   '/pcp/mrp': typeof AppPcpMrpRoute
+  '/pcp/mrp-op': typeof AppPcpMrpOpRoute
   '/pcp/oee': typeof AppPcpOeeRoute
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/pcp/reservas': typeof AppPcpReservasRoute
@@ -820,6 +828,7 @@ export interface FileRoutesById {
   '/_app/pcp/custos': typeof AppPcpCustosRoute
   '/_app/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
   '/_app/pcp/mrp': typeof AppPcpMrpRoute
+  '/_app/pcp/mrp-op': typeof AppPcpMrpOpRoute
   '/_app/pcp/oee': typeof AppPcpOeeRoute
   '/_app/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/_app/pcp/reservas': typeof AppPcpReservasRoute
@@ -914,6 +923,7 @@ export interface FileRouteTypes {
     | '/pcp/custos'
     | '/pcp/maquina-turnos'
     | '/pcp/mrp'
+    | '/pcp/mrp-op'
     | '/pcp/oee'
     | '/pcp/operacoes'
     | '/pcp/reservas'
@@ -1006,6 +1016,7 @@ export interface FileRouteTypes {
     | '/pcp/custos'
     | '/pcp/maquina-turnos'
     | '/pcp/mrp'
+    | '/pcp/mrp-op'
     | '/pcp/oee'
     | '/pcp/operacoes'
     | '/pcp/reservas'
@@ -1099,6 +1110,7 @@ export interface FileRouteTypes {
     | '/_app/pcp/custos'
     | '/_app/pcp/maquina-turnos'
     | '/_app/pcp/mrp'
+    | '/_app/pcp/mrp-op'
     | '/_app/pcp/oee'
     | '/_app/pcp/operacoes'
     | '/_app/pcp/reservas'
@@ -1440,6 +1452,13 @@ declare module '@tanstack/react-router' {
       path: '/pcp/oee'
       fullPath: '/pcp/oee'
       preLoaderRoute: typeof AppPcpOeeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/mrp-op': {
+      id: '/_app/pcp/mrp-op'
+      path: '/pcp/mrp-op'
+      fullPath: '/pcp/mrp-op'
+      preLoaderRoute: typeof AppPcpMrpOpRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/pcp/mrp': {
@@ -1916,6 +1935,7 @@ interface AppRouteChildren {
   AppPcpCustosRoute: typeof AppPcpCustosRoute
   AppPcpMaquinaTurnosRoute: typeof AppPcpMaquinaTurnosRoute
   AppPcpMrpRoute: typeof AppPcpMrpRoute
+  AppPcpMrpOpRoute: typeof AppPcpMrpOpRoute
   AppPcpOeeRoute: typeof AppPcpOeeRoute
   AppPcpOperacoesRoute: typeof AppPcpOperacoesRoute
   AppPcpReservasRoute: typeof AppPcpReservasRoute
@@ -1998,6 +2018,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPcpCustosRoute: AppPcpCustosRoute,
   AppPcpMaquinaTurnosRoute: AppPcpMaquinaTurnosRoute,
   AppPcpMrpRoute: AppPcpMrpRoute,
+  AppPcpMrpOpRoute: AppPcpMrpOpRoute,
   AppPcpOeeRoute: AppPcpOeeRoute,
   AppPcpOperacoesRoute: AppPcpOperacoesRoute,
   AppPcpReservasRoute: AppPcpReservasRoute,
