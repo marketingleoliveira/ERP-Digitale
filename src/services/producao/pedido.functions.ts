@@ -44,7 +44,7 @@ type PedidoInput = {
 };
 
 async function logAudit(
-  supabase: { from: (t: string) => { insert: (v: unknown) => Promise<unknown> } },
+  supabase: { from: (t: string) => { insert: (v: never) => Promise<unknown> } },
   entidadeId: string, acao: string, payload: Record<string, unknown>,
   userId: string, de?: string, para?: string,
 ) {
