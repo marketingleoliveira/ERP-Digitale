@@ -284,11 +284,11 @@ export const gerarOpDaSugestao = createServerFn({ method: "POST" })
     });
 
     // Reserva de materiais (opcional)
-    let reservaResult: unknown = null;
+    let reservaResult: { ok?: boolean; reservas?: string[]; faltas?: unknown[] } | null = null;
     if (data.reservar_materiais) {
       const { data: r, error: rErr } = await supabase.rpc("op_reservar_materiais", { _op_id: opId });
       if (rErr) throw new Error(`OP criada (#${numero}), mas falha ao reservar: ${rErr.message}`);
-      reservaResult = r;
+      reservaResult = (r ?? null) as typeof reservaResult;
     }
 
     return { ok: true, op_id: opId, numero, reserva: reservaResult };
