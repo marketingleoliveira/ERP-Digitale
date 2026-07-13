@@ -58,12 +58,15 @@ async function fetchFios(): Promise<ItemRef[]> {
 }
 async function fetchFornecedores(): Promise<Fornecedor[]> {
   const { data, error } = await supabase
-    .from("tinturarias")
-    .select("id, nome_fantasia, categoria")
-    .neq("categoria", "Insumos")
-    .order("nome_fantasia");
+    .from("fornecedores" as never)
+    .select("id, razao_social, nome_fantasia")
+    .eq("ativo", true)
+    .order("razao_social");
   if (error) throw error;
-  return (data ?? []) as unknown as Fornecedor[];
+  return (data ?? []).map((f: { id: string; razao_social: string; nome_fantasia: string | null }) => ({
+    id: f.id,
+    nome_fantasia: f.nome_fantasia ?? f.razao_social,
+  })) as Fornecedor[];
 }
 
 function LotesPage() {
