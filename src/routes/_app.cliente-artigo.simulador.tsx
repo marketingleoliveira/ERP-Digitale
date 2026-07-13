@@ -41,7 +41,7 @@ function Simulador() {
   });
   const { data: produtos = [] } = useQuery({
     queryKey: ["sim-produtos"],
-    queryFn: async () => (await supabase.from("products").select("id, codigo, descricao, article_id").order("codigo").limit(500)).data ?? [],
+    queryFn: async () => (await supabase.from("products").select("id, codigo, nome, article_id").order("codigo").limit(500)).data ?? [],
   });
 
   const simular = async () => {
