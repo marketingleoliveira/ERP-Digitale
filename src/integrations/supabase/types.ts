@@ -2171,6 +2171,81 @@ export type Database = {
           },
         ]
       }
+      expedicao_itens_lote: {
+        Row: {
+          created_at: string
+          expedicao_id: string
+          id: string
+          lote_id: string | null
+          op_item_id: string | null
+          pedido_item_id: string | null
+          product_id: string | null
+          quantidade: number
+          user_id: string | null
+          variante_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          expedicao_id: string
+          id?: string
+          lote_id?: string | null
+          op_item_id?: string | null
+          pedido_item_id?: string | null
+          product_id?: string | null
+          quantidade: number
+          user_id?: string | null
+          variante_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          expedicao_id?: string
+          id?: string
+          lote_id?: string | null
+          op_item_id?: string | null
+          pedido_item_id?: string | null
+          product_id?: string | null
+          quantidade?: number
+          user_id?: string | null
+          variante_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expedicao_itens_lote_expedicao_id_fkey"
+            columns: ["expedicao_id"]
+            isOneToOne: false
+            referencedRelation: "op_expedicoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expedicao_itens_lote_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expedicao_itens_lote_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_lotes_saldos"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "expedicao_itens_lote_op_item_id_fkey"
+            columns: ["op_item_id"]
+            isOneToOne: false
+            referencedRelation: "op_itens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expedicao_itens_lote_pedido_item_id_fkey"
+            columns: ["pedido_item_id"]
+            isOneToOne: false
+            referencedRelation: "pedido_itens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fios: {
         Row: {
           cest: string | null
@@ -3731,43 +3806,76 @@ export type Database = {
       }
       op_expedicoes: {
         Row: {
+          comprovante_url: string | null
+          conferente_id: string | null
           created_at: string
           data_entrega: string | null
           data_saida: string | null
+          divergencias: Json
+          expedidor_id: string | null
+          frete_tipo: string | null
           id: string
           nota_fiscal_id: string | null
           observacao: string | null
-          op_id: string
+          op_id: string | null
+          pedido_id: string | null
+          peso_bruto: number | null
+          peso_liquido: number | null
           rastreio: string | null
+          romaneio_id: string | null
+          separador_id: string | null
           status: string
           transportadora_id: string | null
           updated_at: string
+          volumes: number | null
         }
         Insert: {
+          comprovante_url?: string | null
+          conferente_id?: string | null
           created_at?: string
           data_entrega?: string | null
           data_saida?: string | null
+          divergencias?: Json
+          expedidor_id?: string | null
+          frete_tipo?: string | null
           id?: string
           nota_fiscal_id?: string | null
           observacao?: string | null
-          op_id: string
+          op_id?: string | null
+          pedido_id?: string | null
+          peso_bruto?: number | null
+          peso_liquido?: number | null
           rastreio?: string | null
+          romaneio_id?: string | null
+          separador_id?: string | null
           status?: string
           transportadora_id?: string | null
           updated_at?: string
+          volumes?: number | null
         }
         Update: {
+          comprovante_url?: string | null
+          conferente_id?: string | null
           created_at?: string
           data_entrega?: string | null
           data_saida?: string | null
+          divergencias?: Json
+          expedidor_id?: string | null
+          frete_tipo?: string | null
           id?: string
           nota_fiscal_id?: string | null
           observacao?: string | null
-          op_id?: string
+          op_id?: string | null
+          pedido_id?: string | null
+          peso_bruto?: number | null
+          peso_liquido?: number | null
           rastreio?: string | null
+          romaneio_id?: string | null
+          separador_id?: string | null
           status?: string
           transportadora_id?: string | null
           updated_at?: string
+          volumes?: number | null
         }
         Relationships: [
           {
@@ -3797,6 +3905,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vw_custos_op"
             referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "op_expedicoes_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_expedicoes_romaneio_id_fkey"
+            columns: ["romaneio_id"]
+            isOneToOne: false
+            referencedRelation: "romaneios"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "op_expedicoes_transportadora_id_fkey"
@@ -6981,6 +7103,28 @@ export type Database = {
     }
     Functions: {
       baixar_estoque_nf: { Args: { _nota_id: string }; Returns: number }
+      exp_registrar_evento: {
+        Args: {
+          _descricao?: string
+          _evento: string
+          _expedicao_id: string
+          _local?: string
+        }
+        Returns: string
+      }
+      exp_separar_lote: {
+        Args: {
+          _expedicao_id: string
+          _lote_id: string
+          _op_item_id: string
+          _quantidade: number
+        }
+        Returns: string
+      }
+      exp_transicionar: {
+        Args: { _expedicao_id: string; _motivo?: string; _novo_status: string }
+        Returns: undefined
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
