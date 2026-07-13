@@ -154,22 +154,20 @@ export const computeOpSuggestions = createServerFn({ method: "POST" })
           const m = maqMap.get(id); const c = capMap.get(id);
           return { id, nome: m?.maquina ?? "?", kg_por_hora: Number(c?.kg_por_hora ?? 0) };
         });
-      // Capacidade EFETIVA por hora = Σ (kg/h NOMINAL × eficiência)
-      // A capacidade cadastrada em `maquina_capacidade.kg_por_hora` é NOMINAL;
-      // eficiência é aplicada exatamente uma vez aqui.
-      const kgHoraEfetivoTotal = maquinasEleg.reduce((a, m) => {
-        const c = capMap.get(m.id); if (!c) return a;
-        return a + m.kg_por_hora * (Number(c.eficiencia_alvo_pct) / 100);
-      }, 0);
-      // Horas produtivas por dia (média entre máquinas elegíveis)
-      const horasDiaMedia = maquinasEleg.length
-        ? maquinasEleg.reduce((a, m) => {
-            const c = capMap.get(m.id); if (!c) return a;
-            return a + Number(c.horas_por_turno) * Number(c.turnos_por_dia);
-          }, 0) / maquinasEleg.length
-        : 0;
-      const capDia = kgHoraEfetivoTotal * horasDiaMedia; // kg/dia efetivos
-      const duracaoH = kgHoraEfetivoTotal > 0 ? g.qtd / kgHoraEfetivoTotal : null;
+      // Fonte única de verdade: src/lib/capacidade.ts
+      // Eficiência aplicada UMA vez; nunca dividir duração por 24.
+      const capsEleg: MaquinaCap[] = maquinasEleg
+        .map(m => capMap.get(m.id))
+        .filter((c): c is NonNullable<typeof c> => !!c)
+        .map(c => ({
+          kg_por_hora: Number(c.kg_por_hora),
+          horas_por_turno: Number(c.horas_por_turno),
+          turnos_por_dia: Number(c.turnos_por_dia),
+          eficiencia_alvo_pct: Number(c.eficiencia_alvo_pct),
+        }));
+      const kgHoraEfetivoTotal = capsEleg.reduce((a, c) => a + capacidadeEfetivaHora(c), 0);
+      const capDia = capsEleg.reduce((a, c) => a + capacidadeKgDia(c), 0); // kg/dia efetivos
+      const duracaoH = duracaoHoras(g.qtd, kgHoraEfetivoTotal);
 
       // Prazo mínimo dos pedidos
       const prazos = g.pedidos.map(p => p.prazo).filter(Boolean) as string[];
