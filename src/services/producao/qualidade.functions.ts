@@ -35,7 +35,22 @@ export const listarFilaInspecao = createServerFn({ method: "GET" })
 
     const { data: rows, error } = await q;
     if (error) throw error;
-    return rows ?? [];
+    return (rows ?? []) as Array<{
+      id: string;
+      numero: number;
+      status: string;
+      prioridade: number | null;
+      data_prevista: string | null;
+      maquina_id: string | null;
+      op_itens: Array<{
+        product_id: string | null;
+        descricao: string | null;
+        quantidade_planejada: number | null;
+        quantidade_produzida: number | null;
+        quantidade_aprovada: number | null;
+        quantidade_reprovada: number | null;
+      }>;
+    }>;
   });
 
 export const getOpInspecao = createServerFn({ method: "GET" })
