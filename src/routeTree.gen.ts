@@ -74,6 +74,7 @@ import { Route as AppFinanceiroDashboardRouteImport } from './routes/_app.financ
 import { Route as AppFinanceiroContasBancariasRouteImport } from './routes/_app.financeiro.contas-bancarias'
 import { Route as AppFinanceiroCentrosCustoRouteImport } from './routes/_app.financeiro.centros-custo'
 import { Route as AppEstoqueKardexRouteImport } from './routes/_app.estoque.kardex'
+import { Route as AppDevSprint0RouteImport } from './routes/_app.dev.sprint0'
 import { Route as AppDevFocusNfeRouteImport } from './routes/_app.dev.focus-nfe'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 import { Route as AppDashboardIndustrialRouteImport } from './routes/_app.dashboard.industrial'
@@ -422,6 +423,11 @@ const AppEstoqueKardexRoute = AppEstoqueKardexRouteImport.update({
   path: '/estoque/kardex',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDevSprint0Route = AppDevSprint0RouteImport.update({
+  id: '/dev/sprint0',
+  path: '/dev/sprint0',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDevFocusNfeRoute = AppDevFocusNfeRouteImport.update({
   id: '/dev/focus-nfe',
   path: '/dev/focus-nfe',
@@ -551,6 +557,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/dev/focus-nfe': typeof AppDevFocusNfeRoute
+  '/dev/sprint0': typeof AppDevSprint0Route
   '/estoque/kardex': typeof AppEstoqueKardexRoute
   '/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
   '/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
@@ -634,6 +641,7 @@ export interface FileRoutesByTo {
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/dev/focus-nfe': typeof AppDevFocusNfeRoute
+  '/dev/sprint0': typeof AppDevSprint0Route
   '/estoque/kardex': typeof AppEstoqueKardexRoute
   '/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
   '/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
@@ -719,6 +727,7 @@ export interface FileRoutesById {
   '/_app/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
   '/_app/dev/focus-nfe': typeof AppDevFocusNfeRoute
+  '/_app/dev/sprint0': typeof AppDevSprint0Route
   '/_app/estoque/kardex': typeof AppEstoqueKardexRoute
   '/_app/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
   '/_app/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
@@ -804,6 +813,7 @@ export interface FileRouteTypes {
     | '/dashboard/industrial'
     | '/dev/cargos'
     | '/dev/focus-nfe'
+    | '/dev/sprint0'
     | '/estoque/kardex'
     | '/financeiro/centros-custo'
     | '/financeiro/contas-bancarias'
@@ -887,6 +897,7 @@ export interface FileRouteTypes {
     | '/dashboard/industrial'
     | '/dev/cargos'
     | '/dev/focus-nfe'
+    | '/dev/sprint0'
     | '/estoque/kardex'
     | '/financeiro/centros-custo'
     | '/financeiro/contas-bancarias'
@@ -971,6 +982,7 @@ export interface FileRouteTypes {
     | '/_app/dashboard/industrial'
     | '/_app/dev/cargos'
     | '/_app/dev/focus-nfe'
+    | '/_app/dev/sprint0'
     | '/_app/estoque/kardex'
     | '/_app/financeiro/centros-custo'
     | '/_app/financeiro/contas-bancarias'
@@ -1481,6 +1493,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEstoqueKardexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/dev/sprint0': {
+      id: '/_app/dev/sprint0'
+      path: '/dev/sprint0'
+      fullPath: '/dev/sprint0'
+      preLoaderRoute: typeof AppDevSprint0RouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dev/focus-nfe': {
       id: '/_app/dev/focus-nfe'
       path: '/dev/focus-nfe'
@@ -1704,6 +1723,7 @@ interface AppRouteChildren {
   AppDashboardIndustrialRoute: typeof AppDashboardIndustrialRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
   AppDevFocusNfeRoute: typeof AppDevFocusNfeRoute
+  AppDevSprint0Route: typeof AppDevSprint0Route
   AppEstoqueKardexRoute: typeof AppEstoqueKardexRoute
   AppFinanceiroCentrosCustoRoute: typeof AppFinanceiroCentrosCustoRoute
   AppFinanceiroContasBancariasRoute: typeof AppFinanceiroContasBancariasRoute
@@ -1778,6 +1798,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDashboardIndustrialRoute: AppDashboardIndustrialRoute,
   AppDevCargosRoute: AppDevCargosRoute,
   AppDevFocusNfeRoute: AppDevFocusNfeRoute,
+  AppDevSprint0Route: AppDevSprint0Route,
   AppEstoqueKardexRoute: AppEstoqueKardexRoute,
   AppFinanceiroCentrosCustoRoute: AppFinanceiroCentrosCustoRoute,
   AppFinanceiroContasBancariasRoute: AppFinanceiroContasBancariasRoute,

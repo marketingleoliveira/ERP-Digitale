@@ -15,13 +15,13 @@ export const Route = createFileRoute("/_app/dev/sprint0")({
 type Row = { key: string; label: string; status: "ok" | "warn" | "fail"; detail: string; link?: string };
 
 async function loadChecklist(): Promise<Row[]> {
-  const q = async (table: string, extra?: (b: ReturnType<typeof supabase.from>) => ReturnType<typeof supabase.from>) => {
+  const q = async (table: string, filter?: { column: string; value: unknown }) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let builder: any = supabase.from(table as never).select("*", { count: "exact", head: true });
-    if (extra) builder = extra(builder);
+    if (filter) builder = builder.eq(filter.column, filter.value);
     const { count, error } = await builder;
     if (error) return -1;
-    return count ?? 0;
+    return (count as number) ?? 0;
   };
 
   const [emp, forn, cli, lotes, articles, bom, maq, cap, turnos, cal, mt] = await Promise.all([
@@ -31,12 +31,13 @@ async function loadChecklist(): Promise<Row[]> {
     q("lotes"),
     q("articles"),
     q("article_bom"),
-    q("maquinas", (b) => b.eq("habilitado", true)),
+    q("maquinas", { column: "habilitado", value: true }),
     q("maquina_capacidade"),
-    q("turnos", (b) => b.eq("ativo", true)),
+    q("turnos", { column: "ativo", value: true }),
     q("calendario_produtivo"),
     q("maquina_turnos"),
   ]);
+
 
   const st = (ok: boolean, warn = false): Row["status"] => (ok ? "ok" : warn ? "warn" : "fail");
 
