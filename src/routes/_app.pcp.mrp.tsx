@@ -35,8 +35,12 @@ function UrgenciaBadge({ u }: { u: MrpLinha["urgencia"] }) {
 
 function Page() {
   const runMrp = useServerFn(computeMrp);
+  const gerarSol = useServerFn(criarSolicitacaoDoMrp);
+  const navigate = useNavigate();
   const [demandas, setDemandas] = useState<{ article_id: string; quantidade_kg: number }[]>([]);
   const [seguranca, setSeguranca] = useState(0);
+  const [selecionadas, setSelecionadas] = useState<Set<number>>(new Set());
+  const [agrupar, setAgrupar] = useState(true);
 
   const { data: articles = [] } = useQuery({
     queryKey: ["articles-mrp"],
@@ -50,10 +54,37 @@ function Page() {
   const mrp = useMutation({
     mutationFn: (auto: boolean) =>
       runMrp({ data: { demandas: auto ? [] : demandas, estoque_seguranca_pct: seguranca } }),
+    onSuccess: () => setSelecionadas(new Set()),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const gerar = useMutation({
+    mutationFn: async () => {
+      const escolhidas = [...selecionadas].map(i => linhas[i]).filter(l => l && l.necessidade_liquida > 0);
+      if (escolhidas.length === 0) throw new Error("Selecione ao menos uma linha com necessidade.");
+      return gerarSol({ data: {
+        linhas: escolhidas.map(l => ({
+          ref_tipo: l.ref_tipo, ref_id: l.ref_id, descricao: l.descricao, unidade: l.unidade,
+          necessidade_liquida: l.necessidade_liquida,
+          fornecedor_id: l.fornecedor_id, prazo_entrega_dias: l.prazo_entrega_dias,
+          urgencia: l.urgencia,
+          origem_op_ids: [], origem_pedido_ids: [],
+          observacao_mrp: `Origem: ${l.origem_articles.map(o => o.codigo).join(", ")}`,
+        })),
+        agrupar_por_fornecedor: agrupar,
+      } });
+    },
+    onSuccess: (r) => {
+      if (r.aviso) { toast.warning(r.aviso); return; }
+      toast.success(`${r.criadas.length} solicitação(ões) criada(s).`);
+      if (r.criadas.length === 1) navigate({ to: "/compras/solicitacoes/$id", params: { id: r.criadas[0].solicitacao_id } });
+      else navigate({ to: "/compras/solicitacoes" });
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
   const linhas = mrp.data?.linhas ?? [];
+
   const kpis = {
     itens: linhas.length,
     urgentes: linhas.filter(l => l.urgencia === "vermelho").length,
