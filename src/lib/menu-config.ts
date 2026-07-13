@@ -60,6 +60,8 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Calendário Produtivo", url: "/pcp/calendario", icon: Clock, group: "Produção (PCP)" },
   { title: "Máquina × Turno", url: "/pcp/maquina-turnos", icon: Network, group: "Produção (PCP)" },
   { title: "Capacidade Máquina", url: "/pcp/capacidade", icon: SlidersHorizontal, group: "Produção (PCP)" },
+  { title: "Operações Produtivas", url: "/pcp/operacoes", icon: Wrench, group: "Produção (PCP)" },
+  { title: "Roteiros de Produção", url: "/pcp/roteiros", icon: Network, group: "Produção (PCP)" },
   { title: "Dashboard Industrial", url: "/dashboard/industrial", icon: LayoutDashboard, group: "" },
   { title: "Dashboard Financeiro", url: "/financeiro/dashboard", icon: LayoutDashboard, group: "Financeiro & Logística" },
   { title: "Contas a Receber", url: "/financeiro", icon: Wallet, group: "Financeiro & Logística" },

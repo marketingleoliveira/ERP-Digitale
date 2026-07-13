@@ -3787,6 +3787,48 @@ export type Database = {
           },
         ]
       }
+      operacoes_produtivas: {
+        Row: {
+          ativo: boolean
+          centro_trabalho: string | null
+          codigo: string
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+          setup_padrao_min: number
+          tempo_padrao_min: number
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          centro_trabalho?: string | null
+          codigo: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          setup_padrao_min?: number
+          tempo_padrao_min?: number
+          tipo?: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          centro_trabalho?: string | null
+          codigo?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          setup_padrao_min?: number
+          tempo_padrao_min?: number
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ordens_producao: {
         Row: {
           created_at: string
@@ -4889,6 +4931,203 @@ export type Database = {
             columns: ["transportadora_id"]
             isOneToOne: false
             referencedRelation: "transportadoras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roteiro_etapa_maquinas: {
+        Row: {
+          etapa_id: string
+          maquina_id: string
+        }
+        Insert: {
+          etapa_id: string
+          maquina_id: string
+        }
+        Update: {
+          etapa_id?: string
+          maquina_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roteiro_etapa_maquinas_etapa_id_fkey"
+            columns: ["etapa_id"]
+            isOneToOne: false
+            referencedRelation: "roteiro_etapas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roteiro_etapa_maquinas_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roteiro_etapa_maquinas_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "roteiro_etapa_maquinas_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+        ]
+      }
+      roteiro_etapas: {
+        Row: {
+          centro_trabalho: string | null
+          consumo_previsto: number
+          created_at: string
+          fornecedor_terceiro_id: string | null
+          id: string
+          maquina_preferencial_id: string | null
+          nome_operacao: string
+          observacao: string | null
+          operacao_id: string | null
+          perdas_previstas_pct: number
+          qualidade_obrigatoria: boolean
+          roteiro_id: string
+          sequencia: number
+          setup_min: number
+          tempo_padrao_min: number
+          terceirizada: boolean
+          updated_at: string
+        }
+        Insert: {
+          centro_trabalho?: string | null
+          consumo_previsto?: number
+          created_at?: string
+          fornecedor_terceiro_id?: string | null
+          id?: string
+          maquina_preferencial_id?: string | null
+          nome_operacao: string
+          observacao?: string | null
+          operacao_id?: string | null
+          perdas_previstas_pct?: number
+          qualidade_obrigatoria?: boolean
+          roteiro_id: string
+          sequencia: number
+          setup_min?: number
+          tempo_padrao_min?: number
+          terceirizada?: boolean
+          updated_at?: string
+        }
+        Update: {
+          centro_trabalho?: string | null
+          consumo_previsto?: number
+          created_at?: string
+          fornecedor_terceiro_id?: string | null
+          id?: string
+          maquina_preferencial_id?: string | null
+          nome_operacao?: string
+          observacao?: string | null
+          operacao_id?: string | null
+          perdas_previstas_pct?: number
+          qualidade_obrigatoria?: boolean
+          roteiro_id?: string
+          sequencia?: number
+          setup_min?: number
+          tempo_padrao_min?: number
+          terceirizada?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roteiro_etapas_fornecedor_terceiro_id_fkey"
+            columns: ["fornecedor_terceiro_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roteiro_etapas_maquina_preferencial_id_fkey"
+            columns: ["maquina_preferencial_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roteiro_etapas_maquina_preferencial_id_fkey"
+            columns: ["maquina_preferencial_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "roteiro_etapas_maquina_preferencial_id_fkey"
+            columns: ["maquina_preferencial_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "roteiro_etapas_operacao_id_fkey"
+            columns: ["operacao_id"]
+            isOneToOne: false
+            referencedRelation: "operacoes_produtivas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roteiro_etapas_roteiro_id_fkey"
+            columns: ["roteiro_id"]
+            isOneToOne: false
+            referencedRelation: "roteiros"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roteiros: {
+        Row: {
+          article_id: string | null
+          ativo: boolean
+          codigo: string
+          created_at: string
+          descricao: string
+          id: string
+          observacoes: string | null
+          revisao: number
+          setup_min: number
+          tempo_padrao_min: number
+          updated_at: string
+        }
+        Insert: {
+          article_id?: string | null
+          ativo?: boolean
+          codigo: string
+          created_at?: string
+          descricao: string
+          id?: string
+          observacoes?: string | null
+          revisao?: number
+          setup_min?: number
+          tempo_padrao_min?: number
+          updated_at?: string
+        }
+        Update: {
+          article_id?: string | null
+          ativo?: boolean
+          codigo?: string
+          created_at?: string
+          descricao?: string
+          id?: string
+          observacoes?: string | null
+          revisao?: number
+          setup_min?: number
+          tempo_padrao_min?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roteiros_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
             referencedColumns: ["id"]
           },
         ]
