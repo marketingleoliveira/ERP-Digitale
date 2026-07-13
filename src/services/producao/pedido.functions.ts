@@ -11,6 +11,7 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type PedidoStatus =
   | "rascunho" | "aguardando_aprovacao" | "aprovado" | "confirmado"
