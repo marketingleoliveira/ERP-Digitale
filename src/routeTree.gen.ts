@@ -98,6 +98,7 @@ import { Route as AppRastreabilidadeTipoIdRouteImport } from './routes/_app.rast
 import { Route as AppProducaoQualidadeOpIdRouteImport } from './routes/_app.producao.qualidade.$opId'
 import { Route as AppProducaoPedidosIdRouteImport } from './routes/_app.producao.pedidos.$id'
 import { Route as AppProducaoOpIdRouteImport } from './routes/_app.producao.op.$id'
+import { Route as AppProducaoExpedicaoIdRouteImport } from './routes/_app.producao.expedicao.$id'
 import { Route as AppPcpRoteirosIdRouteImport } from './routes/_app.pcp.roteiros.$id'
 import { Route as AppComprasSolicitacoesNovaRouteImport } from './routes/_app.compras.solicitacoes.nova'
 import { Route as AppComprasSolicitacoesIdRouteImport } from './routes/_app.compras.solicitacoes.$id'
@@ -559,6 +560,11 @@ const AppProducaoOpIdRoute = AppProducaoOpIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AppProducaoOpRoute,
 } as any)
+const AppProducaoExpedicaoIdRoute = AppProducaoExpedicaoIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppProducaoExpedicaoRoute,
+} as any)
 const AppPcpRoteirosIdRoute = AppPcpRoteirosIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -675,7 +681,7 @@ export interface FileRoutesByFullPath {
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
   '/pcp/vinculos-artigo': typeof AppPcpVinculosArtigoRoute
-  '/producao/expedicao': typeof AppProducaoExpedicaoRoute
+  '/producao/expedicao': typeof AppProducaoExpedicaoRouteWithChildren
   '/producao/industrial': typeof AppProducaoIndustrialRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
   '/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
@@ -691,6 +697,7 @@ export interface FileRoutesByFullPath {
   '/compras/solicitacoes/$id': typeof AppComprasSolicitacoesIdRoute
   '/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
   '/pcp/roteiros/$id': typeof AppPcpRoteirosIdRoute
+  '/producao/expedicao/$id': typeof AppProducaoExpedicaoIdRoute
   '/producao/op/$id': typeof AppProducaoOpIdRoute
   '/producao/pedidos/$id': typeof AppProducaoPedidosIdRoute
   '/producao/qualidade/$opId': typeof AppProducaoQualidadeOpIdRoute
@@ -772,7 +779,7 @@ export interface FileRoutesByTo {
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
   '/pcp/vinculos-artigo': typeof AppPcpVinculosArtigoRoute
-  '/producao/expedicao': typeof AppProducaoExpedicaoRoute
+  '/producao/expedicao': typeof AppProducaoExpedicaoRouteWithChildren
   '/producao/industrial': typeof AppProducaoIndustrialRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
   '/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
@@ -788,6 +795,7 @@ export interface FileRoutesByTo {
   '/compras/solicitacoes/$id': typeof AppComprasSolicitacoesIdRoute
   '/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
   '/pcp/roteiros/$id': typeof AppPcpRoteirosIdRoute
+  '/producao/expedicao/$id': typeof AppProducaoExpedicaoIdRoute
   '/producao/op/$id': typeof AppProducaoOpIdRoute
   '/producao/pedidos/$id': typeof AppProducaoPedidosIdRoute
   '/producao/qualidade/$opId': typeof AppProducaoQualidadeOpIdRoute
@@ -871,7 +879,7 @@ export interface FileRoutesById {
   '/_app/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/_app/pcp/turnos': typeof AppPcpTurnosRoute
   '/_app/pcp/vinculos-artigo': typeof AppPcpVinculosArtigoRoute
-  '/_app/producao/expedicao': typeof AppProducaoExpedicaoRoute
+  '/_app/producao/expedicao': typeof AppProducaoExpedicaoRouteWithChildren
   '/_app/producao/industrial': typeof AppProducaoIndustrialRoute
   '/_app/producao/op': typeof AppProducaoOpRouteWithChildren
   '/_app/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
@@ -887,6 +895,7 @@ export interface FileRoutesById {
   '/_app/compras/solicitacoes/$id': typeof AppComprasSolicitacoesIdRoute
   '/_app/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
   '/_app/pcp/roteiros/$id': typeof AppPcpRoteirosIdRoute
+  '/_app/producao/expedicao/$id': typeof AppProducaoExpedicaoIdRoute
   '/_app/producao/op/$id': typeof AppProducaoOpIdRoute
   '/_app/producao/pedidos/$id': typeof AppProducaoPedidosIdRoute
   '/_app/producao/qualidade/$opId': typeof AppProducaoQualidadeOpIdRoute
@@ -986,6 +995,7 @@ export interface FileRouteTypes {
     | '/compras/solicitacoes/$id'
     | '/compras/solicitacoes/nova'
     | '/pcp/roteiros/$id'
+    | '/producao/expedicao/$id'
     | '/producao/op/$id'
     | '/producao/pedidos/$id'
     | '/producao/qualidade/$opId'
@@ -1083,6 +1093,7 @@ export interface FileRouteTypes {
     | '/compras/solicitacoes/$id'
     | '/compras/solicitacoes/nova'
     | '/pcp/roteiros/$id'
+    | '/producao/expedicao/$id'
     | '/producao/op/$id'
     | '/producao/pedidos/$id'
     | '/producao/qualidade/$opId'
@@ -1181,6 +1192,7 @@ export interface FileRouteTypes {
     | '/_app/compras/solicitacoes/$id'
     | '/_app/compras/solicitacoes/nova'
     | '/_app/pcp/roteiros/$id'
+    | '/_app/producao/expedicao/$id'
     | '/_app/producao/op/$id'
     | '/_app/producao/pedidos/$id'
     | '/_app/producao/qualidade/$opId'
@@ -1819,6 +1831,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProducaoOpIdRouteImport
       parentRoute: typeof AppProducaoOpRoute
     }
+    '/_app/producao/expedicao/$id': {
+      id: '/_app/producao/expedicao/$id'
+      path: '/$id'
+      fullPath: '/producao/expedicao/$id'
+      preLoaderRoute: typeof AppProducaoExpedicaoIdRouteImport
+      parentRoute: typeof AppProducaoExpedicaoRoute
+    }
     '/_app/pcp/roteiros/$id': {
       id: '/_app/pcp/roteiros/$id'
       path: '/$id'
@@ -1950,6 +1969,17 @@ const AppPcpRoteirosRouteWithChildren = AppPcpRoteirosRoute._addFileChildren(
   AppPcpRoteirosRouteChildren,
 )
 
+interface AppProducaoExpedicaoRouteChildren {
+  AppProducaoExpedicaoIdRoute: typeof AppProducaoExpedicaoIdRoute
+}
+
+const AppProducaoExpedicaoRouteChildren: AppProducaoExpedicaoRouteChildren = {
+  AppProducaoExpedicaoIdRoute: AppProducaoExpedicaoIdRoute,
+}
+
+const AppProducaoExpedicaoRouteWithChildren =
+  AppProducaoExpedicaoRoute._addFileChildren(AppProducaoExpedicaoRouteChildren)
+
 interface AppProducaoOpRouteChildren {
   AppProducaoOpIdRoute: typeof AppProducaoOpIdRoute
 }
@@ -2055,7 +2085,7 @@ interface AppRouteChildren {
   AppPcpRoteirosRoute: typeof AppPcpRoteirosRouteWithChildren
   AppPcpTurnosRoute: typeof AppPcpTurnosRoute
   AppPcpVinculosArtigoRoute: typeof AppPcpVinculosArtigoRoute
-  AppProducaoExpedicaoRoute: typeof AppProducaoExpedicaoRoute
+  AppProducaoExpedicaoRoute: typeof AppProducaoExpedicaoRouteWithChildren
   AppProducaoIndustrialRoute: typeof AppProducaoIndustrialRoute
   AppProducaoOpRoute: typeof AppProducaoOpRouteWithChildren
   AppProducaoPedidosRoute: typeof AppProducaoPedidosRouteWithChildren
@@ -2138,7 +2168,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPcpRoteirosRoute: AppPcpRoteirosRouteWithChildren,
   AppPcpTurnosRoute: AppPcpTurnosRoute,
   AppPcpVinculosArtigoRoute: AppPcpVinculosArtigoRoute,
-  AppProducaoExpedicaoRoute: AppProducaoExpedicaoRoute,
+  AppProducaoExpedicaoRoute: AppProducaoExpedicaoRouteWithChildren,
   AppProducaoIndustrialRoute: AppProducaoIndustrialRoute,
   AppProducaoOpRoute: AppProducaoOpRouteWithChildren,
   AppProducaoPedidosRoute: AppProducaoPedidosRouteWithChildren,
