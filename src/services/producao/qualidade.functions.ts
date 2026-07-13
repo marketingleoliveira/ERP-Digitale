@@ -35,7 +35,7 @@ export const listarFilaInspecao = createServerFn({ method: "GET" })
 
     const { data: rows, error } = await q;
     if (error) throw error;
-    return (rows ?? []) as Array<{
+    return ((rows ?? []) as unknown) as Array<{
       id: string;
       numero: number;
       status: string;
