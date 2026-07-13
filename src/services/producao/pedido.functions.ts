@@ -44,8 +44,11 @@ type PedidoInput = {
   itens: PedidoItemInput[];
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SB = SupabaseClient<any, any, any>;
+
 async function logAudit(
-  supabase: { from: (t: string) => { insert: (v: never) => Promise<unknown> } },
+  supabase: SB,
   entidadeId: string, acao: string, payload: Record<string, unknown>,
   userId: string, de?: string, para?: string,
 ) {
