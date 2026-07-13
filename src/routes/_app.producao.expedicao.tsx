@@ -71,7 +71,7 @@ function ExpedicaoPage() {
               <TableRow><TableCell colSpan={7} className="text-center py-6 text-muted-foreground">Nenhuma expedição no filtro atual.</TableCell></TableRow>
             )}
             {(fila.data ?? []).map((row) => {
-              const r = row as {
+              const r = row as unknown as {
                 id: string; status: string; volumes: number | null; rastreio: string | null;
                 pedidos?: { numero: string } | null;
                 ordens_producao?: { numero: number } | null;
