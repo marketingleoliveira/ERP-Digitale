@@ -153,12 +153,22 @@ export const computeOpSuggestions = createServerFn({ method: "POST" })
           const m = maqMap.get(id); const c = capMap.get(id);
           return { id, nome: m?.maquina ?? "?", kg_por_hora: Number(c?.kg_por_hora ?? 0) };
         });
-      const kgHoraTotal = maquinasEleg.reduce((a, m) => a + m.kg_por_hora, 0);
-      const capDia = maquinasEleg.reduce((a, m) => {
+      // Capacidade EFETIVA por hora = Σ (kg/h NOMINAL × eficiência)
+      // A capacidade cadastrada em `maquina_capacidade.kg_por_hora` é NOMINAL;
+      // eficiência é aplicada exatamente uma vez aqui.
+      const kgHoraEfetivoTotal = maquinasEleg.reduce((a, m) => {
         const c = capMap.get(m.id); if (!c) return a;
-        return a + m.kg_por_hora * Number(c.horas_por_turno) * Number(c.turnos_por_dia) * (Number(c.eficiencia_alvo_pct) / 100);
+        return a + m.kg_por_hora * (Number(c.eficiencia_alvo_pct) / 100);
       }, 0);
-      const duracaoH = kgHoraTotal > 0 ? g.qtd / kgHoraTotal : null;
+      // Horas produtivas por dia (média entre máquinas elegíveis)
+      const horasDiaMedia = maquinasEleg.length
+        ? maquinasEleg.reduce((a, m) => {
+            const c = capMap.get(m.id); if (!c) return a;
+            return a + Number(c.horas_por_turno) * Number(c.turnos_por_dia);
+          }, 0) / maquinasEleg.length
+        : 0;
+      const capDia = kgHoraEfetivoTotal * horasDiaMedia; // kg/dia efetivos
+      const duracaoH = kgHoraEfetivoTotal > 0 ? g.qtd / kgHoraEfetivoTotal : null;
 
       // Prazo mínimo dos pedidos
       const prazos = g.pedidos.map(p => p.prazo).filter(Boolean) as string[];
@@ -182,14 +192,14 @@ export const computeOpSuggestions = createServerFn({ method: "POST" })
       if (bomsArt.length === 0) alertas.push("BOM ausente para o artigo");
       if (!rot) alertas.push("Roteiro vigente ausente");
       if (maquinasEleg.length === 0) alertas.push("Nenhuma máquina configurada nas etapas");
-      if (kgHoraTotal === 0 && maquinasEleg.length > 0) alertas.push("Máquinas sem capacidade cadastrada");
+      if (kgHoraEfetivoTotal === 0 && maquinasEleg.length > 0) alertas.push("Máquinas sem capacidade cadastrada");
       if (faltantes.length > 0) alertas.push(`${faltantes.length} material(is) em falta`);
       if (dataNec && diasIndisponiveis.has(dataNec)) alertas.push(`Prazo (${dataNec}) cai em feriado/parada`);
 
-      // Risco de atraso
+      // Risco de atraso: dias necessários = qtd / capDia (jornada produtiva real)
       let risco: OpSugestao["risco_atraso"] = "verde";
-      if (duracaoH !== null && diasParaPrazo !== null) {
-        const diasNec = duracaoH / 24; // aproximação — capDia já considera turnos
+      if (capDia > 0 && diasParaPrazo !== null) {
+        const diasNec = g.qtd / capDia;
         const folga = diasParaPrazo - diasNec - (faltantes.length > 0 ? 5 : 0);
         if (folga < 0) risco = "vermelho";
         else if (folga < 3) risco = "amarelo";

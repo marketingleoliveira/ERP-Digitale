@@ -101,11 +101,11 @@ function CapacidadePage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Máquina</TableHead>
-                <TableHead>kg/hora</TableHead>
+                <TableHead title="Capacidade NOMINAL (bruta). Eficiência é aplicada separadamente.">kg/hora (nominal)</TableHead>
                 <TableHead>h/turno</TableHead>
                 <TableHead>Turnos/dia</TableHead>
                 <TableHead>Dias/semana</TableHead>
-                <TableHead>Eficiência alvo %</TableHead>
+                <TableHead title="Aplicada UMA vez no cálculo (efetiva = nominal × ef). Use 100 se sua kg/h já for líquida.">Eficiência % (→ efetiva)</TableHead>
                 <TableHead className="w-24 text-right">Ação</TableHead>
               </TableRow>
             </TableHeader>
