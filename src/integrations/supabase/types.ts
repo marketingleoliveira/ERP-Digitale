@@ -1976,6 +1976,9 @@ export type Database = {
       }
       entrega_eventos: {
         Row: {
+          comprovante_mime: string | null
+          comprovante_path: string | null
+          comprovante_size: number | null
           created_at: string
           data: string
           descricao: string | null
@@ -1987,6 +1990,9 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          comprovante_mime?: string | null
+          comprovante_path?: string | null
+          comprovante_size?: number | null
           created_at?: string
           data?: string
           descricao?: string | null
@@ -1998,6 +2004,9 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          comprovante_mime?: string | null
+          comprovante_path?: string | null
+          comprovante_size?: number | null
           created_at?: string
           data?: string
           descricao?: string | null
@@ -3072,6 +3081,7 @@ export type Database = {
           fornecedor_id: string | null
           frete_tipo: string | null
           id: string
+          is_teste_e2e: boolean
           mensagem_sefaz: string | null
           modelo: string | null
           numero: string
@@ -3121,6 +3131,7 @@ export type Database = {
           fornecedor_id?: string | null
           frete_tipo?: string | null
           id?: string
+          is_teste_e2e?: boolean
           mensagem_sefaz?: string | null
           modelo?: string | null
           numero: string
@@ -3170,6 +3181,7 @@ export type Database = {
           fornecedor_id?: string | null
           frete_tipo?: string | null
           id?: string
+          is_teste_e2e?: boolean
           mensagem_sefaz?: string | null
           modelo?: string | null
           numero?: string
@@ -7255,6 +7267,7 @@ export type Database = {
         Args: { _novo_status: string; _romaneio_id: string }
         Returns: string
       }
+      seed_rollback: { Args: never; Returns: Json }
       user_has_menu_permission: {
         Args: { _url: string; _user_id: string }
         Returns: boolean
