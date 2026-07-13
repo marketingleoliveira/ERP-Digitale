@@ -132,15 +132,15 @@ export const criarExpedicao = createServerFn({ method: "POST" })
 
 export const separarLote = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { expedicao_id: string; op_item_id: string | null; lote_id: string; quantidade: number }) => d)
+  .inputValidator((d: { expedicao_id: string; op_item_id?: string; lote_id: string; quantidade: number }) => d)
   .handler(async ({ data, context }) => {
     const { supabase } = context;
     const { data: id, error } = await supabase.rpc("exp_separar_lote", {
       _expedicao_id: data.expedicao_id,
-      _op_item_id: data.op_item_id,
+      _op_item_id: data.op_item_id ?? undefined,
       _lote_id: data.lote_id,
       _quantidade: data.quantidade,
-    });
+    } as never);
     if (error) throw error;
     return { id };
   });
