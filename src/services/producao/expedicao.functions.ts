@@ -153,7 +153,7 @@ export const transicionar = createServerFn({ method: "POST" })
     const { error } = await supabase.rpc("exp_transicionar", {
       _expedicao_id: data.expedicao_id,
       _novo_status: data.novo_status,
-      _motivo: data.motivo ?? null,
+      _motivo: data.motivo ?? undefined,
     });
     if (error) throw error;
     return { ok: true };
@@ -183,7 +183,7 @@ export const registrarConferencia = createServerFn({ method: "POST" })
     const { error: e2 } = await supabase.rpc("exp_transicionar", {
       _expedicao_id: data.expedicao_id,
       _novo_status: target,
-      _motivo: motivo,
+      _motivo: motivo ?? undefined,
     });
     if (e2) throw e2;
     return { ok: true };
@@ -261,7 +261,7 @@ export const registrarOcorrencia = createServerFn({ method: "POST" })
       _expedicao_id: data.expedicao_id,
       _evento: `ocorrencia:${data.tipo}`,
       _descricao: data.descricao,
-      _local: data.local ?? null,
+      _local: data.local ?? undefined,
     });
     if (e1) throw e1;
     const { error: e2 } = await supabase.rpc("exp_transicionar", {
