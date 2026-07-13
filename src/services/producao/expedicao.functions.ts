@@ -86,7 +86,7 @@ export const getExpedicao = createServerFn({ method: "GET" })
             ].filter(Boolean).join(","))
             .order("data", { ascending: false })
         : Promise.resolve({ data: [] as never[], error: null }),
-      supabase.from("transportadoras").select("id, nome").order("nome").limit(200),
+      supabase.from("transportadoras").select("id, razao_social, nome_fantasia").order("razao_social").limit(200),
     ]);
 
     return {
