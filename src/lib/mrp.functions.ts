@@ -110,7 +110,7 @@ export const computeMrp = createServerFn({ method: "POST" })
     }
     const transitoMap = new Map<string, number>();
     for (const p of (pcItens ?? [])) {
-      if (!openPcIds.has(p.pedido_id)) continue;
+      if (!p.ref_id || !openPcIds.has(p.pedido_id)) continue;
       const pend = Math.max(0, Number(p.quantidade || 0) - Number(p.quantidade_recebida || 0));
       transitoMap.set(p.ref_id, (transitoMap.get(p.ref_id) ?? 0) + pend);
     }
