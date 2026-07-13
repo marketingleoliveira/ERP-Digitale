@@ -6,6 +6,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { normalizeRefTipo } from "@/lib/ref-tipo";
 
 const inputSchema = z.object({
   demandas: z.array(z.object({
