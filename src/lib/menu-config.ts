@@ -64,6 +64,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Roteiros de Produção", url: "/pcp/roteiros", icon: Network, group: "Produção (PCP)" },
   { title: "OEE Industrial", url: "/pcp/oee", icon: Factory, group: "Produção (PCP)" },
   { title: "Custos Industriais", url: "/pcp/custos", icon: Wallet, group: "Produção (PCP)" },
+  { title: "MRP — Materiais", url: "/pcp/mrp", icon: Package, group: "Produção (PCP)" },
   { title: "Dashboard Industrial", url: "/dashboard/industrial", icon: LayoutDashboard, group: "" },
   { title: "Dashboard Financeiro", url: "/financeiro/dashboard", icon: LayoutDashboard, group: "Financeiro & Logística" },
   { title: "Contas a Receber", url: "/financeiro", icon: Wallet, group: "Financeiro & Logística" },
