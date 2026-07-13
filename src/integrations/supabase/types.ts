@@ -2252,6 +2252,7 @@ export type Database = {
           op_id: string | null
           quantidade: number
           quantidade_disponivel: number
+          tinturaria_id: string | null
           tipo: string
           updated_at: string
         }
@@ -2268,6 +2269,7 @@ export type Database = {
           op_id?: string | null
           quantidade?: number
           quantidade_disponivel?: number
+          tinturaria_id?: string | null
           tipo: string
           updated_at?: string
         }
@@ -2284,6 +2286,7 @@ export type Database = {
           op_id?: string | null
           quantidade?: number
           quantidade_disponivel?: number
+          tinturaria_id?: string | null
           tipo?: string
           updated_at?: string
         }
@@ -2292,7 +2295,7 @@ export type Database = {
             foreignKeyName: "lotes_fornecedor_id_fkey"
             columns: ["fornecedor_id"]
             isOneToOne: false
-            referencedRelation: "tinturarias"
+            referencedRelation: "fornecedores"
             referencedColumns: ["id"]
           },
           {
@@ -2315,6 +2318,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vw_custos_op"
             referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "lotes_tinturaria_id_fkey"
+            columns: ["tinturaria_id"]
+            isOneToOne: false
+            referencedRelation: "tinturarias"
+            referencedColumns: ["id"]
           },
         ]
       }
