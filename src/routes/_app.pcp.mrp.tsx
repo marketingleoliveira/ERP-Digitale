@@ -1,18 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { computeMrp, type MrpLinha } from "@/lib/mrp.functions";
+import { criarSolicitacaoDoMrp } from "@/lib/mrp-solicitacao.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Plus, Play } from "lucide-react";
+import { Trash2, Plus, Play, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
+
 
 export const Route = createFileRoute("/_app/pcp/mrp")({
   ssr: false,
@@ -32,8 +35,12 @@ function UrgenciaBadge({ u }: { u: MrpLinha["urgencia"] }) {
 
 function Page() {
   const runMrp = useServerFn(computeMrp);
+  const gerarSol = useServerFn(criarSolicitacaoDoMrp);
+  const navigate = useNavigate();
   const [demandas, setDemandas] = useState<{ article_id: string; quantidade_kg: number }[]>([]);
   const [seguranca, setSeguranca] = useState(0);
+  const [selecionadas, setSelecionadas] = useState<Set<number>>(new Set());
+  const [agrupar, setAgrupar] = useState(true);
 
   const { data: articles = [] } = useQuery({
     queryKey: ["articles-mrp"],
@@ -47,10 +54,37 @@ function Page() {
   const mrp = useMutation({
     mutationFn: (auto: boolean) =>
       runMrp({ data: { demandas: auto ? [] : demandas, estoque_seguranca_pct: seguranca } }),
+    onSuccess: () => setSelecionadas(new Set()),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const gerar = useMutation({
+    mutationFn: async () => {
+      const escolhidas = [...selecionadas].map(i => linhas[i]).filter(l => l && l.necessidade_liquida > 0);
+      if (escolhidas.length === 0) throw new Error("Selecione ao menos uma linha com necessidade.");
+      return gerarSol({ data: {
+        linhas: escolhidas.map(l => ({
+          ref_tipo: l.ref_tipo, ref_id: l.ref_id, descricao: l.descricao, unidade: l.unidade,
+          necessidade_liquida: l.necessidade_liquida,
+          fornecedor_id: l.fornecedor_id, prazo_entrega_dias: l.prazo_entrega_dias,
+          urgencia: l.urgencia,
+          origem_op_ids: [], origem_pedido_ids: [],
+          observacao_mrp: `Origem: ${l.origem_articles.map(o => o.codigo).join(", ")}`,
+        })),
+        agrupar_por_fornecedor: agrupar,
+      } });
+    },
+    onSuccess: (r) => {
+      if (r.aviso) { toast.warning(r.aviso); return; }
+      toast.success(`${r.criadas.length} solicitação(ões) criada(s).`);
+      if (r.criadas.length === 1) navigate({ to: "/compras/solicitacoes/$id", params: { id: r.criadas[0].solicitacao_id } });
+      else navigate({ to: "/compras/solicitacoes" });
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
   const linhas = mrp.data?.linhas ?? [];
+
   const kpis = {
     itens: linhas.length,
     urgentes: linhas.filter(l => l.urgencia === "vermelho").length,
@@ -129,10 +163,31 @@ function Page() {
           </div>
 
           <Card>
-            <CardHeader><CardTitle>Explosão MRP</CardTitle></CardHeader>
+            <CardHeader className="flex-row items-center justify-between">
+              <CardTitle>Explosão MRP</CardTitle>
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-1.5 text-sm">
+                  <Checkbox checked={agrupar} onCheckedChange={v => setAgrupar(!!v)} /> Agrupar por fornecedor
+                </label>
+                <Button size="sm" onClick={() => gerar.mutate()}
+                  disabled={gerar.isPending || selecionadas.size === 0}>
+                  <ShoppingCart className="h-4 w-4 mr-1.5" />
+                  Gerar solicitação de compra ({selecionadas.size})
+                </Button>
+              </div>
+            </CardHeader>
             <CardContent className="overflow-auto">
               <Table>
                 <TableHeader><TableRow>
+                  <TableHead className="w-8">
+                    <Checkbox
+                      checked={selecionadas.size > 0 && selecionadas.size === linhas.filter(l => l.necessidade_liquida > 0).length}
+                      onCheckedChange={v => {
+                        if (v) setSelecionadas(new Set(linhas.map((l, i) => l.necessidade_liquida > 0 ? i : -1).filter(i => i >= 0)));
+                        else setSelecionadas(new Set());
+                      }}
+                    />
+                  </TableHead>
                   <TableHead>Componente</TableHead>
                   <TableHead className="text-right">Bruta</TableHead>
                   <TableHead className="text-right">Estoque</TableHead>
@@ -146,9 +201,20 @@ function Page() {
                 </TableRow></TableHeader>
                 <TableBody>
                   {linhas.length === 0
-                    ? <TableRow><TableCell colSpan={10} className="text-center text-muted-foreground">Sem necessidades — verifique se há BOM cadastrada para os artigos.</TableCell></TableRow>
+                    ? <TableRow><TableCell colSpan={11} className="text-center text-muted-foreground">Sem necessidades — verifique se há BOM cadastrada para os artigos.</TableCell></TableRow>
                     : linhas.map((l, i) => (
                       <TableRow key={i}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selecionadas.has(i)}
+                            disabled={l.necessidade_liquida <= 0}
+                            onCheckedChange={v => {
+                              const n = new Set(selecionadas);
+                              if (v) n.add(i); else n.delete(i);
+                              setSelecionadas(n);
+                            }}
+                          />
+                        </TableCell>
                         <TableCell>
                           <div className="font-medium">{l.descricao}</div>
                           <div className="text-xs text-muted-foreground">
@@ -170,6 +236,7 @@ function Page() {
               </Table>
             </CardContent>
           </Card>
+
         </>
       )}
     </div>
