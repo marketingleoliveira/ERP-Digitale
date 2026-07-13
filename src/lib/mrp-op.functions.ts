@@ -5,6 +5,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { capacidadeEfetivaHora, capacidadeKgDia, duracaoHoras, type MaquinaCap } from "@/lib/capacidade";
 
 export type OpSugestao = {
   key: string;
