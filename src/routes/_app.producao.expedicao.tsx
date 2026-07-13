@@ -37,9 +37,8 @@ function ExpedicaoPage() {
       <PageHeader
         title="Expedição"
         description="Fila de pedidos liberados → separação, conferência, romaneio e entrega."
-      >
-        <NovaExpedicaoDialog onCreated={() => qc.invalidateQueries({ queryKey: ["expedicao"] })} />
-      </PageHeader>
+        actions={<NovaExpedicaoDialog onCreated={() => qc.invalidateQueries({ queryKey: ["expedicao"] })} />}
+      />
 
       <div className="flex gap-2 items-center">
         <Select value={status || "all"} onValueChange={v => setStatus(v === "all" ? "" : v)}>
