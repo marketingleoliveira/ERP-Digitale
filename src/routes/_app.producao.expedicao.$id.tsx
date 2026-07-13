@@ -36,7 +36,7 @@ function ExpedicaoDetail() {
   if (q.error) return <div className="p-6 text-destructive">Erro: {(q.error as Error).message}</div>;
   if (!q.data) return null;
 
-  const exp = q.data.expedicao as Record<string, unknown> & {
+  const exp = q.data.expedicao as unknown as Record<string, unknown> & {
     id: string; status: string;
     pedidos?: { numero: string; valor_total: number } | null;
     ordens_producao?: { numero: number } | null;
