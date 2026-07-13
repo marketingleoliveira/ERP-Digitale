@@ -84,6 +84,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Gerenciar Menus", url: "/menus", icon: SlidersHorizontal, group: "Administração", locked: true },
   { title: "Certificados A1", url: "/fiscal/certificados", icon: ShieldCheck, group: "Fiscal" },
   { title: "Configurações", url: "/configuracoes", icon: Settings, group: "DEV" },
+  { title: "Focus NFe", url: "/dev/focus-nfe", icon: PlugZap, group: "DEV", locked: true },
   { title: "Cargos", url: "/dev/cargos", icon: Briefcase, group: "DEV", locked: true },
   // Compras
   { title: "Dashboard Compras", url: "/compras", icon: LayoutDashboard, group: "Compras" },
