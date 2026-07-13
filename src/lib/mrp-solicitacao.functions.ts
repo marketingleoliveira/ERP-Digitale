@@ -106,16 +106,12 @@ export const criarSolicitacaoDoMrp = createServerFn({ method: "POST" })
                         : itens.some(i => i.urgencia === "amarelo") ? "alta" : "normal";
       const prazo_min = Math.min(...itens.map(i => i.prazo_entrega_dias ?? 999));
 
-      // próximo número
-      const { data: numRow, error: numErr } = await supabase.rpc("nextval" as never, { sequence_name: "seq_solicitacao_compra_numero" } as never);
-      let numero: number;
-      if (numErr || numRow == null) {
-        // fallback: MAX+1
-        const { data: last } = await supabase.from("solicitacoes_compra").select("numero").order("numero", { ascending: false }).limit(1).maybeSingle();
-        numero = (last?.numero ?? 0) + 1;
-      } else {
-        numero = Number(numRow);
-      }
+      // próximo número (MAX+1) — sequência dedicada existe mas não é exposta ao PostgREST
+      const { data: last } = await supabase
+        .from("solicitacoes_compra").select("numero")
+        .order("numero", { ascending: false }).limit(1).maybeSingle();
+      const numero = ((last as { numero: number } | null)?.numero ?? 0) + 1;
+
 
       const origem_ops = [...new Set(itens.flatMap(i => i.origem_op_ids))];
       const origem_peds = [...new Set(itens.flatMap(i => i.origem_pedido_ids))];
