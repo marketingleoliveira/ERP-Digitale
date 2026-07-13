@@ -1,82 +1,78 @@
-## Módulo de Expedição — /producao/expedicao
 
-Substitui o placeholder por um módulo operacional integrado a Pedidos, OPs, NF-e, Romaneios e Entregas, reutilizando ao máximo o esquema existente.
+# Suíte E2E SEED — Etapas 1 a 11
 
-### 1. Migração (SQL)
+Objetivo: transformar o dataset SEED atual num cenário E2E reproduzível, idempotente e executado pelas **mesmas server functions e RPCs** da UI, sem afrouxar nenhuma regra de negócio.
 
-Estender `op_expedicoes` (hoje mínima) com colunas necessárias, sem quebrar dados atuais:
+## Princípios (não-negociáveis)
 
-- `pedido_id uuid` (FK pedidos, nullable — expedição pode ser por OP ou por pedido)
-- `volumes int default 1`, `peso_bruto numeric`, `peso_liquido numeric`
-- `frete_tipo text` (CIF/FOB/Terceiros/Remetente/Destinatario/SemFrete) via CHECK
-- `separador_id uuid`, `conferente_id uuid`, `expedidor_id uuid`
-- `divergencias jsonb default '[]'`
-- Ampliar CHECK de `status` para os 10 estados solicitados (`aguardando`, `em_separacao`, `separado`, `em_conferencia`, `conferido`, `expedido`, `em_transito`, `entregue`, `ocorrencia`, `devolvido`).
-- Trigger `updated_at`.
+- Prefixo `SEED-` / `TESTE E2E` em todo registro; nenhum documento real.
+- Bloqueado em produção: guard `if (process.env.APP_ENV === 'production') throw`.
+- Nada de `INSERT` direto para "passar" — sempre via server function/RPC oficial.
+- Sem autorização SEFAZ simulada. Modo MOCK é claramente marcado e proibido em prod.
+- Idempotente: cada passo faz upsert por chave natural (`SEED-*`) e é seguro re-executar.
+- Rotina de rollback separada, também com guard de ambiente.
 
-Nova tabela `expedicao_itens_lote` (vínculo lote↔expedição):
-- `expedicao_id`, `op_item_id`, `lote_id`, `quantidade`, `product_id`, `variante_id`.
-- GRANTs + RLS `authenticated`.
+## Entregáveis
 
-Função SQL `exp_registrar_evento(expedicao_id, evento, descricao, local)` grava em `entrega_eventos` (via `romaneio_id` quando existir) e em `op_eventos`, e atualiza `status` de `op_expedicoes` conforme evento.
+### 1. Server functions do harness E2E (`src/services/e2e/`)
 
-Função SQL `exp_transicionar(expedicao_id, novo_status, motivo)`:
-- Valida matriz de transição.
-- Bloqueia passagem a `expedido` sem `nota_fiscal_id` cuja NF esteja `autorizada` (`status_sefaz='autorizada'`), exceto quando `motivo` começa com "OVERRIDE_ADM:" **e** o usuário tem role `admin`.
-- Grava evento; atualiza `updated_at`.
+Arquivos client-safe (`*.functions.ts`), todos com `requireSupabaseAuth` + checagem de role `desenvolvedor`/`gerente` e guard `APP_ENV !== 'production'`:
 
-Função SQL `exp_separar_lote(expedicao_id, op_item_id, lote_id, quantidade)`:
-- Verifica `lotes.quantidade_disponivel >= quantidade` (via `estoque_movimentos` acumulado ou coluna existente).
-- Cria `expedicao_itens_lote` e reserva estoque (movimento `saida_expedicao` pendente).
+- `seed.functions.ts`
+  - `seedEnsureBase()` — cria/garante cliente `SEED CLI LTDA`, artigo `SEED-ART-01`, produto `SEED-PROD-01`, variante, roteiro, máquina, turno, lote `SEED-LOTE-01` (500 kg), BOM.
+  - `seedEnsureClienteArtigo()` — upsert regra vigente R$ 50,00 (etapa 1).
+  - `seedEnsurePedido()` — cria pedido `SEED-PED-001` 300 kg chamando o fluxo comercial oficial, resultando em `origem_preco = 'cliente_artigo'` naturalmente.
+  - `seedRollback()` — remove tudo com prefixo `SEED-`/`TESTE E2E` em ordem inversa de dependência.
 
-### 2. Server functions (`src/services/producao/expedicao.functions.ts`)
+- `e2e-runner.functions.ts` — orquestrador; para cada etapa retorna `{ etapa, status: 'PASS'|'FAIL'|'BLOCKED', esperado, obtido, ids, funcao, logs }`. Chama exclusivamente funções já existentes:
+  - Etapa 2: `computeOpSuggestions` + `gerarOpDaSugestao` (asserta 324,45 / 500 / 0 / 21,25 / ~15,27 / ~1,91).
+  - Etapa 3: RPC de reserva de lote existente (asserta 500 / 324,45 / 175,55).
+  - Etapa 4: `op_transicionar` + `op_apontamentos` + `op_consumos` oficiais.
+  - Etapa 5: `op_registrar_inspecao` (300/0/0) + cenário paralelo parcial (aprovada/reprovada/reprocesso, cria OP-filha via `op_criar_reprocesso`).
+  - Etapa 6: função oficial de pré-faturamento (`src/services/fiscal/pre-faturamento.functions.ts`).
+  - Etapa 7 Modo A: `calcularTributosDaNota` + `buildFocusNfePayload` + tenta emitir → asserta bloqueio por token ausente, sem marcar autorizada.
+  - Etapa 7 Modo B: só roda se `process.env.FOCUS_NFE_TOKEN` presente **e** `empresa.ambiente_nfe='homologacao'`; emite/consulta/CC-e/cancela em ref `TESTE-E2E-*`.
+  - Etapa 7 MOCK: `mockAutorizacaoE2E({ notaId })` — dev-only, marca a NF como `status_sefaz='autorizada_teste_e2e'` (novo valor, **não** `autorizada`) e dispara efeitos internos via função dedicada `on_nfe_autorizada_op_teste` (espelha a real) — nunca gera XML nem chave real; documento fica marcado `is_teste_e2e=true`.
+  - Etapas 8–10: usa funções oficiais (`contas_receber` trigger, `exp_transicionar`, `exp_separar_lote`, `romaneio_transicionar`, `entrega_eventos`).
 
-Todas com `requireSupabaseAuth`.
+### 2. Migração SQL
 
-- `listarFilaExpedicao({ status?, search? })` — pedidos com OP finalizada e NF autorizada + expedições em andamento.
-- `getExpedicao(id)` — cabeçalho + itens + lotes + eventos + NF + transportadora.
-- `criarExpedicao({ pedido_id | op_id })` — cria em status `aguardando`.
-- `separarLote(...)` → chama `exp_separar_lote`.
-- `registrarConferencia({ expedicao_id, divergencias[] })` → status `conferido` ou registra divergência.
-- `fecharRomaneio({ expedicao_id, transportadora_id, frete_tipo, volumes, peso_bruto, peso_liquido, rastreio })` — cria/atualiza `romaneios` e `romaneio_itens`, vincula NF.
-- `transicionar({ expedicao_id, novo_status, motivo? })` → `exp_transicionar`.
-- `registrarOcorrencia({ expedicao_id, tipo, descricao })` → grava evento + status `ocorrencia`.
-- `registrarEntrega({ expedicao_id, data_entrega, comprovante_url? })` → status `entregue`.
-- `indicadoresExpedicao({ dias? })` — tempo médio separação→expedição, on-time delivery, ocorrências.
+- Coluna `notas_fiscais.is_teste_e2e boolean default false` + status extra `'autorizada_teste_e2e'` no CHECK; triggers financeiras/expedição aceitam ambos, mas nunca produzem XML/impressão pública.
+- Bucket privado `entrega-comprovantes` + RLS por cargo; coluna `entrega_eventos.comprovante_path text`.
+- Função `seed_rollback()` SECURITY DEFINER que apaga cascata por prefixo `SEED-`.
 
-### 3. UI
+### 3. Upload real de comprovante (etapa 10)
 
-- `src/routes/_app.producao.expedicao.tsx` — abas **Fila** / **Indicadores**. Fila: DataTable com pedido, cliente, NF, status, ações (iniciar separação, abrir).
-- `src/routes/_app.producao.expedicao.$id.tsx` — cabeçalho + abas:
-  - **Separação** (lotes por item, estoque disponível)
-  - **Conferência** (checklist + divergências)
-  - **Romaneio** (transportadora, frete, volumes, peso, rastreio, botão imprimir)
-  - **Entrega** (eventos, upload de comprovante, status)
-  - **Histórico**
-- Componentes: `expedicao-status-badge.tsx`, `expedicao-separacao-form.tsx`, `expedicao-conferencia-form.tsx`, `expedicao-romaneio-form.tsx`, `expedicao-etiqueta-print.tsx`.
-- Menu já existente `/producao/expedicao` — sem alteração no menu.
+- Bucket privado `entrega-comprovantes`, limite 10 MB, aceita `application/pdf|image/jpeg|image/png`.
+- Server fn `uploadComprovanteEntrega({ eventoId, file })` — valida mime/tamanho, grava em `entregas/{ano}/{eventoId}/{uuid}.ext`, guarda path, gera signed URL sob demanda (`getComprovanteUrl`).
+- UI: input no drawer da entrega + link "Baixar" via signed URL.
+- Contrato futuro de rastreamento documentado em `docs/rastreamento-transportadora.md` (apenas doc, sem implementação).
 
-### 4. Regras aplicadas
+### 4. UI de operação (`/_app/dev/e2e`)
 
-1. Bloqueio de expedição sem NF autorizada (override admin via `has_role`).
-2. `exp_separar_lote` valida saldo do lote.
-3. Vínculo lote↔OP↔pedido↔NF preservado via `expedicao_itens_lote` + `nota_fiscal_id` em `op_expedicoes`.
-4. Todo evento grava `user_id`, `data`, delta em `audit_logs`.
-5. Impressão via rota dedicada `/producao/expedicao/$id/romaneio-print` (print-friendly).
-6. Rastreabilidade: `rastreabilidade.functions.ts` já consulta lotes/OP; nada a mudar além de adicionar join com expedição.
-7. Ocorrências/devoluções listadas em aba própria via `entrega_eventos`.
+Página dev-only (guard por role): botões "Preparar SEED", "Rodar E2E", "Rollback"; renderiza matriz PASS/FAIL/BLOCKED por etapa com IDs, esperado × obtido, função usada, logs; export JSON.
 
-### 5. Testes (`expedicao.test.ts`)
+### 5. Testes automatizados
 
-- Bloqueio sem NF autorizada.
-- Override admin permitido.
-- Separação acima do saldo do lote → erro.
-- Transição inválida → erro.
-- Fluxo completo aguardando → entregue.
-- Ocorrência mantém histórico e status `ocorrencia`.
+- `src/services/e2e/e2e-runner.test.ts` (Vitest) — mocka Supabase e valida a lógica de asserts/idempotência do runner.
+- `tests/e2e/seed-flow.spec.ts` (Playwright, executado via shell conforme guia de browser-use) — login como desenvolvedor, aciona os 3 botões, valida a matriz renderizada e checa RLS negando acesso ao bucket para usuário sem cargo.
 
-### Fora de escopo
+### 6. Documentação
 
-- Integração real com API de transportadora (rastreio manual).
-- Emissão de etiqueta ZPL (apenas HTML print).
-- Devolução com nota de retorno fiscal (apenas registro de evento).
+- `docs/e2e-seed.md` — como rodar, variáveis, matriz de saída, limites do MOCK, checklist de rollback, tabela de RLS/permissões.
+
+## Fora de escopo
+
+- API real de rastreamento de transportadora (só contrato).
+- Emissão fiscal em produção.
+- Alterações de regras de negócio existentes.
+
+## Ordem de execução dos passos técnicos
+
+1. Migração (colunas + bucket + `seed_rollback`).
+2. `seed.functions.ts` + rota `/_app/dev/e2e` mínima.
+3. `e2e-runner.functions.ts` cobrindo etapas 1–6.
+4. Modo A/B/MOCK da etapa 7.
+5. Etapas 8–10 + upload de comprovante.
+6. Etapa 11 (rastreabilidade — reusa `getRastreabilidadeOp`).
+7. Testes Vitest + Playwright + doc.

@@ -84,6 +84,7 @@ import { Route as AppFinanceiroCentrosCustoRouteImport } from './routes/_app.fin
 import { Route as AppEstoqueKardexRouteImport } from './routes/_app.estoque.kardex'
 import { Route as AppDevSprint0RouteImport } from './routes/_app.dev.sprint0'
 import { Route as AppDevFocusNfeRouteImport } from './routes/_app.dev.focus-nfe'
+import { Route as AppDevE2eRouteImport } from './routes/_app.dev.e2e'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 import { Route as AppDashboardIndustrialRouteImport } from './routes/_app.dashboard.industrial'
 import { Route as AppComprasSolicitacoesRouteImport } from './routes/_app.compras.solicitacoes'
@@ -487,6 +488,11 @@ const AppDevFocusNfeRoute = AppDevFocusNfeRouteImport.update({
   path: '/dev/focus-nfe',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDevE2eRoute = AppDevE2eRouteImport.update({
+  id: '/dev/e2e',
+  path: '/dev/e2e',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDevCargosRoute = AppDevCargosRouteImport.update({
   id: '/dev/cargos',
   path: '/dev/cargos',
@@ -644,6 +650,7 @@ export interface FileRoutesByFullPath {
   '/compras/solicitacoes': typeof AppComprasSolicitacoesRouteWithChildren
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
+  '/dev/e2e': typeof AppDevE2eRoute
   '/dev/focus-nfe': typeof AppDevFocusNfeRoute
   '/dev/sprint0': typeof AppDevSprint0Route
   '/estoque/kardex': typeof AppEstoqueKardexRoute
@@ -742,6 +749,7 @@ export interface FileRoutesByTo {
   '/compras/solicitacoes': typeof AppComprasSolicitacoesRouteWithChildren
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
+  '/dev/e2e': typeof AppDevE2eRoute
   '/dev/focus-nfe': typeof AppDevFocusNfeRoute
   '/dev/sprint0': typeof AppDevSprint0Route
   '/estoque/kardex': typeof AppEstoqueKardexRoute
@@ -842,6 +850,7 @@ export interface FileRoutesById {
   '/_app/compras/solicitacoes': typeof AppComprasSolicitacoesRouteWithChildren
   '/_app/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
+  '/_app/dev/e2e': typeof AppDevE2eRoute
   '/_app/dev/focus-nfe': typeof AppDevFocusNfeRoute
   '/_app/dev/sprint0': typeof AppDevSprint0Route
   '/_app/estoque/kardex': typeof AppEstoqueKardexRoute
@@ -942,6 +951,7 @@ export interface FileRouteTypes {
     | '/compras/solicitacoes'
     | '/dashboard/industrial'
     | '/dev/cargos'
+    | '/dev/e2e'
     | '/dev/focus-nfe'
     | '/dev/sprint0'
     | '/estoque/kardex'
@@ -1040,6 +1050,7 @@ export interface FileRouteTypes {
     | '/compras/solicitacoes'
     | '/dashboard/industrial'
     | '/dev/cargos'
+    | '/dev/e2e'
     | '/dev/focus-nfe'
     | '/dev/sprint0'
     | '/estoque/kardex'
@@ -1139,6 +1150,7 @@ export interface FileRouteTypes {
     | '/_app/compras/solicitacoes'
     | '/_app/dashboard/industrial'
     | '/_app/dev/cargos'
+    | '/_app/dev/e2e'
     | '/_app/dev/focus-nfe'
     | '/_app/dev/sprint0'
     | '/_app/estoque/kardex'
@@ -1733,6 +1745,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDevFocusNfeRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/dev/e2e': {
+      id: '/_app/dev/e2e'
+      path: '/dev/e2e'
+      fullPath: '/dev/e2e'
+      preLoaderRoute: typeof AppDevE2eRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dev/cargos': {
       id: '/_app/dev/cargos'
       path: '/dev/cargos'
@@ -2048,6 +2067,7 @@ interface AppRouteChildren {
   AppComprasSolicitacoesRoute: typeof AppComprasSolicitacoesRouteWithChildren
   AppDashboardIndustrialRoute: typeof AppDashboardIndustrialRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
+  AppDevE2eRoute: typeof AppDevE2eRoute
   AppDevFocusNfeRoute: typeof AppDevFocusNfeRoute
   AppDevSprint0Route: typeof AppDevSprint0Route
   AppEstoqueKardexRoute: typeof AppEstoqueKardexRoute
@@ -2131,6 +2151,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppComprasSolicitacoesRoute: AppComprasSolicitacoesRouteWithChildren,
   AppDashboardIndustrialRoute: AppDashboardIndustrialRoute,
   AppDevCargosRoute: AppDevCargosRoute,
+  AppDevE2eRoute: AppDevE2eRoute,
   AppDevFocusNfeRoute: AppDevFocusNfeRoute,
   AppDevSprint0Route: AppDevSprint0Route,
   AppEstoqueKardexRoute: AppEstoqueKardexRoute,
@@ -2191,13 +2212,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
