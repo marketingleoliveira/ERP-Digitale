@@ -94,9 +94,9 @@ export const registrarInspecao = createServerFn({ method: "POST" })
       _qtd_aprovada: data.quantidade_aprovada,
       _qtd_reprovada: data.quantidade_reprovada,
       _qtd_reprocesso: data.quantidade_reprocesso,
-      _defeito: data.defeito ?? null,
-      _causa: data.causa ?? null,
-      _observacao: data.observacao ?? null,
+      _defeito: data.defeito ?? undefined,
+      _causa: data.causa ?? undefined,
+      _observacao: data.observacao ?? undefined,
       _evidencias: (data.evidencias ?? []) as never,
     });
     if (error) throw error;
