@@ -151,7 +151,7 @@ export const computeOpSuggestions = createServerFn({ method: "POST" })
       const maquinasEleg = [...new Set(etapasR.map(e => e.maquina_preferencial_id).filter(Boolean) as string[])]
         .map(id => {
           const m = maqMap.get(id); const c = capMap.get(id);
-          return { id, nome: m?.nome ?? "?", kg_por_hora: Number(c?.kg_por_hora ?? 0) };
+          return { id, nome: m?.maquina ?? "?", kg_por_hora: Number(c?.kg_por_hora ?? 0) };
         });
       const kgHoraTotal = maquinasEleg.reduce((a, m) => a + m.kg_por_hora, 0);
       const capDia = maquinasEleg.reduce((a, m) => {
