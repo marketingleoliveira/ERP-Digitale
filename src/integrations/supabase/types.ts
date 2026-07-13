@@ -510,6 +510,44 @@ export type Database = {
         }
         Relationships: []
       }
+      calendario_produtivo: {
+        Row: {
+          created_at: string
+          data: string
+          id: string
+          observacao: string | null
+          tipo: string
+          turno_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data: string
+          id?: string
+          observacao?: string | null
+          tipo: string
+          turno_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          id?: string
+          observacao?: string | null
+          tipo?: string
+          turno_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendario_produtivo_turno_id_fkey"
+            columns: ["turno_id"]
+            isOneToOne: false
+            referencedRelation: "turnos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cargos: {
         Row: {
           created_at: string
@@ -2251,6 +2289,53 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "vw_oee_maquina"
             referencedColumns: ["maquina_id"]
+          },
+        ]
+      }
+      maquina_turnos: {
+        Row: {
+          created_at: string
+          maquina_id: string
+          turno_id: string
+        }
+        Insert: {
+          created_at?: string
+          maquina_id: string
+          turno_id: string
+        }
+        Update: {
+          created_at?: string
+          maquina_id?: string
+          turno_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maquina_turnos_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maquina_turnos_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "maquina_turnos_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "maquina_turnos_turno_id_fkey"
+            columns: ["turno_id"]
+            isOneToOne: false
+            referencedRelation: "turnos"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -5195,6 +5280,45 @@ export type Database = {
           razao_social?: string
           telefone?: string | null
           uf?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      turnos: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          dias_semana: number[]
+          hora_fim: string
+          hora_inicio: string
+          id: string
+          intervalo_min: number
+          nome: string
+          observacao: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          dias_semana?: number[]
+          hora_fim: string
+          hora_inicio: string
+          id?: string
+          intervalo_min?: number
+          nome: string
+          observacao?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          dias_semana?: number[]
+          hora_fim?: string
+          hora_inicio?: string
+          id?: string
+          intervalo_min?: number
+          nome?: string
+          observacao?: string | null
           updated_at?: string
         }
         Relationships: []

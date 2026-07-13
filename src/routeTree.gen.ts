@@ -47,6 +47,10 @@ import { Route as AppProducaoPedidosRouteImport } from './routes/_app.producao.p
 import { Route as AppProducaoOpRouteImport } from './routes/_app.producao.op'
 import { Route as AppProducaoIndustrialRouteImport } from './routes/_app.producao.industrial'
 import { Route as AppProducaoExpedicaoRouteImport } from './routes/_app.producao.expedicao'
+import { Route as AppPcpTurnosRouteImport } from './routes/_app.pcp.turnos'
+import { Route as AppPcpMaquinaTurnosRouteImport } from './routes/_app.pcp.maquina-turnos'
+import { Route as AppPcpCapacidadeRouteImport } from './routes/_app.pcp.capacidade'
+import { Route as AppPcpCalendarioRouteImport } from './routes/_app.pcp.calendario'
 import { Route as AppLogisticaTransportadorasRouteImport } from './routes/_app.logistica.transportadoras'
 import { Route as AppLogisticaSeparacoesRouteImport } from './routes/_app.logistica.separacoes'
 import { Route as AppLogisticaRomaneiosRouteImport } from './routes/_app.logistica.romaneios'
@@ -70,6 +74,7 @@ import { Route as AppFinanceiroDashboardRouteImport } from './routes/_app.financ
 import { Route as AppFinanceiroContasBancariasRouteImport } from './routes/_app.financeiro.contas-bancarias'
 import { Route as AppFinanceiroCentrosCustoRouteImport } from './routes/_app.financeiro.centros-custo'
 import { Route as AppEstoqueKardexRouteImport } from './routes/_app.estoque.kardex'
+import { Route as AppDevSprint0RouteImport } from './routes/_app.dev.sprint0'
 import { Route as AppDevFocusNfeRouteImport } from './routes/_app.dev.focus-nfe'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 import { Route as AppDashboardIndustrialRouteImport } from './routes/_app.dashboard.industrial'
@@ -277,6 +282,26 @@ const AppProducaoExpedicaoRoute = AppProducaoExpedicaoRouteImport.update({
   path: '/producao/expedicao',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPcpTurnosRoute = AppPcpTurnosRouteImport.update({
+  id: '/pcp/turnos',
+  path: '/pcp/turnos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpMaquinaTurnosRoute = AppPcpMaquinaTurnosRouteImport.update({
+  id: '/pcp/maquina-turnos',
+  path: '/pcp/maquina-turnos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpCapacidadeRoute = AppPcpCapacidadeRouteImport.update({
+  id: '/pcp/capacidade',
+  path: '/pcp/capacidade',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpCalendarioRoute = AppPcpCalendarioRouteImport.update({
+  id: '/pcp/calendario',
+  path: '/pcp/calendario',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppLogisticaTransportadorasRoute =
   AppLogisticaTransportadorasRouteImport.update({
     id: '/logistica/transportadoras',
@@ -396,6 +421,11 @@ const AppFinanceiroCentrosCustoRoute =
 const AppEstoqueKardexRoute = AppEstoqueKardexRouteImport.update({
   id: '/estoque/kardex',
   path: '/estoque/kardex',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDevSprint0Route = AppDevSprint0RouteImport.update({
+  id: '/dev/sprint0',
+  path: '/dev/sprint0',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDevFocusNfeRoute = AppDevFocusNfeRouteImport.update({
@@ -527,6 +557,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/dev/focus-nfe': typeof AppDevFocusNfeRoute
+  '/dev/sprint0': typeof AppDevSprint0Route
   '/estoque/kardex': typeof AppEstoqueKardexRoute
   '/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
   '/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
@@ -550,6 +581,10 @@ export interface FileRoutesByFullPath {
   '/logistica/romaneios': typeof AppLogisticaRomaneiosRoute
   '/logistica/separacoes': typeof AppLogisticaSeparacoesRoute
   '/logistica/transportadoras': typeof AppLogisticaTransportadorasRoute
+  '/pcp/calendario': typeof AppPcpCalendarioRoute
+  '/pcp/capacidade': typeof AppPcpCapacidadeRoute
+  '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/pcp/turnos': typeof AppPcpTurnosRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/producao/industrial': typeof AppProducaoIndustrialRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
@@ -606,6 +641,7 @@ export interface FileRoutesByTo {
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/dev/focus-nfe': typeof AppDevFocusNfeRoute
+  '/dev/sprint0': typeof AppDevSprint0Route
   '/estoque/kardex': typeof AppEstoqueKardexRoute
   '/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
   '/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
@@ -629,6 +665,10 @@ export interface FileRoutesByTo {
   '/logistica/romaneios': typeof AppLogisticaRomaneiosRoute
   '/logistica/separacoes': typeof AppLogisticaSeparacoesRoute
   '/logistica/transportadoras': typeof AppLogisticaTransportadorasRoute
+  '/pcp/calendario': typeof AppPcpCalendarioRoute
+  '/pcp/capacidade': typeof AppPcpCapacidadeRoute
+  '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/pcp/turnos': typeof AppPcpTurnosRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/producao/industrial': typeof AppProducaoIndustrialRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
@@ -687,6 +727,7 @@ export interface FileRoutesById {
   '/_app/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
   '/_app/dev/focus-nfe': typeof AppDevFocusNfeRoute
+  '/_app/dev/sprint0': typeof AppDevSprint0Route
   '/_app/estoque/kardex': typeof AppEstoqueKardexRoute
   '/_app/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
   '/_app/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
@@ -710,6 +751,10 @@ export interface FileRoutesById {
   '/_app/logistica/romaneios': typeof AppLogisticaRomaneiosRoute
   '/_app/logistica/separacoes': typeof AppLogisticaSeparacoesRoute
   '/_app/logistica/transportadoras': typeof AppLogisticaTransportadorasRoute
+  '/_app/pcp/calendario': typeof AppPcpCalendarioRoute
+  '/_app/pcp/capacidade': typeof AppPcpCapacidadeRoute
+  '/_app/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/_app/pcp/turnos': typeof AppPcpTurnosRoute
   '/_app/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/_app/producao/industrial': typeof AppProducaoIndustrialRoute
   '/_app/producao/op': typeof AppProducaoOpRouteWithChildren
@@ -768,6 +813,7 @@ export interface FileRouteTypes {
     | '/dashboard/industrial'
     | '/dev/cargos'
     | '/dev/focus-nfe'
+    | '/dev/sprint0'
     | '/estoque/kardex'
     | '/financeiro/centros-custo'
     | '/financeiro/contas-bancarias'
@@ -791,6 +837,10 @@ export interface FileRouteTypes {
     | '/logistica/romaneios'
     | '/logistica/separacoes'
     | '/logistica/transportadoras'
+    | '/pcp/calendario'
+    | '/pcp/capacidade'
+    | '/pcp/maquina-turnos'
+    | '/pcp/turnos'
     | '/producao/expedicao'
     | '/producao/industrial'
     | '/producao/op'
@@ -847,6 +897,7 @@ export interface FileRouteTypes {
     | '/dashboard/industrial'
     | '/dev/cargos'
     | '/dev/focus-nfe'
+    | '/dev/sprint0'
     | '/estoque/kardex'
     | '/financeiro/centros-custo'
     | '/financeiro/contas-bancarias'
@@ -870,6 +921,10 @@ export interface FileRouteTypes {
     | '/logistica/romaneios'
     | '/logistica/separacoes'
     | '/logistica/transportadoras'
+    | '/pcp/calendario'
+    | '/pcp/capacidade'
+    | '/pcp/maquina-turnos'
+    | '/pcp/turnos'
     | '/producao/expedicao'
     | '/producao/industrial'
     | '/producao/op'
@@ -927,6 +982,7 @@ export interface FileRouteTypes {
     | '/_app/dashboard/industrial'
     | '/_app/dev/cargos'
     | '/_app/dev/focus-nfe'
+    | '/_app/dev/sprint0'
     | '/_app/estoque/kardex'
     | '/_app/financeiro/centros-custo'
     | '/_app/financeiro/contas-bancarias'
@@ -950,6 +1006,10 @@ export interface FileRouteTypes {
     | '/_app/logistica/romaneios'
     | '/_app/logistica/separacoes'
     | '/_app/logistica/transportadoras'
+    | '/_app/pcp/calendario'
+    | '/_app/pcp/capacidade'
+    | '/_app/pcp/maquina-turnos'
+    | '/_app/pcp/turnos'
     | '/_app/producao/expedicao'
     | '/_app/producao/industrial'
     | '/_app/producao/op'
@@ -1244,6 +1304,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProducaoExpedicaoRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/pcp/turnos': {
+      id: '/_app/pcp/turnos'
+      path: '/pcp/turnos'
+      fullPath: '/pcp/turnos'
+      preLoaderRoute: typeof AppPcpTurnosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/maquina-turnos': {
+      id: '/_app/pcp/maquina-turnos'
+      path: '/pcp/maquina-turnos'
+      fullPath: '/pcp/maquina-turnos'
+      preLoaderRoute: typeof AppPcpMaquinaTurnosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/capacidade': {
+      id: '/_app/pcp/capacidade'
+      path: '/pcp/capacidade'
+      fullPath: '/pcp/capacidade'
+      preLoaderRoute: typeof AppPcpCapacidadeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/calendario': {
+      id: '/_app/pcp/calendario'
+      path: '/pcp/calendario'
+      fullPath: '/pcp/calendario'
+      preLoaderRoute: typeof AppPcpCalendarioRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/logistica/transportadoras': {
       id: '/_app/logistica/transportadoras'
       path: '/logistica/transportadoras'
@@ -1403,6 +1491,13 @@ declare module '@tanstack/react-router' {
       path: '/estoque/kardex'
       fullPath: '/estoque/kardex'
       preLoaderRoute: typeof AppEstoqueKardexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/dev/sprint0': {
+      id: '/_app/dev/sprint0'
+      path: '/dev/sprint0'
+      fullPath: '/dev/sprint0'
+      preLoaderRoute: typeof AppDevSprint0RouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/dev/focus-nfe': {
@@ -1628,6 +1723,7 @@ interface AppRouteChildren {
   AppDashboardIndustrialRoute: typeof AppDashboardIndustrialRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
   AppDevFocusNfeRoute: typeof AppDevFocusNfeRoute
+  AppDevSprint0Route: typeof AppDevSprint0Route
   AppEstoqueKardexRoute: typeof AppEstoqueKardexRoute
   AppFinanceiroCentrosCustoRoute: typeof AppFinanceiroCentrosCustoRoute
   AppFinanceiroContasBancariasRoute: typeof AppFinanceiroContasBancariasRoute
@@ -1651,6 +1747,10 @@ interface AppRouteChildren {
   AppLogisticaRomaneiosRoute: typeof AppLogisticaRomaneiosRoute
   AppLogisticaSeparacoesRoute: typeof AppLogisticaSeparacoesRoute
   AppLogisticaTransportadorasRoute: typeof AppLogisticaTransportadorasRoute
+  AppPcpCalendarioRoute: typeof AppPcpCalendarioRoute
+  AppPcpCapacidadeRoute: typeof AppPcpCapacidadeRoute
+  AppPcpMaquinaTurnosRoute: typeof AppPcpMaquinaTurnosRoute
+  AppPcpTurnosRoute: typeof AppPcpTurnosRoute
   AppProducaoExpedicaoRoute: typeof AppProducaoExpedicaoRoute
   AppProducaoIndustrialRoute: typeof AppProducaoIndustrialRoute
   AppProducaoOpRoute: typeof AppProducaoOpRouteWithChildren
@@ -1698,6 +1798,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDashboardIndustrialRoute: AppDashboardIndustrialRoute,
   AppDevCargosRoute: AppDevCargosRoute,
   AppDevFocusNfeRoute: AppDevFocusNfeRoute,
+  AppDevSprint0Route: AppDevSprint0Route,
   AppEstoqueKardexRoute: AppEstoqueKardexRoute,
   AppFinanceiroCentrosCustoRoute: AppFinanceiroCentrosCustoRoute,
   AppFinanceiroContasBancariasRoute: AppFinanceiroContasBancariasRoute,
@@ -1721,6 +1822,10 @@ const AppRouteChildren: AppRouteChildren = {
   AppLogisticaRomaneiosRoute: AppLogisticaRomaneiosRoute,
   AppLogisticaSeparacoesRoute: AppLogisticaSeparacoesRoute,
   AppLogisticaTransportadorasRoute: AppLogisticaTransportadorasRoute,
+  AppPcpCalendarioRoute: AppPcpCalendarioRoute,
+  AppPcpCapacidadeRoute: AppPcpCapacidadeRoute,
+  AppPcpMaquinaTurnosRoute: AppPcpMaquinaTurnosRoute,
+  AppPcpTurnosRoute: AppPcpTurnosRoute,
   AppProducaoExpedicaoRoute: AppProducaoExpedicaoRoute,
   AppProducaoIndustrialRoute: AppProducaoIndustrialRoute,
   AppProducaoOpRoute: AppProducaoOpRouteWithChildren,

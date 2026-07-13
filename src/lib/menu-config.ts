@@ -56,6 +56,10 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Análise Industrial (OEE)", url: "/producao/industrial", icon: Factory, group: "Produção (PCP)" },
   { title: "Planejamento (PCP)", url: "/producao/plano", icon: Scissors, group: "Produção (PCP)" },
   { title: "Ficha Técnica / BOM", url: "/producao/bom", icon: BadgeCheck, group: "Produção (PCP)" },
+  { title: "Turnos", url: "/pcp/turnos", icon: Clock, group: "Produção (PCP)" },
+  { title: "Calendário Produtivo", url: "/pcp/calendario", icon: Clock, group: "Produção (PCP)" },
+  { title: "Máquina × Turno", url: "/pcp/maquina-turnos", icon: Network, group: "Produção (PCP)" },
+  { title: "Capacidade Máquina", url: "/pcp/capacidade", icon: SlidersHorizontal, group: "Produção (PCP)" },
   { title: "Dashboard Industrial", url: "/dashboard/industrial", icon: LayoutDashboard, group: "" },
   { title: "Dashboard Financeiro", url: "/financeiro/dashboard", icon: LayoutDashboard, group: "Financeiro & Logística" },
   { title: "Contas a Receber", url: "/financeiro", icon: Wallet, group: "Financeiro & Logística" },
@@ -85,6 +89,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Certificados A1", url: "/fiscal/certificados", icon: ShieldCheck, group: "Fiscal" },
   { title: "Configurações", url: "/configuracoes", icon: Settings, group: "DEV" },
   { title: "Focus NFe", url: "/dev/focus-nfe", icon: PlugZap, group: "DEV", locked: true },
+  { title: "Sprint 0 Checklist", url: "/dev/sprint0", icon: BadgeCheck, group: "DEV", locked: true },
   { title: "Cargos", url: "/dev/cargos", icon: Briefcase, group: "DEV", locked: true },
   // Compras
   { title: "Dashboard Compras", url: "/compras", icon: LayoutDashboard, group: "Compras" },
