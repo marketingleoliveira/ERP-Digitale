@@ -15,9 +15,9 @@ type Row = { id: string; codigo: string | null; nome: string | null };
 type LoteAgg = { item_id: string; quantidade: number; quantidade_disponivel: number; lotes: number };
 
 async function fetchFios(): Promise<Row[]> {
-  const { data, error } = await supabase.from("fios").select("id, codigo, nome").order("codigo");
+  const { data, error } = await supabase.from("fios").select("id, codigo, tipo").order("codigo");
   if (error) throw error;
-  return (data ?? []) as unknown as Row[];
+  return (data ?? []).map((f) => ({ id: f.id, codigo: f.codigo, nome: f.tipo ?? null }));
 }
 async function fetchLotesFios(): Promise<LoteAgg[]> {
   const { data, error } = await supabase
