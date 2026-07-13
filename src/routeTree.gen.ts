@@ -93,6 +93,7 @@ import { Route as AppComprasFornecedoresRouteImport } from './routes/_app.compra
 import { Route as AppComprasCotacoesRouteImport } from './routes/_app.compras.cotacoes'
 import { Route as AppComprasContasPagarRouteImport } from './routes/_app.compras.contas-pagar'
 import { Route as AppRastreabilidadeTipoIdRouteImport } from './routes/_app.rastreabilidade.$tipo.$id'
+import { Route as AppProducaoPedidosIdRouteImport } from './routes/_app.producao.pedidos.$id'
 import { Route as AppProducaoOpIdRouteImport } from './routes/_app.producao.op.$id'
 import { Route as AppPcpRoteirosIdRouteImport } from './routes/_app.pcp.roteiros.$id'
 import { Route as AppComprasSolicitacoesNovaRouteImport } from './routes/_app.compras.solicitacoes.nova'
@@ -528,6 +529,11 @@ const AppRastreabilidadeTipoIdRoute =
     path: '/rastreabilidade/$tipo/$id',
     getParentRoute: () => AppRoute,
   } as any)
+const AppProducaoPedidosIdRoute = AppProducaoPedidosIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppProducaoPedidosRoute,
+} as any)
 const AppProducaoOpIdRoute = AppProducaoOpIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -650,7 +656,7 @@ export interface FileRoutesByFullPath {
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/producao/industrial': typeof AppProducaoIndustrialRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
-  '/producao/pedidos': typeof AppProducaoPedidosRoute
+  '/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
   '/producao/qualidade': typeof AppProducaoQualidadeRoute
   '/compras/': typeof AppComprasIndexRoute
   '/financeiro/': typeof AppFinanceiroIndexRoute
@@ -664,6 +670,7 @@ export interface FileRoutesByFullPath {
   '/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
   '/pcp/roteiros/$id': typeof AppPcpRoteirosIdRoute
   '/producao/op/$id': typeof AppProducaoOpIdRoute
+  '/producao/pedidos/$id': typeof AppProducaoPedidosIdRoute
   '/rastreabilidade/$tipo/$id': typeof AppRastreabilidadeTipoIdRoute
 }
 export interface FileRoutesByTo {
@@ -743,7 +750,7 @@ export interface FileRoutesByTo {
   '/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/producao/industrial': typeof AppProducaoIndustrialRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
-  '/producao/pedidos': typeof AppProducaoPedidosRoute
+  '/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
   '/producao/qualidade': typeof AppProducaoQualidadeRoute
   '/compras': typeof AppComprasIndexRoute
   '/financeiro': typeof AppFinanceiroIndexRoute
@@ -757,6 +764,7 @@ export interface FileRoutesByTo {
   '/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
   '/pcp/roteiros/$id': typeof AppPcpRoteirosIdRoute
   '/producao/op/$id': typeof AppProducaoOpIdRoute
+  '/producao/pedidos/$id': typeof AppProducaoPedidosIdRoute
   '/rastreabilidade/$tipo/$id': typeof AppRastreabilidadeTipoIdRoute
 }
 export interface FileRoutesById {
@@ -838,7 +846,7 @@ export interface FileRoutesById {
   '/_app/producao/expedicao': typeof AppProducaoExpedicaoRoute
   '/_app/producao/industrial': typeof AppProducaoIndustrialRoute
   '/_app/producao/op': typeof AppProducaoOpRouteWithChildren
-  '/_app/producao/pedidos': typeof AppProducaoPedidosRoute
+  '/_app/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
   '/_app/producao/qualidade': typeof AppProducaoQualidadeRoute
   '/_app/compras/': typeof AppComprasIndexRoute
   '/_app/financeiro/': typeof AppFinanceiroIndexRoute
@@ -852,6 +860,7 @@ export interface FileRoutesById {
   '/_app/compras/solicitacoes/nova': typeof AppComprasSolicitacoesNovaRoute
   '/_app/pcp/roteiros/$id': typeof AppPcpRoteirosIdRoute
   '/_app/producao/op/$id': typeof AppProducaoOpIdRoute
+  '/_app/producao/pedidos/$id': typeof AppProducaoPedidosIdRoute
   '/_app/rastreabilidade/$tipo/$id': typeof AppRastreabilidadeTipoIdRoute
 }
 export interface FileRouteTypes {
@@ -947,6 +956,7 @@ export interface FileRouteTypes {
     | '/compras/solicitacoes/nova'
     | '/pcp/roteiros/$id'
     | '/producao/op/$id'
+    | '/producao/pedidos/$id'
     | '/rastreabilidade/$tipo/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -1040,6 +1050,7 @@ export interface FileRouteTypes {
     | '/compras/solicitacoes/nova'
     | '/pcp/roteiros/$id'
     | '/producao/op/$id'
+    | '/producao/pedidos/$id'
     | '/rastreabilidade/$tipo/$id'
   id:
     | '__root__'
@@ -1134,6 +1145,7 @@ export interface FileRouteTypes {
     | '/_app/compras/solicitacoes/nova'
     | '/_app/pcp/roteiros/$id'
     | '/_app/producao/op/$id'
+    | '/_app/producao/pedidos/$id'
     | '/_app/rastreabilidade/$tipo/$id'
   fileRoutesById: FileRoutesById
 }
@@ -1734,6 +1746,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRastreabilidadeTipoIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/producao/pedidos/$id': {
+      id: '/_app/producao/pedidos/$id'
+      path: '/$id'
+      fullPath: '/producao/pedidos/$id'
+      preLoaderRoute: typeof AppProducaoPedidosIdRouteImport
+      parentRoute: typeof AppProducaoPedidosRoute
+    }
     '/_app/producao/op/$id': {
       id: '/_app/producao/op/$id'
       path: '/$id'
@@ -1871,6 +1890,17 @@ const AppProducaoOpRouteWithChildren = AppProducaoOpRoute._addFileChildren(
   AppProducaoOpRouteChildren,
 )
 
+interface AppProducaoPedidosRouteChildren {
+  AppProducaoPedidosIdRoute: typeof AppProducaoPedidosIdRoute
+}
+
+const AppProducaoPedidosRouteChildren: AppProducaoPedidosRouteChildren = {
+  AppProducaoPedidosIdRoute: AppProducaoPedidosIdRoute,
+}
+
+const AppProducaoPedidosRouteWithChildren =
+  AppProducaoPedidosRoute._addFileChildren(AppProducaoPedidosRouteChildren)
+
 interface AppRouteChildren {
   AppAgulhaRoute: typeof AppAgulhaRoute
   AppArtigosRoute: typeof AppArtigosRoute
@@ -1945,7 +1975,7 @@ interface AppRouteChildren {
   AppProducaoExpedicaoRoute: typeof AppProducaoExpedicaoRoute
   AppProducaoIndustrialRoute: typeof AppProducaoIndustrialRoute
   AppProducaoOpRoute: typeof AppProducaoOpRouteWithChildren
-  AppProducaoPedidosRoute: typeof AppProducaoPedidosRoute
+  AppProducaoPedidosRoute: typeof AppProducaoPedidosRouteWithChildren
   AppProducaoQualidadeRoute: typeof AppProducaoQualidadeRoute
   AppComprasIndexRoute: typeof AppComprasIndexRoute
   AppFinanceiroIndexRoute: typeof AppFinanceiroIndexRoute
@@ -2028,7 +2058,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProducaoExpedicaoRoute: AppProducaoExpedicaoRoute,
   AppProducaoIndustrialRoute: AppProducaoIndustrialRoute,
   AppProducaoOpRoute: AppProducaoOpRouteWithChildren,
-  AppProducaoPedidosRoute: AppProducaoPedidosRoute,
+  AppProducaoPedidosRoute: AppProducaoPedidosRouteWithChildren,
   AppProducaoQualidadeRoute: AppProducaoQualidadeRoute,
   AppComprasIndexRoute: AppComprasIndexRoute,
   AppFinanceiroIndexRoute: AppFinanceiroIndexRoute,

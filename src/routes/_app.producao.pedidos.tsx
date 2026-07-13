@@ -55,10 +55,10 @@ function PedidosList() {
           onChange={e => setSearch(e.target.value)}
           className="max-w-xs"
         />
-        <Select value={status} onValueChange={setStatus}>
+        <Select value={status || "__all__"} onValueChange={v => setStatus(v === "__all__" ? "" : v)}>
           <SelectTrigger className="w-56"><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
-            {STATUS_FILTROS.map(s => <SelectItem key={s.v || "all"} value={s.v || "__all__"}>{s.label}</SelectItem>)}
+            {STATUS_FILTROS.map(s => <SelectItem key={s.v || "__all__"} value={s.v || "__all__"}>{s.label}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
