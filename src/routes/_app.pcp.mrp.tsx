@@ -163,10 +163,31 @@ function Page() {
           </div>
 
           <Card>
-            <CardHeader><CardTitle>Explosão MRP</CardTitle></CardHeader>
+            <CardHeader className="flex-row items-center justify-between">
+              <CardTitle>Explosão MRP</CardTitle>
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-1.5 text-sm">
+                  <Checkbox checked={agrupar} onCheckedChange={v => setAgrupar(!!v)} /> Agrupar por fornecedor
+                </label>
+                <Button size="sm" onClick={() => gerar.mutate()}
+                  disabled={gerar.isPending || selecionadas.size === 0}>
+                  <ShoppingCart className="h-4 w-4 mr-1.5" />
+                  Gerar solicitação de compra ({selecionadas.size})
+                </Button>
+              </div>
+            </CardHeader>
             <CardContent className="overflow-auto">
               <Table>
                 <TableHeader><TableRow>
+                  <TableHead className="w-8">
+                    <Checkbox
+                      checked={selecionadas.size > 0 && selecionadas.size === linhas.filter(l => l.necessidade_liquida > 0).length}
+                      onCheckedChange={v => {
+                        if (v) setSelecionadas(new Set(linhas.map((l, i) => l.necessidade_liquida > 0 ? i : -1).filter(i => i >= 0)));
+                        else setSelecionadas(new Set());
+                      }}
+                    />
+                  </TableHead>
                   <TableHead>Componente</TableHead>
                   <TableHead className="text-right">Bruta</TableHead>
                   <TableHead className="text-right">Estoque</TableHead>
@@ -180,9 +201,20 @@ function Page() {
                 </TableRow></TableHeader>
                 <TableBody>
                   {linhas.length === 0
-                    ? <TableRow><TableCell colSpan={10} className="text-center text-muted-foreground">Sem necessidades — verifique se há BOM cadastrada para os artigos.</TableCell></TableRow>
+                    ? <TableRow><TableCell colSpan={11} className="text-center text-muted-foreground">Sem necessidades — verifique se há BOM cadastrada para os artigos.</TableCell></TableRow>
                     : linhas.map((l, i) => (
                       <TableRow key={i}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selecionadas.has(i)}
+                            disabled={l.necessidade_liquida <= 0}
+                            onCheckedChange={v => {
+                              const n = new Set(selecionadas);
+                              if (v) n.add(i); else n.delete(i);
+                              setSelecionadas(n);
+                            }}
+                          />
+                        </TableCell>
                         <TableCell>
                           <div className="font-medium">{l.descricao}</div>
                           <div className="text-xs text-muted-foreground">
@@ -204,6 +236,7 @@ function Page() {
               </Table>
             </CardContent>
           </Card>
+
         </>
       )}
     </div>
