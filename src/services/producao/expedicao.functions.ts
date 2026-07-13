@@ -59,34 +59,25 @@ export const getExpedicao = createServerFn({ method: "GET" })
   .inputValidator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const [exp, itensLote, itensOP, itensPedido, eventos, transportadoras] = await Promise.all([
-      supabase.from("op_expedicoes").select(
-        "*, pedidos(id, numero, cliente_id, valor_total, prazo_entrega), " +
-        "ordens_producao(id, numero, status), " +
-        "notas_fiscais(id, numero, serie, status_sefaz, chave_acesso, valor_total), " +
-        "romaneios(id, numero, status)"
-      ).eq("id", data.id).single(),
+    const exp = await supabase.from("op_expedicoes").select(
+      "*, pedidos(id, numero, cliente_id, valor_total, prazo_entrega), " +
+      "ordens_producao(id, numero, status), " +
+      "notas_fiscais(id, numero, serie, status_sefaz, chave_acesso, valor_total), " +
+      "romaneios(id, numero, status)"
+    ).eq("id", data.id).single();
+    if (exp.error) throw exp.error;
+    const expRow = exp.data as { op_id?: string | null; pedido_id?: string | null; romaneio_id?: string | null; nota_fiscal_id?: string | null };
+
+    const [itensLote, itensOpReal, itensPedidoReal, eventos, transportadoras] = await Promise.all([
       supabase.from("expedicao_itens_lote").select(
         "*, lotes(id, numero_lote, quantidade_disponivel), op_itens(id, descricao, quantidade_planejada)"
       ).eq("expedicao_id", data.id),
-      supabase.from("op_itens").select("*").eq("op_id",
-        // will resolve below after exp loads if op_id exists
-        "00000000-0000-0000-0000-000000000000"),
-      supabase.from("pedido_itens").select("*").limit(0),
-      supabase.from("entrega_eventos").select("*")
-        .order("data", { ascending: false }).limit(100),
-      supabase.from("transportadoras").select("id, nome").order("nome").limit(200),
-    ]);
-    if (exp.error) throw exp.error;
-
-    const expRow = exp.data as { op_id?: string | null; pedido_id?: string | null; romaneio_id?: string | null; nota_fiscal_id?: string | null };
-    const [itensOpReal, itensPedidoReal, eventosReais] = await Promise.all([
       expRow.op_id
         ? supabase.from("op_itens").select("*").eq("op_id", expRow.op_id)
-        : Promise.resolve({ data: [], error: null }),
+        : Promise.resolve({ data: [] as never[], error: null }),
       expRow.pedido_id
         ? supabase.from("pedido_itens").select("*").eq("pedido_id", expRow.pedido_id)
-        : Promise.resolve({ data: [], error: null }),
+        : Promise.resolve({ data: [] as never[], error: null }),
       expRow.romaneio_id || expRow.nota_fiscal_id
         ? supabase.from("entrega_eventos").select("*")
             .or([
@@ -94,7 +85,8 @@ export const getExpedicao = createServerFn({ method: "GET" })
               expRow.nota_fiscal_id ? `nota_fiscal_id.eq.${expRow.nota_fiscal_id}` : "",
             ].filter(Boolean).join(","))
             .order("data", { ascending: false })
-        : Promise.resolve({ data: [], error: null }),
+        : Promise.resolve({ data: [] as never[], error: null }),
+      supabase.from("transportadoras").select("id, nome").order("nome").limit(200),
     ]);
 
     return {
@@ -102,9 +94,8 @@ export const getExpedicao = createServerFn({ method: "GET" })
       itens_lote: itensLote.data ?? [],
       op_itens: itensOpReal.data ?? [],
       pedido_itens: itensPedidoReal.data ?? [],
-      eventos: eventosReais.data ?? eventos.data ?? [],
+      eventos: eventos.data ?? [],
       transportadoras: transportadoras.data ?? [],
-      _unused: itensOP.data && itensPedido.data ? undefined : undefined,
     };
   });
 
