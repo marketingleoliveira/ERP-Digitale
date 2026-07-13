@@ -119,7 +119,7 @@ function Page() {
             ) : data.length === 0 ? (
               <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Nenhuma regra cadastrada.</TableCell></TableRow>
             ) : data.map(r => {
-              const row = r as Record<string, unknown> & { id: string };
+              const row = r as unknown as Record<string, unknown> & { id: string };
               return (
                 <TableRow key={row.id}>
                   <TableCell>

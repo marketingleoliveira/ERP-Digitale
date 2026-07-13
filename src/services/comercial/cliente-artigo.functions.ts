@@ -131,9 +131,9 @@ export const resolverPrecoClienteArtigo = createServerFn({ method: "POST" })
     const { supabase } = context;
     const { data: rows, error } = await supabase.rpc("resolver_preco_cliente_artigo", {
       _cliente_id: data.cliente_id,
-      _produto_id: data.produto_id ?? null,
-      _variante_id: data.variante_id ?? null,
-      _artigo_id: data.artigo_id ?? null,
+      _produto_id: data.produto_id ?? undefined,
+      _variante_id: data.variante_id ?? undefined,
+      _artigo_id: data.artigo_id ?? undefined,
       _data: data.data ?? new Date().toISOString().slice(0, 10),
     });
     if (error) throw new Error(error.message);
