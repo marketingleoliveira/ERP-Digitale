@@ -2290,6 +2290,13 @@ export type Database = {
             referencedRelation: "vw_oee_maquina"
             referencedColumns: ["maquina_id"]
           },
+          {
+            foreignKeyName: "maquina_capacidade_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: true
+            referencedRelation: "vw_oee_maquina_periodo"
+            referencedColumns: ["maquina_id"]
+          },
         ]
       }
       maquina_turnos: {
@@ -2328,6 +2335,13 @@ export type Database = {
             columns: ["maquina_id"]
             isOneToOne: false
             referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "maquina_turnos_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
             referencedColumns: ["maquina_id"]
           },
           {
@@ -3085,6 +3099,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "op_apontamentos_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_operador"
+            referencedColumns: ["funcionario_id"]
+          },
+          {
             foreignKeyName: "op_apontamentos_maquina_id_fkey"
             columns: ["maquina_id"]
             isOneToOne: false
@@ -3103,6 +3124,13 @@ export type Database = {
             columns: ["maquina_id"]
             isOneToOne: false
             referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "op_apontamentos_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
             referencedColumns: ["maquina_id"]
           },
           {
@@ -3298,6 +3326,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_entradas_estoque_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_artigo"
+            referencedColumns: ["product_id"]
           },
           {
             foreignKeyName: "op_entradas_estoque_variante_id_fkey"
@@ -3572,6 +3607,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "op_itens_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_artigo"
+            referencedColumns: ["product_id"]
+          },
+          {
             foreignKeyName: "op_itens_variante_id_fkey"
             columns: ["variante_id"]
             isOneToOne: false
@@ -3640,6 +3682,13 @@ export type Database = {
             referencedColumns: ["maquina_id"]
           },
           {
+            foreignKeyName: "op_paradas_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
+            referencedColumns: ["maquina_id"]
+          },
+          {
             foreignKeyName: "op_paradas_op_id_fkey"
             columns: ["op_id"]
             isOneToOne: false
@@ -3699,6 +3748,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "funcionarios"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_qualidade_inspetor_id_fkey"
+            columns: ["inspetor_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_operador"
+            referencedColumns: ["funcionario_id"]
           },
           {
             foreignKeyName: "op_qualidade_op_id_fkey"
@@ -3890,6 +3946,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ordens_producao_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_operador"
+            referencedColumns: ["funcionario_id"]
+          },
+          {
             foreignKeyName: "ordens_producao_maquina_id_fkey"
             columns: ["maquina_id"]
             isOneToOne: false
@@ -3908,6 +3971,13 @@ export type Database = {
             columns: ["maquina_id"]
             isOneToOne: false
             referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "ordens_producao_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
             referencedColumns: ["maquina_id"]
           },
           {
@@ -3990,6 +4060,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pedido_itens_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_artigo"
+            referencedColumns: ["product_id"]
           },
           {
             foreignKeyName: "pedido_itens_variante_id_fkey"
@@ -4239,6 +4316,13 @@ export type Database = {
             referencedRelation: "funcionarios"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "plano_producao_responsavel_id_fkey"
+            columns: ["responsavel_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_operador"
+            referencedColumns: ["funcionario_id"]
+          },
         ]
       }
       plano_producao_itens: {
@@ -4311,6 +4395,13 @@ export type Database = {
             referencedColumns: ["maquina_id"]
           },
           {
+            foreignKeyName: "plano_producao_itens_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
+            referencedColumns: ["maquina_id"]
+          },
+          {
             foreignKeyName: "plano_producao_itens_op_id_fkey"
             columns: ["op_id"]
             isOneToOne: false
@@ -4377,6 +4468,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_artigo"
+            referencedColumns: ["product_id"]
           },
         ]
       }
@@ -4977,6 +5075,13 @@ export type Database = {
             referencedRelation: "vw_oee_maquina"
             referencedColumns: ["maquina_id"]
           },
+          {
+            foreignKeyName: "roteiro_etapa_maquinas_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
+            referencedColumns: ["maquina_id"]
+          },
         ]
       }
       roteiro_etapas: {
@@ -5064,6 +5169,13 @@ export type Database = {
             columns: ["maquina_preferencial_id"]
             isOneToOne: false
             referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "roteiro_etapas_maquina_preferencial_id_fkey"
+            columns: ["maquina_preferencial_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
             referencedColumns: ["maquina_id"]
           },
           {
@@ -5760,6 +5872,20 @@ export type Database = {
         }
         Relationships: []
       }
+      vw_oee_artigo: {
+        Row: {
+          codigo: string | null
+          min_operado: number | null
+          nome: string | null
+          oee_pct: number | null
+          performance_pct: number | null
+          product_id: string | null
+          qtd_produzida: number | null
+          qtd_refugo: number | null
+          qualidade_pct: number | null
+        }
+        Relationships: []
+      }
       vw_oee_maquina: {
         Row: {
           disponibilidade_pct: number | null
@@ -5772,6 +5898,61 @@ export type Database = {
           qtd_produzida: number | null
           qtd_refugo: number | null
           qualidade_pct: number | null
+        }
+        Relationships: []
+      }
+      vw_oee_maquina_periodo: {
+        Row: {
+          disponibilidade_pct: number | null
+          maquina_id: string | null
+          min_operado: number | null
+          min_parado: number | null
+          nome: string | null
+          numero: number | null
+          oee_pct: number | null
+          performance_pct: number | null
+          qtd_produzida: number | null
+          qtd_refugo: number | null
+          qualidade_pct: number | null
+        }
+        Relationships: []
+      }
+      vw_oee_mensal: {
+        Row: {
+          disponibilidade_pct: number | null
+          mes: string | null
+          min_operado: number | null
+          min_parado: number | null
+          oee_pct: number | null
+          performance_pct: number | null
+          qtd_produzida: number | null
+          qtd_refugo: number | null
+          qualidade_pct: number | null
+        }
+        Relationships: []
+      }
+      vw_oee_operador: {
+        Row: {
+          funcionario_id: string | null
+          min_operado: number | null
+          nome: string | null
+          oee_pct: number | null
+          performance_pct: number | null
+          qtd_produzida: number | null
+          qtd_refugo: number | null
+          qualidade_pct: number | null
+        }
+        Relationships: []
+      }
+      vw_oee_turno: {
+        Row: {
+          min_operado: number | null
+          oee_pct: number | null
+          performance_pct: number | null
+          qtd_produzida: number | null
+          qtd_refugo: number | null
+          qualidade_pct: number | null
+          turno: string | null
         }
         Relationships: []
       }
