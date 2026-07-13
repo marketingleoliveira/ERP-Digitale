@@ -1542,6 +1542,7 @@ export type Database = {
           csc_token: string | null
           email: string | null
           exige_op_para_nfe: boolean
+          focus_nfe_token: string | null
           id: string
           inscricao_estadual: string | null
           inscricao_municipal: string | null
@@ -1577,6 +1578,7 @@ export type Database = {
           csc_token?: string | null
           email?: string | null
           exige_op_para_nfe?: boolean
+          focus_nfe_token?: string | null
           id?: string
           inscricao_estadual?: string | null
           inscricao_municipal?: string | null
@@ -1612,6 +1614,7 @@ export type Database = {
           csc_token?: string | null
           email?: string | null
           exige_op_para_nfe?: boolean
+          focus_nfe_token?: string | null
           id?: string
           inscricao_estadual?: string | null
           inscricao_municipal?: string | null
