@@ -45,16 +45,21 @@ import { Route as AppComprasIndexRouteImport } from './routes/_app.compras.index
 import { Route as AppProducaoQualidadeRouteImport } from './routes/_app.producao.qualidade'
 import { Route as AppProducaoPedidosRouteImport } from './routes/_app.producao.pedidos'
 import { Route as AppProducaoOpRouteImport } from './routes/_app.producao.op'
+import { Route as AppProducaoKanbanRouteImport } from './routes/_app.producao.kanban'
 import { Route as AppProducaoIndustrialRouteImport } from './routes/_app.producao.industrial'
 import { Route as AppProducaoExpedicaoRouteImport } from './routes/_app.producao.expedicao'
+import { Route as AppProducaoChaoFabricaRouteImport } from './routes/_app.producao.chao-fabrica'
 import { Route as AppPcpVinculosArtigoRouteImport } from './routes/_app.pcp.vinculos-artigo'
 import { Route as AppPcpTurnosRouteImport } from './routes/_app.pcp.turnos'
 import { Route as AppPcpRoteirosRouteImport } from './routes/_app.pcp.roteiros'
 import { Route as AppPcpReservasRouteImport } from './routes/_app.pcp.reservas'
+import { Route as AppPcpProgramacaoRouteImport } from './routes/_app.pcp.programacao'
 import { Route as AppPcpOperacoesRouteImport } from './routes/_app.pcp.operacoes'
 import { Route as AppPcpOeeRouteImport } from './routes/_app.pcp.oee'
 import { Route as AppPcpMrpOpRouteImport } from './routes/_app.pcp.mrp-op'
 import { Route as AppPcpMrpRouteImport } from './routes/_app.pcp.mrp'
+import { Route as AppPcpMpsRouteImport } from './routes/_app.pcp.mps'
+import { Route as AppPcpMotivosParadaRouteImport } from './routes/_app.pcp.motivos-parada'
 import { Route as AppPcpMaquinaTurnosRouteImport } from './routes/_app.pcp.maquina-turnos'
 import { Route as AppPcpCustosRouteImport } from './routes/_app.pcp.custos'
 import { Route as AppPcpCapacidadeRouteImport } from './routes/_app.pcp.capacidade'
@@ -287,6 +292,11 @@ const AppProducaoOpRoute = AppProducaoOpRouteImport.update({
   path: '/producao/op',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProducaoKanbanRoute = AppProducaoKanbanRouteImport.update({
+  id: '/producao/kanban',
+  path: '/producao/kanban',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProducaoIndustrialRoute = AppProducaoIndustrialRouteImport.update({
   id: '/producao/industrial',
   path: '/producao/industrial',
@@ -295,6 +305,11 @@ const AppProducaoIndustrialRoute = AppProducaoIndustrialRouteImport.update({
 const AppProducaoExpedicaoRoute = AppProducaoExpedicaoRouteImport.update({
   id: '/producao/expedicao',
   path: '/producao/expedicao',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProducaoChaoFabricaRoute = AppProducaoChaoFabricaRouteImport.update({
+  id: '/producao/chao-fabrica',
+  path: '/producao/chao-fabrica',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPcpVinculosArtigoRoute = AppPcpVinculosArtigoRouteImport.update({
@@ -317,6 +332,11 @@ const AppPcpReservasRoute = AppPcpReservasRouteImport.update({
   path: '/pcp/reservas',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPcpProgramacaoRoute = AppPcpProgramacaoRouteImport.update({
+  id: '/pcp/programacao',
+  path: '/pcp/programacao',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPcpOperacoesRoute = AppPcpOperacoesRouteImport.update({
   id: '/pcp/operacoes',
   path: '/pcp/operacoes',
@@ -335,6 +355,16 @@ const AppPcpMrpOpRoute = AppPcpMrpOpRouteImport.update({
 const AppPcpMrpRoute = AppPcpMrpRouteImport.update({
   id: '/pcp/mrp',
   path: '/pcp/mrp',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpMpsRoute = AppPcpMpsRouteImport.update({
+  id: '/pcp/mps',
+  path: '/pcp/mps',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpMotivosParadaRoute = AppPcpMotivosParadaRouteImport.update({
+  id: '/pcp/motivos-parada',
+  path: '/pcp/motivos-parada',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPcpMaquinaTurnosRoute = AppPcpMaquinaTurnosRouteImport.update({
@@ -680,16 +710,21 @@ export interface FileRoutesByFullPath {
   '/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/pcp/custos': typeof AppPcpCustosRoute
   '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/pcp/motivos-parada': typeof AppPcpMotivosParadaRoute
+  '/pcp/mps': typeof AppPcpMpsRoute
   '/pcp/mrp': typeof AppPcpMrpRoute
   '/pcp/mrp-op': typeof AppPcpMrpOpRoute
   '/pcp/oee': typeof AppPcpOeeRoute
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
+  '/pcp/programacao': typeof AppPcpProgramacaoRoute
   '/pcp/reservas': typeof AppPcpReservasRoute
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
   '/pcp/vinculos-artigo': typeof AppPcpVinculosArtigoRoute
+  '/producao/chao-fabrica': typeof AppProducaoChaoFabricaRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRouteWithChildren
   '/producao/industrial': typeof AppProducaoIndustrialRoute
+  '/producao/kanban': typeof AppProducaoKanbanRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
   '/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
   '/producao/qualidade': typeof AppProducaoQualidadeRouteWithChildren
@@ -779,16 +814,21 @@ export interface FileRoutesByTo {
   '/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/pcp/custos': typeof AppPcpCustosRoute
   '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/pcp/motivos-parada': typeof AppPcpMotivosParadaRoute
+  '/pcp/mps': typeof AppPcpMpsRoute
   '/pcp/mrp': typeof AppPcpMrpRoute
   '/pcp/mrp-op': typeof AppPcpMrpOpRoute
   '/pcp/oee': typeof AppPcpOeeRoute
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
+  '/pcp/programacao': typeof AppPcpProgramacaoRoute
   '/pcp/reservas': typeof AppPcpReservasRoute
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
   '/pcp/vinculos-artigo': typeof AppPcpVinculosArtigoRoute
+  '/producao/chao-fabrica': typeof AppProducaoChaoFabricaRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRouteWithChildren
   '/producao/industrial': typeof AppProducaoIndustrialRoute
+  '/producao/kanban': typeof AppProducaoKanbanRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
   '/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
   '/producao/qualidade': typeof AppProducaoQualidadeRouteWithChildren
@@ -880,16 +920,21 @@ export interface FileRoutesById {
   '/_app/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/_app/pcp/custos': typeof AppPcpCustosRoute
   '/_app/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/_app/pcp/motivos-parada': typeof AppPcpMotivosParadaRoute
+  '/_app/pcp/mps': typeof AppPcpMpsRoute
   '/_app/pcp/mrp': typeof AppPcpMrpRoute
   '/_app/pcp/mrp-op': typeof AppPcpMrpOpRoute
   '/_app/pcp/oee': typeof AppPcpOeeRoute
   '/_app/pcp/operacoes': typeof AppPcpOperacoesRoute
+  '/_app/pcp/programacao': typeof AppPcpProgramacaoRoute
   '/_app/pcp/reservas': typeof AppPcpReservasRoute
   '/_app/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/_app/pcp/turnos': typeof AppPcpTurnosRoute
   '/_app/pcp/vinculos-artigo': typeof AppPcpVinculosArtigoRoute
+  '/_app/producao/chao-fabrica': typeof AppProducaoChaoFabricaRoute
   '/_app/producao/expedicao': typeof AppProducaoExpedicaoRouteWithChildren
   '/_app/producao/industrial': typeof AppProducaoIndustrialRoute
+  '/_app/producao/kanban': typeof AppProducaoKanbanRoute
   '/_app/producao/op': typeof AppProducaoOpRouteWithChildren
   '/_app/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
   '/_app/producao/qualidade': typeof AppProducaoQualidadeRouteWithChildren
@@ -981,16 +1026,21 @@ export interface FileRouteTypes {
     | '/pcp/capacidade'
     | '/pcp/custos'
     | '/pcp/maquina-turnos'
+    | '/pcp/motivos-parada'
+    | '/pcp/mps'
     | '/pcp/mrp'
     | '/pcp/mrp-op'
     | '/pcp/oee'
     | '/pcp/operacoes'
+    | '/pcp/programacao'
     | '/pcp/reservas'
     | '/pcp/roteiros'
     | '/pcp/turnos'
     | '/pcp/vinculos-artigo'
+    | '/producao/chao-fabrica'
     | '/producao/expedicao'
     | '/producao/industrial'
+    | '/producao/kanban'
     | '/producao/op'
     | '/producao/pedidos'
     | '/producao/qualidade'
@@ -1080,16 +1130,21 @@ export interface FileRouteTypes {
     | '/pcp/capacidade'
     | '/pcp/custos'
     | '/pcp/maquina-turnos'
+    | '/pcp/motivos-parada'
+    | '/pcp/mps'
     | '/pcp/mrp'
     | '/pcp/mrp-op'
     | '/pcp/oee'
     | '/pcp/operacoes'
+    | '/pcp/programacao'
     | '/pcp/reservas'
     | '/pcp/roteiros'
     | '/pcp/turnos'
     | '/pcp/vinculos-artigo'
+    | '/producao/chao-fabrica'
     | '/producao/expedicao'
     | '/producao/industrial'
+    | '/producao/kanban'
     | '/producao/op'
     | '/producao/pedidos'
     | '/producao/qualidade'
@@ -1180,16 +1235,21 @@ export interface FileRouteTypes {
     | '/_app/pcp/capacidade'
     | '/_app/pcp/custos'
     | '/_app/pcp/maquina-turnos'
+    | '/_app/pcp/motivos-parada'
+    | '/_app/pcp/mps'
     | '/_app/pcp/mrp'
     | '/_app/pcp/mrp-op'
     | '/_app/pcp/oee'
     | '/_app/pcp/operacoes'
+    | '/_app/pcp/programacao'
     | '/_app/pcp/reservas'
     | '/_app/pcp/roteiros'
     | '/_app/pcp/turnos'
     | '/_app/pcp/vinculos-artigo'
+    | '/_app/producao/chao-fabrica'
     | '/_app/producao/expedicao'
     | '/_app/producao/industrial'
+    | '/_app/producao/kanban'
     | '/_app/producao/op'
     | '/_app/producao/pedidos'
     | '/_app/producao/qualidade'
@@ -1472,6 +1532,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProducaoOpRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/producao/kanban': {
+      id: '/_app/producao/kanban'
+      path: '/producao/kanban'
+      fullPath: '/producao/kanban'
+      preLoaderRoute: typeof AppProducaoKanbanRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/producao/industrial': {
       id: '/_app/producao/industrial'
       path: '/producao/industrial'
@@ -1484,6 +1551,13 @@ declare module '@tanstack/react-router' {
       path: '/producao/expedicao'
       fullPath: '/producao/expedicao'
       preLoaderRoute: typeof AppProducaoExpedicaoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/producao/chao-fabrica': {
+      id: '/_app/producao/chao-fabrica'
+      path: '/producao/chao-fabrica'
+      fullPath: '/producao/chao-fabrica'
+      preLoaderRoute: typeof AppProducaoChaoFabricaRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/pcp/vinculos-artigo': {
@@ -1514,6 +1588,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPcpReservasRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/pcp/programacao': {
+      id: '/_app/pcp/programacao'
+      path: '/pcp/programacao'
+      fullPath: '/pcp/programacao'
+      preLoaderRoute: typeof AppPcpProgramacaoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/pcp/operacoes': {
       id: '/_app/pcp/operacoes'
       path: '/pcp/operacoes'
@@ -1540,6 +1621,20 @@ declare module '@tanstack/react-router' {
       path: '/pcp/mrp'
       fullPath: '/pcp/mrp'
       preLoaderRoute: typeof AppPcpMrpRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/mps': {
+      id: '/_app/pcp/mps'
+      path: '/pcp/mps'
+      fullPath: '/pcp/mps'
+      preLoaderRoute: typeof AppPcpMpsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/motivos-parada': {
+      id: '/_app/pcp/motivos-parada'
+      path: '/pcp/motivos-parada'
+      fullPath: '/pcp/motivos-parada'
+      preLoaderRoute: typeof AppPcpMotivosParadaRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/pcp/maquina-turnos': {
@@ -2097,16 +2192,21 @@ interface AppRouteChildren {
   AppPcpCapacidadeRoute: typeof AppPcpCapacidadeRoute
   AppPcpCustosRoute: typeof AppPcpCustosRoute
   AppPcpMaquinaTurnosRoute: typeof AppPcpMaquinaTurnosRoute
+  AppPcpMotivosParadaRoute: typeof AppPcpMotivosParadaRoute
+  AppPcpMpsRoute: typeof AppPcpMpsRoute
   AppPcpMrpRoute: typeof AppPcpMrpRoute
   AppPcpMrpOpRoute: typeof AppPcpMrpOpRoute
   AppPcpOeeRoute: typeof AppPcpOeeRoute
   AppPcpOperacoesRoute: typeof AppPcpOperacoesRoute
+  AppPcpProgramacaoRoute: typeof AppPcpProgramacaoRoute
   AppPcpReservasRoute: typeof AppPcpReservasRoute
   AppPcpRoteirosRoute: typeof AppPcpRoteirosRouteWithChildren
   AppPcpTurnosRoute: typeof AppPcpTurnosRoute
   AppPcpVinculosArtigoRoute: typeof AppPcpVinculosArtigoRoute
+  AppProducaoChaoFabricaRoute: typeof AppProducaoChaoFabricaRoute
   AppProducaoExpedicaoRoute: typeof AppProducaoExpedicaoRouteWithChildren
   AppProducaoIndustrialRoute: typeof AppProducaoIndustrialRoute
+  AppProducaoKanbanRoute: typeof AppProducaoKanbanRoute
   AppProducaoOpRoute: typeof AppProducaoOpRouteWithChildren
   AppProducaoPedidosRoute: typeof AppProducaoPedidosRouteWithChildren
   AppProducaoQualidadeRoute: typeof AppProducaoQualidadeRouteWithChildren
@@ -2181,16 +2281,21 @@ const AppRouteChildren: AppRouteChildren = {
   AppPcpCapacidadeRoute: AppPcpCapacidadeRoute,
   AppPcpCustosRoute: AppPcpCustosRoute,
   AppPcpMaquinaTurnosRoute: AppPcpMaquinaTurnosRoute,
+  AppPcpMotivosParadaRoute: AppPcpMotivosParadaRoute,
+  AppPcpMpsRoute: AppPcpMpsRoute,
   AppPcpMrpRoute: AppPcpMrpRoute,
   AppPcpMrpOpRoute: AppPcpMrpOpRoute,
   AppPcpOeeRoute: AppPcpOeeRoute,
   AppPcpOperacoesRoute: AppPcpOperacoesRoute,
+  AppPcpProgramacaoRoute: AppPcpProgramacaoRoute,
   AppPcpReservasRoute: AppPcpReservasRoute,
   AppPcpRoteirosRoute: AppPcpRoteirosRouteWithChildren,
   AppPcpTurnosRoute: AppPcpTurnosRoute,
   AppPcpVinculosArtigoRoute: AppPcpVinculosArtigoRoute,
+  AppProducaoChaoFabricaRoute: AppProducaoChaoFabricaRoute,
   AppProducaoExpedicaoRoute: AppProducaoExpedicaoRouteWithChildren,
   AppProducaoIndustrialRoute: AppProducaoIndustrialRoute,
+  AppProducaoKanbanRoute: AppProducaoKanbanRoute,
   AppProducaoOpRoute: AppProducaoOpRouteWithChildren,
   AppProducaoPedidosRoute: AppProducaoPedidosRouteWithChildren,
   AppProducaoQualidadeRoute: AppProducaoQualidadeRouteWithChildren,
@@ -2212,13 +2317,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

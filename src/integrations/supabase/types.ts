@@ -2765,6 +2765,39 @@ export type Database = {
         }
         Relationships: []
       }
+      motivos_parada: {
+        Row: {
+          ativo: boolean
+          categoria: string
+          codigo: string
+          created_at: string
+          descricao: string
+          id: string
+          planejada: boolean
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          categoria: string
+          codigo: string
+          created_at?: string
+          descricao: string
+          id?: string
+          planejada?: boolean
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          categoria?: string
+          codigo?: string
+          created_at?: string
+          descricao?: string
+          id?: string
+          planejada?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       movimentos_financeiros: {
         Row: {
           centro_custo_id: string | null
@@ -2875,6 +2908,101 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vw_custos_op"
             referencedColumns: ["op_id"]
+          },
+        ]
+      }
+      mps_periodos: {
+        Row: {
+          created_at: string
+          id: string
+          observacao: string | null
+          periodo: string
+          status: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          observacao?: string | null
+          periodo: string
+          status?: string
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          observacao?: string | null
+          periodo?: string
+          status?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mps_previsoes: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          observacao: string | null
+          origem: string
+          periodo_id: string
+          quantidade_firme: number
+          quantidade_prevista: number
+          updated_at: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          observacao?: string | null
+          origem?: string
+          periodo_id: string
+          quantidade_firme?: number
+          quantidade_prevista?: number
+          updated_at?: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          observacao?: string | null
+          origem?: string
+          periodo_id?: string
+          quantidade_firme?: number
+          quantidade_prevista?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mps_previsoes_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mps_previsoes_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "mps_previsoes_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
+          },
+          {
+            foreignKeyName: "mps_previsoes_periodo_id_fkey"
+            columns: ["periodo_id"]
+            isOneToOne: false
+            referencedRelation: "mps_periodos"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -5370,6 +5498,105 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      programacao_slots: {
+        Row: {
+          created_at: string
+          fim_previsto: string
+          id: string
+          inicio_previsto: string
+          maquina_id: string
+          observacao: string | null
+          op_id: string
+          op_item_id: string | null
+          sequencia: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          fim_previsto: string
+          id?: string
+          inicio_previsto: string
+          maquina_id: string
+          observacao?: string | null
+          op_id: string
+          op_item_id?: string | null
+          sequencia?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          fim_previsto?: string
+          id?: string
+          inicio_previsto?: string
+          maquina_id?: string
+          observacao?: string | null
+          op_id?: string
+          op_item_id?: string | null
+          sequencia?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "programacao_slots_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "programacao_slots_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "programacao_slots_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "programacao_slots_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "programacao_slots_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "programacao_slots_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "programacao_slots_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custos_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "programacao_slots_op_item_id_fkey"
+            columns: ["op_item_id"]
+            isOneToOne: false
+            referencedRelation: "op_itens"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       recebimento_itens: {
         Row: {
