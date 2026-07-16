@@ -50,7 +50,7 @@ function ProgramacaoPage() {
   const { data: ops = [] } = useQuery({
     queryKey: ["ops-programaveis"],
     queryFn: async (): Promise<OP[]> => {
-      const { data, error } = await supabase.from("ordens_producao").select("id, numero, status, prioridade, maquina_id, data_prevista").in("status", ["planejada", "em_execucao"]).order("prioridade");
+      const { data, error } = await supabase.from("ordens_producao").select("id, numero, status, prioridade, maquina_id, data_prevista").in("status", ["planejada", "programada", "em_producao"]).order("prioridade");
       if (error) throw error;
       return (data ?? []) as OP[];
     },
