@@ -55,6 +55,7 @@ import { Route as AppPcpOperacoesRouteImport } from './routes/_app.pcp.operacoes
 import { Route as AppPcpOeeRouteImport } from './routes/_app.pcp.oee'
 import { Route as AppPcpMrpOpRouteImport } from './routes/_app.pcp.mrp-op'
 import { Route as AppPcpMrpRouteImport } from './routes/_app.pcp.mrp'
+import { Route as AppPcpMotivosParadaRouteImport } from './routes/_app.pcp.motivos-parada'
 import { Route as AppPcpMaquinaTurnosRouteImport } from './routes/_app.pcp.maquina-turnos'
 import { Route as AppPcpCustosRouteImport } from './routes/_app.pcp.custos'
 import { Route as AppPcpCapacidadeRouteImport } from './routes/_app.pcp.capacidade'
@@ -335,6 +336,11 @@ const AppPcpMrpOpRoute = AppPcpMrpOpRouteImport.update({
 const AppPcpMrpRoute = AppPcpMrpRouteImport.update({
   id: '/pcp/mrp',
   path: '/pcp/mrp',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpMotivosParadaRoute = AppPcpMotivosParadaRouteImport.update({
+  id: '/pcp/motivos-parada',
+  path: '/pcp/motivos-parada',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPcpMaquinaTurnosRoute = AppPcpMaquinaTurnosRouteImport.update({
@@ -680,6 +686,7 @@ export interface FileRoutesByFullPath {
   '/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/pcp/custos': typeof AppPcpCustosRoute
   '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/pcp/motivos-parada': typeof AppPcpMotivosParadaRoute
   '/pcp/mrp': typeof AppPcpMrpRoute
   '/pcp/mrp-op': typeof AppPcpMrpOpRoute
   '/pcp/oee': typeof AppPcpOeeRoute
@@ -779,6 +786,7 @@ export interface FileRoutesByTo {
   '/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/pcp/custos': typeof AppPcpCustosRoute
   '/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/pcp/motivos-parada': typeof AppPcpMotivosParadaRoute
   '/pcp/mrp': typeof AppPcpMrpRoute
   '/pcp/mrp-op': typeof AppPcpMrpOpRoute
   '/pcp/oee': typeof AppPcpOeeRoute
@@ -880,6 +888,7 @@ export interface FileRoutesById {
   '/_app/pcp/capacidade': typeof AppPcpCapacidadeRoute
   '/_app/pcp/custos': typeof AppPcpCustosRoute
   '/_app/pcp/maquina-turnos': typeof AppPcpMaquinaTurnosRoute
+  '/_app/pcp/motivos-parada': typeof AppPcpMotivosParadaRoute
   '/_app/pcp/mrp': typeof AppPcpMrpRoute
   '/_app/pcp/mrp-op': typeof AppPcpMrpOpRoute
   '/_app/pcp/oee': typeof AppPcpOeeRoute
@@ -981,6 +990,7 @@ export interface FileRouteTypes {
     | '/pcp/capacidade'
     | '/pcp/custos'
     | '/pcp/maquina-turnos'
+    | '/pcp/motivos-parada'
     | '/pcp/mrp'
     | '/pcp/mrp-op'
     | '/pcp/oee'
@@ -1080,6 +1090,7 @@ export interface FileRouteTypes {
     | '/pcp/capacidade'
     | '/pcp/custos'
     | '/pcp/maquina-turnos'
+    | '/pcp/motivos-parada'
     | '/pcp/mrp'
     | '/pcp/mrp-op'
     | '/pcp/oee'
@@ -1180,6 +1191,7 @@ export interface FileRouteTypes {
     | '/_app/pcp/capacidade'
     | '/_app/pcp/custos'
     | '/_app/pcp/maquina-turnos'
+    | '/_app/pcp/motivos-parada'
     | '/_app/pcp/mrp'
     | '/_app/pcp/mrp-op'
     | '/_app/pcp/oee'
@@ -1540,6 +1552,13 @@ declare module '@tanstack/react-router' {
       path: '/pcp/mrp'
       fullPath: '/pcp/mrp'
       preLoaderRoute: typeof AppPcpMrpRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/motivos-parada': {
+      id: '/_app/pcp/motivos-parada'
+      path: '/pcp/motivos-parada'
+      fullPath: '/pcp/motivos-parada'
+      preLoaderRoute: typeof AppPcpMotivosParadaRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/pcp/maquina-turnos': {
@@ -2097,6 +2116,7 @@ interface AppRouteChildren {
   AppPcpCapacidadeRoute: typeof AppPcpCapacidadeRoute
   AppPcpCustosRoute: typeof AppPcpCustosRoute
   AppPcpMaquinaTurnosRoute: typeof AppPcpMaquinaTurnosRoute
+  AppPcpMotivosParadaRoute: typeof AppPcpMotivosParadaRoute
   AppPcpMrpRoute: typeof AppPcpMrpRoute
   AppPcpMrpOpRoute: typeof AppPcpMrpOpRoute
   AppPcpOeeRoute: typeof AppPcpOeeRoute
@@ -2181,6 +2201,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPcpCapacidadeRoute: AppPcpCapacidadeRoute,
   AppPcpCustosRoute: AppPcpCustosRoute,
   AppPcpMaquinaTurnosRoute: AppPcpMaquinaTurnosRoute,
+  AppPcpMotivosParadaRoute: AppPcpMotivosParadaRoute,
   AppPcpMrpRoute: AppPcpMrpRoute,
   AppPcpMrpOpRoute: AppPcpMrpOpRoute,
   AppPcpOeeRoute: AppPcpOeeRoute,
