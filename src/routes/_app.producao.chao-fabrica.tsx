@@ -42,7 +42,7 @@ function ChaoFabricaPage() {
   const { data: funcs = [] } = useQuery({
     queryKey: ["cf-funcs"],
     queryFn: async (): Promise<Func[]> => {
-      const { data, error } = await supabase.from("funcionarios").select("id, nome").eq("ativo", true).order("nome");
+      const { data, error } = await supabase.from("funcionarios").select("id, nome").eq("habilitado", true).order("nome");
       if (error) throw error;
       return (data ?? []) as Func[];
     },
