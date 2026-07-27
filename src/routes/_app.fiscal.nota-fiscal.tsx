@@ -24,7 +24,7 @@ function NotasFiscaisPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("notas_fiscais")
-        .select("*, customer:cliente_id!notas_fiscais_cliente_id_fkey(razao_social)")
+        .select("*, customers!notas_fiscais_cliente_id_fkey(razao_social)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
@@ -82,7 +82,7 @@ function NotasFiscaisPage() {
                       </div>
                     </TableCell>
                     <TableCell>{new Date(nota.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell>{nota.customer?.razao_social || "Consumidor"}</TableCell>
+                    <TableCell>{(nota.customers as any)?.razao_social || "Consumidor"}</TableCell>
                     <TableCell>R$ {Number(nota.valor_total || 0).toFixed(2)}</TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(nota.status_sefaz || "")} variant="outline">
