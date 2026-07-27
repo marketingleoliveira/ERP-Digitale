@@ -2529,6 +2529,45 @@ export type Database = {
         }
         Relationships: []
       }
+      inspecoes_qualidade: {
+        Row: {
+          created_at: string | null
+          id: string
+          inspetor_id: string | null
+          lote_id: string
+          status: Database["public"]["Enums"]["qualidade_status"] | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          inspetor_id?: string | null
+          lote_id: string
+          status?: Database["public"]["Enums"]["qualidade_status"] | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          inspetor_id?: string | null
+          lote_id?: string
+          status?: Database["public"]["Enums"]["qualidade_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inspecoes_qualidade_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inspecoes_qualidade_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_lotes_saldos"
+            referencedColumns: ["lote_id"]
+          },
+        ]
+      }
       lote_genealogia: {
         Row: {
           created_at: string | null
@@ -2617,11 +2656,15 @@ export type Database = {
           habilitado: boolean
           id: string
           item_id: string
+          liberado_comercial: boolean | null
           numero_lote: string
           observacao: string | null
           op_id: string | null
           quantidade: number
           quantidade_disponivel: number
+          saldo_aprovado: number | null
+          saldo_bloqueado: number | null
+          saldo_qualidade: number | null
           status_processo: string | null
           tinturaria_id: string | null
           tipo: string
@@ -2637,11 +2680,15 @@ export type Database = {
           habilitado?: boolean
           id?: string
           item_id: string
+          liberado_comercial?: boolean | null
           numero_lote: string
           observacao?: string | null
           op_id?: string | null
           quantidade?: number
           quantidade_disponivel?: number
+          saldo_aprovado?: number | null
+          saldo_bloqueado?: number | null
+          saldo_qualidade?: number | null
           status_processo?: string | null
           tinturaria_id?: string | null
           tipo: string
@@ -2657,11 +2704,15 @@ export type Database = {
           habilitado?: boolean
           id?: string
           item_id?: string
+          liberado_comercial?: boolean | null
           numero_lote?: string
           observacao?: string | null
           op_id?: string | null
           quantidade?: number
           quantidade_disponivel?: number
+          saldo_aprovado?: number | null
+          saldo_bloqueado?: number | null
+          saldo_qualidade?: number | null
           status_processo?: string | null
           tinturaria_id?: string | null
           tipo?: string
@@ -5871,6 +5922,96 @@ export type Database = {
         }
         Relationships: []
       }
+      qualidade_plano_caracteristicas: {
+        Row: {
+          id: string
+          limite_max: number | null
+          limite_min: number | null
+          nome: string
+          plano_id: string | null
+          valor_nominal: number | null
+        }
+        Insert: {
+          id?: string
+          limite_max?: number | null
+          limite_min?: number | null
+          nome: string
+          plano_id?: string | null
+          valor_nominal?: number | null
+        }
+        Update: {
+          id?: string
+          limite_max?: number | null
+          limite_min?: number | null
+          nome?: string
+          plano_id?: string | null
+          valor_nominal?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qualidade_plano_caracteristicas_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "qualidade_planos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qualidade_planos: {
+        Row: {
+          artigo_id: string | null
+          created_at: string | null
+          criado_por: string | null
+          id: string
+          nome: string
+          status: string | null
+          versao: number
+          vigencia_inicio: string | null
+        }
+        Insert: {
+          artigo_id?: string | null
+          created_at?: string | null
+          criado_por?: string | null
+          id?: string
+          nome: string
+          status?: string | null
+          versao?: number
+          vigencia_inicio?: string | null
+        }
+        Update: {
+          artigo_id?: string | null
+          created_at?: string | null
+          criado_por?: string | null
+          id?: string
+          nome?: string
+          status?: string | null
+          versao?: number
+          vigencia_inicio?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qualidade_planos_artigo_id_fkey"
+            columns: ["artigo_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qualidade_planos_artigo_id_fkey"
+            columns: ["artigo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "qualidade_planos_artigo_id_fkey"
+            columns: ["artigo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
+          },
+        ]
+      }
       recebimento_itens: {
         Row: {
           created_at: string
@@ -8370,6 +8511,15 @@ export type Database = {
         | "logistica"
         | "qualidade"
         | "desenvolvedor"
+      lote_classificacao:
+        | "PRIMEIRA_QUALIDADE"
+        | "SEGUNDA_QUALIDADE"
+        | "SALDO"
+        | "AMOSTRA"
+        | "REPROCESSO"
+        | "REFUGO"
+        | "BLOQUEADO"
+        | "PRODUTO_ACABADO"
       mrp_suggestion_status:
         | "SUGERIDA"
         | "EM_ANALISE"
@@ -8405,6 +8555,17 @@ export type Database = {
         | "RETORNO-PARCIAL"
         | "RETORNADA"
         | "CONCLUÍDA"
+        | "CANCELADA"
+      qualidade_status:
+        | "PENDENTE"
+        | "EM_CONFERENCIA"
+        | "AGUARDANDO_ENSAIO"
+        | "AGUARDANDO_APROVACAO"
+        | "APROVADA"
+        | "APROVADA_COM_RESSALVA"
+        | "REPROVADA"
+        | "PARCIALMENTE_APROVADA"
+        | "REPROCESSO"
         | "CANCELADA"
     }
     CompositeTypes: {
@@ -8543,6 +8704,16 @@ export const Constants = {
         "qualidade",
         "desenvolvedor",
       ],
+      lote_classificacao: [
+        "PRIMEIRA_QUALIDADE",
+        "SEGUNDA_QUALIDADE",
+        "SALDO",
+        "AMOSTRA",
+        "REPROCESSO",
+        "REFUGO",
+        "BLOQUEADO",
+        "PRODUTO_ACABADO",
+      ],
       mrp_suggestion_status: [
         "SUGERIDA",
         "EM_ANALISE",
@@ -8580,6 +8751,18 @@ export const Constants = {
         "RETORNO-PARCIAL",
         "RETORNADA",
         "CONCLUÍDA",
+        "CANCELADA",
+      ],
+      qualidade_status: [
+        "PENDENTE",
+        "EM_CONFERENCIA",
+        "AGUARDANDO_ENSAIO",
+        "AGUARDANDO_APROVACAO",
+        "APROVADA",
+        "APROVADA_COM_RESSALVA",
+        "REPROVADA",
+        "PARCIALMENTE_APROVADA",
+        "REPROCESSO",
         "CANCELADA",
       ],
     },
