@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 // Tipagem básica
 export interface SimulacaoReserva {
@@ -18,40 +19,44 @@ export interface SimulacaoReserva {
 }
 
 export const simulateOrderReservation = createServerFn({ method: "GET" })
-  .input(z.object({ pedidoId: z.string() }))
-  .handler(async ({ input }) => {
-    const { data, error } = await supabase.rpc("simulate_sales_order_reservation", {
-      p_pedido_id: input.pedidoId
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ pedidoId: z.string() }).parse(data))
+  .handler(async ({ data }) => {
+    const { data: result, error } = await supabase.rpc("simulate_sales_order_reservation", {
+      p_pedido_id: data.pedidoId
     });
 
     if (error) throw new Error(error.message);
-    return data as SimulacaoReserva[];
+    return result as SimulacaoReserva[];
   });
 
 export const reserveOrderStock = createServerFn({ method: "POST" })
-  .input(z.object({ pedidoId: z.string(), idempotencyKey: z.string() }))
-  .handler(async ({ input }) => {
-    const { data, error } = await supabase.rpc("reserve_stock_for_sales_order", {
-      p_pedido_id: input.pedidoId,
-      p_idempotency_key: input.idempotencyKey
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ pedidoId: z.string(), idempotencyKey: z.string() }).parse(data))
+  .handler(async ({ data }) => {
+    const { data: result, error } = await supabase.rpc("reserve_stock_for_sales_order", {
+      p_pedido_id: data.pedidoId,
+      p_idempotency_key: data.idempotencyKey
     });
 
     if (error) throw new Error(error.message);
-    return data;
+    return result;
   });
 
 export const shipOrder = createServerFn({ method: "POST" })
-  .input(z.object({ pedidoId: z.string() }))
-  .handler(async ({ input }) => {
-    const { data, error } = await supabase.rpc("ship_sales_order", {
-      p_pedido_id: input.pedidoId
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ pedidoId: z.string() }).parse(data))
+  .handler(async ({ data }) => {
+    const { data: result, error } = await supabase.rpc("ship_sales_order", {
+      p_pedido_id: data.pedidoId
     });
 
     if (error) throw new Error(error.message);
-    return data;
+    return result;
   });
 
 export const getEstoqueComercial = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .handler(async () => {
     const { data, error } = await supabase
       .from("vw_estoque_comercial")
@@ -62,7 +67,9 @@ export const getEstoqueComercial = createServerFn({ method: "GET" })
   });
 
 export const getRNCs = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .handler(async () => {
+    // Note: This requires the profiles table and profiles relation to work
     const { data, error } = await supabase
       .from("nao_conformidades")
       .select("*, responsavel:profiles(full_name), lote:lotes(numero_lote)");
