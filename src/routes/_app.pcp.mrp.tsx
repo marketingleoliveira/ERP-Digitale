@@ -15,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Plus, Play, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
+import { AcronymTooltip } from "@/components/ui/acronym-tooltip";
 
 
 export const Route = createFileRoute("/_app/pcp/mrp")({
@@ -98,9 +99,9 @@ function Page() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">MRP — Necessidades de Materiais</h1>
+        <h1 className="text-2xl font-bold"><AcronymTooltip>MRP</AcronymTooltip> — Necessidades de Materiais</h1>
         <p className="text-sm text-muted-foreground">
-          Explosão da BOM · Necessidade Bruta → Estoque → Trânsito → Necessidade Líquida · Sugestão de compra.
+          Explosão da <AcronymTooltip>BOM</AcronymTooltip> · Necessidade Bruta → Estoque → Trânsito → Necessidade Líquida · Sugestão de compra.
         </p>
       </div>
 
@@ -114,7 +115,7 @@ function Page() {
                 onChange={e => setSeguranca(Number(e.target.value))} className="w-32" />
             </div>
             <Button onClick={() => mrp.mutate(true)} disabled={mrp.isPending}>
-              <Play className="h-4 w-4 mr-1.5" /> Rodar automático (OPs abertas)
+              <Play className="h-4 w-4 mr-1.5" /> Rodar automático (<AcronymTooltip>OP</AcronymTooltip>s abertas)
             </Button>
             <Button variant="outline" onClick={() => mrp.mutate(false)} disabled={mrp.isPending || demandas.length === 0}>
               Rodar com demandas abaixo
@@ -164,7 +165,7 @@ function Page() {
 
           <Card>
             <CardHeader className="flex-row items-center justify-between">
-              <CardTitle>Explosão MRP</CardTitle>
+              <CardTitle>Explosão <AcronymTooltip>MRP</AcronymTooltip></CardTitle>
               <div className="flex items-center gap-3">
                 <label className="flex items-center gap-1.5 text-sm">
                   <Checkbox checked={agrupar} onCheckedChange={v => setAgrupar(!!v)} /> Agrupar por fornecedor
@@ -201,7 +202,7 @@ function Page() {
                 </TableRow></TableHeader>
                 <TableBody>
                   {linhas.length === 0
-                    ? <TableRow><TableCell colSpan={11} className="text-center text-muted-foreground">Sem necessidades — verifique se há BOM cadastrada para os artigos.</TableCell></TableRow>
+                    ? <TableRow><TableCell colSpan={11} className="text-center text-muted-foreground">Sem necessidades — verifique se há <AcronymTooltip>BOM</AcronymTooltip> cadastrada para os artigos.</TableCell></TableRow>
                     : linhas.map((l, i) => (
                       <TableRow key={i}>
                         <TableCell>
