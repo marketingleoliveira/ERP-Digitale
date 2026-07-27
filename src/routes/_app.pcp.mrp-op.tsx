@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Checkbox } from "@/components/ui/checkbox";
 import { AlertCircle, Play, CheckCircle2, Factory } from "lucide-react";
 import { toast } from "sonner";
+import { AcronymTooltip } from "@/components/ui/acronym-tooltip";
 
 export const Route = createFileRoute("/_app/pcp/mrp-op")({
   ssr: false,
@@ -89,9 +90,9 @@ function Page() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">MRP → Sugestão de Ordens de Produção</h1>
+        <h1 className="text-2xl font-bold"><AcronymTooltip>MRP</AcronymTooltip> → Sugestão de Ordens de Produção</h1>
         <p className="text-sm text-muted-foreground">
-          Consolida pedidos confirmados por artigo, valida BOM/roteiro/capacidade e sugere OPs. Aprovação manual gera a OP e reserva materiais.
+          Consolida pedidos confirmados por artigo, valida <AcronymTooltip>BOM</AcronymTooltip>/roteiro/capacidade e sugere <AcronymTooltip>OP</AcronymTooltip>s. Aprovação manual gera a <AcronymTooltip>OP</AcronymTooltip> e reserva materiais.
         </p>
       </div>
 
@@ -173,7 +174,7 @@ function Page() {
       <Dialog open={!!aberta} onOpenChange={o => !o && setAberta(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Revisar e gerar OP — {aberta?.article_codigo}</DialogTitle>
+            <DialogTitle>Revisar e gerar <AcronymTooltip>OP</AcronymTooltip> — {aberta?.article_codigo}</DialogTitle>
           </DialogHeader>
           {aberta && (
             <div className="space-y-4">
@@ -235,7 +236,7 @@ function Page() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setAberta(null)}>Cancelar</Button>
             <Button onClick={() => criar.mutate()} disabled={criar.isPending || qtd <= 0}>
-              Aprovar e gerar OP
+              Aprovar e gerar <AcronymTooltip>OP</AcronymTooltip>
             </Button>
           </DialogFooter>
         </DialogContent>
