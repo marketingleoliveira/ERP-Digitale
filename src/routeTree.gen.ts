@@ -43,10 +43,12 @@ import { Route as AppLogisticaIndexRouteImport } from './routes/_app.logistica.i
 import { Route as AppFinanceiroIndexRouteImport } from './routes/_app.financeiro.index'
 import { Route as AppComprasIndexRouteImport } from './routes/_app.compras.index'
 import { Route as AppProducaoQualidadeRouteImport } from './routes/_app.producao.qualidade'
+import { Route as AppProducaoPlanoRouteImport } from './routes/_app.producao.plano'
 import { Route as AppProducaoPedidosRouteImport } from './routes/_app.producao.pedidos'
 import { Route as AppProducaoOpRouteImport } from './routes/_app.producao.op'
 import { Route as AppProducaoIndustrialRouteImport } from './routes/_app.producao.industrial'
 import { Route as AppProducaoExpedicaoRouteImport } from './routes/_app.producao.expedicao'
+import { Route as AppProducaoBomRouteImport } from './routes/_app.producao.bom'
 import { Route as AppPcpVinculosArtigoRouteImport } from './routes/_app.pcp.vinculos-artigo'
 import { Route as AppPcpTurnosRouteImport } from './routes/_app.pcp.turnos'
 import { Route as AppPcpRoteirosRouteImport } from './routes/_app.pcp.roteiros'
@@ -277,6 +279,11 @@ const AppProducaoQualidadeRoute = AppProducaoQualidadeRouteImport.update({
   path: '/producao/qualidade',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProducaoPlanoRoute = AppProducaoPlanoRouteImport.update({
+  id: '/producao/plano',
+  path: '/producao/plano',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProducaoPedidosRoute = AppProducaoPedidosRouteImport.update({
   id: '/producao/pedidos',
   path: '/producao/pedidos',
@@ -295,6 +302,11 @@ const AppProducaoIndustrialRoute = AppProducaoIndustrialRouteImport.update({
 const AppProducaoExpedicaoRoute = AppProducaoExpedicaoRouteImport.update({
   id: '/producao/expedicao',
   path: '/producao/expedicao',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProducaoBomRoute = AppProducaoBomRouteImport.update({
+  id: '/producao/bom',
+  path: '/producao/bom',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPcpVinculosArtigoRoute = AppPcpVinculosArtigoRouteImport.update({
@@ -688,10 +700,12 @@ export interface FileRoutesByFullPath {
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
   '/pcp/vinculos-artigo': typeof AppPcpVinculosArtigoRoute
+  '/producao/bom': typeof AppProducaoBomRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRouteWithChildren
   '/producao/industrial': typeof AppProducaoIndustrialRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
   '/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
+  '/producao/plano': typeof AppProducaoPlanoRoute
   '/producao/qualidade': typeof AppProducaoQualidadeRouteWithChildren
   '/compras/': typeof AppComprasIndexRoute
   '/financeiro/': typeof AppFinanceiroIndexRoute
@@ -787,10 +801,12 @@ export interface FileRoutesByTo {
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
   '/pcp/vinculos-artigo': typeof AppPcpVinculosArtigoRoute
+  '/producao/bom': typeof AppProducaoBomRoute
   '/producao/expedicao': typeof AppProducaoExpedicaoRouteWithChildren
   '/producao/industrial': typeof AppProducaoIndustrialRoute
   '/producao/op': typeof AppProducaoOpRouteWithChildren
   '/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
+  '/producao/plano': typeof AppProducaoPlanoRoute
   '/producao/qualidade': typeof AppProducaoQualidadeRouteWithChildren
   '/compras': typeof AppComprasIndexRoute
   '/financeiro': typeof AppFinanceiroIndexRoute
@@ -888,10 +904,12 @@ export interface FileRoutesById {
   '/_app/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/_app/pcp/turnos': typeof AppPcpTurnosRoute
   '/_app/pcp/vinculos-artigo': typeof AppPcpVinculosArtigoRoute
+  '/_app/producao/bom': typeof AppProducaoBomRoute
   '/_app/producao/expedicao': typeof AppProducaoExpedicaoRouteWithChildren
   '/_app/producao/industrial': typeof AppProducaoIndustrialRoute
   '/_app/producao/op': typeof AppProducaoOpRouteWithChildren
   '/_app/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
+  '/_app/producao/plano': typeof AppProducaoPlanoRoute
   '/_app/producao/qualidade': typeof AppProducaoQualidadeRouteWithChildren
   '/_app/compras/': typeof AppComprasIndexRoute
   '/_app/financeiro/': typeof AppFinanceiroIndexRoute
@@ -989,10 +1007,12 @@ export interface FileRouteTypes {
     | '/pcp/roteiros'
     | '/pcp/turnos'
     | '/pcp/vinculos-artigo'
+    | '/producao/bom'
     | '/producao/expedicao'
     | '/producao/industrial'
     | '/producao/op'
     | '/producao/pedidos'
+    | '/producao/plano'
     | '/producao/qualidade'
     | '/compras/'
     | '/financeiro/'
@@ -1088,10 +1108,12 @@ export interface FileRouteTypes {
     | '/pcp/roteiros'
     | '/pcp/turnos'
     | '/pcp/vinculos-artigo'
+    | '/producao/bom'
     | '/producao/expedicao'
     | '/producao/industrial'
     | '/producao/op'
     | '/producao/pedidos'
+    | '/producao/plano'
     | '/producao/qualidade'
     | '/compras'
     | '/financeiro'
@@ -1188,10 +1210,12 @@ export interface FileRouteTypes {
     | '/_app/pcp/roteiros'
     | '/_app/pcp/turnos'
     | '/_app/pcp/vinculos-artigo'
+    | '/_app/producao/bom'
     | '/_app/producao/expedicao'
     | '/_app/producao/industrial'
     | '/_app/producao/op'
     | '/_app/producao/pedidos'
+    | '/_app/producao/plano'
     | '/_app/producao/qualidade'
     | '/_app/compras/'
     | '/_app/financeiro/'
@@ -1458,6 +1482,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProducaoQualidadeRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/producao/plano': {
+      id: '/_app/producao/plano'
+      path: '/producao/plano'
+      fullPath: '/producao/plano'
+      preLoaderRoute: typeof AppProducaoPlanoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/producao/pedidos': {
       id: '/_app/producao/pedidos'
       path: '/producao/pedidos'
@@ -1484,6 +1515,13 @@ declare module '@tanstack/react-router' {
       path: '/producao/expedicao'
       fullPath: '/producao/expedicao'
       preLoaderRoute: typeof AppProducaoExpedicaoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/producao/bom': {
+      id: '/_app/producao/bom'
+      path: '/producao/bom'
+      fullPath: '/producao/bom'
+      preLoaderRoute: typeof AppProducaoBomRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/pcp/vinculos-artigo': {
@@ -2105,10 +2143,12 @@ interface AppRouteChildren {
   AppPcpRoteirosRoute: typeof AppPcpRoteirosRouteWithChildren
   AppPcpTurnosRoute: typeof AppPcpTurnosRoute
   AppPcpVinculosArtigoRoute: typeof AppPcpVinculosArtigoRoute
+  AppProducaoBomRoute: typeof AppProducaoBomRoute
   AppProducaoExpedicaoRoute: typeof AppProducaoExpedicaoRouteWithChildren
   AppProducaoIndustrialRoute: typeof AppProducaoIndustrialRoute
   AppProducaoOpRoute: typeof AppProducaoOpRouteWithChildren
   AppProducaoPedidosRoute: typeof AppProducaoPedidosRouteWithChildren
+  AppProducaoPlanoRoute: typeof AppProducaoPlanoRoute
   AppProducaoQualidadeRoute: typeof AppProducaoQualidadeRouteWithChildren
   AppComprasIndexRoute: typeof AppComprasIndexRoute
   AppFinanceiroIndexRoute: typeof AppFinanceiroIndexRoute
@@ -2189,10 +2229,12 @@ const AppRouteChildren: AppRouteChildren = {
   AppPcpRoteirosRoute: AppPcpRoteirosRouteWithChildren,
   AppPcpTurnosRoute: AppPcpTurnosRoute,
   AppPcpVinculosArtigoRoute: AppPcpVinculosArtigoRoute,
+  AppProducaoBomRoute: AppProducaoBomRoute,
   AppProducaoExpedicaoRoute: AppProducaoExpedicaoRouteWithChildren,
   AppProducaoIndustrialRoute: AppProducaoIndustrialRoute,
   AppProducaoOpRoute: AppProducaoOpRouteWithChildren,
   AppProducaoPedidosRoute: AppProducaoPedidosRouteWithChildren,
+  AppProducaoPlanoRoute: AppProducaoPlanoRoute,
   AppProducaoQualidadeRoute: AppProducaoQualidadeRouteWithChildren,
   AppComprasIndexRoute: AppComprasIndexRoute,
   AppFinanceiroIndexRoute: AppFinanceiroIndexRoute,
