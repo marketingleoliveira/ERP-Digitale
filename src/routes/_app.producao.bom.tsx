@@ -230,12 +230,15 @@ function BomPage() {
         </div>
 
 
-        {loadingExplosion ? (
+        {(loadingExplosion || loadingCosts) ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-muted-foreground">Processando motor de explosão...</p>
+            <p className="text-muted-foreground">
+              {loadingCosts ? "Calculando motor de custos..." : "Processando motor de explosão..."}
+            </p>
           </div>
-        ) : explosionError ? (
+        ) : (explosionError || costError) ? (
+
           <Card className="border-destructive">
             <CardContent className="flex items-center gap-4 py-6">
               <AlertCircle className="h-6 w-6 text-destructive" />
