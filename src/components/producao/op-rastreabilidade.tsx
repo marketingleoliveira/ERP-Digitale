@@ -28,8 +28,9 @@ export function OpRastreabilidade({ opId }: Props) {
   type EventoRow = { id: string; created_at: string; tipo: string; para_status: string | null };
   type NotaRow = { id: string; numero: string; serie: string; status_sefaz: string | null; valor_total: number };
   type ContaRow = { id: string; valor: number; vencimento: string | null; status: string };
-  type LoteRow = { id: string; numero_lote: string | null; quantidade_disponivel: number };
+  type LoteRow = { id: string; numero_lote: string | null; quantidade: number; classificacao: string | null };
   type ExpRow = { id: string; created_at: string; transportadora?: string | null };
+  type EntradaRow = { id: string; data_entrada: string; quantidade: number; lote_id: string };
 
   const Step = ({ title, count, children }: { title: string; count: number; children?: React.ReactNode }) => (
     <>
@@ -52,9 +53,23 @@ export function OpRastreabilidade({ opId }: Props) {
       <Step title="Apontamentos" count={data.apontamentos.length} />
       <Step title="Consumos de matéria-prima" count={data.consumos.length} />
       <Step title="Qualidade" count={data.qualidade.length} />
-      <Step title="Lotes gerados" count={data.lotes.length}>
+      <Step title="Entradas de Estoque" count={data.entradas.length}>
+        {(data.entradas as EntradaRow[]).map((en) => (
+          <div key={en.id} className="flex justify-between">
+            <span>{new Date(en.data_entrada).toLocaleDateString()}</span>
+            <span className="font-mono font-bold">{en.quantidade} un</span>
+          </div>
+        ))}
+      </Step>
+      <Step title="Lotes Produzidos" count={data.lotes.length}>
         {(data.lotes as LoteRow[]).map((l) => (
-          <div key={l.id}>Lote {l.numero_lote} — disp: {l.quantidade_disponivel}</div>
+          <div key={l.id} className="space-y-0.5 border-b pb-1 mb-1 last:border-0">
+            <div className="flex justify-between items-center">
+              <span className="font-mono font-bold">Lote {l.numero_lote}</span>
+              <Badge variant="secondary" className="text-[10px]">{l.classificacao || 'S/C'}</Badge>
+            </div>
+            <div className="text-[10px] text-muted-foreground">Qtd Total: {l.quantidade} un</div>
+          </div>
         ))}
       </Step>
       <Step title="Notas Fiscais" count={data.notas.length}>
