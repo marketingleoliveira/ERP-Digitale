@@ -9036,6 +9036,10 @@ export type Database = {
         }
         Returns: string
       }
+      reserve_stock_for_sales_order: {
+        Args: { p_idempotency_key: string; p_pedido_id: string }
+        Returns: Json
+      }
       resolver_preco_cliente_artigo: {
         Args: {
           _artigo_id?: string
@@ -9071,6 +9075,10 @@ export type Database = {
         }
         Returns: Json
       }
+      ship_sales_order: {
+        Args: { p_expedicao_id?: string; p_pedido_id: string }
+        Returns: Json
+      }
       simulate_production_posting: {
         Args: { p_consumos: Json; p_op_id: string; p_quantidade_boa: number }
         Returns: Json
@@ -9082,6 +9090,18 @@ export type Database = {
           p_quantidade_entrada: number
         }
         Returns: Json
+      }
+      simulate_sales_order_reservation: {
+        Args: { p_deposito?: string; p_pedido_id: string; p_politica?: string }
+        Returns: {
+          artigo_id: string
+          cor_id: string
+          lotes_sugeridos: Json
+          pedido_item_id: string
+          quantidade_atendida: number
+          quantidade_solicitada: number
+          variante_id: string
+        }[]
       }
       user_has_menu_permission: {
         Args: { _url: string; _user_id: string }
