@@ -2878,6 +2878,51 @@ export type Database = {
           },
         ]
       }
+      mrp_suggestion_orders: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          id: string
+          purchase_order_id: string | null
+          purchase_order_item_id: string | null
+          quantity_converted: number
+          suggestion_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          purchase_order_id?: string | null
+          purchase_order_item_id?: string | null
+          quantity_converted: number
+          suggestion_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          purchase_order_id?: string | null
+          purchase_order_item_id?: string | null
+          quantity_converted?: number
+          suggestion_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mrp_suggestion_orders_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos_compra"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mrp_suggestion_orders_suggestion_id_fkey"
+            columns: ["suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "mrp_suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mrp_suggestion_origins: {
         Row: {
           created_at: string
