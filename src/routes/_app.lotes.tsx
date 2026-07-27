@@ -173,10 +173,19 @@ function LotesPage() {
                     <TableCell><span className="inline-flex rounded bg-muted px-2 py-0.5 text-xs uppercase">{l.tipo}</span></TableCell>
                     <TableCell><span className="text-primary font-medium">{item?.codigo ?? "—"}</span> {item?.nome ?? ""}</TableCell>
                     <TableCell className="font-medium">{l.numero_lote}</TableCell>
-                    <TableCell className="text-right">{Number(l.quantidade).toLocaleString("pt-BR", { minimumFractionDigits: 3 })}</TableCell>
-                    <TableCell className="text-right">{Number(l.quantidade_disponivel).toLocaleString("pt-BR", { minimumFractionDigits: 3 })}</TableCell>
-                    <TableCell>{l.data_entrada}</TableCell>
-                    <TableCell>{l.fornecedor_id ? fornecedorMap.get(l.fornecedor_id) ?? "—" : "—"}</TableCell>
+                    <TableCell className="text-right font-mono text-xs">{Number(l.quantidade).toLocaleString("pt-BR", { minimumFractionDigits: 3 })}</TableCell>
+                    <TableCell className="text-right font-mono text-xs text-blue-600">{(l as any).saldo_qualidade ? Number((l as any).saldo_qualidade).toLocaleString("pt-BR", { minimumFractionDigits: 3 }) : "—"}</TableCell>
+                    <TableCell className="text-right font-mono text-xs text-green-600">{(l as any).saldo_aprovado ? Number((l as any).saldo_aprovado).toLocaleString("pt-BR", { minimumFractionDigits: 3 }) : "—"}</TableCell>
+                    <TableCell className="text-right font-mono text-xs font-bold">{Number(l.quantidade_disponivel).toLocaleString("pt-BR", { minimumFractionDigits: 3 })}</TableCell>
+                    <TableCell className="text-xs">{l.data_entrada}</TableCell>
+                    <TableCell>
+                      <span className={cn(
+                        "inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase",
+                        (l as any).liberado_comercial ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                      )}>
+                        {(l as any).liberado_comercial ? "Liberado" : "Pendente"}
+                      </span>
+                    </TableCell>
                   </TableRow>
                 );
               })}
