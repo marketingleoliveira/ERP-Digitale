@@ -9,11 +9,11 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
   let testReservaId: string;
 
   beforeAll(async () => {
-    // Busca dados reais ou os que acabamos de inserir
+    // Busca os IDs criados na migration
     const { data: op } = await supabase.from('ordens_producao').select('id').eq('numero', 999999).single();
     const { data: lote } = await supabase.from('lotes').select('id, item_id').eq('numero_lote', 'LOTE-TESTE-555').single();
     
-    if (!op || !lote) throw new Error('Dados de teste não encontrados no banco.');
+    if (!op || !lote) throw new Error(`Dados de teste não encontrados. OP: ${!!op}, Lote: ${!!lote}`);
     
     testOpId = op.id;
     testLoteId = lote.id;
@@ -51,17 +51,21 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
     const { data: loteAntes } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId).single();
     const { data: reserva } = await supabase.from('reservas' as any).select('quantidade').eq('id', testReservaId).single();
 
+    if (!loteAntes || !reserva) throw new Error('Dados para cancelamento incompletos');
+
     await cancelReservation(testReservaId);
 
     const { data: loteDepois } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId).single();
-    if (!loteAntes || !loteDepois || !reserva) throw new Error('Dados para cancelamento inconsistentes');
-    
+    if (!loteDepois) throw new Error('Lote depois cancelamento não encontrado');
+
     expect(Number(loteDepois.quantidade_disponivel)).toBe(Number(loteAntes.quantidade_disponivel) + Number((reserva as any).quantidade));
   });
 
   it('deve falhar ao tentar reservar mais do que o disponível', async () => {
     const { data: lote } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId).single();
-    const impossibleQty = Number(lote!.quantidade_disponivel) + 1000;
+    if (!lote) throw new Error('Lote para teste de erro não encontrado');
+    
+    const impossibleQty = Number(lote.quantidade_disponivel) + 1000;
 
     await expect(createMaterialReservation({
       opId: testOpId,
