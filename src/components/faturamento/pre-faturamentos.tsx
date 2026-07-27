@@ -8,11 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
 import { Loader2, FileText, Truck } from "lucide-react";
 
 export function PreFaturamentoDashboard() {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const { data: expedicoes } = useSuspenseQuery({
     queryKey: ["expedicoes-pendentes"],
@@ -34,9 +32,9 @@ export function PreFaturamentoDashboard() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => createPreFaturamento(data),
+    mutationFn: (data: any) => createPreFaturamento({ data }),
     onSuccess: () => {
-      toast({ title: "Sucesso", description: "Pré-faturamento criado com sucesso." });
+      alert("Pré-faturamento criado com sucesso.");
       setSelectedExp(null);
       setSimulacao(null);
       queryClient.invalidateQueries({ queryKey: ["expedicoes-pendentes"] });
@@ -85,8 +83,8 @@ export function PreFaturamentoDashboard() {
               {expedicoes.map((exp) => (
                 <TableRow key={exp.id}>
                   <TableCell className="font-mono text-xs">{exp.id.slice(0, 8)}</TableCell>
-                  <TableCell>{exp.pedido?.numero_pedido || "N/A"}</TableCell>
-                  <TableCell>{exp.customer?.razao_social || "N/A"}</TableCell>
+                  <TableCell>{exp.pedido?.numero || "N/A"}</TableCell>
+                  <TableCell>{exp.transportadora?.razao_social || "N/A"}</TableCell>
                   <TableCell>
                     <Badge variant="outline">{exp.status}</Badge>
                   </TableCell>

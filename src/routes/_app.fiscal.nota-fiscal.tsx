@@ -24,7 +24,7 @@ function NotasFiscaisPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("notas_fiscais")
-        .select("*, customer:cliente_id(razao_social)")
+        .select("*, customer:cliente_id!notas_fiscais_cliente_id_fkey(razao_social)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
