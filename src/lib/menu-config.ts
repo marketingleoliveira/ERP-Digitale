@@ -56,6 +56,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Análise Industrial (OEE)", url: "/producao/industrial", icon: Factory, group: "Produção (PCP)" },
   { title: "Planejamento (PCP)", url: "/producao/plano", icon: Scissors, group: "Produção (PCP)" },
   { title: "Ficha Técnica / BOM", url: "/producao/bom", icon: BadgeCheck, group: "Produção (PCP)" },
+  { title: "Onde é Usado", url: "/producao/onde-e-usado", icon: Filter, group: "Produção (PCP)" },
   { title: "Turnos", url: "/pcp/turnos", icon: Clock, group: "Produção (PCP)" },
   { title: "Calendário Produtivo", url: "/pcp/calendario", icon: Clock, group: "Produção (PCP)" },
   { title: "Máquina × Turno", url: "/pcp/maquina-turnos", icon: Network, group: "Produção (PCP)" },
