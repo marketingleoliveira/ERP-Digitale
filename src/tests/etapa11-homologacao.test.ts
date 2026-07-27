@@ -5,13 +5,13 @@ describe('Etapa 11.2: Homologação Fiscal e Certificação (Direct SQL Validati
   let testData: any = {};
 
   beforeAll(async () => {
-    const { data: emp } = await supabaseAdmin.from('empresa').select('id, focus_nfe_token').limit(1).single();
+    const { data: emp } = await supabaseAdmin.from('empresa').select('id, focus_nfe_token, focus_nfe_token_ciphertext').limit(1).single();
     const { data: nat } = await supabaseAdmin.from('naturezas_operacao').select('id').eq('ativo', true).limit(1).single();
     
     testData = {
       empresaId: emp?.id,
       naturezaId: nat?.id,
-      tokenPresent: !!emp?.focus_nfe_token
+      tokenPresent: !!(emp?.focus_nfe_token_ciphertext || emp?.focus_nfe_token)
     };
   });
 
@@ -20,12 +20,12 @@ describe('Etapa 11.2: Homologação Fiscal e Certificação (Direct SQL Validati
     
     const { data, error } = await supabaseAdmin
       .from('empresa')
-      .select('focus_nfe_token')
+      .select('focus_nfe_token, focus_nfe_token_ciphertext')
       .limit(1)
       .single();
 
     expect(error).toBeNull();
-    expect(data?.focus_nfe_token).toBeDefined();
+    expect(data?.focus_nfe_token_ciphertext || data?.focus_nfe_token).toBeDefined();
   });
 
   it('ETAPA 7: Validar RPC de Simulação', async () => {
