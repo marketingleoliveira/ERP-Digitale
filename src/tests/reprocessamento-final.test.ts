@@ -22,9 +22,9 @@ describe('EXECUÇÃO FINAL ETAPA 11.3: Inserção e Reprocessamento Real', () =>
     // Recupera o token atual criptografado para validação
     if (emp.focus_nfe_token_ciphertext && emp.focus_nfe_token_iv) {
       ctx.token = await decryptToken(
-        emp.focus_nfe_token_ciphertext,
-        emp.focus_nfe_token_iv,
-        emp.focus_nfe_token_encryption_version
+        emp.focus_nfe_token_ciphertext as string,
+        emp.focus_nfe_token_iv as string,
+        (emp.focus_nfe_token_encryption_version as string) || undefined
       );
     }
   });
@@ -70,7 +70,7 @@ describe('EXECUÇÃO FINAL ETAPA 11.3: Inserção e Reprocessamento Real', () =>
     const res = await focusAdapter.consultar(config as any, ctx.referenciaAnterior);
     
     console.log('Consulta Referência:', ctx.referenciaAnterior);
-    console.log('Resultado:', res.status === 404 ? 'NÃO ENCONTRADA' : res.body?.status);
+    console.log('Resultado:', res.status === 404 ? 'NÃO ENCONTRADA' : (res.body?.status || 'ESTADO_DESCONHECIDO'));
     
     // Se não encontrada, prosseguimos com o reprocessamento
     if (res.status === 404 || res.status === 401) {
@@ -86,6 +86,8 @@ describe('EXECUÇÃO FINAL ETAPA 11.3: Inserção e Reprocessamento Real', () =>
       .select('*')
       .eq('id', ctx.preFaturamentoId)
       .single();
+
+    if (!pre) throw new Error('Pré-faturamento não encontrado no reprocessamento');
 
     // Gerar uma referência única para este teste real, mas baseada na lógica de reuso
     const novaReferencia = ctx.referenciaAnterior || ('REF_REPRO_' + Date.now());
@@ -117,8 +119,8 @@ describe('EXECUÇÃO FINAL ETAPA 11.3: Inserção e Reprocessamento Real', () =>
     await supabaseAdmin.from('nfe_logs').insert({
       acao: 'reprocessamento_nfe_11_3',
       http_status: response.status,
-      request: payload,
-      response: response.body,
+      request: payload as any,
+      response: response.body as any,
       metadata: { attempt: 2, correlation_id: crypto.randomUUID() }
     });
   });
