@@ -380,7 +380,7 @@ function BomPage() {
                 </div>
               )}
 
-              {viewMode === "consolidated" && (
+               {viewMode === "consolidated" && (
                 <Table>
                    <TableHeader>
                     <TableRow>
@@ -389,11 +389,18 @@ function BomPage() {
                       <TableHead>Tipo</TableHead>
                       <TableHead className="text-right">Total Liq</TableHead>
                       <TableHead className="text-right">Total Bruto</TableHead>
+                      {activeTab === "costs" && (
+                        <>
+                          <TableHead className="text-right">Custo Un.</TableHead>
+                          <TableHead className="text-right font-bold">Custo Total</TableHead>
+                          <TableHead className="text-right">% Part.</TableHead>
+                        </>
+                      )}
                       <TableHead>Un</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {consolidatedData.map((item, idx) => (
+                    {(activeTab === "structure" ? consolidatedData : costExplosion).map((item: any, idx) => (
                       <TableRow key={idx}>
                         <TableCell className="font-mono text-xs">{item.codigo || "—"}</TableCell>
                         <TableCell className="font-medium">{item.component_descricao}</TableCell>
@@ -403,17 +410,34 @@ function BomPage() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right font-mono">
-                           {item.total_liq.toLocaleString(undefined, { minimumFractionDigits: 4 })}
+                           {(Number(item.total_liq || item.quantidade_liquida)).toLocaleString(undefined, { minimumFractionDigits: 4 })}
                         </TableCell>
                         <TableCell className="text-right font-mono font-bold">
-                           {item.total_bru.toLocaleString(undefined, { minimumFractionDigits: 4 })}
+                           {(Number(item.total_bru || item.quantidade_bruta)).toLocaleString(undefined, { minimumFractionDigits: 4 })}
                         </TableCell>
+                        {activeTab === "costs" && (
+                          <>
+                            <TableCell className="text-right font-mono text-xs">
+                              {Number(item.custo_unitario || 0).toLocaleString('pt-BR', { minimumFractionDigits: 4 })}
+                            </TableCell>
+                            <TableCell className="text-right font-mono text-xs font-bold text-primary">
+                              {Number(item.custo_total_linha || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                            </TableCell>
+                            <TableCell className="text-right font-mono text-xs">
+                              {costSummary?.custo_total_estimado ? 
+                                ((Number(item.custo_total_linha || 0) / costSummary.custo_total_estimado) * 100).toFixed(1) + '%' : 
+                                '0.0%'
+                              }
+                            </TableCell>
+                          </>
+                        )}
                         <TableCell className="text-xs">{item.unidade}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               )}
+
 
               {viewMode === "levels" && (
                 <div className="p-4 space-y-4">
