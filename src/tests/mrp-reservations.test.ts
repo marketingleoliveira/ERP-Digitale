@@ -38,7 +38,6 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
     const { data: loteDepois } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId).single();
     if (!loteDepois) throw new Error('Lote depois não encontrado');
 
-    // Verifica se o saldo diminuiu exatamente a quantidade reservada
     expect(Number(loteDepois.quantidade_disponivel)).toBe(Number(loteAntes.quantidade_disponivel) - qtyToReserve);
   });
 
@@ -55,6 +54,8 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
     await cancelReservation(testReservaId);
 
     const { data: loteDepois } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId).single();
+    if (!loteAntes || !loteDepois || !reserva) throw new Error('Dados para cancelamento inconsistentes');
+    
     expect(Number(loteDepois.quantidade_disponivel)).toBe(Number(loteAntes.quantidade_disponivel) + Number((reserva as any).quantidade));
   });
 
