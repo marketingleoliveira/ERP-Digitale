@@ -4899,6 +4899,119 @@ export type Database = {
         }
         Relationships: []
       }
+      ordens_industrializacao: {
+        Row: {
+          artigo_id: string | null
+          cor_solicitada: string | null
+          created_at: string | null
+          created_by: string | null
+          data_emissao: string | null
+          data_prevista: string | null
+          empresa_id: string | null
+          fornecedor_id: string
+          id: string
+          idempotency_key: string | null
+          numero: number
+          observacao: string | null
+          op_id: string | null
+          servico_tipo: string
+          status:
+            | Database["public"]["Enums"]["ordem_industrializacao_status"]
+            | null
+          updated_at: string | null
+        }
+        Insert: {
+          artigo_id?: string | null
+          cor_solicitada?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          data_emissao?: string | null
+          data_prevista?: string | null
+          empresa_id?: string | null
+          fornecedor_id: string
+          id?: string
+          idempotency_key?: string | null
+          numero?: number
+          observacao?: string | null
+          op_id?: string | null
+          servico_tipo: string
+          status?:
+            | Database["public"]["Enums"]["ordem_industrializacao_status"]
+            | null
+          updated_at?: string | null
+        }
+        Update: {
+          artigo_id?: string | null
+          cor_solicitada?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          data_emissao?: string | null
+          data_prevista?: string | null
+          empresa_id?: string | null
+          fornecedor_id?: string
+          id?: string
+          idempotency_key?: string | null
+          numero?: number
+          observacao?: string | null
+          op_id?: string | null
+          servico_tipo?: string
+          status?:
+            | Database["public"]["Enums"]["ordem_industrializacao_status"]
+            | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ordens_industrializacao_artigo_id_fkey"
+            columns: ["artigo_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ordens_industrializacao_artigo_id_fkey"
+            columns: ["artigo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "ordens_industrializacao_artigo_id_fkey"
+            columns: ["artigo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
+          },
+          {
+            foreignKeyName: "ordens_industrializacao_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ordens_industrializacao_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ordens_industrializacao_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "ordens_industrializacao_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custos_op"
+            referencedColumns: ["op_id"]
+          },
+        ]
+      }
       ordens_producao: {
         Row: {
           created_at: string
@@ -5996,6 +6109,109 @@ export type Database = {
         }
         Relationships: []
       }
+      remessa_itens: {
+        Row: {
+          created_at: string | null
+          id: string
+          lote_origem_id: string
+          quantidade_enviada: number
+          quantidade_perdida: number | null
+          quantidade_retornada: number | null
+          remessa_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          lote_origem_id: string
+          quantidade_enviada: number
+          quantidade_perdida?: number | null
+          quantidade_retornada?: number | null
+          remessa_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          lote_origem_id?: string
+          quantidade_enviada?: number
+          quantidade_perdida?: number | null
+          quantidade_retornada?: number | null
+          remessa_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "remessa_itens_lote_origem_id_fkey"
+            columns: ["lote_origem_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "remessa_itens_lote_origem_id_fkey"
+            columns: ["lote_origem_id"]
+            isOneToOne: false
+            referencedRelation: "vw_lotes_saldos"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "remessa_itens_remessa_id_fkey"
+            columns: ["remessa_id"]
+            isOneToOne: false
+            referencedRelation: "remessas_terceiros"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      remessas_terceiros: {
+        Row: {
+          created_at: string | null
+          data_saida: string | null
+          documento_referencia: string | null
+          id: string
+          observacao: string | null
+          ordem_id: string
+          status: string | null
+          transportadora_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_saida?: string | null
+          documento_referencia?: string | null
+          id?: string
+          observacao?: string | null
+          ordem_id: string
+          status?: string | null
+          transportadora_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          data_saida?: string | null
+          documento_referencia?: string | null
+          id?: string
+          observacao?: string | null
+          ordem_id?: string
+          status?: string | null
+          transportadora_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "remessas_terceiros_ordem_id_fkey"
+            columns: ["ordem_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_industrializacao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "remessas_terceiros_transportadora_id_fkey"
+            columns: ["transportadora_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reservas: {
         Row: {
           created_at: string | null
@@ -6089,6 +6305,106 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vw_custos_op"
             referencedColumns: ["op_id"]
+          },
+        ]
+      }
+      retorno_itens: {
+        Row: {
+          created_at: string | null
+          id: string
+          lote_resultante_id: string
+          quantidade_perdida: number | null
+          quantidade_recebida: number
+          remessa_item_id: string
+          retorno_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          lote_resultante_id: string
+          quantidade_perdida?: number | null
+          quantidade_recebida: number
+          remessa_item_id: string
+          retorno_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          lote_resultante_id?: string
+          quantidade_perdida?: number | null
+          quantidade_recebida?: number
+          remessa_item_id?: string
+          retorno_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retorno_itens_lote_resultante_id_fkey"
+            columns: ["lote_resultante_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "retorno_itens_lote_resultante_id_fkey"
+            columns: ["lote_resultante_id"]
+            isOneToOne: false
+            referencedRelation: "vw_lotes_saldos"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "retorno_itens_remessa_item_id_fkey"
+            columns: ["remessa_item_id"]
+            isOneToOne: false
+            referencedRelation: "remessa_itens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "retorno_itens_retorno_id_fkey"
+            columns: ["retorno_id"]
+            isOneToOne: false
+            referencedRelation: "retornos_terceiros"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      retornos_terceiros: {
+        Row: {
+          created_at: string | null
+          custo_servico: number | null
+          data_chegada: string | null
+          documento_referencia: string | null
+          id: string
+          observacao: string | null
+          remessa_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          custo_servico?: number | null
+          data_chegada?: string | null
+          documento_referencia?: string | null
+          id?: string
+          observacao?: string | null
+          remessa_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          custo_servico?: number | null
+          data_chegada?: string | null
+          documento_referencia?: string | null
+          id?: string
+          observacao?: string | null
+          remessa_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retornos_terceiros_remessa_id_fkey"
+            columns: ["remessa_id"]
+            isOneToOne: false
+            referencedRelation: "remessas_terceiros"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -7985,6 +8301,15 @@ export type Database = {
         Returns: string
       }
       seed_rollback: { Args: never; Returns: Json }
+      ship_material_to_external_processor: {
+        Args: {
+          p_documento_referencia?: string
+          p_idempotency_key?: string
+          p_lotes_data: Json
+          p_ordem_id: string
+        }
+        Returns: Json
+      }
       simulate_production_posting: {
         Args: { p_consumos: Json; p_op_id: string; p_quantidade_boa: number }
         Returns: Json
@@ -8060,6 +8385,18 @@ export type Database = {
         | "expedida"
         | "encerrada"
         | "cancelada"
+      ordem_industrializacao_status:
+        | "RASCUNHO"
+        | "APROVADA"
+        | "AGUARDANDO-REMESSA"
+        | "REMESSA-PARCIAL"
+        | "REMETIDA"
+        | "EM-TRÂNSITO"
+        | "EM-PODER-DO-TERCEIRO"
+        | "RETORNO-PARCIAL"
+        | "RETORNADA"
+        | "CONCLUÍDA"
+        | "CANCELADA"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -8222,6 +8559,19 @@ export const Constants = {
         "expedida",
         "encerrada",
         "cancelada",
+      ],
+      ordem_industrializacao_status: [
+        "RASCUNHO",
+        "APROVADA",
+        "AGUARDANDO-REMESSA",
+        "REMESSA-PARCIAL",
+        "REMETIDA",
+        "EM-TRÂNSITO",
+        "EM-PODER-DO-TERCEIRO",
+        "RETORNO-PARCIAL",
+        "RETORNADA",
+        "CONCLUÍDA",
+        "CANCELADA",
       ],
     },
   },
