@@ -117,21 +117,118 @@ function BomPage() {
             />
           </div>
           <div className="md:col-span-3">
-            <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)} className="w-full">
-              <TabsList>
-                <TabsTrigger value="tree" className="gap-2">
-                  <GitBranch className="h-4 w-4" /> Árvore
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
+                <TabsTrigger value="structure" className="gap-2">
+                  <Layers className="h-4 w-4" /> Estrutura
                 </TabsTrigger>
-                <TabsTrigger value="consolidated" className="gap-2">
-                  <List className="h-4 w-4" /> Consolidado
-                </TabsTrigger>
-                <TabsTrigger value="levels" className="gap-2">
-                  <Layers className="h-4 w-4" /> Por Nível
+                <TabsTrigger value="costs" className="gap-2">
+                  <DollarSign className="h-4 w-4" /> Custos
                 </TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
         </div>
+
+        {activeTab === "costs" && costSummary && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="bg-primary/5 border-primary/20">
+              <CardContent className="pt-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase mb-1">Custo Total Est.</p>
+                    <h3 className="text-2xl font-bold text-primary">
+                      {costSummary.custo_total_estimado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </h3>
+                  </div>
+                  <div className="p-2 bg-primary/10 rounded-full">
+                    <DollarSign className="h-5 w-5 text-primary" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-green-500/5 border-green-500/20">
+              <CardContent className="pt-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase mb-1">Custo Unitário</p>
+                    <h3 className="text-2xl font-bold text-green-600">
+                      {costSummary.custo_unitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </h3>
+                  </div>
+                  <div className="p-2 bg-green-500/10 rounded-full">
+                    <TrendingDown className="h-5 w-5 text-green-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-orange-500/5 border-orange-500/20">
+              <CardContent className="pt-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase mb-1">Custo Perdas</p>
+                    <div className="flex items-baseline gap-2">
+                      <h3 className="text-xl font-bold text-orange-600">
+                        {costSummary.custo_das_perdas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                      </h3>
+                      <span className="text-xs font-medium text-orange-600/80">
+                        ({costSummary.percentual_perdas.toFixed(1)}%)
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-2 bg-orange-500/10 rounded-full">
+                    <Percent className="h-5 w-5 text-orange-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className={cn(
+              "border-2",
+              costSummary.status_geral === 'COMPLETO' ? "bg-green-500/5 border-green-500/20" : 
+              costSummary.status_geral === 'PARCIAL' ? "bg-yellow-500/5 border-yellow-500/20" :
+              "bg-destructive/5 border-destructive/20"
+            )}>
+              <CardContent className="pt-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase mb-1">Cobertura/Status</p>
+                    <h3 className={cn(
+                      "text-lg font-bold",
+                      costSummary.status_geral === 'COMPLETO' ? "text-green-600" : 
+                      costSummary.status_geral === 'PARCIAL' ? "text-yellow-600" :
+                      "text-destructive"
+                    )}>
+                      {costSummary.cobertura_custos.toFixed(0)}% — {costSummary.status_geral}
+                    </h3>
+                  </div>
+                  <div className="p-2 bg-muted rounded-full">
+                    {costSummary.status_geral === 'COMPLETO' ? <ShieldOff className="h-5 w-5 text-green-600" /> : <AlertCircle className="h-5 w-5" />}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between gap-4">
+          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)} className="w-auto">
+            <TabsList>
+              <TabsTrigger value="tree" className="gap-2">
+                <GitBranch className="h-4 w-4" /> Árvore
+              </TabsTrigger>
+              <TabsTrigger value="consolidated" className="gap-2">
+                <List className="h-4 w-4" /> Consolidado
+              </TabsTrigger>
+              <TabsTrigger value="levels" className="gap-2">
+                <Layers className="h-4 w-4" /> Por Nível
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+
 
         {loadingExplosion ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
