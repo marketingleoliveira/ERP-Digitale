@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { focusAdapter, FocusConfig } from "@/services/fiscal/focus.adapter";
+import { decryptToken } from "@/services/fiscal/encryption.server";
 
 // Esquema para o envio da NF-e
 const emissaoNfeSchema = z.object({
@@ -15,16 +16,27 @@ const emissaoNfeSchema = z.object({
 async function getFocusConfig(supabase: any): Promise<FocusConfig> {
   const { data: empresa, error } = await supabase
     .from("empresa")
-    .select("focus_nfe_token, ambiente_nfe")
+    .select("focus_nfe_token, focus_nfe_token_ciphertext, focus_nfe_token_iv, focus_nfe_token_encryption_version, ambiente_nfe")
     .limit(1)
     .single();
 
-  if (error || !empresa?.focus_nfe_token) {
+  if (error || (!empresa?.focus_nfe_token && !empresa?.focus_nfe_token_ciphertext)) {
     throw new Error("Configuração Focus NFe não encontrada ou incompleta.");
   }
 
+  let token = empresa.focus_nfe_token;
+  if (empresa.focus_nfe_token_ciphertext && empresa.focus_nfe_token_iv) {
+    token = await decryptToken(
+      empresa.focus_nfe_token_ciphertext,
+      empresa.focus_nfe_token_iv,
+      empresa.focus_nfe_token_encryption_version
+    );
+  }
+
+  if (!token) throw new Error("Credencial Focus NFe não disponível após descriptografia.");
+
   return {
-    token: empresa.focus_nfe_token,
+    token,
     ambiente: empresa.ambiente_nfe || "homologacao",
   };
 }
