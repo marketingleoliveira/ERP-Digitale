@@ -3698,6 +3698,51 @@ export type Database = {
           },
         ]
       }
+      naturezas_operacao: {
+        Row: {
+          ativo: boolean | null
+          cfop_externo: string | null
+          cfop_interno: string | null
+          created_at: string | null
+          descricao: string
+          finalidade: string
+          gera_financeiro: boolean | null
+          id: string
+          mensagem_fixa: string | null
+          movimenta_estoque: boolean | null
+          tipo_movimento: string
+          updated_at: string | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          cfop_externo?: string | null
+          cfop_interno?: string | null
+          created_at?: string | null
+          descricao: string
+          finalidade: string
+          gera_financeiro?: boolean | null
+          id?: string
+          mensagem_fixa?: string | null
+          movimenta_estoque?: boolean | null
+          tipo_movimento: string
+          updated_at?: string | null
+        }
+        Update: {
+          ativo?: boolean | null
+          cfop_externo?: string | null
+          cfop_interno?: string | null
+          created_at?: string | null
+          descricao?: string
+          finalidade?: string
+          gera_financeiro?: boolean | null
+          id?: string
+          mensagem_fixa?: string | null
+          movimenta_estoque?: boolean | null
+          tipo_movimento?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       ncm_catalogo: {
         Row: {
           aliq_cofins_padrao: number | null
@@ -6258,6 +6303,133 @@ export type Database = {
             columns: ["plano_id"]
             isOneToOne: false
             referencedRelation: "plano_producao"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pre_faturamento_itens: {
+        Row: {
+          cfop: string | null
+          created_at: string | null
+          cst: string | null
+          descricao: string | null
+          id: string
+          pre_faturamento_id: string | null
+          produto_id: string | null
+          quantidade: number | null
+          unidade: string | null
+          valor_total: number | null
+          valor_unitario: number | null
+        }
+        Insert: {
+          cfop?: string | null
+          created_at?: string | null
+          cst?: string | null
+          descricao?: string | null
+          id?: string
+          pre_faturamento_id?: string | null
+          produto_id?: string | null
+          quantidade?: number | null
+          unidade?: string | null
+          valor_total?: number | null
+          valor_unitario?: number | null
+        }
+        Update: {
+          cfop?: string | null
+          created_at?: string | null
+          cst?: string | null
+          descricao?: string | null
+          id?: string
+          pre_faturamento_id?: string | null
+          produto_id?: string | null
+          quantidade?: number | null
+          unidade?: string | null
+          valor_total?: number | null
+          valor_unitario?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pre_faturamento_itens_pre_faturamento_id_fkey"
+            columns: ["pre_faturamento_id"]
+            isOneToOne: false
+            referencedRelation: "pre_faturamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pre_faturamentos: {
+        Row: {
+          cliente_id: string | null
+          created_at: string | null
+          expedicao_id: string | null
+          id: string
+          idempotency_key: string | null
+          natureza_id: string | null
+          payload_fiscal: Json | null
+          pedido_id: string | null
+          status: string
+          updated_at: string | null
+          valor_impostos: number | null
+          valor_produtos: number | null
+          valor_total: number | null
+        }
+        Insert: {
+          cliente_id?: string | null
+          created_at?: string | null
+          expedicao_id?: string | null
+          id?: string
+          idempotency_key?: string | null
+          natureza_id?: string | null
+          payload_fiscal?: Json | null
+          pedido_id?: string | null
+          status?: string
+          updated_at?: string | null
+          valor_impostos?: number | null
+          valor_produtos?: number | null
+          valor_total?: number | null
+        }
+        Update: {
+          cliente_id?: string | null
+          created_at?: string | null
+          expedicao_id?: string | null
+          id?: string
+          idempotency_key?: string | null
+          natureza_id?: string | null
+          payload_fiscal?: Json | null
+          pedido_id?: string | null
+          status?: string
+          updated_at?: string | null
+          valor_impostos?: number | null
+          valor_produtos?: number | null
+          valor_total?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pre_faturamentos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pre_faturamentos_expedicao_id_fkey"
+            columns: ["expedicao_id"]
+            isOneToOne: false
+            referencedRelation: "op_expedicoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pre_faturamentos_natureza_id_fkey"
+            columns: ["natureza_id"]
+            isOneToOne: false
+            referencedRelation: "naturezas_operacao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pre_faturamentos_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
             referencedColumns: ["id"]
           },
         ]
@@ -9047,6 +9219,10 @@ export type Database = {
           unidade: string
         }[]
       }
+      finalize_authorized_sales_invoice: {
+        Args: { p_nota_id: string; p_user_id: string }
+        Returns: Json
+      }
       generate_purchase_suggestions: {
         Args: {
           p_data_fim?: string
@@ -9279,6 +9455,10 @@ export type Database = {
           p_op_id: string
           p_quantidade_entrada: number
         }
+        Returns: Json
+      }
+      simulate_sales_invoice: {
+        Args: { p_expedicao_id: string; p_natureza_id: string }
         Returns: Json
       }
       simulate_sales_order_reservation: {
