@@ -3,21 +3,23 @@ import { supabase } from '@/integrations/supabase/client';
 import { createMaterialReservation, cancelReservation, fetchMaterialReservations } from '@/lib/mrp-suggestions';
 
 describe('Reserva Transacional de Materiais (Etapa 5)', () => {
-  let testOpId: string = '146b2ca6-0759-4bd7-97cc-c51465bea494';
+  let testOpId: string;
   let testItemId: string;
-  let testLoteId: string = '79a69fa2-a350-4b38-839e-9b164c56d3cc';
+  let testLoteId: string;
   let testReservaId: string;
 
   beforeAll(async () => {
-    // Busca dados reais ou os que acabamos de inserir
-    const { data: op } = await supabase.from('ordens_producao').select('id').eq('id', testOpId).maybeSingle();
-    const { data: lote } = await supabase.from('lotes').select('id, item_id').eq('id', testLoteId).maybeSingle();
+    // Busca os IDs confirmados via query direta para garantir bypass de possíveis filtros de RLS no teste
+    const { data: ops } = await supabase.from('ordens_producao').select('id').eq('numero', 999999);
+    const { data: lotes } = await supabase.from('lotes').select('id, item_id').eq('numero_lote', 'LOTE-TESTE-555');
     
-    if (!op || !lote) throw new Error(`Dados de teste não encontrados no banco. OP: ${!!op}, Lote: ${!!lote}`);
+    if (!ops?.length || !lotes?.length) {
+       throw new Error(`Dados de teste não encontrados. OP count: ${ops?.length}, Lote count: ${lotes?.length}`);
+    }
     
-    testOpId = op.id;
-    testLoteId = lote.id;
-    testItemId = lote.item_id;
+    testOpId = ops[0].id;
+    testLoteId = lotes[0].id;
+    testItemId = lotes[0].item_id;
   });
 
   it('deve criar uma reserva vinculada a um lote e comprometer o saldo', async () => {
@@ -38,7 +40,6 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
     const { data: loteDepois } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId).single();
     if (!loteDepois) throw new Error('Lote depois não encontrado');
 
-    // Verifica se o saldo diminuiu exatamente a quantidade reservada
     expect(Number(loteDepois.quantidade_disponivel)).toBe(Number(loteAntes.quantidade_disponivel) - qtyToReserve);
   });
 
@@ -52,7 +53,7 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
     const { data: loteAntes } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId).single();
     const { data: reserva } = await supabase.from('reservas' as any).select('quantidade').eq('id', testReservaId).single();
 
-    if (!loteAntes || !reserva) throw new Error('Inconsistência antes do cancelamento');
+    if (!loteAntes || !reserva) throw new Error('Dados para cancelamento incompletos');
 
     await cancelReservation(testReservaId);
 
@@ -62,11 +63,9 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
     expect(Number(loteDepois.quantidade_disponivel)).toBe(Number(loteAntes.quantidade_disponivel) + Number((reserva as any).quantidade));
   });
 
-  it('deve falhar ao tentar reservar mais do que o disponível (concorrência/integridade)', async () => {
+  it('deve falhar ao tentar reservar mais do que o disponível', async () => {
     const { data: lote } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId).single();
-    if (!lote) throw new Error('Lote não encontrado para teste de saldo insuficiente');
-    
-    const impossibleQty = Number(lote.quantidade_disponivel) + 1000;
+    const impossibleQty = Number(lote!.quantidade_disponivel) + 1000;
 
     await expect(createMaterialReservation({
       opId: testOpId,
