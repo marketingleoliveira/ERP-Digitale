@@ -7,6 +7,7 @@ describe('Etapa 11.2: Homologação Fiscal e Certificação', () => {
   let testData: any = {};
 
   beforeAll(async () => {
+    // Buscar ou criar dados básicos se necessário
     const { data: emp } = await supabaseAdmin.from('empresa').select('id, focus_nfe_token').limit(1).single();
     const { data: art } = await supabaseAdmin.from('articles').select('id').limit(1).single();
     const { data: cust } = await supabaseAdmin.from('customers').select('id').limit(1).single();
@@ -22,29 +23,31 @@ describe('Etapa 11.2: Homologação Fiscal e Certificação', () => {
   });
 
   it('ETAPA 0: Auditoria de Segurança do Token', async () => {
+    // @ts-ignore - Chamada direta de server function para teste
     const status = await getFiscalCertificationStatus();
     expect(status.tokenConfigurado).toBe(true);
-    // Verificação de exposição (simulada via auditoria de server function)
     expect(status.bloqueadores).not.toContain('Token Focus NFe não configurado');
   });
 
   it('ETAPA 7: Executar Simulação Real', async () => {
-    // Criar uma expedição fictícia para o teste se não existir
     const { data: exp } = await supabaseAdmin.from('op_expedicoes').insert({
       status: 'pendente',
       observacao: 'Teste Homologação'
     }).select().single();
 
     if (exp) {
+      // @ts-ignore - Chamada direta de server function para teste
       const result = await simulateInvoice({
-        expedicaoId: exp.id,
-        naturezaId: testData.naturezaId
+        data: {
+          expedicaoId: exp.id,
+          naturezaId: testData.naturezaId
+        }
       });
 
       expect(result).toBeDefined();
-      expect(result.valor_total).toBeGreaterThan(0);
+      const sim = result as any;
+      expect(sim.valor_total).toBeGreaterThan(0);
       
-      // Cleanup
       await supabaseAdmin.from('op_expedicoes').delete().eq('id', exp.id);
     }
   });
@@ -57,17 +60,20 @@ describe('Etapa 11.2: Homologação Fiscal e Certificação', () => {
     if (exp) {
       const idempotencyKey = crypto.randomUUID();
       const payload = {
-        expedicaoId: exp.id,
-        naturezaId: testData.naturezaId,
-        idempotencyKey
+        data: {
+          expedicaoId: exp.id,
+          naturezaId: testData.naturezaId,
+          idempotencyKey
+        }
       };
 
+      // @ts-ignore
       const call1 = await createPreFaturamento(payload);
+      // @ts-ignore
       const call2 = await createPreFaturamento(payload);
 
       expect(call1.id).toBe(call2.id);
       
-      // Cleanup
       await supabaseAdmin.from('pre_faturamentos').delete().eq('id', call1.id);
       await supabaseAdmin.from('op_expedicoes').delete().eq('id', exp.id);
     }
