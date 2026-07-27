@@ -41,7 +41,11 @@ function AuthPage() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
     setLoading(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) { 
+      console.error("Login Error Object:", error);
+      toast.error(error.message || "Erro desconhecido ao fazer login"); 
+      return; 
+    }
     navigate({ to: "/inicio" });
   };
 
