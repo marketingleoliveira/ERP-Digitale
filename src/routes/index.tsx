@@ -9,7 +9,7 @@ function RootRedirect() {
   const navigate = useNavigate();
   
   useEffect(() => {
-    navigate({ to: "/dev/focus-nfe", replace: true });
+    navigate({ to: "/dashboard", replace: true });
   }, [navigate]);
 
   return null;
