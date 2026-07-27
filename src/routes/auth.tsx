@@ -42,8 +42,8 @@ function AuthPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
     setLoading(false);
     if (error) { 
-      console.error("Login Error Object:", error);
-      toast.error(error.message || "Erro desconhecido ao fazer login"); 
+      console.error("Login Error Full Object:", JSON.stringify(error, null, 2));
+      toast.error(error.message || "Credenciais inválidas ou conta não autorizada"); 
       return; 
     }
     navigate({ to: "/inicio" });
