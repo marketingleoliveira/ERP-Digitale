@@ -2227,6 +2227,13 @@ export type Database = {
             foreignKeyName: "estoque_movimentos_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "estoque_movimentos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -2318,6 +2325,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expedicao_itens_lote_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "expedicao_itens_lote_lote_id_fkey"
@@ -2706,6 +2720,13 @@ export type Database = {
             foreignKeyName: "inspecoes_qualidade_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "inspecoes_qualidade_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -2748,6 +2769,13 @@ export type Database = {
             foreignKeyName: "lote_genealogia_lote_origem_id_fkey"
             columns: ["lote_origem_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "lote_genealogia_lote_origem_id_fkey"
+            columns: ["lote_origem_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -2757,6 +2785,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lote_genealogia_lote_resultante_id_fkey"
+            columns: ["lote_resultante_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "lote_genealogia_lote_resultante_id_fkey"
@@ -2846,6 +2881,13 @@ export type Database = {
             foreignKeyName: "lote_revisoes_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "lote_revisoes_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -2907,6 +2949,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lote_rolos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "lote_rolos_lote_id_fkey"
@@ -3637,6 +3686,13 @@ export type Database = {
             foreignKeyName: "nao_conformidades_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "nao_conformidades_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -4251,6 +4307,13 @@ export type Database = {
             foreignKeyName: "op_acabamentos_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "op_acabamentos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -4448,6 +4511,13 @@ export type Database = {
             foreignKeyName: "op_consumos_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "op_consumos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -4589,6 +4659,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_entradas_estoque_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "op_entradas_estoque_lote_id_fkey"
@@ -5338,6 +5415,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_reservas_lote_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "op_reservas_lote_lote_id_fkey"
@@ -6583,6 +6667,13 @@ export type Database = {
             foreignKeyName: "recebimento_itens_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "recebimento_itens_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -6806,6 +6897,13 @@ export type Database = {
             foreignKeyName: "remessa_itens_lote_origem_id_fkey"
             columns: ["lote_origem_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "remessa_itens_lote_origem_id_fkey"
+            columns: ["lote_origem_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -6939,6 +7037,13 @@ export type Database = {
             foreignKeyName: "reservas_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "reservas_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -7000,6 +7105,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "retorno_itens_lote_resultante_id_fkey"
+            columns: ["lote_resultante_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "retorno_itens_lote_resultante_id_fkey"
@@ -7539,6 +7651,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "separacao_itens_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "separacao_itens_lote_id_fkey"
@@ -8092,6 +8211,13 @@ export type Database = {
             foreignKeyName: "vendas_reservas_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "vendas_reservas_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -8431,6 +8557,63 @@ export type Database = {
           },
         ]
       }
+      vw_estoque_comercial: {
+        Row: {
+          artigo_id: string | null
+          classificacao: string | null
+          custo_definitivo: number | null
+          data_entrada: string | null
+          deposito: string | null
+          idade_lote: string | null
+          liberado_comercial: boolean | null
+          lote_id: string | null
+          lote_tipo: string | null
+          numero_lote: string | null
+          saldo_aprovado: number | null
+          saldo_disponivel: number | null
+          saldo_em_separacao: number | null
+          saldo_fisico: number | null
+          saldo_reservado: number | null
+          status_processo: string | null
+        }
+        Insert: {
+          artigo_id?: string | null
+          classificacao?: string | null
+          custo_definitivo?: number | null
+          data_entrada?: string | null
+          deposito?: string | null
+          idade_lote?: never
+          liberado_comercial?: boolean | null
+          lote_id?: string | null
+          lote_tipo?: string | null
+          numero_lote?: string | null
+          saldo_aprovado?: number | null
+          saldo_disponivel?: never
+          saldo_em_separacao?: number | null
+          saldo_fisico?: number | null
+          saldo_reservado?: number | null
+          status_processo?: string | null
+        }
+        Update: {
+          artigo_id?: string | null
+          classificacao?: string | null
+          custo_definitivo?: number | null
+          data_entrada?: string | null
+          deposito?: string | null
+          idade_lote?: never
+          liberado_comercial?: boolean | null
+          lote_id?: string | null
+          lote_tipo?: string | null
+          numero_lote?: string | null
+          saldo_aprovado?: number | null
+          saldo_disponivel?: never
+          saldo_em_separacao?: number | null
+          saldo_fisico?: number | null
+          saldo_reservado?: number | null
+          status_processo?: string | null
+        }
+        Relationships: []
+      }
       vw_fluxo_caixa: {
         Row: {
           centro_custo_id: string | null
@@ -8615,6 +8798,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_reservas_lote_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "op_reservas_lote_lote_id_fkey"
