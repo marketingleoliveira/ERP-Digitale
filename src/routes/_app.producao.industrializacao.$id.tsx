@@ -1,8 +1,8 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, Link } from '@tanstack/react-router';
 import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getIndustrializationOrderById, shipMaterialToExternalProcessor } from '@/lib/op-industrializacao.functions';
 import { Button } from '@/components/ui/button';
-import { Truck, PackageCheck, History, ArrowLeft, Plus } from 'lucide-react';
+import { Truck, PackageCheck, History, ArrowLeft, Plus, BadgeCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
@@ -174,13 +174,63 @@ function IndustrializacaoDetailPage() {
                       <PackageCheck className="h-4 w-4" /> Registrar Retorno
                     </Button>
                   </TableCell>
-
                 </TableRow>
               ))}
               {(!order.remessas || (order.remessas as any[]).length === 0) && (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-6 text-muted-foreground italic">
                     Nenhuma remessa registrada para esta ordem.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* Seção de Retornos e Qualidade */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Retornos e Inspeções de Qualidade</CardTitle>
+          <BadgeCheck className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Data Retorno</TableHead>
+                <TableHead>NF Retorno</TableHead>
+                <TableHead>Lotes Recebidos</TableHead>
+                <TableHead>Status Qualidade</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {(order.remessas as any[])?.flatMap((r: any) => (r.retornos as any[]) || [])?.map((retorno: any) => (
+                <TableRow key={retorno.id}>
+                  <TableCell>{format(new Date(retorno.data_retorno), 'dd/MM/yyyy HH:mm')}</TableCell>
+                  <TableCell>{retorno.documento_referencia || 'N/A'}</TableCell>
+                  <TableCell>{(retorno.itens as any[])?.length} lotes</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">AGUARDANDO INSPEÇÃO</Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      asChild
+                    >
+                      <Link to="/producao/qualidade">
+                        Inspecionar na Fila
+                      </Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {(!order.remessas || (order.remessas as any[]).flatMap((r: any) => (r.retornos as any[]) || []).length === 0) && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-6 text-muted-foreground italic">
+                    Nenhum retorno registrado.
                   </TableCell>
                 </TableRow>
               )}
