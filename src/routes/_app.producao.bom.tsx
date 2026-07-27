@@ -445,22 +445,43 @@ function BomPage() {
 
               {viewMode === "levels" && (
                 <div className="p-4 space-y-4">
-                  {[...new Set(explosion.map(i => i.nivel))].sort().map(level => (
+                  {[...new Set((activeTab === "structure" ? explosion : costExplosion).map((i: any) => i.nivel))].sort().map(level => (
                     <div key={level} className="space-y-2">
                       <h3 className="text-sm font-bold flex items-center gap-2">
                         <Badge variant="default">Nível {level}</Badge>
+                        {activeTab === "costs" && (
+                          <span className="text-xs font-normal text-muted-foreground">
+                            Subtotal: {(activeTab === "structure" ? 0 : costExplosion.filter((i: any) => i.nivel === level).reduce((acc: number, i: any) => acc + Number(i.custo_total_linha || 0), 0)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                          </span>
+                        )}
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                        {explosion.filter(i => i.nivel === level).map((item, idx) => (
-                          <div key={idx} className="p-2 border rounded-md text-xs bg-card hover:shadow-sm transition-shadow">
+                        {(activeTab === "structure" ? explosion : costExplosion).filter((i: any) => i.nivel === level).map((item: any, idx: number) => (
+                          <div key={idx} className={cn(
+                            "p-2 border rounded-md text-xs bg-card hover:shadow-sm transition-shadow flex flex-col justify-between",
+                            activeTab === "costs" && item.is_missing && "border-destructive/30 bg-destructive/5"
+                          )}>
                             <div className="flex justify-between items-start mb-1">
                               <span className="font-semibold truncate">{item.component_descricao}</span>
                               <Badge variant="outline" className="text-[9px] h-4">{item.unidade}</Badge>
                             </div>
                             <div className="text-muted-foreground font-mono flex justify-between">
-                              <span>Qtd: {Number(item.quantidade_bruta).toFixed(4)}</span>
+                              <span>Qtd: {Number(item.quantidade_bruta).toFixed(3)}</span>
                               <span>{item.codigo}</span>
                             </div>
+                            {activeTab === "costs" && (
+                              <div className="mt-2 pt-2 border-t flex justify-between items-center">
+                                <span className={cn(
+                                  "font-bold",
+                                  item.is_missing ? "text-destructive" : "text-primary"
+                                )}>
+                                  {Number(item.custo_total_linha || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                </span>
+                                <Badge variant="secondary" className="text-[8px] h-3 px-1">
+                                  {item.status_custo}
+                                </Badge>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -468,6 +489,7 @@ function BomPage() {
                   ))}
                 </div>
               )}
+
             </CardContent>
           </Card>
         )}
