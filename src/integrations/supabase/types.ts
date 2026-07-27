@@ -5045,6 +5045,7 @@ export type Database = {
           fornecedor_id: string
           frete: number | null
           id: string
+          idempotency_key: string | null
           numero: number
           observacao: string | null
           prazo_entrega: string | null
@@ -5063,6 +5064,7 @@ export type Database = {
           fornecedor_id: string
           frete?: number | null
           id?: string
+          idempotency_key?: string | null
           numero?: number
           observacao?: string | null
           prazo_entrega?: string | null
@@ -5081,6 +5083,7 @@ export type Database = {
           fornecedor_id?: string
           frete?: number | null
           id?: string
+          idempotency_key?: string | null
           numero?: number
           observacao?: string | null
           prazo_entrega?: string | null
@@ -7401,38 +7404,74 @@ export type Database = {
         }
       }
       baixar_estoque_nf: { Args: { _nota_id: string }; Returns: number }
-      convert_mrp_suggestions_to_order: {
-        Args: {
-          p_condicao_pagamento?: string
-          p_fornecedor_id: string
-          p_prazo_entrega?: string
-          p_suggestion_ids: string[]
-        }
-        Returns: {
-          condicao_pagamento: string | null
-          confirmado_em: string | null
-          cotacao_id: string | null
-          created_at: string
-          criado_por: string | null
-          desconto: number | null
-          enviado_em: string | null
-          fornecedor_id: string
-          frete: number | null
-          id: string
-          numero: number
-          observacao: string | null
-          prazo_entrega: string | null
-          status: string
-          updated_at: string
-          valor_total: number
-        }
-        SetofOptions: {
-          from: "*"
-          to: "pedidos_compra"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
+      convert_mrp_suggestions_to_order:
+        | {
+            Args: {
+              p_condicao_pagamento?: string
+              p_fornecedor_id: string
+              p_prazo_entrega?: string
+              p_suggestion_ids: string[]
+            }
+            Returns: {
+              condicao_pagamento: string | null
+              confirmado_em: string | null
+              cotacao_id: string | null
+              created_at: string
+              criado_por: string | null
+              desconto: number | null
+              enviado_em: string | null
+              fornecedor_id: string
+              frete: number | null
+              id: string
+              idempotency_key: string | null
+              numero: number
+              observacao: string | null
+              prazo_entrega: string | null
+              status: string
+              updated_at: string
+              valor_total: number
+            }
+            SetofOptions: {
+              from: "*"
+              to: "pedidos_compra"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
+        | {
+            Args: {
+              p_condicao_pagamento?: string
+              p_fornecedor_id: string
+              p_idempotency_key?: string
+              p_prazo_entrega?: string
+              p_suggestion_ids: string[]
+            }
+            Returns: {
+              condicao_pagamento: string | null
+              confirmado_em: string | null
+              cotacao_id: string | null
+              created_at: string
+              criado_por: string | null
+              desconto: number | null
+              enviado_em: string | null
+              fornecedor_id: string
+              frete: number | null
+              id: string
+              idempotency_key: string | null
+              numero: number
+              observacao: string | null
+              prazo_entrega: string | null
+              status: string
+              updated_at: string
+              valor_total: number
+            }
+            SetofOptions: {
+              from: "*"
+              to: "pedidos_compra"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
       exp_registrar_evento: {
         Args: {
           _descricao?: string
