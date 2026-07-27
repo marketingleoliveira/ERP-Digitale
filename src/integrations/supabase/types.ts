@@ -1905,6 +1905,10 @@ export type Database = {
           email: string | null
           exige_op_para_nfe: boolean
           focus_nfe_token: string | null
+          focus_nfe_token_ciphertext: string | null
+          focus_nfe_token_iv: string | null
+          focus_nfe_token_updated_at: string | null
+          focus_nfe_token_updated_by: string | null
           id: string
           inscricao_estadual: string | null
           inscricao_municipal: string | null
@@ -1941,6 +1945,10 @@ export type Database = {
           email?: string | null
           exige_op_para_nfe?: boolean
           focus_nfe_token?: string | null
+          focus_nfe_token_ciphertext?: string | null
+          focus_nfe_token_iv?: string | null
+          focus_nfe_token_updated_at?: string | null
+          focus_nfe_token_updated_by?: string | null
           id?: string
           inscricao_estadual?: string | null
           inscricao_municipal?: string | null
@@ -1977,6 +1985,10 @@ export type Database = {
           email?: string | null
           exige_op_para_nfe?: boolean
           focus_nfe_token?: string | null
+          focus_nfe_token_ciphertext?: string | null
+          focus_nfe_token_iv?: string | null
+          focus_nfe_token_updated_at?: string | null
+          focus_nfe_token_updated_by?: string | null
           id?: string
           inscricao_estadual?: string | null
           inscricao_municipal?: string | null

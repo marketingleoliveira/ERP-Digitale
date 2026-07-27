@@ -4,6 +4,7 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { encryptToken } from "@/services/fiscal/encryption.server";
 
 export type FocusConfigPayload = {
   provedor_nfe: "focus_nfe" | "nenhum" | "plugnotas";
@@ -29,27 +30,31 @@ export const getFocusConfigServer = createServerFn({ method: "GET" })
     await assertDev(context as never);
     const { data, error } = await context.supabase
       .from("empresa")
-      .select("id, provedor_nfe, ambiente_nfe, focus_nfe_token, serie_nfe, proximo_numero_nfe, cnpj, razao_social")
+      .select("id, provedor_nfe, ambiente_nfe, focus_nfe_token, focus_nfe_token_ciphertext, focus_nfe_token_updated_at, serie_nfe, proximo_numero_nfe, cnpj, razao_social")
       .limit(1)
       .maybeSingle();
     if (error) throw new Error(error.message);
     const rec = (data as Record<string, unknown> | null) ?? null;
+    
+    const tokenConfigurado = Boolean(rec?.focus_nfe_token_ciphertext || rec?.focus_nfe_token);
+    const armazenamento = rec?.focus_nfe_token_ciphertext ? "criptografado" : (rec?.focus_nfe_token ? "legado (texto aberto)" : "ausente");
+
     return {
       exists: Boolean(rec),
-      id: (rec?.id as string) ?? null,
+      id: (rec?.id as string) ?? "",
       provedor_nfe: (rec?.provedor_nfe as string) ?? "nenhum",
       ambiente_nfe: (rec?.ambiente_nfe as string) ?? "homologacao",
-      // Nunca retornar o token bruto para a UI: apenas indicar se está setado
-      token_configurado: Boolean(rec?.focus_nfe_token),
-      token_preview: rec?.focus_nfe_token
-        ? String(rec.focus_nfe_token).slice(0, 4) + "…" + String(rec.focus_nfe_token).slice(-4)
-        : "",
+      token_configurado: tokenConfigurado,
+      armazenamento,
+      token_updated_at: rec?.focus_nfe_token_updated_at ? String(rec.focus_nfe_token_updated_at) : null,
+      token_preview: "********",
       serie_nfe: (rec?.serie_nfe as number) ?? 1,
       proximo_numero_nfe: (rec?.proximo_numero_nfe as number) ?? 1,
       cnpj: (rec?.cnpj as string) ?? "",
       razao_social: (rec?.razao_social as string) ?? "",
       env_token_presente: Boolean(process.env.FOCUS_NFE_TOKEN),
     };
+
   });
 
 /* ==================== SALVAR CONFIG ==================== */
@@ -70,9 +75,15 @@ export const saveFocusConfig = createServerFn({ method: "POST" })
     if (data.ambiente_nfe !== undefined) patch.ambiente_nfe = data.ambiente_nfe;
     if (data.serie_nfe !== undefined) patch.serie_nfe = data.serie_nfe;
     if (data.proximo_numero_nfe !== undefined) patch.proximo_numero_nfe = data.proximo_numero_nfe;
-    // Token: só grava se veio string não-vazia (permite deixar em branco no form sem apagar)
+    
+    // Token: Criptografa e salva nos novos campos, limpando o legado
     if (typeof data.focus_nfe_token === "string" && data.focus_nfe_token.trim().length > 0) {
-      patch.focus_nfe_token = data.focus_nfe_token.trim();
+      const { ciphertext, iv } = await encryptToken(data.focus_nfe_token.trim());
+      patch.focus_nfe_token_ciphertext = ciphertext;
+      patch.focus_nfe_token_iv = iv;
+      patch.focus_nfe_token_updated_at = new Date().toISOString();
+      patch.focus_nfe_token_updated_by = context.userId;
+      patch.focus_nfe_token = null; // Limpa o legado texto-aberto
     }
 
     if (existing) {
@@ -101,7 +112,13 @@ export const clearFocusToken = createServerFn({ method: "POST" })
     if (!existing) return { ok: true as const };
     const { error } = await context.supabase
       .from("empresa")
-      .update({ focus_nfe_token: null } as never)
+      .update({ 
+        focus_nfe_token: null, 
+        focus_nfe_token_ciphertext: null, 
+        focus_nfe_token_iv: null,
+        focus_nfe_token_updated_at: new Date().toISOString(),
+        focus_nfe_token_updated_by: context.userId
+      } as never)
       .eq("id", (existing as Record<string, unknown>).id as string);
     if (error) throw new Error(error.message);
     return { ok: true as const };
@@ -114,12 +131,24 @@ export const testFocusConnection = createServerFn({ method: "POST" })
     await assertDev(context as never);
     const { data: emp } = await context.supabase
       .from("empresa")
-      .select("focus_nfe_token, ambiente_nfe, cnpj")
+      .select("focus_nfe_token, focus_nfe_token_ciphertext, focus_nfe_token_iv, ambiente_nfe, cnpj")
       .limit(1)
       .maybeSingle();
     const empRec = (emp as Record<string, unknown> | null) ?? {};
-    const token = (empRec.focus_nfe_token as string | null) || process.env.FOCUS_NFE_TOKEN;
+    
+    let token = (empRec.focus_nfe_token as string | null);
+    if (!token) token = null; // Normalize undefined to null
+
+    
+    // Tenta descriptografar se houver token seguro
+    if (empRec.focus_nfe_token_ciphertext && empRec.focus_nfe_token_iv) {
+      const { decryptToken } = await import("@/services/fiscal/encryption.server");
+      token = await decryptToken(empRec.focus_nfe_token_ciphertext as string, empRec.focus_nfe_token_iv as string);
+    }
+    
+    if (!token) token = process.env.FOCUS_NFE_TOKEN ?? null;
     if (!token) return { ok: false as const, mensagem: "Token não configurado." };
+
 
     const ambiente = (empRec.ambiente_nfe as string) ?? "homologacao";
     const baseUrl = ambiente === "producao"
@@ -151,4 +180,6 @@ export const testFocusConnection = createServerFn({ method: "POST" })
         mensagem: `Erro de rede: ${e instanceof Error ? e.message : String(e)}`,
       };
     }
+
   });
+
