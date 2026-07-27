@@ -23,6 +23,7 @@ import autoTable from "jspdf-autotable";
 import logoAsset from "@/assets/digitale-logo.png.asset.json";
 import { StatusDot } from "@/components/status-dot";
 import { maskCPF, maskCNPJ, maskRG, maskCEP, maskPhone } from "@/lib/masks";
+import { AcronymTooltip } from "@/components/ui/acronym-tooltip";
 
 export const Route = createFileRoute("/_app/empresa")({
   ssr: false,
@@ -277,7 +278,7 @@ function EmpresaPage() {
                   />
                 </th>
                 <th className="p-2 text-left">Nome Fantasia</th>
-                <th className="p-2 text-left">CNPJ/CPF</th>
+                <th className="p-2 text-left"><AcronymTooltip>CNPJ</AcronymTooltip>/<AcronymTooltip>CPF</AcronymTooltip></th>
                 <th className="p-2 text-left">Telefone</th>
                 <th className="p-2 text-left">Contato</th>
                 <th className="p-2 text-left">Tipo</th>
@@ -331,11 +332,11 @@ function EmpresaPage() {
             <Input value={filters.nome} onChange={(e) => setFilters({ ...filters, nome: e.target.value })} />
           </div>
           <div>
-            <Label className="text-xs">CNPJ</Label>
+            <Label className="text-xs"><AcronymTooltip>CNPJ</AcronymTooltip></Label>
             <Input value={filters.cnpj} onChange={(e) => setFilters({ ...filters, cnpj: maskCNPJ(e.target.value) })} maxLength={18} inputMode="numeric" />
           </div>
           <div>
-            <Label className="text-xs">CPF</Label>
+            <Label className="text-xs"><AcronymTooltip>CPF</AcronymTooltip></Label>
             <Input value={filters.cpf} onChange={(e) => setFilters({ ...filters, cpf: maskCPF(e.target.value) })} maxLength={14} inputMode="numeric" />
           </div>
           <div>

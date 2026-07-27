@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { FilePlus2, Loader2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { AcronymTooltip } from "@/components/ui/acronym-tooltip";
 import type { RegraTributaria } from "@/services/fiscal/tax-engine/types";
 
 export const Route = createFileRoute("/_app/fiscal/regras-tributarias")({ ssr: false, component: RegrasPage });
@@ -57,7 +58,9 @@ function RegrasPage() {
           <TableHeader>
             <TableRow className="bg-primary hover:bg-primary">
               {["Prioridade","Nome","Origem→Destino","Operação","NCM","CFOP","CST/CSOSN","ICMS%","ST","Ativa","Ações"].map((h) => (
-                <TableHead key={h} className="text-primary-foreground">{h}</TableHead>
+                <TableHead key={typeof h === 'string' ? h : (h as any).key} className="text-primary-foreground">
+                  {h === "NCM" ? <AcronymTooltip>NCM</AcronymTooltip> : h === "CFOP" ? <AcronymTooltip>CFOP</AcronymTooltip> : h}
+                </TableHead>
               ))}
             </TableRow>
           </TableHeader>
@@ -169,37 +172,37 @@ function RegraDialog({ open, onOpenChange, editing }: { open: boolean; onOpenCha
             <div><Label>Tipo Cliente</Label>{optSelect(form.tipo_cliente, (v) => set("tipo_cliente", v as typeof form.tipo_cliente), TIPOS_CLIENTE)}</div>
             <div><Label>Operação</Label>{optSelect(form.tipo_operacao, (v) => set("tipo_operacao", v as typeof form.tipo_operacao), OPERACOES)}</div>
             <div><Label>Finalidade</Label>{optSelect(form.finalidade, (v) => set("finalidade", v as typeof form.finalidade), FINALIDADES)}</div>
-            <div><Label>NCM Prefixo</Label><Input value={form.ncm_prefix ?? ""} onChange={(e) => set("ncm_prefix", e.target.value || null)} placeholder="ex. 6006" /></div>
-            <div><Label>CEST</Label><Input value={form.cest ?? ""} onChange={(e) => set("cest", e.target.value || null)} /></div>
+            <div><Label><AcronymTooltip>NCM</AcronymTooltip> Prefixo</Label><Input value={form.ncm_prefix ?? ""} onChange={(e) => set("ncm_prefix", e.target.value || null)} placeholder="ex. 6006" /></div>
+            <div><Label><AcronymTooltip>CEST</AcronymTooltip></Label><Input value={form.cest ?? ""} onChange={(e) => set("cest", e.target.value || null)} /></div>
           </fieldset>
 
           <fieldset className="grid grid-cols-4 gap-3">
-            <legend className="text-sm font-semibold">ICMS</legend>
-            <div><Label>CFOP</Label><Input value={form.cfop} onChange={(e) => set("cfop", e.target.value)} /></div>
-            <div><Label>CST ICMS</Label><Input value={form.cst_icms ?? ""} onChange={(e) => set("cst_icms", e.target.value || null)} /></div>
+            <legend className="text-sm font-semibold"><AcronymTooltip>ICMS</AcronymTooltip></legend>
+            <div><Label><AcronymTooltip>CFOP</AcronymTooltip></Label><Input value={form.cfop} onChange={(e) => set("cfop", e.target.value)} /></div>
+            <div><Label><AcronymTooltip>CST</AcronymTooltip> <AcronymTooltip>ICMS</AcronymTooltip></Label><Input value={form.cst_icms ?? ""} onChange={(e) => set("cst_icms", e.target.value || null)} /></div>
             <div><Label>CSOSN</Label><Input value={form.csosn ?? ""} onChange={(e) => set("csosn", e.target.value || null)} /></div>
-            <div><Label>Alíquota ICMS %</Label><Input type="number" step="0.01" value={form.aliq_icms} onChange={(e) => set("aliq_icms", Number(e.target.value))} /></div>
+            <div><Label>Alíquota <AcronymTooltip>ICMS</AcronymTooltip> %</Label><Input type="number" step="0.01" value={form.aliq_icms} onChange={(e) => set("aliq_icms", Number(e.target.value))} /></div>
             <div><Label>Redução Base %</Label><Input type="number" step="0.01" value={form.red_base_icms_pct} onChange={(e) => set("red_base_icms_pct", Number(e.target.value))} /></div>
             <div><Label>FCP %</Label><Input type="number" step="0.01" value={form.aliq_fcp} onChange={(e) => set("aliq_fcp", Number(e.target.value))} /></div>
             <div className="flex items-center gap-2"><Switch checked={form.calcula_difal} onCheckedChange={(v) => set("calcula_difal", v)} /><Label>Calcula DIFAL</Label></div>
           </fieldset>
 
           <fieldset className="grid grid-cols-4 gap-3">
-            <legend className="text-sm font-semibold">ICMS ST</legend>
+            <legend className="text-sm font-semibold"><AcronymTooltip>ICMS</AcronymTooltip> ST</legend>
             <div className="flex items-center gap-2"><Switch checked={form.calcula_st} onCheckedChange={(v) => set("calcula_st", v)} /><Label>Calcula ST</Label></div>
             <div><Label>MVA %</Label><Input type="number" step="0.01" value={form.mva_pct} onChange={(e) => set("mva_pct", Number(e.target.value))} /></div>
-            <div><Label>Alíq. ICMS ST %</Label><Input type="number" step="0.01" value={form.aliq_icms_st} onChange={(e) => set("aliq_icms_st", Number(e.target.value))} /></div>
+            <div><Label>Alíq. <AcronymTooltip>ICMS</AcronymTooltip> ST %</Label><Input type="number" step="0.01" value={form.aliq_icms_st} onChange={(e) => set("aliq_icms_st", Number(e.target.value))} /></div>
             <div><Label>FCP ST %</Label><Input type="number" step="0.01" value={form.aliq_fcp_st} onChange={(e) => set("aliq_fcp_st", Number(e.target.value))} /></div>
           </fieldset>
 
           <fieldset className="grid grid-cols-4 gap-3">
-            <legend className="text-sm font-semibold">IPI / PIS / COFINS</legend>
-            <div><Label>CST IPI</Label><Input value={form.cst_ipi ?? ""} onChange={(e) => set("cst_ipi", e.target.value || null)} /></div>
-            <div><Label>Alíq. IPI %</Label><Input type="number" step="0.01" value={form.aliq_ipi} onChange={(e) => set("aliq_ipi", Number(e.target.value))} /></div>
-            <div><Label>CST PIS</Label><Input value={form.cst_pis ?? ""} onChange={(e) => set("cst_pis", e.target.value || null)} /></div>
-            <div><Label>Alíq. PIS %</Label><Input type="number" step="0.0001" value={form.aliq_pis} onChange={(e) => set("aliq_pis", Number(e.target.value))} /></div>
-            <div><Label>CST COFINS</Label><Input value={form.cst_cofins ?? ""} onChange={(e) => set("cst_cofins", e.target.value || null)} /></div>
-            <div><Label>Alíq. COFINS %</Label><Input type="number" step="0.0001" value={form.aliq_cofins} onChange={(e) => set("aliq_cofins", Number(e.target.value))} /></div>
+            <legend className="text-sm font-semibold"><AcronymTooltip>IPI</AcronymTooltip> / <AcronymTooltip>PIS</AcronymTooltip> / <AcronymTooltip>COFINS</AcronymTooltip></legend>
+            <div><Label><AcronymTooltip>CST</AcronymTooltip> <AcronymTooltip>IPI</AcronymTooltip></Label><Input value={form.cst_ipi ?? ""} onChange={(e) => set("cst_ipi", e.target.value || null)} /></div>
+            <div><Label>Alíq. <AcronymTooltip>IPI</AcronymTooltip> %</Label><Input type="number" step="0.01" value={form.aliq_ipi} onChange={(e) => set("aliq_ipi", Number(e.target.value))} /></div>
+            <div><Label><AcronymTooltip>CST</AcronymTooltip> <AcronymTooltip>PIS</AcronymTooltip></Label><Input value={form.cst_pis ?? ""} onChange={(e) => set("cst_pis", e.target.value || null)} /></div>
+            <div><Label>Alíq. <AcronymTooltip>PIS</AcronymTooltip> %</Label><Input type="number" step="0.0001" value={form.aliq_pis} onChange={(e) => set("aliq_pis", Number(e.target.value))} /></div>
+            <div><Label><AcronymTooltip>CST</AcronymTooltip> <AcronymTooltip>COFINS</AcronymTooltip></Label><Input value={form.cst_cofins ?? ""} onChange={(e) => set("cst_cofins", e.target.value || null)} /></div>
+            <div><Label>Alíq. <AcronymTooltip>COFINS</AcronymTooltip> %</Label><Input type="number" step="0.0001" value={form.aliq_cofins} onChange={(e) => set("aliq_cofins", Number(e.target.value))} /></div>
           </fieldset>
 
           <div><Label>Observação</Label><Input value={form.observacao ?? ""} onChange={(e) => set("observacao", e.target.value || null)} /></div>
