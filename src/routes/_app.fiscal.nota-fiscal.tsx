@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileText, Search, Printer, AlertTriangle } from "lucide-react";
+import { AcronymTooltip } from "@/components/ui/acronym-tooltip";
 
 export const Route = createFileRoute("/_app/fiscal/nota-fiscal")({
   component: NotasFiscaisPage,
@@ -45,7 +46,7 @@ function NotasFiscaisPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Documentos Fiscais</h1>
-          <p className="text-muted-foreground">Emissão e controle de NF-e integrados à expedição.</p>
+          <p className="text-muted-foreground">Emissão e controle de <AcronymTooltip>NF-e</AcronymTooltip> integrados à expedição.</p>
         </div>
       </div>
 
@@ -61,7 +62,7 @@ function NotasFiscaisPage() {
                 <TableHead>Data</TableHead>
                 <TableHead>Destinatário</TableHead>
                 <TableHead>Valor</TableHead>
-                <TableHead>Status SEFAZ</TableHead>
+                <TableHead>Status <AcronymTooltip>SEFAZ</AcronymTooltip></TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -96,6 +97,7 @@ function NotasFiscaisPage() {
                         </Button>
                         {nota.danfe_url && (
                           <Button size="icon" variant="ghost" asChild title="Imprimir DANFE">
+                            <AcronymTooltip>DANFE</AcronymTooltip>
                             <a href={nota.danfe_url} target="_blank" rel="noreferrer">
                               <Printer className="h-4 w-4" />
                             </a>
