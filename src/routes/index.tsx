@@ -14,4 +14,3 @@ function RootRedirect() {
 
   return null;
 }
-

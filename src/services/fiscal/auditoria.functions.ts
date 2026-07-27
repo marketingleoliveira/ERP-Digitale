@@ -21,7 +21,7 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
     // 2. Dados da Empresa e Ambiente
     const { data: empresa } = await supabase
       .from("empresa")
-      .select("provedor_nfe, ambiente_nfe, focus_nfe_token, serie_nfe, proximo_numero_nfe, cnpj, razao_social, uf, crt")
+      .select("provedor_nfe, ambiente_nfe, focus_nfe_token, focus_nfe_token_ciphertext, focus_nfe_token_iv, focus_nfe_token_encryption_version, serie_nfe, proximo_numero_nfe, cnpj, razao_social, uf, crt")
       .limit(1)
       .maybeSingle();
 
@@ -70,7 +70,7 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
 
     // 7. Bloqueadores Reais
     const bloqueadores: string[] = [];
-    if (!empresa?.focus_nfe_token) bloqueadores.push("Token Focus NFe não configurado na tabela empresa");
+    if (!empresa?.focus_nfe_token_ciphertext && !empresa?.focus_nfe_token) bloqueadores.push("Token Focus NFe não configurado na tabela empresa");
     if (!empresa?.cnpj) bloqueadores.push("CNPJ da empresa não configurado");
     if (!empresa?.uf) bloqueadores.push("UF da empresa não configurada");
     if (rpcsAusentes.length > 0) bloqueadores.push(`RPCs ausentes: ${rpcsAusentes.join(", ")}`);
@@ -81,7 +81,7 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
     return {
       isDev: !!isDev,
       ambiente: empresa?.ambiente_nfe || "homologacao",
-      tokenConfigurado: !!empresa?.focus_nfe_token,
+      tokenConfigurado: !!(empresa?.focus_nfe_token_ciphertext || empresa?.focus_nfe_token),
       empresa: {
         razaoSocial: empresa?.razao_social,
         cnpj: empresa?.cnpj,
