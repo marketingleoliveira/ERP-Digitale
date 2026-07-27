@@ -68,9 +68,21 @@ export function calculateCostSummary(items: BomCostItem[], plannedQty: number): 
   // Actually, for a consolidated view of costs, we should only sum the components that are not 'artigo' or are leaves in the BOM.
   // BUT the instruction says "Total estimated cost" which usually means the sum of all raw material costs.
   
-  const rawMaterials = items.filter(it => it.component_ref_tipo !== 'artigo');
-  const totalCost = items.reduce((acc, it) => acc + Number(it.custo_total_linha || 0), 0);
-  const totalLoss = items.reduce((acc, it) => acc + Number(it.custo_perda || 0), 0);
+  // To avoid double counting, we only sum items that are either:
+  // 1. Not articles (raw materials, services, etc.)
+  // 2. Articles that are leaves in this specific explosion (don't have children)
+  
+  // Create a set of all parent_ids in the result set
+  const parentIds = new Set(items.map(it => it.component_ref_id).filter(id => id));
+  
+  // A "leaf" is an item whose ref_id is not a parent of any other item in this result set
+  const leafItems = items.filter(it => 
+    it.component_ref_tipo !== 'artigo' || !parentIds.has(it.component_ref_id)
+  );
+
+  const totalCost = leafItems.reduce((acc, it) => acc + Number(it.custo_total_linha || 0), 0);
+  const totalLoss = leafItems.reduce((acc, it) => acc + Number(it.custo_perda || 0), 0);
+
   
   const missingCount = items.filter(it => it.is_missing).length;
   const outdatedCount = items.filter(it => it.is_outdated).length;
