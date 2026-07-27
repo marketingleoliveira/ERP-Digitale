@@ -41,6 +41,11 @@ export type MrpSuggestion = {
   fornecedor?: {
     nome_fantasia: string;
   };
+  mrp_suggestion_orders?: {
+    order_id: string;
+    order_number: number;
+    quantity: number;
+  }[];
 };
 
 export async function generateMrpSuggestions(
@@ -85,7 +90,7 @@ export async function convertSuggestionsToOrder(
     p_condicao_pagamento: paymentTerms,
     p_prazo_entrega: deliveryDate,
     p_idempotency_key: crypto.randomUUID()
-  });
+  } as any);
 
   if (error) throw error;
   return data;
@@ -96,7 +101,12 @@ export async function fetchMrpSuggestions(filters?: any) {
     .from('mrp_suggestions')
     .select(`
       *,
-      fornecedor:fornecedor_sugerido_id(nome_fantasia)
+      fornecedor:fornecedor_sugerido_id(nome_fantasia),
+      mrp_suggestion_orders(
+        order_id:purchase_order_id,
+        quantity:quantity_converted,
+        pedidos_compra:purchase_order_id(numero)
+      )
     `)
     .order('prioridade', { ascending: false })
     .order('data_necessaria', { ascending: true });
@@ -107,7 +117,18 @@ export async function fetchMrpSuggestions(filters?: any) {
 
   const { data, error } = await query;
   if (error) throw error;
-  return data as MrpSuggestion[];
+
+  // Transform order number
+  const transformed = (data as any[]).map(s => ({
+    ...s,
+    pedidos_relacionados: s.mrp_suggestion_orders?.map((o: any) => ({
+      order_id: o.order_id,
+      order_number: o.pedidos_compra?.numero,
+      quantity: o.quantity
+    })) || []
+  }));
+
+  return transformed as MrpSuggestion[];
 }
 
 export async function fetchSuggestionOrigins(suggestionId: string) {
@@ -121,4 +142,50 @@ export async function fetchSuggestionOrigins(suggestionId: string) {
 
   if (error) throw error;
   return data;
+}
+
+export async function fetchMaterialReservations(opId?: string) {
+  let query = supabase
+    .from('reservas' as any)
+    .select(`
+      *,
+      item:products(nome, codigo),
+      lote:lote_id(numero_lote, quantidade_disponivel),
+      op:op_id(numero)
+    ` as any);
+
+  if (opId) {
+    query = (query as any).eq('op_id', opId);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data;
+}
+
+
+export async function createMaterialReservation(data: {
+  opId: string;
+  itemId: string;
+  quantity: number;
+  loteId: string;
+}) {
+  const { data: res, error } = await supabase.rpc('reserve_material_for_op' as any, {
+    p_op_id: data.opId,
+    p_item_id: data.itemId,
+    p_quantidade: data.quantity,
+    p_lote_id: data.loteId
+  });
+
+  if (error) throw error;
+  return res;
+}
+
+export async function cancelReservation(reservaId: string) {
+  const { error } = await supabase.rpc('cancel_material_reservation' as any, {
+    p_reserva_id: reservaId
+  });
+
+  if (error) throw error;
+  return true;
 }

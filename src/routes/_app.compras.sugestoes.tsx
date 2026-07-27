@@ -36,7 +36,8 @@ import {
   ArrowRight,
   Filter,
   Search,
-  ShoppingCart
+  ShoppingCart,
+  ExternalLink
 } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
 import { toast } from 'sonner';
@@ -45,12 +46,15 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { Link, useNavigate } from '@tanstack/react-router';
+
 export const Route = createFileRoute('/_app/compras/sugestoes')({
   component: MrpSuggestionsPage,
 });
 
 function MrpSuggestionsPage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSuggestion, setSelectedSuggestion] = useState<any | null>(null);
@@ -93,7 +97,20 @@ function MrpSuggestionsPage() {
       convertSuggestionsToOrder(data.ids, data.supplierId, data.paymentTerms, data.deliveryDate),
     onSuccess: (order) => {
       queryClient.invalidateQueries({ queryKey: ['mrp-suggestions'] });
-      toast.success(`Pedido de compra #${order.numero || order.id.slice(0,8)} gerado com sucesso`);
+      const orderNumber = order.numero || order.id.slice(0, 8);
+      toast.success(
+        <div className="flex flex-col gap-1">
+          <span>Pedido de compra #{orderNumber} gerado com sucesso</span>
+          <Button 
+            variant="link" 
+            className="p-0 h-auto text-blue-600 justify-start"
+            onClick={() => navigate({ to: `/_app/compras/pedidos/${order.id}` })}
+          >
+            Visualizar pedido
+          </Button>
+        </div>,
+        { duration: 6000 }
+      );
       setIsConversionModalOpen(false);
       setSelectedIds([]);
     },
@@ -387,7 +404,7 @@ function MrpSuggestionsPage() {
           </DialogHeader>
           
           {selectedSuggestion && (
-            <div className="space-y-4 py-4">
+            <div className="space-y-6 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground">Necessidade Bruta</h4>
@@ -397,15 +414,57 @@ function MrpSuggestionsPage() {
                   <h4 className="text-sm font-medium text-muted-foreground">Estoque Disponível</h4>
                   <p className="text-lg font-bold">{selectedSuggestion.estoque_disponivel.toFixed(3)} {selectedSuggestion.unidade}</p>
                 </div>
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground">Compras em Trânsito</h4>
-                  <p className="text-lg font-bold">{selectedSuggestion.quantidade_em_transito.toFixed(3)} {selectedSuggestion.unidade}</p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground">Necessidade Líquida</h4>
-                  <p className="text-lg font-bold text-primary">{selectedSuggestion.necessidade_liquida.toFixed(3)} {selectedSuggestion.unidade}</p>
-                </div>
               </div>
+
+              {selectedSuggestion.pedidos_relacionados && selectedSuggestion.pedidos_relacionados.length > 0 && (
+                <div className="space-y-2 border-t pt-4">
+                  <h4 className="text-sm font-semibold flex items-center gap-2">
+                    <ShoppingCart className="h-4 w-4" />
+                    Pedidos de Compra Gerados
+                  </h4>
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Número</TableHead>
+                          <TableHead className="text-right">Qtd. Convertida</TableHead>
+                          <TableHead className="text-right">Ação</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {selectedSuggestion.pedidos_relacionados.map((p: any) => (
+                          <TableRow key={p.order_id}>
+                            <TableCell className="font-mono font-bold">#{p.order_number || 'N/A'}</TableCell>
+                            <TableCell className="text-right">{p.quantity.toFixed(3)}</TableCell>
+                            <TableCell className="text-right">
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                onClick={() => navigate({ to: `/_app/compras/pedidos/${p.order_id}` })}
+                                className="h-8 gap-1"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                Ver Pedido
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              )}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground">Compras em Trânsito</h4>
+                    <p className="text-lg font-bold">{selectedSuggestion.quantidade_em_transito.toFixed(3)} {selectedSuggestion.unidade}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground">Necessidade Líquida</h4>
+                    <p className="text-lg font-bold text-primary">{selectedSuggestion.necessidade_liquida.toFixed(3)} {selectedSuggestion.unidade}</p>
+                  </div>
+                </div>
+
 
               <div className="border rounded-md p-4 bg-muted/50">
                 <h4 className="text-sm font-semibold mb-2">Composição por Ordens de Produção</h4>
