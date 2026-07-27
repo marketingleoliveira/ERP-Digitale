@@ -9,12 +9,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { 
   Loader2, Search, FileText, ChevronRight, ChevronDown, 
-  Layers, List, GitBranch, AlertCircle, Shirt, ArrowLeft
+  Layers, List, GitBranch, AlertCircle, Shirt, ArrowLeft,
+  DollarSign, TrendingDown, Info, Calendar, ShieldOff,
+  Percent, ArrowUpRight
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { explodeBom, ExplodeBomItem } from "@/lib/bom-explosion";
+import { explodeBomCost, calculateCostSummary, BomCostItem } from "@/lib/bom-cost";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 export const Route = createFileRoute("/_app/producao/bom")({
   ssr: false,
