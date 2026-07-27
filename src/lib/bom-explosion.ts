@@ -10,7 +10,7 @@ export interface ExplodeBomItem {
   quantidade_liquida: number;
   quantidade_bruta: number;
   nivel: number;
-  codigo?: string;
+  codigo?: string | null;
   ativo?: boolean;
 }
 
