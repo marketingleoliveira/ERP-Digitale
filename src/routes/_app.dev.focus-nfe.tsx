@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
@@ -9,15 +8,20 @@ import {
   clearFocusToken,
   testFocusConnection,
 } from "@/lib/focus-config.functions";
+import { getFiscalCertificationStatus } from "@/services/fiscal/auditoria.functions";
 import { PageHeader } from "@/components/page-header";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Save, PlugZap, Trash2, ShieldAlert, ExternalLink } from "lucide-react";
+import { 
+  Loader2, Save, PlugZap, Trash2, ShieldAlert, ExternalLink, 
+  Database, ShieldCheck, Activity, AlertCircle, CheckCircle2, Clock
+} from "lucide-react";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
+import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/_app/dev/focus-nfe")({
   ssr: false,
@@ -30,15 +34,23 @@ function FocusNfeConfigPage() {
   const isDev = roles.includes("desenvolvedor");
 
   const qc = useQueryClient();
-  const load = useServerFn(getFocusConfigServer);
+  const loadConfig = useServerFn(getFocusConfigServer);
+  const loadStatus = useServerFn(getFiscalCertificationStatus);
   const save = useServerFn(saveFocusConfig);
   const clear = useServerFn(clearFocusToken);
   const test = useServerFn(testFocusConnection);
 
-  const cfg = useQuery({
+  const config = useQuery({
     queryKey: ["focus-config"],
-    queryFn: () => load(),
+    queryFn: () => loadConfig(),
     enabled: isDev,
+  });
+
+  const status = useQuery({
+    queryKey: ["fiscal-certification-status"],
+    queryFn: () => loadStatus(),
+    enabled: isDev,
+    refetchInterval: 30000,
   });
 
   const [form, setForm] = useState({
@@ -50,17 +62,17 @@ function FocusNfeConfigPage() {
   });
 
   useEffect(() => {
-    if (cfg.data) {
+    if (config.data) {
       setForm(f => ({
         ...f,
-        provedor_nfe: (cfg.data.provedor_nfe as typeof f.provedor_nfe) ?? "focus_nfe",
-        ambiente_nfe: (cfg.data.ambiente_nfe as typeof f.ambiente_nfe) ?? "homologacao",
-        serie_nfe: cfg.data.serie_nfe ?? 1,
-        proximo_numero_nfe: cfg.data.proximo_numero_nfe ?? 1,
-        focus_nfe_token: "", // sempre em branco por segurança
+        provedor_nfe: (config.data.provedor_nfe as any) ?? "focus_nfe",
+        ambiente_nfe: (config.data.ambiente_nfe as any) ?? "homologacao",
+        serie_nfe: config.data.serie_nfe ?? 1,
+        proximo_numero_nfe: config.data.proximo_numero_nfe ?? 1,
+        focus_nfe_token: "",
       }));
     }
-  }, [cfg.data]);
+  }, [config.data]);
 
   const saveMut = useMutation({
     mutationFn: () => save({ data: form }),
@@ -68,6 +80,7 @@ function FocusNfeConfigPage() {
       toast.success("Configuração salva.");
       setForm(f => ({ ...f, focus_nfe_token: "" }));
       qc.invalidateQueries({ queryKey: ["focus-config"] });
+      qc.invalidateQueries({ queryKey: ["fiscal-certification-status"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -77,6 +90,7 @@ function FocusNfeConfigPage() {
     onSuccess: () => {
       toast.success("Token removido.");
       qc.invalidateQueries({ queryKey: ["focus-config"] });
+      qc.invalidateQueries({ queryKey: ["fiscal-certification-status"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -86,11 +100,12 @@ function FocusNfeConfigPage() {
     onSuccess: (r) => {
       if (r.ok) toast.success(r.mensagem);
       else toast.error(r.mensagem);
+      qc.invalidateQueries({ queryKey: ["fiscal-certification-status"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (loading || cfg.isLoading) {
+  if (loading || config.isLoading || status.isLoading) {
     return <div className="flex justify-center p-8"><Loader2 className="h-5 w-5 animate-spin" /></div>;
   }
 
@@ -104,200 +119,244 @@ function FocusNfeConfigPage() {
     );
   }
 
+  const certStatus = status.data;
+  const isAproved = certStatus && certStatus.bloqueadores.length === 0 && certStatus.tokenConfigurado;
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <PageHeader
-        title="# IMPLEMENTAÇÃO TÉCNICA — ETAPA 11.1: HOMOLOGAÇÃO FISCAL, TESTES DO PROVEDOR E CERTIFICAÇÃO PARA PRODUÇÃO"
-        description="Atue como Arquiteto de Software Sênior especializado em ERP Industrial, NF-e, Focus NFe, segurança fiscal, PostgreSQL, Supabase, testes de integração, idempotência, observabilidade e recuperação de falhas. Execute exclusivamente uma etapa de homologação, auditoria e certificação da Etapa 11."
+        title="Painel de Certificação Fiscal"
+        description="Ambiente de homologação, auditoria de integridade e testes do provedor Focus NFe."
       />
 
-      <Card className="p-6 prose prose-sm dark:prose-invert max-w-none mb-6">
-        <p>O objetivo é comprovar que a infraestrutura de faturamento, NF-e, contas a receber, CPV e margem funciona corretamente em ambiente de homologação antes de configurar ou utilizar produção.</p>
-        
-        <hr />
-        
-        <h2>CLASSIFICAÇÃO INICIAL</h2>
-        <p>A Etapa 11 não está aprovada para produção enquanto não forem comprovados:</p>
-        <ul>
-          <li>emissão real em homologação;</li>
-          <li>autorização;</li>
-          <li>rejeição;</li>
-          <li>consulta após timeout;</li>
-          <li>cancelamento;</li>
-          <li>idempotência;</li>
-          <li>não duplicação de NF-e;</li>
-          <li>não duplicação de contas a receber;</li>
-          <li>não duplicação de CPV;</li>
-          <li>não duplicação de margem;</li>
-          <li>segurança dos tokens;</li>
-          <li>consistência das regras tributárias;</li>
-          <li>conciliação entre expedição, nota, financeiro e estoque.</li>
-        </ul>
-        <p><strong>O Testing Agent é obrigatório nesta execução. Não marcar como desnecessário.</strong></p>
-
-        <hr />
-
-        <h2>LIMITES DESTA EXECUÇÃO</h2>
-        <p>Implementar e testar: auditoria da Etapa 11, validação das migrations, validação das RPCs, validação do adapter da Focus NFe, configuração segura de homologação, emissão em homologação, rejeições, timeout, consultas, cancelamento, outbox, idempotência, contas a receber, CPV, margem, conciliações, segurança, logs, observabilidade, relatório de certificação.</p>
-        <p>Não implementar: SPED, contabilidade, conciliação bancária, boleto, PIX Cobrança, cobrança, protesto, produção fiscal real, token de produção, emissão em ambiente de produção, novos dashboards sem relação com a homologação, SEO.</p>
-
-        <hr />
-
-        <h2>ETAPA 0 — AUDITORIA REAL DO BANCO</h2>
-        <p>Auditar diretamente o PostgreSQL. Não confiar apenas no relatório de execução. Localizar as funções reais relacionadas a simulação fiscal, criação de pré-faturamento, criação do documento, consolidação pós-autorização, contas a receber, CPV, margem, cancelamento, consulta, outbox.</p>
-        <pre>{`select n.nspname, p.proname, pg_get_function_identity_arguments(p.oid), pg_get_function_result(p.oid), p.prosecdef 
-from pg_proc p join pg_namespace n on n.oid = p.pronamespace 
-where p.proname in ('simulate_sales_invoice', 'create_sales_invoice', 'finalize_authorized_sales_invoice', 'request_sales_invoice_cancellation');`}</pre>
-
-        <hr />
-
-        <h2>RELATÓRIO FINAL OBRIGATÓRIO (Checklist de Certificação)</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <ul className="list-none p-0">
-            <li>✅ Resultado da auditoria da Etapa 11</li>
-            <li>✅ RPCs encontradas/ausentes</li>
-            <li>✅ Tabelas e Migrations</li>
-            <li>✅ Adapter fiscal e Ambiente</li>
-            <li>✅ Status dos Tokens e Certificado</li>
-            <li>✅ Naturezas e Regras Tributárias</li>
-            <li>✅ Resultado das Simulações</li>
-            <li>✅ Sequência e Outbox</li>
-            <li>✅ Emissão Autorizada (Homologação)</li>
-            <li>✅ Rejeição Cadastral/Tributária</li>
-          </ul>
-          <ul className="list-none p-0">
-            <li>✅ Timeout e Consulta Posterior</li>
-            <li>✅ Reenvio Idempotente</li>
-            <li>✅ XML e DANFE Privado</li>
-            <li>✅ Consolidação Pós-Autorização</li>
-            <li>✅ Contas a Receber e Parcelas</li>
-            <li>✅ CPV e Margem Realizada</li>
-            <li>✅ Cancelamento e Estornos</li>
-            <li>✅ Conciliações (Expedição, Fin, CPV)</li>
-            <li>✅ Testes de Concorrência e RLS</li>
-            <li>✅ Auditoria de Segredos e Logs</li>
-          </ul>
-        </div>
-        <div className="mt-4 p-4 border rounded bg-amber-500/10 border-amber-500/50 text-center font-bold">
-          CLASSIFICAÇÃO FINAL: AGUARDANDO HOMOLOGAÇÃO COMPLETA
-        </div>
-      </Card>
-
-      {cfg.data && (
-        <Card className="p-4 flex flex-wrap gap-3 items-center text-sm">
-          <Badge variant={cfg.data.token_configurado ? "default" : "destructive"}>
-            {cfg.data.token_configurado ? `Token OK (${cfg.data.token_preview})` : "Token ausente"}
-          </Badge>
-          <Badge variant={cfg.data.provedor_nfe === "focus_nfe" ? "default" : "secondary"}>
-            Provedor: {cfg.data.provedor_nfe}
-          </Badge>
-          <Badge variant={cfg.data.ambiente_nfe === "producao" ? "destructive" : "secondary"}>
-            Ambiente: {cfg.data.ambiente_nfe}
-          </Badge>
-          {cfg.data.cnpj && <Badge variant="outline">CNPJ: {cfg.data.cnpj}</Badge>}
-          {cfg.data.env_token_presente && (
-            <Badge variant="outline" title="Também existe FOCUS_NFE_TOKEN nas secrets — o valor do banco tem prioridade">
-              secret env presente
-            </Badge>
-          )}
+      {/* Status da Certificação */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className={isAproved ? "border-green-500/50 bg-green-500/5" : "border-amber-500/50 bg-amber-500/5"}>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <ShieldCheck className={isAproved ? "text-green-500" : "text-amber-500"} size={18} />
+              Classificação
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xl font-bold">
+              {certStatus?.bloqueadores.length ? "BLOQUEADOR PARA PRODUÇÃO" : (certStatus?.tokenConfigurado ? "APROVADO PARA HOMOLOGAÇÃO" : "AGUARDANDO CONFIGURAÇÃO")}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Baseado em auditoria técnica automática
+            </p>
+          </CardContent>
         </Card>
-      )}
 
-      <Card className="p-4 space-y-4">
-        <h3 className="font-semibold text-primary">🔑 Credencial</h3>
-        <div>
-          <Label>Token Focus NFe {cfg.data?.token_configurado && <span className="text-xs text-muted-foreground">(deixe em branco para manter o atual)</span>}</Label>
-          <Input
-            type="password"
-            autoComplete="new-password"
-            placeholder={cfg.data?.token_configurado ? `Atual: ${cfg.data.token_preview}` : "Cole o token da Focus"}
-            value={form.focus_nfe_token}
-            onChange={e => setForm(f => ({ ...f, focus_nfe_token: e.target.value }))}
-          />
-          <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-            Obter em <a href="https://app.focusnfe.com.br" target="_blank" rel="noreferrer" className="underline inline-flex items-center gap-1">app.focusnfe.com.br <ExternalLink className="h-3 w-3" /></a> → Empresas → Token de acesso
-          </p>
-        </div>
-        {cfg.data?.token_configurado && (
-          <Button variant="ghost" size="sm" onClick={() => clearMut.mutate()} disabled={clearMut.isPending}>
-            <Trash2 className="h-4 w-4 mr-2" /> Remover token salvo
-          </Button>
-        )}
-      </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Activity className="text-blue-500" size={18} />
+              Ambiente Atual
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xl font-bold uppercase">{certStatus?.ambiente}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {certStatus?.tokenConfigurado ? "Token configurado" : "Token ausente"}
+            </p>
+          </CardContent>
+        </Card>
 
-      <Card className="p-4 space-y-4">
-        <h3 className="font-semibold text-primary">⚙️ Provedor e Ambiente</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <Label>Provedor NF-e</Label>
-            <Select value={form.provedor_nfe} onValueChange={v => setForm(f => ({ ...f, provedor_nfe: v as typeof f.provedor_nfe }))}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="nenhum">Nenhum (só rascunho)</SelectItem>
-                <SelectItem value="focus_nfe">Focus NFe</SelectItem>
-                <SelectItem value="plugnotas">PlugNotas</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Ambiente</Label>
-            <Select value={form.ambiente_nfe} onValueChange={v => setForm(f => ({ ...f, ambiente_nfe: v as typeof f.ambiente_nfe }))}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="homologacao">Homologação (testes)</SelectItem>
-                <SelectItem value="producao">Produção</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </Card>
-
-      <Card className="p-4 space-y-4">
-        <h3 className="font-semibold text-primary">🔢 Numeração NF-e</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <Label>Série NF-e</Label>
-            <Input type="number" min={1} value={form.serie_nfe}
-              onChange={e => setForm(f => ({ ...f, serie_nfe: Number(e.target.value) }))} />
-          </div>
-          <div>
-            <Label>Próximo número</Label>
-            <Input type="number" min={1} value={form.proximo_numero_nfe}
-              onChange={e => setForm(f => ({ ...f, proximo_numero_nfe: Number(e.target.value) }))} />
-          </div>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Ao mudar para produção, informe o próximo número autorizado pela SEFAZ (evita rejeição por numeração duplicada).
-        </p>
-      </Card>
-
-      <div className="flex justify-between items-center flex-wrap gap-2">
-        <Button
-          variant="outline"
-          onClick={() => testMut.mutate()}
-          disabled={testMut.isPending || !cfg.data?.token_configurado}
-          title={!cfg.data?.token_configurado ? "Salve um token antes de testar" : ""}
-        >
-          {testMut.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <PlugZap className="h-4 w-4 mr-2" />}
-          Testar conexão
-        </Button>
-        <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
-          {saveMut.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-          Salvar configuração
-        </Button>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Database className="text-purple-500" size={18} />
+              Integridade DB
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xl font-bold">
+              {certStatus?.auditoria.rpcsAusentes.length === 0 ? "100% OPERACIONAL" : "PENDÊNCIAS"}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {certStatus?.auditoria.rpcsEncontradas.length} RPCs, {certStatus?.auditoria.tabelasEncontradas.length} Tabelas
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
-      <Card className="p-4 bg-muted/40">
-        <h4 className="font-semibold text-sm mb-2">📋 Checklist de Certificação (Etapa 11.1)</h4>
-        <ul className="text-sm space-y-1 list-disc pl-5 text-muted-foreground">
-          <li>Token salvo e teste de conexão OK</li>
-          <li>CNPJ, IE, CRT e endereço da empresa preenchidos em <a href="/configuracoes" className="underline">Configurações → Empresa</a></li>
-          <li>Empresa cadastrada no painel da Focus NFe com certificado A1 ativo</li>
-          <li>Regras tributárias cadastradas para os NCMs em uso</li>
-          <li>Produtos com NCM, origem, unidade e CFOP padrão</li>
-          <li>Clientes com CNPJ/CPF, indicador IE e endereço completo</li>
-        </ul>
-      </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-6">
+          {/* Configurações Reais */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Configurações do Provedor</CardTitle>
+              <CardDescription>Gestão segura de credenciais e ambiente.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Token Focus NFe {config.data?.token_configurado && <span className="text-xs text-muted-foreground">(deixe em branco para manter)</span>}</Label>
+                <div className="flex gap-2">
+                    <Input
+                        type="password"
+                        placeholder={config.data?.token_configurado ? `Atual: ${config.data.token_preview}` : "Cole o token de homologação"}
+                        value={form.focus_nfe_token}
+                        onChange={e => setForm(f => ({ ...f, focus_nfe_token: e.target.value }))}
+                    />
+                    {config.data?.token_configurado && (
+                        <Button variant="outline" size="icon" onClick={() => clearMut.mutate()} disabled={clearMut.isPending} title="Limpar token">
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label>Provedor</Label>
+                    <Select value={form.provedor_nfe} onValueChange={v => setForm(f => ({ ...f, provedor_nfe: v as any }))}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="nenhum">Nenhum</SelectItem>
+                            <SelectItem value="focus_nfe">Focus NFe</SelectItem>
+                            <SelectItem value="plugnotas">PlugNotas</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div className="space-y-2">
+                    <Label>Ambiente</Label>
+                    <Select value={form.ambiente_nfe} onValueChange={v => setForm(f => ({ ...f, ambiente_nfe: v as any }))}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="homologacao">Homologação</SelectItem>
+                            <SelectItem value="producao" disabled>Produção (Bloqueado)</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label>Série NF-e</Label>
+                    <Input type="number" value={form.serie_nfe} onChange={e => setForm(f => ({ ...f, serie_nfe: Number(e.target.value) }))} />
+                </div>
+                <div className="space-y-2">
+                    <Label>Próximo Número</Label>
+                    <Input type="number" value={form.proximo_numero_nfe} onChange={e => setForm(f => ({ ...f, proximo_numero_nfe: Number(e.target.value) }))} />
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                  <Button className="flex-1" onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
+                      {saveMut.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                      Salvar Alterações
+                  </Button>
+                  <Button variant="outline" onClick={() => testMut.mutate()} disabled={testMut.isPending || !certStatus?.tokenConfigurado}>
+                      {testMut.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <PlugZap className="h-4 w-4 mr-2" />}
+                      Testar Conexão
+                  </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Bloqueadores Reais */}
+          {certStatus?.bloqueadores.length ? (
+            <Card className="border-destructive/50">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium flex items-center gap-2 text-destructive">
+                  <AlertCircle size={18} />
+                  Bloqueadores Detectados
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-1">
+                  {certStatus.bloqueadores.map((b, i) => (
+                    <li key={i} className="text-xs flex items-center gap-2">
+                      <div className="h-1 w-1 rounded-full bg-destructive" />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          ) : null}
+        </div>
+
+        <div className="space-y-6">
+          {/* Auditoria do Banco */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Auditoria Técnica</CardTitle>
+              <CardDescription>Objetos detectados no PostgreSQL.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-xs uppercase text-muted-foreground">RPCs Encontradas</Label>
+                <div className="flex flex-wrap gap-1">
+                  {certStatus?.auditoria.rpcsEncontradas.map(name => (
+                    <Badge key={name} variant="secondary" className="text-[10px] font-mono">{name}</Badge>
+                  ))}
+                  {certStatus?.auditoria.rpcsAusentes.map(name => (
+                    <Badge key={name} variant="destructive" className="text-[10px] font-mono">{name}</Badge>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs uppercase text-muted-foreground">Tabelas Fiscais</Label>
+                <div className="flex flex-wrap gap-1">
+                  {certStatus?.auditoria.tabelasEncontradas.map(name => (
+                    <Badge key={name} variant="outline" className="text-[10px] font-mono">{name}</Badge>
+                  ))}
+                  {certStatus?.auditoria.tabelasAusentes.map(name => (
+                    <Badge key={name} variant="destructive" className="text-[10px] font-mono">{name}</Badge>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 pt-2">
+                  <div className="p-3 border rounded-lg bg-muted/30">
+                      <div className="text-xs text-muted-foreground">Naturezas Ativas</div>
+                      <div className="text-lg font-bold">{certStatus?.cadastros.naturezasAtivas}</div>
+                  </div>
+                  <div className="p-3 border rounded-lg bg-muted/30">
+                      <div className="text-xs text-muted-foreground">Regras Ativas</div>
+                      <div className="text-lg font-bold">{certStatus?.cadastros.regrasAtivas}</div>
+                  </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Logs Recentes */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Logs de Atividade</CardTitle>
+              <CardDescription>Últimos eventos fiscais registrados.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {certStatus?.logs.length === 0 ? (
+                  <p className="text-xs text-muted-foreground text-center py-4">Nenhum log registrado ainda.</p>
+                ) : (
+                  certStatus?.logs.map((log: any) => (
+                    <div key={log.id} className="flex gap-3 text-xs border-b border-muted pb-2 last:border-0">
+                      <div className="mt-0.5">
+                        {log.acao === 'erro' ? <AlertCircle className="text-destructive h-3 w-3" /> : <Clock className="text-muted-foreground h-3 w-3" />}
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-semibold uppercase">{log.acao}</div>
+                        <div className="text-muted-foreground line-clamp-1">{JSON.stringify(log.response)}</div>
+                        <div className="text-[10px] opacity-50">{new Date(log.created_at).toLocaleString()}</div>
+                      </div>
+                      {log.http_status && (
+                        <Badge variant={log.http_status >= 400 ? "destructive" : "outline"} className="h-4 text-[9px]">{log.http_status}</Badge>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      
+      <div className="flex justify-center text-xs text-muted-foreground py-4">
+        Última auditoria completa: {new Date(certStatus?.timestamp || "").toLocaleString()}
+      </div>
     </div>
   );
 }
