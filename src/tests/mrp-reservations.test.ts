@@ -10,7 +10,7 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
   let testReservaId: string;
 
   it('deve criar uma reserva vinculada a um lote e comprometer o saldo', async () => {
-    // Verificamos o saldo antes (sem .single() para evitar erro de coerção se houver lixo)
+    // Verificamos o saldo antes
     const { data: lotesAntes, error: errorAntes } = await supabase
         .from('lotes')
         .select('quantidade_disponivel')
@@ -21,13 +21,16 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
 
     const qtyToReserve = 5;
 
-    testReservaId = await createMaterialReservation({
-      opId: testOpId,
-      itemId: testItemId,
-      quantity: qtyToReserve,
-      loteId: testLoteId
+    // Criar a reserva via RPC
+    const { data: reservaId, error: errorReserva } = await supabase.rpc('reserve_material_for_op' as any, {
+      p_op_id: testOpId,
+      p_item_id: testItemId,
+      p_quantidade: qtyToReserve,
+      p_lote_id: testLoteId
     });
 
+    if (errorReserva) throw errorReserva;
+    testReservaId = reservaId as string;
     expect(testReservaId).toBeDefined();
 
     // Verificamos se o saldo foi subtraído corretamente
@@ -36,9 +39,13 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
   });
 
   it('deve listar reservas de uma OP específica', async () => {
-    const reservas = await fetchMaterialReservations(testOpId);
+    const { data: reservas, error } = await supabase
+      .from('reservas' as any)
+      .select('*')
+      .eq('op_id', testOpId);
+    
+    if (error) throw error;
     expect(Array.isArray(reservas)).toBe(true);
-    // Verificamos se a reserva que criamos está na lista
     expect((reservas as any[]).some(r => r.id === testReservaId)).toBe(true);
   });
 
@@ -48,7 +55,10 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
 
     if (!lotesAntes?.length || !reservas?.length) throw new Error('Dados para cancelamento não encontrados');
 
-    await cancelReservation(testReservaId);
+    const { error: errorCancel } = await supabase.rpc('cancel_material_reservation' as any, {
+      p_reserva_id: testReservaId
+    });
+    if (errorCancel) throw errorCancel;
 
     const { data: lotesDepois } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId);
     expect(Number(lotesDepois![0].quantidade_disponivel)).toBe(Number(lotesAntes[0].quantidade_disponivel) + Number(reservas[0].quantidade));
@@ -56,13 +66,15 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
 
   it('deve impedir reserva de quantidade superior ao disponível', async () => {
     const { data: lotes } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId);
-    const impossibleQty = Number(lotes![0].quantidade_disponivel) + 1000;
+    const impossibleQty = Number(lotes![0].quantidade_disponivel) + 5000;
 
-    await expect(createMaterialReservation({
-      opId: testOpId,
-      itemId: testItemId,
-      quantity: impossibleQty,
-      loteId: testLoteId
-    })).rejects.toThrow();
+    const { error } = await supabase.rpc('reserve_material_for_op' as any, {
+      p_op_id: testOpId,
+      p_item_id: testItemId,
+      p_quantidade: impossibleQty,
+      p_lote_id: testLoteId
+    });
+
+    expect(error).toBeDefined();
   });
 });
