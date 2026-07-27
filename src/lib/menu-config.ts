@@ -7,7 +7,7 @@ import {
   Building2, FlaskConical, Spool, UserSquare2, Palette, Droplet,
   Sparkles, Layers, Wrench, Syringe, Target, Code2, Briefcase,
   Server, IdCard, KeyRound, Clock, Network, PlugZap, Filter,
-  ClipboardCheck,
+  ClipboardCheck, AlertTriangle,
   type LucideIcon,
 } from "lucide-react";
 
