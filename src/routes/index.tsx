@@ -9,7 +9,7 @@ function RootRedirect() {
   const navigate = useNavigate();
   
   useEffect(() => {
-    navigate({ to: "/dashboard", replace: true });
+    navigate({ to: "/inicio", replace: true });
   }, [navigate]);
 
   return null;
