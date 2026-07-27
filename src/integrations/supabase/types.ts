@@ -8255,6 +8255,15 @@ export type Database = {
         Returns: number
       }
       proximo_numero_op: { Args: never; Returns: number }
+      receive_external_processing_return: {
+        Args: {
+          p_custo_servico?: number
+          p_documento_referencia?: string
+          p_itens_retorno: Json
+          p_remessa_id: string
+        }
+        Returns: Json
+      }
       receive_production_output: {
         Args: {
           p_classificacao: string
