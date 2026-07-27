@@ -33,9 +33,10 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
       "ship_sales_order"
     ];
 
-    const { data: functionsFound } = await supabase.rpc("read_query", {
+    const { data: functionsFound } = await (supabase.rpc("read_query" as any, {
       query: `SELECT proname FROM pg_proc WHERE proname = ANY(ARRAY['${rpcsCriticas.join("','")}'])`
-    });
+    } as any) as any);
+
 
     const rpcsEncontradas = (functionsFound as any[])?.map(f => f.proname) || [];
     const rpcsAusentes = rpcsCriticas.filter(name => !rpcsEncontradas.includes(name));
@@ -46,9 +47,10 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
       "regras_tributarias", "contas_receber", "pre_faturamentos", "nfe_logs"
     ];
 
-    const { data: tablesFound } = await supabase.rpc("read_query", {
+    const { data: tablesFound } = await (supabase.rpc("read_query" as any, {
         query: `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = ANY(ARRAY['${tabelasCriticas.join("','")}'])`
-    });
+    } as any) as any);
+
     
     const tabelasEncontradas = (tablesFound as any[])?.map(t => t.table_name) || [];
     const tabelasAusentes = tabelasCriticas.filter(name => !tabelasEncontradas.includes(name));
