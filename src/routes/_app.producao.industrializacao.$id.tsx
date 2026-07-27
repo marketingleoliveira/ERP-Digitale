@@ -1,8 +1,8 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, Link } from '@tanstack/react-router';
 import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getIndustrializationOrderById, shipMaterialToExternalProcessor } from '@/lib/op-industrializacao.functions';
 import { Button } from '@/components/ui/button';
-import { Truck, PackageCheck, History, ArrowLeft, Plus } from 'lucide-react';
+import { Truck, PackageCheck, History, ArrowLeft, Plus, BadgeCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
