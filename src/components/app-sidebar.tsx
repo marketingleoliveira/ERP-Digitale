@@ -60,15 +60,25 @@ export function AppSidebar() {
             <TooltipProvider>
               <Tooltip delayDuration={300}>
                 <TooltipTrigger asChild>
-                  <span className="ml-auto inline-flex cursor-help items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 text-[10px] font-semibold text-accent-foreground ring-1 ring-accent/30">
-                    <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                  <span className="ml-auto inline-flex cursor-help items-center gap-1.5 rounded-full bg-accent/15 px-2.5 py-1 text-[10px] font-semibold text-accent-foreground ring-1 ring-accent/30 hover:bg-accent/25 transition-colors group/erp-label">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+                    </span>
                     #ERP DIGITALE
+                    <Info className="h-3 w-3 opacity-50 group-hover/erp-label:opacity-100 transition-opacity" />
                   </span>
                 </TooltipTrigger>
-                <TooltipContent side="right" className="max-w-xs p-3 text-xs leading-relaxed">
-                  <p>
-                    O ERP foi projetado para atender integralmente ao processo produtivo da Digitale Têxtil, desde a aquisição do fio até a expedição do tecido acabado. O sistema integra planejamento de produção, fichas técnicas, controle de estoque por lotes, custos industriais, compras, rastreabilidade e auditoria, além de suportar operações terceirizadas, como a tinturaria, mantendo o controle completo das remessas, retornos e custos de beneficiamento. Dessa forma, cada lote pode ser acompanhado durante todo o ciclo produtivo, proporcionando maior controle operacional, redução de perdas, rastreabilidade e informações confiáveis para a tomada de decisão.
-                  </p>
+                <TooltipContent side="right" className="max-w-xs p-4 text-xs leading-relaxed shadow-xl border-accent/20">
+                  <div className="space-y-2">
+                    <p className="font-bold text-accent-foreground flex items-center gap-2">
+                      <Info className="h-3.5 w-3.5" />
+                      Sobre o Sistema ERP
+                    </p>
+                    <p className="text-muted-foreground">
+                      O ERP foi projetado para atender integralmente ao processo produtivo da Digitale Têxtil, desde a aquisição do fio até a expedição do tecido acabado. O sistema integra planejamento de produção, fichas técnicas, controle de estoque por lotes, custos industriais, compras, rastreabilidade e auditoria, além de suportar operações terceirizadas, como a tinturaria, mantendo o controle completo das remessas, retornos e custos de beneficiamento. Dessa forma, cada lote pode ser acompanhado durante todo o ciclo produtivo, proporcionando maior controle operacional, redução de perdas, rastreabilidade e informações confiáveis para a tomada de decisão.
+                    </p>
+                  </div>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
