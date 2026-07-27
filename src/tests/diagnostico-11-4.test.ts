@@ -3,13 +3,15 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 describe('ETAPA 11.4: Diagnóstico de Credencial', () => {
   it('1. Verificar colunas de status na tabela empresa', async () => {
-    const { data: cols, error: err } = await supabaseAdmin.rpc('read_query' as any, {
-      query: "SELECT column_name FROM information_schema.columns WHERE table_name = 'empresa' AND column_name IN ('focus_nfe_token_status', 'focus_nfe_token_last_error_code')"
-    });
-    if (err) throw err;
-    const names = (cols as any[] || []).map(c => c.column_name);
-    expect(names).toContain('focus_nfe_token_status');
-    expect(names).toContain('focus_nfe_token_last_error_code');
+    const { data: emp, error } = await supabaseAdmin
+      .from('empresa')
+      .select('focus_nfe_token_status, focus_nfe_token_last_error_code')
+      .limit(1)
+      .maybeSingle();
+    
+    if (error) throw error;
+    // Se a tabela estiver vazia, o teste passa pois a coluna existe no schema (o select não falhou)
+    expect(true).toBe(true);
   });
 
   it('2. Testar bloqueio de RLS para colunas sensíveis', async () => {
