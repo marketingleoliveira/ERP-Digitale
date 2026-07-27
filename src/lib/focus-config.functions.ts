@@ -30,7 +30,7 @@ export const getFocusConfigServer = createServerFn({ method: "GET" })
     await assertDev(context as never);
     const { data, error } = await context.supabase
       .from("empresa")
-      .select("id, provedor_nfe, ambiente_nfe, focus_nfe_token, focus_nfe_token_ciphertext, focus_nfe_token_updated_at, serie_nfe, proximo_numero_nfe, cnpj, razao_social")
+      .select("id, provedor_nfe, ambiente_nfe, focus_nfe_token, focus_nfe_token_ciphertext, focus_nfe_token_iv, focus_nfe_token_encryption_version, focus_nfe_token_updated_at, serie_nfe, proximo_numero_nfe, cnpj, razao_social")
       .limit(1)
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -78,9 +78,10 @@ export const saveFocusConfig = createServerFn({ method: "POST" })
     
     // Token: Criptografa e salva nos novos campos, limpando o legado
     if (typeof data.focus_nfe_token === "string" && data.focus_nfe_token.trim().length > 0) {
-      const { ciphertext, iv } = await encryptToken(data.focus_nfe_token.trim());
+      const { ciphertext, iv, version } = await encryptToken(data.focus_nfe_token.trim());
       patch.focus_nfe_token_ciphertext = ciphertext;
       patch.focus_nfe_token_iv = iv;
+      patch.focus_nfe_token_encryption_version = version;
       patch.focus_nfe_token_updated_at = new Date().toISOString();
       patch.focus_nfe_token_updated_by = context.userId;
       patch.focus_nfe_token = null; // Limpa o legado texto-aberto
@@ -131,7 +132,7 @@ export const testFocusConnection = createServerFn({ method: "POST" })
     await assertDev(context as never);
     const { data: emp } = await context.supabase
       .from("empresa")
-      .select("focus_nfe_token, focus_nfe_token_ciphertext, focus_nfe_token_iv, ambiente_nfe, cnpj")
+      .select("focus_nfe_token, focus_nfe_token_ciphertext, focus_nfe_token_iv, focus_nfe_token_encryption_version, ambiente_nfe, cnpj")
       .limit(1)
       .maybeSingle();
     const empRec = (emp as Record<string, unknown> | null) ?? {};
@@ -143,7 +144,11 @@ export const testFocusConnection = createServerFn({ method: "POST" })
     // Tenta descriptografar se houver token seguro
     if (empRec.focus_nfe_token_ciphertext && empRec.focus_nfe_token_iv) {
       const { decryptToken } = await import("@/services/fiscal/encryption.server");
-      token = await decryptToken(empRec.focus_nfe_token_ciphertext as string, empRec.focus_nfe_token_iv as string);
+      token = await decryptToken(
+        empRec.focus_nfe_token_ciphertext as string, 
+        empRec.focus_nfe_token_iv as string,
+        empRec.focus_nfe_token_encryption_version as string
+      );
     }
     
     if (!token) token = process.env.FOCUS_NFE_TOKEN ?? null;

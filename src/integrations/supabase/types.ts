@@ -1906,6 +1906,7 @@ export type Database = {
           exige_op_para_nfe: boolean
           focus_nfe_token: string | null
           focus_nfe_token_ciphertext: string | null
+          focus_nfe_token_encryption_version: string | null
           focus_nfe_token_iv: string | null
           focus_nfe_token_updated_at: string | null
           focus_nfe_token_updated_by: string | null
@@ -1946,6 +1947,7 @@ export type Database = {
           exige_op_para_nfe?: boolean
           focus_nfe_token?: string | null
           focus_nfe_token_ciphertext?: string | null
+          focus_nfe_token_encryption_version?: string | null
           focus_nfe_token_iv?: string | null
           focus_nfe_token_updated_at?: string | null
           focus_nfe_token_updated_by?: string | null
@@ -1986,6 +1988,7 @@ export type Database = {
           exige_op_para_nfe?: boolean
           focus_nfe_token?: string | null
           focus_nfe_token_ciphertext?: string | null
+          focus_nfe_token_encryption_version?: string | null
           focus_nfe_token_iv?: string | null
           focus_nfe_token_updated_at?: string | null
           focus_nfe_token_updated_by?: string | null
