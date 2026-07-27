@@ -234,7 +234,12 @@ function MrpSuggestionsPage() {
                   </TableRow>
                 ) : (
                   filteredData.map((item) => (
-                    <TableRow key={item.id} className={item.prioridade === 'urgente' ? 'bg-red-50/30' : ''}>
+                    <TableRow 
+                      key={item.id} 
+                      className={`${item.prioridade === 'urgente' ? 'bg-red-50/30' : ''} cursor-pointer hover:bg-muted/50`}
+                      onClick={() => setSelectedSuggestion(item)}
+                    >
+
                       <TableCell>{getStatusBadge(item.status)}</TableCell>
                       <TableCell>
                         <Badge 
