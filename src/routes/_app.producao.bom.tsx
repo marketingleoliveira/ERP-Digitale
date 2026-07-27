@@ -50,8 +50,19 @@ function BomPage() {
   const { data: explosion = [], isLoading: loadingExplosion, error: explosionError } = useQuery({
     queryKey: ["bom-explosion", selectedArticle?.id, plannedQty],
     queryFn: () => selectedArticle ? explodeBom(selectedArticle.id, plannedQty) : Promise.resolve([]),
-    enabled: !!selectedArticle,
+    enabled: !!selectedArticle && activeTab === "structure",
   });
+
+  const { data: costExplosion = [], isLoading: loadingCosts, error: costError } = useQuery({
+    queryKey: ["bom-cost-explosion", selectedArticle?.id, plannedQty],
+    queryFn: () => selectedArticle ? explodeBomCost(selectedArticle.id, plannedQty) : Promise.resolve([]),
+    enabled: !!selectedArticle && activeTab === "costs",
+  });
+
+  const costSummary = useMemo(() => 
+    activeTab === "costs" ? calculateCostSummary(costExplosion as BomCostItem[], plannedQty) : null
+  , [costExplosion, plannedQty, activeTab]);
+
 
   const filteredArticles = articles.filter(a => 
     (a.codigo || "").toLowerCase().includes(filter.toLowerCase()) ||
