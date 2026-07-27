@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PreFaturamentoDashboard } from "@/components/faturamento/pre-faturamentos";
 
-export const Route = createFileRoute("/fiscal/dashboard")({
+export const Route = createFileRoute("/_app/fiscal/dashboard")({
   component: FiscalDashboardPage,
   head: () => ({
     title: "Dashboard Fiscal | ERP Digitale",

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileText, Search, Printer, AlertTriangle } from "lucide-react";
 
-export const Route = createFileRoute("/fiscal/nota-fiscal")({
+export const Route = createFileRoute("/_app/fiscal/nota-fiscal")({
   component: NotasFiscaisPage,
   head: () => ({
     title: "Documentos Fiscais | ERP Digitale",
