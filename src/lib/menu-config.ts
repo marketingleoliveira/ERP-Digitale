@@ -7,7 +7,7 @@ import {
   Building2, FlaskConical, Spool, UserSquare2, Palette, Droplet,
   Sparkles, Layers, Wrench, Syringe, Target, Code2, Briefcase,
   Server, IdCard, KeyRound, Clock, Network, PlugZap, Filter,
-  ClipboardCheck,
+  ClipboardCheck, AlertTriangle,
   type LucideIcon,
 } from "lucide-react";
 
@@ -113,6 +113,10 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Contas a Pagar", url: "/compras/contas-pagar", icon: Wallet, group: "Compras" },
   { title: "Sugestões do MRP", url: "/compras/sugestoes", icon: Package, group: "Compras" },
   { title: "Industrialização", url: "/producao/industrializacao", icon: Handshake, group: "Produção (PCP)" },
+  { title: "Estoque Comercial", url: "/comercial/estoque", icon: Warehouse, group: "Estoque" },
+  { title: "Pedidos de Venda", url: "/comercial/pedidos", icon: ShoppingCart, group: "Compras" },
+  { title: "RNCs", url: "/qualidade/rnc", icon: AlertTriangle, group: "Produção (PCP)" },
+
 
 
 ];

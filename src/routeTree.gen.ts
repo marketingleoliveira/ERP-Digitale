@@ -42,6 +42,7 @@ import { Route as AppProducaoIndexRouteImport } from './routes/_app.producao.ind
 import { Route as AppLogisticaIndexRouteImport } from './routes/_app.logistica.index'
 import { Route as AppFinanceiroIndexRouteImport } from './routes/_app.financeiro.index'
 import { Route as AppComprasIndexRouteImport } from './routes/_app.compras.index'
+import { Route as AppQualidadeRncRouteImport } from './routes/_app.qualidade.rnc'
 import { Route as AppProducaoQualidadeRouteImport } from './routes/_app.producao.qualidade'
 import { Route as AppProducaoPlanoRouteImport } from './routes/_app.producao.plano'
 import { Route as AppProducaoPedidosRouteImport } from './routes/_app.producao.pedidos'
@@ -99,6 +100,8 @@ import { Route as AppComprasPedidosRouteImport } from './routes/_app.compras.ped
 import { Route as AppComprasFornecedoresRouteImport } from './routes/_app.compras.fornecedores'
 import { Route as AppComprasCotacoesRouteImport } from './routes/_app.compras.cotacoes'
 import { Route as AppComprasContasPagarRouteImport } from './routes/_app.compras.contas-pagar'
+import { Route as AppComercialPedidosRouteImport } from './routes/_app.comercial.pedidos'
+import { Route as AppComercialEstoqueRouteImport } from './routes/_app.comercial.estoque'
 import { Route as AppClienteArtigoSimuladorRouteImport } from './routes/_app.cliente-artigo.simulador'
 import { Route as AppClienteArtigoIdRouteImport } from './routes/_app.cliente-artigo.$id'
 import { Route as AppRastreabilidadeTipoIdRouteImport } from './routes/_app.rastreabilidade.$tipo.$id'
@@ -277,6 +280,11 @@ const AppFinanceiroIndexRoute = AppFinanceiroIndexRouteImport.update({
 const AppComprasIndexRoute = AppComprasIndexRouteImport.update({
   id: '/compras/',
   path: '/compras/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQualidadeRncRoute = AppQualidadeRncRouteImport.update({
+  id: '/qualidade/rnc',
+  path: '/qualidade/rnc',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProducaoQualidadeRoute = AppProducaoQualidadeRouteImport.update({
@@ -571,6 +579,16 @@ const AppComprasContasPagarRoute = AppComprasContasPagarRouteImport.update({
   path: '/compras/contas-pagar',
   getParentRoute: () => AppRoute,
 } as any)
+const AppComercialPedidosRoute = AppComercialPedidosRouteImport.update({
+  id: '/comercial/pedidos',
+  path: '/comercial/pedidos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppComercialEstoqueRoute = AppComercialEstoqueRouteImport.update({
+  id: '/comercial/estoque',
+  path: '/comercial/estoque',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppClienteArtigoSimuladorRoute =
   AppClienteArtigoSimuladorRouteImport.update({
     id: '/simulador',
@@ -686,6 +704,8 @@ export interface FileRoutesByFullPath {
   '/variante': typeof AppVarianteRoute
   '/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
   '/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
+  '/comercial/estoque': typeof AppComercialEstoqueRoute
+  '/comercial/pedidos': typeof AppComercialPedidosRoute
   '/compras/contas-pagar': typeof AppComprasContasPagarRoute
   '/compras/cotacoes': typeof AppComprasCotacoesRouteWithChildren
   '/compras/fornecedores': typeof AppComprasFornecedoresRoute
@@ -743,6 +763,7 @@ export interface FileRoutesByFullPath {
   '/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
   '/producao/plano': typeof AppProducaoPlanoRoute
   '/producao/qualidade': typeof AppProducaoQualidadeRouteWithChildren
+  '/qualidade/rnc': typeof AppQualidadeRncRoute
   '/compras/': typeof AppComprasIndexRoute
   '/financeiro/': typeof AppFinanceiroIndexRoute
   '/logistica/': typeof AppLogisticaIndexRoute
@@ -792,6 +813,8 @@ export interface FileRoutesByTo {
   '/variante': typeof AppVarianteRoute
   '/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
   '/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
+  '/comercial/estoque': typeof AppComercialEstoqueRoute
+  '/comercial/pedidos': typeof AppComercialPedidosRoute
   '/compras/contas-pagar': typeof AppComprasContasPagarRoute
   '/compras/cotacoes': typeof AppComprasCotacoesRouteWithChildren
   '/compras/fornecedores': typeof AppComprasFornecedoresRoute
@@ -849,6 +872,7 @@ export interface FileRoutesByTo {
   '/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
   '/producao/plano': typeof AppProducaoPlanoRoute
   '/producao/qualidade': typeof AppProducaoQualidadeRouteWithChildren
+  '/qualidade/rnc': typeof AppQualidadeRncRoute
   '/compras': typeof AppComprasIndexRoute
   '/financeiro': typeof AppFinanceiroIndexRoute
   '/logistica': typeof AppLogisticaIndexRoute
@@ -900,6 +924,8 @@ export interface FileRoutesById {
   '/_app/variante': typeof AppVarianteRoute
   '/_app/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
   '/_app/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
+  '/_app/comercial/estoque': typeof AppComercialEstoqueRoute
+  '/_app/comercial/pedidos': typeof AppComercialPedidosRoute
   '/_app/compras/contas-pagar': typeof AppComprasContasPagarRoute
   '/_app/compras/cotacoes': typeof AppComprasCotacoesRouteWithChildren
   '/_app/compras/fornecedores': typeof AppComprasFornecedoresRoute
@@ -957,6 +983,7 @@ export interface FileRoutesById {
   '/_app/producao/pedidos': typeof AppProducaoPedidosRouteWithChildren
   '/_app/producao/plano': typeof AppProducaoPlanoRoute
   '/_app/producao/qualidade': typeof AppProducaoQualidadeRouteWithChildren
+  '/_app/qualidade/rnc': typeof AppQualidadeRncRoute
   '/_app/compras/': typeof AppComprasIndexRoute
   '/_app/financeiro/': typeof AppFinanceiroIndexRoute
   '/_app/logistica/': typeof AppLogisticaIndexRoute
@@ -1008,6 +1035,8 @@ export interface FileRouteTypes {
     | '/variante'
     | '/cliente-artigo/$id'
     | '/cliente-artigo/simulador'
+    | '/comercial/estoque'
+    | '/comercial/pedidos'
     | '/compras/contas-pagar'
     | '/compras/cotacoes'
     | '/compras/fornecedores'
@@ -1065,6 +1094,7 @@ export interface FileRouteTypes {
     | '/producao/pedidos'
     | '/producao/plano'
     | '/producao/qualidade'
+    | '/qualidade/rnc'
     | '/compras/'
     | '/financeiro/'
     | '/logistica/'
@@ -1114,6 +1144,8 @@ export interface FileRouteTypes {
     | '/variante'
     | '/cliente-artigo/$id'
     | '/cliente-artigo/simulador'
+    | '/comercial/estoque'
+    | '/comercial/pedidos'
     | '/compras/contas-pagar'
     | '/compras/cotacoes'
     | '/compras/fornecedores'
@@ -1171,6 +1203,7 @@ export interface FileRouteTypes {
     | '/producao/pedidos'
     | '/producao/plano'
     | '/producao/qualidade'
+    | '/qualidade/rnc'
     | '/compras'
     | '/financeiro'
     | '/logistica'
@@ -1221,6 +1254,8 @@ export interface FileRouteTypes {
     | '/_app/variante'
     | '/_app/cliente-artigo/$id'
     | '/_app/cliente-artigo/simulador'
+    | '/_app/comercial/estoque'
+    | '/_app/comercial/pedidos'
     | '/_app/compras/contas-pagar'
     | '/_app/compras/cotacoes'
     | '/_app/compras/fornecedores'
@@ -1278,6 +1313,7 @@ export interface FileRouteTypes {
     | '/_app/producao/pedidos'
     | '/_app/producao/plano'
     | '/_app/producao/qualidade'
+    | '/_app/qualidade/rnc'
     | '/_app/compras/'
     | '/_app/financeiro/'
     | '/_app/logistica/'
@@ -1535,6 +1571,13 @@ declare module '@tanstack/react-router' {
       path: '/compras'
       fullPath: '/compras/'
       preLoaderRoute: typeof AppComprasIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/qualidade/rnc': {
+      id: '/_app/qualidade/rnc'
+      path: '/qualidade/rnc'
+      fullPath: '/qualidade/rnc'
+      preLoaderRoute: typeof AppQualidadeRncRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/producao/qualidade': {
@@ -1936,6 +1979,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppComprasContasPagarRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/comercial/pedidos': {
+      id: '/_app/comercial/pedidos'
+      path: '/comercial/pedidos'
+      fullPath: '/comercial/pedidos'
+      preLoaderRoute: typeof AppComercialPedidosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/comercial/estoque': {
+      id: '/_app/comercial/estoque'
+      path: '/comercial/estoque'
+      fullPath: '/comercial/estoque'
+      preLoaderRoute: typeof AppComercialEstoqueRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/cliente-artigo/simulador': {
       id: '/_app/cliente-artigo/simulador'
       path: '/simulador'
@@ -2208,6 +2265,8 @@ interface AppRouteChildren {
   AppTimeLogRoute: typeof AppTimeLogRoute
   AppUsuariosRoute: typeof AppUsuariosRoute
   AppVarianteRoute: typeof AppVarianteRoute
+  AppComercialEstoqueRoute: typeof AppComercialEstoqueRoute
+  AppComercialPedidosRoute: typeof AppComercialPedidosRoute
   AppComprasContasPagarRoute: typeof AppComprasContasPagarRoute
   AppComprasCotacoesRoute: typeof AppComprasCotacoesRouteWithChildren
   AppComprasFornecedoresRoute: typeof AppComprasFornecedoresRoute
@@ -2265,6 +2324,7 @@ interface AppRouteChildren {
   AppProducaoPedidosRoute: typeof AppProducaoPedidosRouteWithChildren
   AppProducaoPlanoRoute: typeof AppProducaoPlanoRoute
   AppProducaoQualidadeRoute: typeof AppProducaoQualidadeRouteWithChildren
+  AppQualidadeRncRoute: typeof AppQualidadeRncRoute
   AppComprasIndexRoute: typeof AppComprasIndexRoute
   AppFinanceiroIndexRoute: typeof AppFinanceiroIndexRoute
   AppLogisticaIndexRoute: typeof AppLogisticaIndexRoute
@@ -2298,6 +2358,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppTimeLogRoute: AppTimeLogRoute,
   AppUsuariosRoute: AppUsuariosRoute,
   AppVarianteRoute: AppVarianteRoute,
+  AppComercialEstoqueRoute: AppComercialEstoqueRoute,
+  AppComercialPedidosRoute: AppComercialPedidosRoute,
   AppComprasContasPagarRoute: AppComprasContasPagarRoute,
   AppComprasCotacoesRoute: AppComprasCotacoesRouteWithChildren,
   AppComprasFornecedoresRoute: AppComprasFornecedoresRoute,
@@ -2356,6 +2418,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProducaoPedidosRoute: AppProducaoPedidosRouteWithChildren,
   AppProducaoPlanoRoute: AppProducaoPlanoRoute,
   AppProducaoQualidadeRoute: AppProducaoQualidadeRouteWithChildren,
+  AppQualidadeRncRoute: AppQualidadeRncRoute,
   AppComprasIndexRoute: AppComprasIndexRoute,
   AppFinanceiroIndexRoute: AppFinanceiroIndexRoute,
   AppLogisticaIndexRoute: AppLogisticaIndexRoute,

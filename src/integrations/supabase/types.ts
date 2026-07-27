@@ -1047,6 +1047,60 @@ export type Database = {
         }
         Relationships: []
       }
+      conferencias: {
+        Row: {
+          conferente_id: string | null
+          created_at: string | null
+          divergencias: Json | null
+          id: string
+          observacao: string | null
+          pedido_id: string | null
+          resultado: Json | null
+          separacao_id: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          conferente_id?: string | null
+          created_at?: string | null
+          divergencias?: Json | null
+          id?: string
+          observacao?: string | null
+          pedido_id?: string | null
+          resultado?: Json | null
+          separacao_id?: string | null
+          status: string
+          updated_at?: string | null
+        }
+        Update: {
+          conferente_id?: string | null
+          created_at?: string | null
+          divergencias?: Json | null
+          id?: string
+          observacao?: string | null
+          pedido_id?: string | null
+          resultado?: Json | null
+          separacao_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conferencias_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conferencias_separacao_id_fkey"
+            columns: ["separacao_id"]
+            isOneToOne: false
+            referencedRelation: "separacoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       config_tolerancia: {
         Row: {
           categoria_id: string | null
@@ -2173,6 +2227,13 @@ export type Database = {
             foreignKeyName: "estoque_movimentos_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "estoque_movimentos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -2264,6 +2325,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expedicao_itens_lote_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "expedicao_itens_lote_lote_id_fkey"
@@ -2652,6 +2720,13 @@ export type Database = {
             foreignKeyName: "inspecoes_qualidade_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "inspecoes_qualidade_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -2694,6 +2769,13 @@ export type Database = {
             foreignKeyName: "lote_genealogia_lote_origem_id_fkey"
             columns: ["lote_origem_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "lote_genealogia_lote_origem_id_fkey"
+            columns: ["lote_origem_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -2703,6 +2785,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lote_genealogia_lote_resultante_id_fkey"
+            columns: ["lote_resultante_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "lote_genealogia_lote_resultante_id_fkey"
@@ -2792,6 +2881,13 @@ export type Database = {
             foreignKeyName: "lote_revisoes_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "lote_revisoes_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -2858,6 +2954,13 @@ export type Database = {
             foreignKeyName: "lote_rolos_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "lote_rolos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -2885,9 +2988,11 @@ export type Database = {
           quantidade_disponivel: number
           saldo_aprovado: number | null
           saldo_bloqueado: number | null
+          saldo_em_separacao: number | null
           saldo_qualidade: number | null
           saldo_quarentena: number | null
           saldo_reprocesso: number | null
+          saldo_reservado_comercial: number | null
           status_processo: string | null
           tinturaria_id: string | null
           tipo: string
@@ -2914,9 +3019,11 @@ export type Database = {
           quantidade_disponivel?: number
           saldo_aprovado?: number | null
           saldo_bloqueado?: number | null
+          saldo_em_separacao?: number | null
           saldo_qualidade?: number | null
           saldo_quarentena?: number | null
           saldo_reprocesso?: number | null
+          saldo_reservado_comercial?: number | null
           status_processo?: string | null
           tinturaria_id?: string | null
           tipo: string
@@ -2943,9 +3050,11 @@ export type Database = {
           quantidade_disponivel?: number
           saldo_aprovado?: number | null
           saldo_bloqueado?: number | null
+          saldo_em_separacao?: number | null
           saldo_qualidade?: number | null
           saldo_quarentena?: number | null
           saldo_reprocesso?: number | null
+          saldo_reservado_comercial?: number | null
           status_processo?: string | null
           tinturaria_id?: string | null
           tipo?: string
@@ -3577,6 +3686,13 @@ export type Database = {
             foreignKeyName: "nao_conformidades_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "nao_conformidades_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -4191,6 +4307,13 @@ export type Database = {
             foreignKeyName: "op_acabamentos_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "op_acabamentos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -4388,6 +4511,13 @@ export type Database = {
             foreignKeyName: "op_consumos_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "op_consumos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -4529,6 +4659,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_entradas_estoque_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "op_entradas_estoque_lote_id_fkey"
@@ -5283,6 +5420,13 @@ export type Database = {
             foreignKeyName: "op_reservas_lote_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "op_reservas_lote_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -5593,15 +5737,22 @@ export type Database = {
       }
       pedido_itens: {
         Row: {
+          artigo_id: string | null
           cor_id: string | null
           created_at: string
           descricao: string | null
           estampa_id: string | null
           id: string
+          observacao: string | null
           origem_preco: string | null
           pedido_id: string
           product_id: string | null
           quantidade: number
+          quantidade_cancelada: number | null
+          quantidade_conferida: number | null
+          quantidade_expedida: number | null
+          quantidade_reservada: number | null
+          quantidade_separada: number | null
           regra_cliente_artigo_id: string | null
           unidade: string
           valor_total: number | null
@@ -5609,15 +5760,22 @@ export type Database = {
           variante_id: string | null
         }
         Insert: {
+          artigo_id?: string | null
           cor_id?: string | null
           created_at?: string
           descricao?: string | null
           estampa_id?: string | null
           id?: string
+          observacao?: string | null
           origem_preco?: string | null
           pedido_id: string
           product_id?: string | null
           quantidade?: number
+          quantidade_cancelada?: number | null
+          quantidade_conferida?: number | null
+          quantidade_expedida?: number | null
+          quantidade_reservada?: number | null
+          quantidade_separada?: number | null
           regra_cliente_artigo_id?: string | null
           unidade?: string
           valor_total?: number | null
@@ -5625,15 +5783,22 @@ export type Database = {
           variante_id?: string | null
         }
         Update: {
+          artigo_id?: string | null
           cor_id?: string | null
           created_at?: string
           descricao?: string | null
           estampa_id?: string | null
           id?: string
+          observacao?: string | null
           origem_preco?: string | null
           pedido_id?: string
           product_id?: string | null
           quantidade?: number
+          quantidade_cancelada?: number | null
+          quantidade_conferida?: number | null
+          quantidade_expedida?: number | null
+          quantidade_reservada?: number | null
+          quantidade_separada?: number | null
           regra_cliente_artigo_id?: string | null
           unidade?: string
           valor_total?: number | null
@@ -5701,47 +5866,74 @@ export type Database = {
       }
       pedidos: {
         Row: {
+          acréscimos: number | null
+          canal: string | null
           cliente_id: string | null
           condicao_pagamento: string | null
           created_at: string
           created_by: string | null
           data_pedido: string
+          desconto: number | null
+          empresa_id: string | null
+          filial_id: string | null
+          frete: number | null
           id: string
+          idempotency_key: string | null
+          moeda: string | null
           numero: string
           observacao: string | null
           prazo_entrega: string | null
           status: string
           updated_at: string
+          valor_produtos: number | null
           valor_total: number
           vendedor_id: string | null
         }
         Insert: {
+          acréscimos?: number | null
+          canal?: string | null
           cliente_id?: string | null
           condicao_pagamento?: string | null
           created_at?: string
           created_by?: string | null
           data_pedido?: string
+          desconto?: number | null
+          empresa_id?: string | null
+          filial_id?: string | null
+          frete?: number | null
           id?: string
+          idempotency_key?: string | null
+          moeda?: string | null
           numero: string
           observacao?: string | null
           prazo_entrega?: string | null
           status?: string
           updated_at?: string
+          valor_produtos?: number | null
           valor_total?: number
           vendedor_id?: string | null
         }
         Update: {
+          acréscimos?: number | null
+          canal?: string | null
           cliente_id?: string | null
           condicao_pagamento?: string | null
           created_at?: string
           created_by?: string | null
           data_pedido?: string
+          desconto?: number | null
+          empresa_id?: string | null
+          filial_id?: string | null
+          frete?: number | null
           id?: string
+          idempotency_key?: string | null
+          moeda?: string | null
           numero?: string
           observacao?: string | null
           prazo_entrega?: string | null
           status?: string
           updated_at?: string
+          valor_produtos?: number | null
           valor_total?: number
           vendedor_id?: string | null
         }
@@ -6475,6 +6667,13 @@ export type Database = {
             foreignKeyName: "recebimento_itens_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "recebimento_itens_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -6698,6 +6897,13 @@ export type Database = {
             foreignKeyName: "remessa_itens_lote_origem_id_fkey"
             columns: ["lote_origem_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "remessa_itens_lote_origem_id_fkey"
+            columns: ["lote_origem_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -6831,6 +7037,13 @@ export type Database = {
             foreignKeyName: "reservas_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "reservas_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -6892,6 +7105,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "retorno_itens_lote_resultante_id_fkey"
+            columns: ["lote_resultante_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "retorno_itens_lote_resultante_id_fkey"
@@ -7436,6 +7656,13 @@ export type Database = {
             foreignKeyName: "separacao_itens_lote_id_fkey"
             columns: ["lote_id"]
             isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "separacao_itens_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
             referencedRelation: "vw_lotes_saldos"
             referencedColumns: ["lote_id"]
           },
@@ -7935,6 +8162,88 @@ export type Database = {
         }
         Relationships: []
       }
+      vendas_reservas: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          id: string
+          lote_id: string | null
+          pedido_id: string | null
+          pedido_item_id: string | null
+          quantidade: number
+          rolo_id: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          lote_id?: string | null
+          pedido_id?: string | null
+          pedido_item_id?: string | null
+          quantidade: number
+          rolo_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          lote_id?: string | null
+          pedido_id?: string | null
+          pedido_item_id?: string | null
+          quantidade?: number
+          rolo_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendas_reservas_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendas_reservas_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "vendas_reservas_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_lotes_saldos"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "vendas_reservas_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendas_reservas_pedido_item_id_fkey"
+            columns: ["pedido_item_id"]
+            isOneToOne: false
+            referencedRelation: "pedido_itens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendas_reservas_rolo_id_fkey"
+            columns: ["rolo_id"]
+            isOneToOne: false
+            referencedRelation: "lote_rolos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       v_qualidade_indicadores: {
@@ -8248,6 +8557,63 @@ export type Database = {
           },
         ]
       }
+      vw_estoque_comercial: {
+        Row: {
+          artigo_id: string | null
+          classificacao: string | null
+          custo_definitivo: number | null
+          data_entrada: string | null
+          deposito: string | null
+          idade_lote: string | null
+          liberado_comercial: boolean | null
+          lote_id: string | null
+          lote_tipo: string | null
+          numero_lote: string | null
+          saldo_aprovado: number | null
+          saldo_disponivel: number | null
+          saldo_em_separacao: number | null
+          saldo_fisico: number | null
+          saldo_reservado: number | null
+          status_processo: string | null
+        }
+        Insert: {
+          artigo_id?: string | null
+          classificacao?: string | null
+          custo_definitivo?: number | null
+          data_entrada?: string | null
+          deposito?: string | null
+          idade_lote?: never
+          liberado_comercial?: boolean | null
+          lote_id?: string | null
+          lote_tipo?: string | null
+          numero_lote?: string | null
+          saldo_aprovado?: number | null
+          saldo_disponivel?: never
+          saldo_em_separacao?: number | null
+          saldo_fisico?: number | null
+          saldo_reservado?: number | null
+          status_processo?: string | null
+        }
+        Update: {
+          artigo_id?: string | null
+          classificacao?: string | null
+          custo_definitivo?: number | null
+          data_entrada?: string | null
+          deposito?: string | null
+          idade_lote?: never
+          liberado_comercial?: boolean | null
+          lote_id?: string | null
+          lote_tipo?: string | null
+          numero_lote?: string | null
+          saldo_aprovado?: number | null
+          saldo_disponivel?: never
+          saldo_em_separacao?: number | null
+          saldo_fisico?: number | null
+          saldo_reservado?: number | null
+          status_processo?: string | null
+        }
+        Relationships: []
+      }
       vw_fluxo_caixa: {
         Row: {
           centro_custo_id: string | null
@@ -8432,6 +8798,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lotes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_reservas_lote_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_estoque_comercial"
+            referencedColumns: ["lote_id"]
           },
           {
             foreignKeyName: "op_reservas_lote_lote_id_fkey"
@@ -8853,6 +9226,10 @@ export type Database = {
         }
         Returns: string
       }
+      reserve_stock_for_sales_order: {
+        Args: { p_idempotency_key: string; p_pedido_id: string }
+        Returns: Json
+      }
       resolver_preco_cliente_artigo: {
         Args: {
           _artigo_id?: string
@@ -8888,6 +9265,10 @@ export type Database = {
         }
         Returns: Json
       }
+      ship_sales_order: {
+        Args: { p_expedicao_id?: string; p_pedido_id: string }
+        Returns: Json
+      }
       simulate_production_posting: {
         Args: { p_consumos: Json; p_op_id: string; p_quantidade_boa: number }
         Returns: Json
@@ -8899,6 +9280,18 @@ export type Database = {
           p_quantidade_entrada: number
         }
         Returns: Json
+      }
+      simulate_sales_order_reservation: {
+        Args: { p_deposito?: string; p_pedido_id: string; p_politica?: string }
+        Returns: {
+          artigo_id: string
+          cor_id: string
+          lotes_sugeridos: Json
+          pedido_item_id: string
+          quantidade_atendida: number
+          quantidade_solicitada: number
+          variante_id: string
+        }[]
       }
       user_has_menu_permission: {
         Args: { _url: string; _user_id: string }
