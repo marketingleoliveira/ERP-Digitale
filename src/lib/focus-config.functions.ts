@@ -41,19 +41,20 @@ export const getFocusConfigServer = createServerFn({ method: "GET" })
 
     return {
       exists: Boolean(rec),
-      id: (rec?.id as string) ?? null,
+      id: (rec?.id as string) ?? "",
       provedor_nfe: (rec?.provedor_nfe as string) ?? "nenhum",
       ambiente_nfe: (rec?.ambiente_nfe as string) ?? "homologacao",
       token_configurado: tokenConfigurado,
       armazenamento,
-      token_updated_at: rec?.focus_nfe_token_updated_at,
-      token_preview: "********", // Nunca retornar fragmentos reais do token no GET
+      token_updated_at: rec?.focus_nfe_token_updated_at ? String(rec.focus_nfe_token_updated_at) : null,
+      token_preview: "********",
       serie_nfe: (rec?.serie_nfe as number) ?? 1,
       proximo_numero_nfe: (rec?.proximo_numero_nfe as number) ?? 1,
       cnpj: (rec?.cnpj as string) ?? "",
       razao_social: (rec?.razao_social as string) ?? "",
       env_token_presente: Boolean(process.env.FOCUS_NFE_TOKEN),
     };
+
   });
 
 /* ==================== SALVAR CONFIG ==================== */
@@ -136,6 +137,8 @@ export const testFocusConnection = createServerFn({ method: "POST" })
     const empRec = (emp as Record<string, unknown> | null) ?? {};
     
     let token = (empRec.focus_nfe_token as string | null);
+    if (!token) token = null; // Normalize undefined to null
+
     
     // Tenta descriptografar se houver token seguro
     if (empRec.focus_nfe_token_ciphertext && empRec.focus_nfe_token_iv) {

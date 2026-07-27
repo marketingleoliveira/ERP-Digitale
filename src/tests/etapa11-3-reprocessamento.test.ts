@@ -43,13 +43,14 @@ describe('ETAPA 11.3: Correção Segura e Reconciliação NF-e', () => {
     // Busca logs de tentativas 401 anteriores
     const { data: logs } = await supabaseAdmin.from('nfe_logs')
       .select('*')
-      .eq('status_http', 401)
+      .eq('http_status', 401)
       .limit(1);
     
     if (logs && logs.length > 0) {
         console.log('Tentativa 401 reconciliada. Identificador:', logs[0].id);
-        ctx.referenciaAnterior = logs[0].referencia;
+        ctx.referenciaAnterior = (logs[0].request as any)?.referencia || '';
     }
+
 
     const config = { token: ctx.token, ambiente: 'homologacao' };
     const ref = ctx.referenciaAnterior || ('REF_RECONCILE_' + Date.now());

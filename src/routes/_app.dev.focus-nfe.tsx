@@ -63,15 +63,17 @@ function FocusNfeConfigPage() {
 
   useEffect(() => {
     if (config.data) {
+      const data = config.data as any;
       setForm(f => ({
         ...f,
-        provedor_nfe: (config.data.provedor_nfe as any) ?? "focus_nfe",
-        ambiente_nfe: (config.data.ambiente_nfe as any) ?? "homologacao",
-        serie_nfe: config.data.serie_nfe ?? 1,
-        proximo_numero_nfe: config.data.proximo_numero_nfe ?? 1,
+        provedor_nfe: data.provedor_nfe ?? "focus_nfe",
+        ambiente_nfe: data.ambiente_nfe ?? "homologacao",
+        serie_nfe: data.serie_nfe ?? 1,
+        proximo_numero_nfe: data.proximo_numero_nfe ?? 1,
         focus_nfe_token: "",
       }));
     }
+
   }, [config.data]);
 
   const saveMut = useMutation({
@@ -195,16 +197,17 @@ function FocusNfeConfigPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Token Focus NFe {config.data?.token_configurado && <span className="text-xs text-muted-foreground">(deixe em branco para manter)</span>}</Label>
+                <Label>Token Focus NFe {(config.data as any)?.token_configurado && <span className="text-xs text-muted-foreground">(deixe em branco para manter)</span>}</Label>
                 <div className="flex gap-2">
                     <Input
                         type="password"
-                        placeholder={config.data?.token_configurado ? `Atual: ${config.data.token_preview}` : "Cole o token de homologação"}
+                        placeholder={(config.data as any)?.token_configurado ? `Atual: ${(config.data as any).token_preview}` : "Cole o token de homologação"}
                         value={form.focus_nfe_token}
                         onChange={e => setForm(f => ({ ...f, focus_nfe_token: e.target.value }))}
                     />
-                    {config.data?.token_configurado && (
+                    {(config.data as any)?.token_configurado && (
                         <Button variant="outline" size="icon" onClick={() => clearMut.mutate()} disabled={clearMut.isPending} title="Limpar token">
+
                             <Trash2 className="h-4 w-4" />
                         </Button>
                     )}
