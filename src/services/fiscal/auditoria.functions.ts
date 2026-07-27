@@ -21,7 +21,7 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
     // 2. Dados da Empresa e Ambiente
     const { data: empresa } = await supabase
       .from("empresa")
-      .select("provedor_nfe, ambiente_nfe, focus_nfe_token, focus_nfe_token_ciphertext, focus_nfe_token_iv, focus_nfe_token_encryption_version, serie_nfe, proximo_numero_nfe, cnpj, razao_social, uf, crt")
+      .select("provedor_nfe, ambiente_nfe, focus_nfe_token_status, focus_nfe_token_last_error_code, focus_nfe_token_last_error_at, serie_nfe, proximo_numero_nfe, cnpj, razao_social, uf, crt")
       .limit(1)
       .maybeSingle();
 
@@ -81,7 +81,8 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
     return {
       isDev: !!isDev,
       ambiente: empresa?.ambiente_nfe || "homologacao",
-      tokenConfigurado: !!(empresa?.focus_nfe_token_ciphertext || empresa?.focus_nfe_token),
+      tokenStatus: empresa?.focus_nfe_token_status || "MISSING",
+      tokenConfigurado: empresa?.focus_nfe_token_status === 'VALID' || empresa?.focus_nfe_token_status === 'PENDING_VALIDATION',
       empresa: {
         razaoSocial: empresa?.razao_social,
         cnpj: empresa?.cnpj,

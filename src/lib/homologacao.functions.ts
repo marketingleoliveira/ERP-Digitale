@@ -72,11 +72,11 @@ export const emitirNfeHomologacao = createServerFn({ method: "POST" })
     const response = await focusAdapter.emitir(config, data.referencia, payload);
 
     await supabase.rpc('log_nfe_event', {
-      acao: "envio_nfe",
-      http_status: response.status,
-      request: payload as any,
-      response: response.body as any,
-      user_id: userId
+      _acao: "envio_nfe",
+      _http_status: response.status,
+      _request: payload as any,
+      _response: response.body as any,
+      _user_id: userId
     });
 
     return {

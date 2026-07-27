@@ -137,19 +137,19 @@ function FocusNfeConfigPage() {
 
       {/* Status da Certificação */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className={isAproved ? "border-green-500/50 bg-green-500/5" : "border-amber-500/50 bg-amber-500/5"}>
+        <Card className={certStatus?.tokenStatus === 'VALID' ? "border-green-500/50 bg-green-500/5" : (certStatus?.tokenStatus === 'INVALID' ? "border-destructive/50 bg-destructive/5" : "border-amber-500/50 bg-amber-500/5")}>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <ShieldCheck className={isAproved ? "text-green-500" : "text-amber-500"} size={18} />
-              Classificação
+              <ShieldCheck className={certStatus?.tokenStatus === 'VALID' ? "text-green-500" : (certStatus?.tokenStatus === 'INVALID' ? "text-destructive" : "text-amber-500")} size={18} />
+              Status da Credencial
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold">
-              {certStatus?.bloqueadores.length ? "BLOQUEADOR PARA PRODUÇÃO" : (certStatus?.tokenConfigurado ? "APROVADO PARA HOMOLOGAÇÃO" : "AGUARDANDO CONFIGURAÇÃO")}
+            <div className="text-xl font-bold uppercase">
+              {certStatus?.tokenStatus}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Baseado em auditoria técnica automática
+              {certStatus?.tokenStatus === 'INVALID' ? "Substituição obrigatória" : "Auditoria de autenticação"}
             </p>
           </CardContent>
         </Card>
