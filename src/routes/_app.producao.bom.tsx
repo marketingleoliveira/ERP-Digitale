@@ -90,7 +90,11 @@ function BomPage() {
             <Input 
               type="number" 
               value={plannedQty} 
-              onChange={(e) => setPlannedQty(Math.max(1, Number(e.target.value)))}
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                if (val > 1000000) return; // Limite de 1 milhão
+                setPlannedQty(Math.max(0.0001, val));
+              }}
               min={1}
             />
           </div>
@@ -122,7 +126,10 @@ function BomPage() {
               <AlertCircle className="h-6 w-6 text-destructive" />
               <div>
                 <p className="font-semibold text-destructive">Erro na Explosão</p>
-                <p className="text-sm text-muted-foreground">Houve um problema ao processar a estrutura recursiva. Verifique se existem ciclos infinitos.</p>
+                <p className="text-sm text-muted-foreground">
+                  Houve um problema ao processar a estrutura recursiva. Verifique se existem ciclos infinitos ou artigos sem cadastro na BOM.
+                  Detalhamento técnico: {(explosionError as any)?.message || 'Erro desconhecido'}
+                </p>
               </div>
             </CardContent>
           </Card>
