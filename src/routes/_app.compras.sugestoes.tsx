@@ -38,7 +38,7 @@ import {
   Search,
   ShoppingCart
 } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { Input } from '@/components/ui/input';
@@ -54,6 +54,14 @@ function MrpSuggestionsPage() {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSuggestion, setSelectedSuggestion] = useState<any | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isConversionModalOpen, setIsConversionModalOpen] = useState(false);
+  const [conversionData, setConversionData] = useState<{
+    supplierId: string;
+    paymentTerms: string;
+    deliveryDate: string;
+    items: any[];
+  } | null>(null);
 
   const { data: suggestions, isLoading } = useQuery({
 
@@ -79,6 +87,42 @@ function MrpSuggestionsPage() {
       toast.success('Sugestão aprovada');
     }
   });
+
+  const convertMutation = useMutation({
+    mutationFn: (data: { ids: string[], supplierId: string, paymentTerms?: string, deliveryDate?: string }) => 
+      convertSuggestionsToOrder(data.ids, data.supplierId, data.paymentTerms, data.deliveryDate),
+    onSuccess: (order) => {
+      queryClient.invalidateQueries({ queryKey: ['mrp-suggestions'] });
+      toast.success(`Pedido de compra #${order.numero || order.id.slice(0,8)} gerado com sucesso`);
+      setIsConversionModalOpen(false);
+      setSelectedIds([]);
+    },
+    onError: (error: any) => {
+      toast.error('Erro ao converter sugestões: ' + (error.message || 'Erro desconhecido'));
+    }
+  });
+
+  const handleOpenConversion = () => {
+    if (selectedIds.length === 0) return;
+    
+    const selectedItems = suggestions?.filter(s => selectedIds.includes(s.id)) || [];
+    const suppliers = new Set(selectedItems.map(s => s.fornecedor_sugerido_id).filter(Boolean));
+    
+    if (suppliers.size > 1) {
+      toast.error('Selecione sugestões do mesmo fornecedor para converter em um único pedido.');
+      return;
+    }
+
+    const supplierId = Array.from(suppliers)[0] as string || '';
+    
+    setConversionData({
+      supplierId,
+      paymentTerms: '',
+      deliveryDate: format(new Date(), 'yyyy-MM-dd'),
+      items: selectedItems
+    });
+    setIsConversionModalOpen(true);
+  };
 
   const filteredData = useMemo(() => {
     if (!suggestions) return [];
@@ -118,14 +162,27 @@ function MrpSuggestionsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Sugestões do MRP</h1>
           <p className="text-muted-foreground">Converta necessidades líquidas em pedidos de compra.</p>
         </div>
-        <Button 
-          onClick={() => generateMutation.mutate()} 
-          disabled={generateMutation.isPending}
-          className="gap-2"
-        >
-          {generateMutation.isPending ? <Clock className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-          Processar MRP
-        </Button>
+        <div className="flex gap-2">
+          {selectedIds.length > 0 && (
+            <Button 
+              onClick={handleOpenConversion}
+              variant="default"
+              className="gap-2 bg-green-600 hover:bg-green-700"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              Converter ({selectedIds.length})
+            </Button>
+          )}
+          <Button 
+            onClick={() => generateMutation.mutate()} 
+            disabled={generateMutation.isPending}
+            variant="outline"
+            className="gap-2"
+          >
+            {generateMutation.isPending ? <Clock className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+            Reprocessar MRP
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
@@ -207,6 +264,19 @@ function MrpSuggestionsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[40px]">
+                    <input 
+                      type="checkbox" 
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedIds(filteredData.filter(s => s.status === 'APROVADA').map(s => s.id));
+                        } else {
+                          setSelectedIds([]);
+                        }
+                      }}
+                      checked={selectedIds.length > 0 && selectedIds.length === filteredData.filter(s => s.status === 'APROVADA').length}
+                    />
+                  </TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Prioridade</TableHead>
                   <TableHead>Material</TableHead>
@@ -236,12 +306,23 @@ function MrpSuggestionsPage() {
                   filteredData.map((item) => (
                     <TableRow 
                       key={item.id} 
-                      className={`${item.prioridade === 'urgente' ? 'bg-red-50/30' : ''} cursor-pointer hover:bg-muted/50`}
-                      onClick={() => setSelectedSuggestion(item)}
+                      className={`${item.prioridade === 'urgente' ? 'bg-red-50/30' : ''} cursor-pointer hover:bg-muted/50 ${selectedIds.includes(item.id) ? 'bg-muted' : ''}`}
                     >
 
-                      <TableCell>{getStatusBadge(item.status)}</TableCell>
-                      <TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <input 
+                          type="checkbox" 
+                          checked={selectedIds.includes(item.id)}
+                          disabled={item.status !== 'APROVADA'}
+                          onChange={() => {
+                            setSelectedIds(prev => 
+                              prev.includes(item.id) ? prev.filter(id => id !== item.id) : [...prev, item.id]
+                            );
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell onClick={() => setSelectedSuggestion(item)}>{getStatusBadge(item.status)}</TableCell>
+                      <TableCell onClick={() => setSelectedSuggestion(item)}>
                         <Badge 
                           variant={item.prioridade === 'urgente' || item.prioridade === 'alta' ? 'destructive' : 'outline'}
                           className="capitalize"
@@ -249,16 +330,16 @@ function MrpSuggestionsPage() {
                           {item.prioridade}
                         </Badge>
                       </TableCell>
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium" onClick={() => setSelectedSuggestion(item)}>
                         {item.descricao}
                         <div className="text-xs text-muted-foreground uppercase">{item.ref_tipo}</div>
                       </TableCell>
-                      <TableCell className="text-right font-mono">{item.necessidade_liquida.toFixed(3)}</TableCell>
-                      <TableCell className="text-right font-mono font-bold text-primary">{item.quantidade_sugerida.toFixed(3)}</TableCell>
-                      <TableCell>{item.unidade}</TableCell>
-                      <TableCell>{item.data_necessaria ? format(new Date(item.data_necessaria), 'dd/MM/yy') : '—'}</TableCell>
-                      <TableCell className="max-w-[150px] truncate">{item.fornecedor?.nome_fantasia || 'A definir'}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right font-mono" onClick={() => setSelectedSuggestion(item)}>{item.necessidade_liquida.toFixed(3)}</TableCell>
+                      <TableCell className="text-right font-mono font-bold text-primary" onClick={() => setSelectedSuggestion(item)}>{item.quantidade_sugerida.toFixed(3)}</TableCell>
+                      <TableCell onClick={() => setSelectedSuggestion(item)}>{item.unidade}</TableCell>
+                      <TableCell onClick={() => setSelectedSuggestion(item)}>{item.data_necessaria ? format(new Date(item.data_necessaria), 'dd/MM/yy') : '—'}</TableCell>
+                      <TableCell className="max-w-[150px] truncate" onClick={() => setSelectedSuggestion(item)}>{item.fornecedor?.nome_fantasia || 'A definir'}</TableCell>
+                      <TableCell className="text-right" onClick={() => setSelectedSuggestion(item)}>
                         {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.custo_total_estimado || 0)}
                       </TableCell>
                       <TableCell className="text-right">
@@ -273,7 +354,16 @@ function MrpSuggestionsPage() {
                           </Button>
                         )}
                         {item.status === 'APROVADA' && (
-                          <Button size="sm" variant="outline" className="h-8 gap-1">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="h-8 gap-1"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedIds([item.id]);
+                              handleOpenConversion();
+                            }}
+                          >
                             <ShoppingCart className="h-3 w-3" />
                             Comprar
                           </Button>
@@ -350,6 +440,102 @@ function MrpSuggestionsPage() {
               )}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isConversionModalOpen} onOpenChange={setIsConversionModalOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Conferência de Conversão</DialogTitle>
+            <DialogDescription>
+              Revise os itens e condições antes de gerar o pedido de compra.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {conversionData && (
+            <div className="space-y-6 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Condição de Pagamento</label>
+                  <Input 
+                    placeholder="Ex: 30/60 dias" 
+                    value={conversionData.paymentTerms}
+                    onChange={(e) => setConversionData({...conversionData, paymentTerms: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Data de Entrega</label>
+                  <Input 
+                    type="date" 
+                    value={conversionData.deliveryDate}
+                    onChange={(e) => setConversionData({...conversionData, deliveryDate: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div className="border rounded-md overflow-hidden">
+                <Table>
+                  <TableHeader className="bg-muted/50">
+                    <TableRow>
+                      <TableHead>Material</TableHead>
+                      <TableHead className="text-right">Quantidade</TableHead>
+                      <TableHead>Un</TableHead>
+                      <TableHead className="text-right">Preço Un. (Est.)</TableHead>
+                      <TableHead className="text-right">Total (Est.)</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {conversionData.items.map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.descricao}</TableCell>
+                        <TableCell className="text-right">{item.quantidade_aprovada.toFixed(3)}</TableCell>
+                        <TableCell>{item.unidade}</TableCell>
+                        <TableCell className="text-right">
+                          {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.custo_unitario_estimado || 0)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.custo_total_estimado || 0)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow className="bg-muted/20 font-bold">
+                      <TableCell colSpan={4} className="text-right">Total Geral Estimado:</TableCell>
+                      <TableCell className="text-right">
+                        {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                          conversionData.items.reduce((acc, curr) => acc + (curr.custo_total_estimado || 0), 0)
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-100 rounded text-yellow-800 text-sm">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                <p>Esta operação é irreversível. O pedido será criado no status <strong>rascunho</strong>.</p>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsConversionModalOpen(false)}>Cancelar</Button>
+            <Button 
+              className="bg-green-600 hover:bg-green-700"
+              disabled={convertMutation.isPending}
+              onClick={() => {
+                if (conversionData) {
+                  convertMutation.mutate({
+                    ids: selectedIds,
+                    supplierId: conversionData.supplierId,
+                    paymentTerms: conversionData.paymentTerms,
+                    deliveryDate: conversionData.deliveryDate
+                  });
+                }
+              }}
+            >
+              {convertMutation.isPending ? <Clock className="h-4 w-4 animate-spin mr-2" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
+              Confirmar Conversão
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
