@@ -6,7 +6,7 @@ import {
   SlidersHorizontal,
   Building2, FlaskConical, Spool, UserSquare2, Palette, Droplet,
   Sparkles, Layers, Wrench, Syringe, Target, Code2, Briefcase,
-  Server, IdCard, KeyRound, Clock, Network, PlugZap,
+  Server, IdCard, KeyRound, Clock, Network, PlugZap, Filter,
   type LucideIcon,
 } from "lucide-react";
 
@@ -56,6 +56,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Análise Industrial (OEE)", url: "/producao/industrial", icon: Factory, group: "Produção (PCP)" },
   { title: "Planejamento (PCP)", url: "/producao/plano", icon: Scissors, group: "Produção (PCP)" },
   { title: "Ficha Técnica / BOM", url: "/producao/bom", icon: BadgeCheck, group: "Produção (PCP)" },
+  { title: "Onde é Usado", url: "/producao/onde-e-usado", icon: Filter, group: "Produção (PCP)" },
   { title: "Turnos", url: "/pcp/turnos", icon: Clock, group: "Produção (PCP)" },
   { title: "Calendário Produtivo", url: "/pcp/calendario", icon: Clock, group: "Produção (PCP)" },
   { title: "Máquina × Turno", url: "/pcp/maquina-turnos", icon: Network, group: "Produção (PCP)" },
