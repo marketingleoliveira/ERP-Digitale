@@ -13,6 +13,8 @@ import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { RemessaDialog } from '@/components/producao/industrializacao/remessa-dialog';
+import { RetornoDialog } from '@/components/producao/industrializacao/retorno-dialog';
+
 
 
 export const Route = createFileRoute('/_app/producao/industrializacao/$id')({
@@ -31,6 +33,9 @@ function IndustrializacaoDetailPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [remessaOpen, setRemessaOpen] = useState(false);
+  const [retornoOpen, setRetornoOpen] = useState(false);
+  const [selectedRemessa, setSelectedRemessa] = useState<any>(null);
+
 
   const { data: order } = useSuspenseQuery({
 
@@ -157,10 +162,19 @@ function IndustrializacaoDetailPage() {
                   <TableCell>{(remessa.itens as any[])?.length} lotes</TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm">Ver Itens</Button>
-                    <Button variant="outline" size="sm" className="ml-2 gap-2 text-green-600 border-green-200 bg-green-50 hover:bg-green-100">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="ml-2 gap-2 text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
+                      onClick={() => {
+                        setSelectedRemessa(remessa);
+                        setRetornoOpen(true);
+                      }}
+                    >
                       <PackageCheck className="h-4 w-4" /> Registrar Retorno
                     </Button>
                   </TableCell>
+
                 </TableRow>
               ))}
               {(!order.remessas || (order.remessas as any[]).length === 0) && (
@@ -180,7 +194,13 @@ function IndustrializacaoDetailPage() {
         open={remessaOpen} 
         onOpenChange={setRemessaOpen} 
       />
+      <RetornoDialog
+        remessa={selectedRemessa}
+        open={retornoOpen}
+        onOpenChange={setRetornoOpen}
+      />
     </div>
+
 
   );
 }
