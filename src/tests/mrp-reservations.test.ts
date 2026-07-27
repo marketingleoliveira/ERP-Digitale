@@ -9,12 +9,11 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
   let testReservaId: string;
 
   beforeAll(async () => {
-    // Busca dados reais para teste
-    const { data: op } = await supabase.from('ordens_producao').select('id').limit(1).single();
-    // Usa 'lotes' que possuem saldo e item_id (verificado que vincula a products/items)
-    const { data: lote } = await supabase.from('lotes').select('id, item_id, quantidade_disponivel').gt('quantidade_disponivel', 10).limit(1).single();
+    // Busca dados reais ou os que acabamos de inserir
+    const { data: op } = await supabase.from('ordens_producao').select('id').eq('numero', 999999).single();
+    const { data: lote } = await supabase.from('lotes').select('id, item_id').eq('numero_lote', 'LOTE-TESTE-555').single();
     
-    if (!op || !lote) throw new Error('Dados insuficientes para rodar testes de reserva.');
+    if (!op || !lote) throw new Error('Dados de teste não encontrados no banco.');
     
     testOpId = op.id;
     testLoteId = lote.id;
@@ -39,6 +38,7 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
     const { data: loteDepois } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId).single();
     if (!loteDepois) throw new Error('Lote depois não encontrado');
 
+    // Verifica se o saldo diminuiu exatamente a quantidade reservada
     expect(Number(loteDepois.quantidade_disponivel)).toBe(Number(loteAntes.quantidade_disponivel) - qtyToReserve);
   });
 
@@ -50,24 +50,17 @@ describe('Reserva Transacional de Materiais (Etapa 5)', () => {
 
   it('deve cancelar uma reserva e devolver o saldo ao lote', async () => {
     const { data: loteAntes } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId).single();
-    if (!loteAntes) throw new Error('Lote antes cancelamento não encontrado');
-
     const { data: reserva } = await supabase.from('reservas' as any).select('quantidade').eq('id', testReservaId).single();
-    if (!reserva) throw new Error('Reserva não encontrada');
 
     await cancelReservation(testReservaId);
 
     const { data: loteDepois } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId).single();
-    if (!loteDepois) throw new Error('Lote depois cancelamento não encontrado');
-
     expect(Number(loteDepois.quantidade_disponivel)).toBe(Number(loteAntes.quantidade_disponivel) + Number((reserva as any).quantidade));
   });
 
   it('deve falhar ao tentar reservar mais do que o disponível', async () => {
     const { data: lote } = await supabase.from('lotes').select('quantidade_disponivel').eq('id', testLoteId).single();
-    if (!lote) throw new Error('Lote para teste de erro não encontrado');
-
-    const impossibleQty = Number(lote.quantidade_disponivel) + 1000;
+    const impossibleQty = Number(lote!.quantidade_disponivel) + 1000;
 
     await expect(createMaterialReservation({
       opId: testOpId,
