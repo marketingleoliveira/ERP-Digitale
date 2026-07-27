@@ -3,7 +3,7 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 describe('ETAPA 11.4: Diagnóstico de Credencial', () => {
   it('1. Verificar colunas de status na tabela empresa', async () => {
-    const { data: cols } = await supabaseAdmin.rpc('read_query', {
+    const { data: cols } = await supabaseAdmin.rpc('read_query' as any, {
       query: "SELECT column_name FROM information_schema.columns WHERE table_name = 'empresa' AND column_name IN ('focus_nfe_token_status', 'focus_nfe_token_last_error_code')"
     });
     const names = (cols as any[]).map(c => c.column_name);
