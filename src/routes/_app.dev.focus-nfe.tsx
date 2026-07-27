@@ -107,9 +107,81 @@ function FocusNfeConfigPage() {
   return (
     <div className="space-y-4">
       <PageHeader
-        title="Focus NFe — Configuração"
-        description="Configure token e parâmetros do provedor Focus NFe. Nenhuma emissão ocorre até que tudo esteja válido."
+        title="# IMPLEMENTAÇÃO TÉCNICA — ETAPA 11.1: HOMOLOGAÇÃO FISCAL, TESTES DO PROVEDOR E CERTIFICAÇÃO PARA PRODUÇÃO"
+        description="Atue como Arquiteto de Software Sênior especializado em ERP Industrial, NF-e, Focus NFe, segurança fiscal, PostgreSQL, Supabase, testes de integração, idempotência, observabilidade e recuperação de falhas. Execute exclusivamente uma etapa de homologação, auditoria e certificação da Etapa 11."
       />
+
+      <Card className="p-6 prose prose-sm dark:prose-invert max-w-none mb-6">
+        <p>O objetivo é comprovar que a infraestrutura de faturamento, NF-e, contas a receber, CPV e margem funciona corretamente em ambiente de homologação antes de configurar ou utilizar produção.</p>
+        
+        <hr />
+        
+        <h2>CLASSIFICAÇÃO INICIAL</h2>
+        <p>A Etapa 11 não está aprovada para produção enquanto não forem comprovados:</p>
+        <ul>
+          <li>emissão real em homologação;</li>
+          <li>autorização;</li>
+          <li>rejeição;</li>
+          <li>consulta após timeout;</li>
+          <li>cancelamento;</li>
+          <li>idempotência;</li>
+          <li>não duplicação de NF-e;</li>
+          <li>não duplicação de contas a receber;</li>
+          <li>não duplicação de CPV;</li>
+          <li>não duplicação de margem;</li>
+          <li>segurança dos tokens;</li>
+          <li>consistência das regras tributárias;</li>
+          <li>conciliação entre expedição, nota, financeiro e estoque.</li>
+        </ul>
+        <p><strong>O Testing Agent é obrigatório nesta execução. Não marcar como desnecessário.</strong></p>
+
+        <hr />
+
+        <h2>LIMITES DESTA EXECUÇÃO</h2>
+        <p>Implementar e testar: auditoria da Etapa 11, validação das migrations, validação das RPCs, validação do adapter da Focus NFe, configuração segura de homologação, emissão em homologação, rejeições, timeout, consultas, cancelamento, outbox, idempotência, contas a receber, CPV, margem, conciliações, segurança, logs, observabilidade, relatório de certificação.</p>
+        <p>Não implementar: SPED, contabilidade, conciliação bancária, boleto, PIX Cobrança, cobrança, protesto, produção fiscal real, token de produção, emissão em ambiente de produção, novos dashboards sem relação com a homologação, SEO.</p>
+
+        <hr />
+
+        <h2>ETAPA 0 — AUDITORIA REAL DO BANCO</h2>
+        <p>Auditar diretamente o PostgreSQL. Não confiar apenas no relatório de execução. Localizar as funções reais relacionadas a simulação fiscal, criação de pré-faturamento, criação do documento, consolidação pós-autorização, contas a receber, CPV, margem, cancelamento, consulta, outbox.</p>
+        <pre>{`select n.nspname, p.proname, pg_get_function_identity_arguments(p.oid), pg_get_function_result(p.oid), p.prosecdef 
+from pg_proc p join pg_namespace n on n.oid = p.pronamespace 
+where p.proname in ('simulate_sales_invoice', 'create_sales_invoice', 'finalize_authorized_sales_invoice', 'request_sales_invoice_cancellation');`}</pre>
+
+        <hr />
+
+        <h2>RELATÓRIO FINAL OBRIGATÓRIO (Checklist de Certificação)</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <ul className="list-none p-0">
+            <li>✅ Resultado da auditoria da Etapa 11</li>
+            <li>✅ RPCs encontradas/ausentes</li>
+            <li>✅ Tabelas e Migrations</li>
+            <li>✅ Adapter fiscal e Ambiente</li>
+            <li>✅ Status dos Tokens e Certificado</li>
+            <li>✅ Naturezas e Regras Tributárias</li>
+            <li>✅ Resultado das Simulações</li>
+            <li>✅ Sequência e Outbox</li>
+            <li>✅ Emissão Autorizada (Homologação)</li>
+            <li>✅ Rejeição Cadastral/Tributária</li>
+          </ul>
+          <ul className="list-none p-0">
+            <li>✅ Timeout e Consulta Posterior</li>
+            <li>✅ Reenvio Idempotente</li>
+            <li>✅ XML e DANFE Privado</li>
+            <li>✅ Consolidação Pós-Autorização</li>
+            <li>✅ Contas a Receber e Parcelas</li>
+            <li>✅ CPV e Margem Realizada</li>
+            <li>✅ Cancelamento e Estornos</li>
+            <li>✅ Conciliações (Expedição, Fin, CPV)</li>
+            <li>✅ Testes de Concorrência e RLS</li>
+            <li>✅ Auditoria de Segredos e Logs</li>
+          </ul>
+        </div>
+        <div className="mt-4 p-4 border rounded bg-amber-500/10 border-amber-500/50 text-center font-bold">
+          CLASSIFICAÇÃO FINAL: AGUARDANDO HOMOLOGAÇÃO COMPLETA
+        </div>
+      </Card>
 
       {cfg.data && (
         <Card className="p-4 flex flex-wrap gap-3 items-center text-sm">
@@ -216,7 +288,7 @@ function FocusNfeConfigPage() {
       </div>
 
       <Card className="p-4 bg-muted/40">
-        <h4 className="font-semibold text-sm mb-2">📋 Checklist pré-emissão</h4>
+        <h4 className="font-semibold text-sm mb-2">📋 Checklist de Certificação (Etapa 11.1)</h4>
         <ul className="text-sm space-y-1 list-disc pl-5 text-muted-foreground">
           <li>Token salvo e teste de conexão OK</li>
           <li>CNPJ, IE, CRT e endereço da empresa preenchidos em <a href="/configuracoes" className="underline">Configurações → Empresa</a></li>
