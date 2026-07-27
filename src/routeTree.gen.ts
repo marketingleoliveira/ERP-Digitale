@@ -99,6 +99,7 @@ import { Route as AppComprasPedidosRouteImport } from './routes/_app.compras.ped
 import { Route as AppComprasFornecedoresRouteImport } from './routes/_app.compras.fornecedores'
 import { Route as AppComprasCotacoesRouteImport } from './routes/_app.compras.cotacoes'
 import { Route as AppComprasContasPagarRouteImport } from './routes/_app.compras.contas-pagar'
+import { Route as AppComercialEstoqueRouteImport } from './routes/_app.comercial.estoque'
 import { Route as AppClienteArtigoSimuladorRouteImport } from './routes/_app.cliente-artigo.simulador'
 import { Route as AppClienteArtigoIdRouteImport } from './routes/_app.cliente-artigo.$id'
 import { Route as AppRastreabilidadeTipoIdRouteImport } from './routes/_app.rastreabilidade.$tipo.$id'
@@ -571,6 +572,11 @@ const AppComprasContasPagarRoute = AppComprasContasPagarRouteImport.update({
   path: '/compras/contas-pagar',
   getParentRoute: () => AppRoute,
 } as any)
+const AppComercialEstoqueRoute = AppComercialEstoqueRouteImport.update({
+  id: '/comercial/estoque',
+  path: '/comercial/estoque',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppClienteArtigoSimuladorRoute =
   AppClienteArtigoSimuladorRouteImport.update({
     id: '/simulador',
@@ -686,6 +692,7 @@ export interface FileRoutesByFullPath {
   '/variante': typeof AppVarianteRoute
   '/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
   '/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
+  '/comercial/estoque': typeof AppComercialEstoqueRoute
   '/compras/contas-pagar': typeof AppComprasContasPagarRoute
   '/compras/cotacoes': typeof AppComprasCotacoesRouteWithChildren
   '/compras/fornecedores': typeof AppComprasFornecedoresRoute
@@ -792,6 +799,7 @@ export interface FileRoutesByTo {
   '/variante': typeof AppVarianteRoute
   '/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
   '/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
+  '/comercial/estoque': typeof AppComercialEstoqueRoute
   '/compras/contas-pagar': typeof AppComprasContasPagarRoute
   '/compras/cotacoes': typeof AppComprasCotacoesRouteWithChildren
   '/compras/fornecedores': typeof AppComprasFornecedoresRoute
@@ -900,6 +908,7 @@ export interface FileRoutesById {
   '/_app/variante': typeof AppVarianteRoute
   '/_app/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
   '/_app/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
+  '/_app/comercial/estoque': typeof AppComercialEstoqueRoute
   '/_app/compras/contas-pagar': typeof AppComprasContasPagarRoute
   '/_app/compras/cotacoes': typeof AppComprasCotacoesRouteWithChildren
   '/_app/compras/fornecedores': typeof AppComprasFornecedoresRoute
@@ -1008,6 +1017,7 @@ export interface FileRouteTypes {
     | '/variante'
     | '/cliente-artigo/$id'
     | '/cliente-artigo/simulador'
+    | '/comercial/estoque'
     | '/compras/contas-pagar'
     | '/compras/cotacoes'
     | '/compras/fornecedores'
@@ -1114,6 +1124,7 @@ export interface FileRouteTypes {
     | '/variante'
     | '/cliente-artigo/$id'
     | '/cliente-artigo/simulador'
+    | '/comercial/estoque'
     | '/compras/contas-pagar'
     | '/compras/cotacoes'
     | '/compras/fornecedores'
@@ -1221,6 +1232,7 @@ export interface FileRouteTypes {
     | '/_app/variante'
     | '/_app/cliente-artigo/$id'
     | '/_app/cliente-artigo/simulador'
+    | '/_app/comercial/estoque'
     | '/_app/compras/contas-pagar'
     | '/_app/compras/cotacoes'
     | '/_app/compras/fornecedores'
@@ -1936,6 +1948,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppComprasContasPagarRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/comercial/estoque': {
+      id: '/_app/comercial/estoque'
+      path: '/comercial/estoque'
+      fullPath: '/comercial/estoque'
+      preLoaderRoute: typeof AppComercialEstoqueRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/cliente-artigo/simulador': {
       id: '/_app/cliente-artigo/simulador'
       path: '/simulador'
@@ -2208,6 +2227,7 @@ interface AppRouteChildren {
   AppTimeLogRoute: typeof AppTimeLogRoute
   AppUsuariosRoute: typeof AppUsuariosRoute
   AppVarianteRoute: typeof AppVarianteRoute
+  AppComercialEstoqueRoute: typeof AppComercialEstoqueRoute
   AppComprasContasPagarRoute: typeof AppComprasContasPagarRoute
   AppComprasCotacoesRoute: typeof AppComprasCotacoesRouteWithChildren
   AppComprasFornecedoresRoute: typeof AppComprasFornecedoresRoute
@@ -2298,6 +2318,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppTimeLogRoute: AppTimeLogRoute,
   AppUsuariosRoute: AppUsuariosRoute,
   AppVarianteRoute: AppVarianteRoute,
+  AppComercialEstoqueRoute: AppComercialEstoqueRoute,
   AppComprasContasPagarRoute: AppComprasContasPagarRoute,
   AppComprasCotacoesRoute: AppComprasCotacoesRouteWithChildren,
   AppComprasFornecedoresRoute: AppComprasFornecedoresRoute,
@@ -2374,3 +2395,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
