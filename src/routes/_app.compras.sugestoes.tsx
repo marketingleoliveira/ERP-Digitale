@@ -454,11 +454,17 @@ function MrpSuggestionsPage() {
                   </div>
                 </div>
               )}
-
-                  <h4 className="text-sm font-medium text-muted-foreground">Necessidade Líquida</h4>
-                  <p className="text-lg font-bold text-primary">{selectedSuggestion.necessidade_liquida.toFixed(3)} {selectedSuggestion.unidade}</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground">Compras em Trânsito</h4>
+                    <p className="text-lg font-bold">{selectedSuggestion.quantidade_em_transito.toFixed(3)} {selectedSuggestion.unidade}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground">Necessidade Líquida</h4>
+                    <p className="text-lg font-bold text-primary">{selectedSuggestion.necessidade_liquida.toFixed(3)} {selectedSuggestion.unidade}</p>
+                  </div>
                 </div>
-              </div>
+
 
               <div className="border rounded-md p-4 bg-muted/50">
                 <h4 className="text-sm font-semibold mb-2">Composição por Ordens de Produção</h4>
