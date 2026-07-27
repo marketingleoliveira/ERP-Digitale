@@ -41,7 +41,7 @@ export const computeMrp = createServerFn({ method: "POST" })
 
     let demandas = data.demandas;
     
-    // 1) Se não vieram demandas, agrega das OPs em aberto (planejadas, programadas, em produção)
+    // 1) Se não vieram demandas, agrega das OPs em aberto
     if (demandas.length === 0) {
       const { data: opItens } = await supabase.from("op_itens")
         .select("op_id, product_id, quantidade_planejada, quantidade_produzida, ordens_producao!inner(status)")
@@ -66,7 +66,7 @@ export const computeMrp = createServerFn({ method: "POST" })
 
     // 2) Chamadas recursivas para explosão de BOM no banco (RPC explode_bom)
     const explosaoPromessas = demandas.map(d => 
-      supabase.rpc("explode_bom" as never, { 
+      supabase.rpc("explode_bom" as any, { 
         p_article_id: d.article_id, 
         p_quantidade_base: d.quantidade_kg 
       })
@@ -79,7 +79,7 @@ export const computeMrp = createServerFn({ method: "POST" })
       const { data: itens, error } = explosaoResultados[idx];
       if (error) return;
       
-      (itens as any[] ?? []).forEach(it => {
+      ((itens as any[]) ?? []).forEach(it => {
         const key = it.component_ref_id ? `${it.component_ref_tipo}:${it.component_ref_id}` : `desc:${it.component_descricao}`;
         const cur = brutasMap.get(key);
         const origem = { article_id: d.article_id, qtd_kg: d.quantidade_kg };
@@ -96,22 +96,22 @@ export const computeMrp = createServerFn({ method: "POST" })
       });
     });
 
-    // 3) Consultar saldos, reservas e trânsito via View consolidada
+    // 3) Consultar saldos via View consolidada
     const refIds = [...brutasMap.values()].map(b => b.component_ref_id).filter(Boolean);
-    const { data: saldos } = await supabase.from("vw_mrp_explosion")
+    const { data: saldos } = await supabase.from("vw_mrp_explosion" as any)
       .select("*")
       .in("ref_id", refIds);
     
-    const saldoMap = new Map(saldos?.map(s => [s.ref_id, s]) ?? []);
+    const saldoMap = new Map(saldos?.map((s: any) => [s.ref_id, s]) ?? []);
 
-    // 4) Fornecedores e Prazos (última compra/lote)
+    // 4) Fornecedores (última compra/lote)
     const { data: lastLotes } = await supabase.from("lotes")
-      .select("item_id, fornecedor_id, fornecedores(razao_social, nome_fantasia, prazo_entrega_dias)")
+      .select("item_id, fornecedor_id, fornecedores:fornecedor_id(razao_social, nome_fantasia, prazo_entrega_dias)")
       .in("item_id", refIds)
       .order("created_at", { ascending: false });
     
     const fornMap = new Map<string, any>();
-    lastLotes?.forEach(l => {
+    lastLotes?.forEach((l: any) => {
       if (l.item_id && !fornMap.has(l.item_id)) fornMap.set(l.item_id, l.fornecedores);
     });
 
@@ -132,22 +132,25 @@ export const computeMrp = createServerFn({ method: "POST" })
       
       const liq = Math.max(0, b.quantidade_bruta - (est - res) - tra + seg);
       
+      const urgencia: "verde" | "amarelo" | "vermelho" = 
+        liq <= 0 ? "verde" : (est - res + tra) < b.quantidade_bruta * 0.5 ? "vermelho" : "amarelo";
+
       return {
-        ref_tipo: b.component_ref_tipo,
-        ref_id: b.component_ref_id,
-        descricao: b.component_descricao,
-        unidade: b.unidade,
+        ref_tipo: b.component_ref_tipo as string,
+        ref_id: b.component_ref_id as string | null,
+        descricao: b.component_descricao as string,
+        unidade: b.unidade as string,
         necessidade_bruta: Number(b.quantidade_bruta.toFixed(3)),
         estoque_disponivel: Number(est.toFixed(3)),
         estoque_reservado: Number(res.toFixed(3)),
         em_transito: Number(tra.toFixed(3)),
         estoque_seguranca: Number(seg.toFixed(3)),
         necessidade_liquida: Number(liq.toFixed(3)),
-        fornecedor_id: forn?.id ?? null,
-        fornecedor_nome: forn ? (forn.nome_fantasia || forn.razao_social) : null,
-        prazo_entrega_dias: forn?.prazo_entrega_dias ?? null,
-        urgencia: liq <= 0 ? "verde" : (est - res + tra) < b.quantidade_bruta * 0.5 ? "vermelho" : "amarelo",
-        origem_articles: b.origem.map((o: any) => ({
+        fornecedor_id: (forn?.id as string | null) ?? null,
+        fornecedor_nome: forn ? (forn.nome_fantasia || forn.razao_social) as string : null,
+        prazo_entrega_dias: (forn?.prazo_entrega_dias as number | null) ?? null,
+        urgencia,
+        origem_articles: (b.origem as any[]).map((o: any) => ({
           ...o,
           codigo: artsInfoMap.get(o.article_id)?.codigo ?? "",
           nome: artsInfoMap.get(o.article_id)?.nome ?? "",
