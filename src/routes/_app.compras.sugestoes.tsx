@@ -36,7 +36,8 @@ import {
   ArrowRight,
   Filter,
   Search,
-  ShoppingCart
+  ShoppingCart,
+  ExternalLink
 } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
 import { toast } from 'sonner';
@@ -45,12 +46,15 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { Link, useNavigate } from '@tanstack/react-router';
+
 export const Route = createFileRoute('/_app/compras/sugestoes')({
   component: MrpSuggestionsPage,
 });
 
 function MrpSuggestionsPage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSuggestion, setSelectedSuggestion] = useState<any | null>(null);
@@ -93,7 +97,20 @@ function MrpSuggestionsPage() {
       convertSuggestionsToOrder(data.ids, data.supplierId, data.paymentTerms, data.deliveryDate),
     onSuccess: (order) => {
       queryClient.invalidateQueries({ queryKey: ['mrp-suggestions'] });
-      toast.success(`Pedido de compra #${order.numero || order.id.slice(0,8)} gerado com sucesso`);
+      const orderNumber = order.numero || order.id.slice(0, 8);
+      toast.success(
+        <div className="flex flex-col gap-1">
+          <span>Pedido de compra #{orderNumber} gerado com sucesso</span>
+          <Button 
+            variant="link" 
+            className="p-0 h-auto text-blue-600 justify-start"
+            onClick={() => navigate({ to: `/_app/compras/pedidos/${order.id}` })}
+          >
+            Visualizar pedido
+          </Button>
+        </div>,
+        { duration: 6000 }
+      );
       setIsConversionModalOpen(false);
       setSelectedIds([]);
     },
