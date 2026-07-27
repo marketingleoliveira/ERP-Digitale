@@ -2529,6 +2529,95 @@ export type Database = {
         }
         Relationships: []
       }
+      inspecao_defeitos: {
+        Row: {
+          created_at: string | null
+          disposicao: string | null
+          id: string
+          inspecao_id: string | null
+          localizacao: string | null
+          quantidade: number
+          severidade: string | null
+          tipo_defeito: string
+        }
+        Insert: {
+          created_at?: string | null
+          disposicao?: string | null
+          id?: string
+          inspecao_id?: string | null
+          localizacao?: string | null
+          quantidade: number
+          severidade?: string | null
+          tipo_defeito: string
+        }
+        Update: {
+          created_at?: string | null
+          disposicao?: string | null
+          id?: string
+          inspecao_id?: string | null
+          localizacao?: string | null
+          quantidade?: number
+          severidade?: string | null
+          tipo_defeito?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inspecao_defeitos_inspecao_id_fkey"
+            columns: ["inspecao_id"]
+            isOneToOne: false
+            referencedRelation: "inspecoes_qualidade"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inspecao_resultados: {
+        Row: {
+          caracteristica_id: string | null
+          conforme: boolean | null
+          created_at: string | null
+          id: string
+          inspecao_id: string | null
+          observacao: string | null
+          resultado_qualitativo: string | null
+          valor_medido: number | null
+        }
+        Insert: {
+          caracteristica_id?: string | null
+          conforme?: boolean | null
+          created_at?: string | null
+          id?: string
+          inspecao_id?: string | null
+          observacao?: string | null
+          resultado_qualitativo?: string | null
+          valor_medido?: number | null
+        }
+        Update: {
+          caracteristica_id?: string | null
+          conforme?: boolean | null
+          created_at?: string | null
+          id?: string
+          inspecao_id?: string | null
+          observacao?: string | null
+          resultado_qualitativo?: string | null
+          valor_medido?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inspecao_resultados_caracteristica_id_fkey"
+            columns: ["caracteristica_id"]
+            isOneToOne: false
+            referencedRelation: "qualidade_plano_caracteristicas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inspecao_resultados_inspecao_id_fkey"
+            columns: ["inspecao_id"]
+            isOneToOne: false
+            referencedRelation: "inspecoes_qualidade"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inspecoes_qualidade: {
         Row: {
           created_at: string | null
@@ -2645,18 +2734,150 @@ export type Database = {
           },
         ]
       }
+      lote_revisoes: {
+        Row: {
+          classificacao:
+            | Database["public"]["Enums"]["lote_classificacao"]
+            | null
+          created_at: string | null
+          data_revisao: string | null
+          id: string
+          largura_media: number | null
+          lote_id: string | null
+          metragem_revisada: number | null
+          observacao: string | null
+          peso_revisado: number | null
+          pontos_defeito: number | null
+          revisor_id: string | null
+        }
+        Insert: {
+          classificacao?:
+            | Database["public"]["Enums"]["lote_classificacao"]
+            | null
+          created_at?: string | null
+          data_revisao?: string | null
+          id?: string
+          largura_media?: number | null
+          lote_id?: string | null
+          metragem_revisada?: number | null
+          observacao?: string | null
+          peso_revisado?: number | null
+          pontos_defeito?: number | null
+          revisor_id?: string | null
+        }
+        Update: {
+          classificacao?:
+            | Database["public"]["Enums"]["lote_classificacao"]
+            | null
+          created_at?: string | null
+          data_revisao?: string | null
+          id?: string
+          largura_media?: number | null
+          lote_id?: string | null
+          metragem_revisada?: number | null
+          observacao?: string | null
+          peso_revisado?: number | null
+          pontos_defeito?: number | null
+          revisor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lote_revisoes_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lote_revisoes_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_lotes_saldos"
+            referencedColumns: ["lote_id"]
+          },
+        ]
+      }
+      lote_rolos: {
+        Row: {
+          classificacao:
+            | Database["public"]["Enums"]["lote_classificacao"]
+            | null
+          created_at: string | null
+          deposito: string | null
+          id: string
+          largura: number | null
+          localizacao: string | null
+          lote_id: string | null
+          metragem: number | null
+          numero_rolo: string
+          peso: number
+          status: string | null
+          tonalidade: string | null
+        }
+        Insert: {
+          classificacao?:
+            | Database["public"]["Enums"]["lote_classificacao"]
+            | null
+          created_at?: string | null
+          deposito?: string | null
+          id?: string
+          largura?: number | null
+          localizacao?: string | null
+          lote_id?: string | null
+          metragem?: number | null
+          numero_rolo: string
+          peso: number
+          status?: string | null
+          tonalidade?: string | null
+        }
+        Update: {
+          classificacao?:
+            | Database["public"]["Enums"]["lote_classificacao"]
+            | null
+          created_at?: string | null
+          deposito?: string | null
+          id?: string
+          largura?: number | null
+          localizacao?: string | null
+          lote_id?: string | null
+          metragem?: number | null
+          numero_rolo?: string
+          peso?: number
+          status?: string | null
+          tonalidade?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lote_rolos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lote_rolos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_lotes_saldos"
+            referencedColumns: ["lote_id"]
+          },
+        ]
+      }
       lotes: {
         Row: {
           classificacao: string | null
           created_at: string
+          custo_definitivo: number | null
           custo_unitario: number | null
           data_entrada: string
+          data_liberacao: string | null
           deposito: string | null
           fornecedor_id: string | null
           habilitado: boolean
           id: string
           item_id: string
           liberado_comercial: boolean | null
+          liberado_por: string | null
           numero_lote: string
           observacao: string | null
           op_id: string | null
@@ -2665,6 +2886,8 @@ export type Database = {
           saldo_aprovado: number | null
           saldo_bloqueado: number | null
           saldo_qualidade: number | null
+          saldo_quarentena: number | null
+          saldo_reprocesso: number | null
           status_processo: string | null
           tinturaria_id: string | null
           tipo: string
@@ -2673,14 +2896,17 @@ export type Database = {
         Insert: {
           classificacao?: string | null
           created_at?: string
+          custo_definitivo?: number | null
           custo_unitario?: number | null
           data_entrada?: string
+          data_liberacao?: string | null
           deposito?: string | null
           fornecedor_id?: string | null
           habilitado?: boolean
           id?: string
           item_id: string
           liberado_comercial?: boolean | null
+          liberado_por?: string | null
           numero_lote: string
           observacao?: string | null
           op_id?: string | null
@@ -2689,6 +2915,8 @@ export type Database = {
           saldo_aprovado?: number | null
           saldo_bloqueado?: number | null
           saldo_qualidade?: number | null
+          saldo_quarentena?: number | null
+          saldo_reprocesso?: number | null
           status_processo?: string | null
           tinturaria_id?: string | null
           tipo: string
@@ -2697,14 +2925,17 @@ export type Database = {
         Update: {
           classificacao?: string | null
           created_at?: string
+          custo_definitivo?: number | null
           custo_unitario?: number | null
           data_entrada?: string
+          data_liberacao?: string | null
           deposito?: string | null
           fornecedor_id?: string | null
           habilitado?: boolean
           id?: string
           item_id?: string
           liberado_comercial?: boolean | null
+          liberado_por?: string | null
           numero_lote?: string
           observacao?: string | null
           op_id?: string | null
@@ -2713,6 +2944,8 @@ export type Database = {
           saldo_aprovado?: number | null
           saldo_bloqueado?: number | null
           saldo_qualidade?: number | null
+          saldo_quarentena?: number | null
+          saldo_reprocesso?: number | null
           status_processo?: string | null
           tinturaria_id?: string | null
           tipo?: string
@@ -3275,6 +3508,80 @@ export type Database = {
           },
         ]
       }
+      nao_conformidades: {
+        Row: {
+          acao_corretiva: string | null
+          causa_raiz: string | null
+          created_at: string | null
+          descricao: string
+          fornecedor_id: string | null
+          id: string
+          inspecao_id: string | null
+          lote_id: string | null
+          numero: number
+          prazo: string | null
+          responsavel_id: string | null
+          status: string | null
+        }
+        Insert: {
+          acao_corretiva?: string | null
+          causa_raiz?: string | null
+          created_at?: string | null
+          descricao: string
+          fornecedor_id?: string | null
+          id?: string
+          inspecao_id?: string | null
+          lote_id?: string | null
+          numero?: number
+          prazo?: string | null
+          responsavel_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          acao_corretiva?: string | null
+          causa_raiz?: string | null
+          created_at?: string | null
+          descricao?: string
+          fornecedor_id?: string | null
+          id?: string
+          inspecao_id?: string | null
+          lote_id?: string | null
+          numero?: number
+          prazo?: string | null
+          responsavel_id?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nao_conformidades_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nao_conformidades_inspecao_id_fkey"
+            columns: ["inspecao_id"]
+            isOneToOne: false
+            referencedRelation: "inspecoes_qualidade"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nao_conformidades_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nao_conformidades_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_lotes_saldos"
+            referencedColumns: ["lote_id"]
+          },
+        ]
+      }
       ncm_catalogo: {
         Row: {
           aliq_cofins_padrao: number | null
@@ -3813,6 +4120,107 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "variantes"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      op_acabamentos: {
+        Row: {
+          created_at: string | null
+          data_fim: string | null
+          data_inicio: string | null
+          fornecedor_id: string | null
+          id: string
+          lote_id: string | null
+          maquina_id: string | null
+          operacao_id: string | null
+          parametros: Json | null
+          perda: number | null
+          quantidade_entrada: number | null
+          quantidade_saida: number | null
+          responsavel_id: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_fim?: string | null
+          data_inicio?: string | null
+          fornecedor_id?: string | null
+          id?: string
+          lote_id?: string | null
+          maquina_id?: string | null
+          operacao_id?: string | null
+          parametros?: Json | null
+          perda?: number | null
+          quantidade_entrada?: number | null
+          quantidade_saida?: number | null
+          responsavel_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          data_fim?: string | null
+          data_inicio?: string | null
+          fornecedor_id?: string | null
+          id?: string
+          lote_id?: string | null
+          maquina_id?: string | null
+          operacao_id?: string | null
+          parametros?: Json | null
+          perda?: number | null
+          quantidade_entrada?: number | null
+          quantidade_saida?: number | null
+          responsavel_id?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "op_acabamentos_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_acabamentos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_acabamentos_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_lotes_saldos"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "op_acabamentos_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "op_acabamentos_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "op_acabamentos_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "op_acabamentos_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
+            referencedColumns: ["maquina_id"]
           },
         ]
       }
@@ -8118,6 +8526,18 @@ export type Database = {
         Args: { p_reserva_id: string }
         Returns: undefined
       }
+      complete_lot_quality_inspection: {
+        Args: {
+          p_classificacoes: Json
+          p_defeitos: Json
+          p_idempotency_key?: string
+          p_inspecao_id: string
+          p_lote_id: string
+          p_parecer: string
+          p_resultados: Json
+        }
+        Returns: Json
+      }
       convert_mrp_suggestions_to_order:
         | {
             Args: {
@@ -8413,6 +8833,14 @@ export type Database = {
           p_observacao?: string
           p_op_id: string
           p_quantidade: number
+        }
+        Returns: Json
+      }
+      release_lot_for_commercial_use: {
+        Args: {
+          p_deposito: string
+          p_idempotency_key?: string
+          p_lote_id: string
         }
         Returns: Json
       }
