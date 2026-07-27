@@ -1908,6 +1908,9 @@ export type Database = {
           focus_nfe_token_ciphertext: string | null
           focus_nfe_token_encryption_version: string | null
           focus_nfe_token_iv: string | null
+          focus_nfe_token_last_error_at: string | null
+          focus_nfe_token_last_error_code: string | null
+          focus_nfe_token_status: string | null
           focus_nfe_token_updated_at: string | null
           focus_nfe_token_updated_by: string | null
           id: string
@@ -1949,6 +1952,9 @@ export type Database = {
           focus_nfe_token_ciphertext?: string | null
           focus_nfe_token_encryption_version?: string | null
           focus_nfe_token_iv?: string | null
+          focus_nfe_token_last_error_at?: string | null
+          focus_nfe_token_last_error_code?: string | null
+          focus_nfe_token_status?: string | null
           focus_nfe_token_updated_at?: string | null
           focus_nfe_token_updated_by?: string | null
           id?: string
@@ -1990,6 +1996,9 @@ export type Database = {
           focus_nfe_token_ciphertext?: string | null
           focus_nfe_token_encryption_version?: string | null
           focus_nfe_token_iv?: string | null
+          focus_nfe_token_last_error_at?: string | null
+          focus_nfe_token_last_error_code?: string | null
+          focus_nfe_token_status?: string | null
           focus_nfe_token_updated_at?: string | null
           focus_nfe_token_updated_by?: string | null
           id?: string
@@ -9308,6 +9317,17 @@ export type Database = {
           _juros?: number
           _observacao?: string
           _valor_pago: number
+        }
+        Returns: string
+      }
+      log_nfe_event: {
+        Args: {
+          _acao: string
+          _http_status: number
+          _nota_fiscal_id?: string
+          _request: Json
+          _response: Json
+          _user_id: string
         }
         Returns: string
       }
