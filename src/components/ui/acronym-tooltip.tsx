@@ -37,6 +37,24 @@ const acronyms: Record<string, string> = {
   "XML": "Extensible Markup Language - Formato de arquivo da nota fiscal.",
   "SEFAZ": "Secretaria da Fazenda.",
   "FIFO": "First In, First Out - Primeiro que entra, primeiro que sai (controle de estoque).",
+  "IBGE": "Instituto Brasileiro de Geografia e Estatística - Provedor de códigos de cidades e estados.",
+  "GTIN": "Global Trade Item Number - Código de barras do produto (antigo EAN).",
+  "CEST": "Código Especificador da Substituição Tributária - Identifica mercadorias sujeitas à substituição tributária.",
+  "DANFE": "Documento Auxiliar da Nota Fiscal Eletrônica - Representação gráfica da NF-e.",
+  "DAPI": "Demonstrativo de Apuração do ICMS.",
+  "GIA": "Guia de Informação e Apuração do ICMS.",
+  "EFD": "Escrituração Fiscal Digital - Parte do projeto SPED.",
+  "SPED": "Sistema Público de Escrituração Digital.",
+  "CTE": "Conhecimento de Transporte Eletrônico.",
+  "MDFE": "Manifesto Eletrônico de Documentos Fiscais.",
+  "REINF": "Erituração Fiscal Digital de Retenções e Outras Informações Fiscais.",
+  "E-SOCIAL": "Sistema de Escrituração Digital das Obrigações Fiscais, Previdenciárias e Trabalhistas.",
+  "Kardex": "Ficha de controle de movimentação física e financeira de estoque.",
+  "Lote": "Identificador de uma quantidade específica de produto fabricado ou recebido de uma vez.",
+  "RNC": "Relatório de Não Conformidade - Documento para registrar desvios de qualidade.",
+  "OEE": "Overall Equipment Effectiveness - Eficácia Global do Equipamento.",
+  "Setup": "Tempo de preparação de uma máquina para iniciar a produção de um novo item.",
+  "Lead Time": "Tempo total entre o pedido e a entrega ou conclusão de um processo.",
 }
 
 interface AcronymTooltipProps {
@@ -54,7 +72,11 @@ export function AcronymTooltip({ children }: AcronymTooltipProps) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="cursor-help underline decoration-dotted underline-offset-4 decoration-primary/50 hover:decoration-primary transition-colors">
+          <span 
+            className="cursor-help underline decoration-dotted underline-offset-4 decoration-primary/50 hover:decoration-primary transition-colors inline-flex items-center"
+            tabIndex={0}
+            role="help"
+          >
             {children}
           </span>
         </TooltipTrigger>
