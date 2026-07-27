@@ -83,7 +83,8 @@ export async function convertSuggestionsToOrder(
     p_suggestion_ids: suggestionIds,
     p_fornecedor_id: supplierId,
     p_condicao_pagamento: paymentTerms,
-    p_prazo_entrega: deliveryDate
+    p_prazo_entrega: deliveryDate,
+    p_idempotency_key: crypto.randomUUID()
   });
 
   if (error) throw error;
