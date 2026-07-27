@@ -12,6 +12,8 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { RemessaDialog } from '@/components/producao/industrializacao/remessa-dialog';
+
 
 export const Route = createFileRoute('/_app/producao/industrializacao/$id')({
   loader: async ({ context, params }) => {
@@ -28,7 +30,10 @@ function IndustrializacaoDetailPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [remessaOpen, setRemessaOpen] = useState(false);
+
   const { data: order } = useSuspenseQuery({
+
     queryKey: ['industrialization-order', id],
     queryFn: () => getIndustrializationOrderById({ data: id }),
   });
@@ -61,10 +66,11 @@ function IndustrializacaoDetailPage() {
              </Button>
           )}
           {['APROVADA', 'AGUARDANDO-REMESSA', 'REMESSA-PARCIAL'].includes(order.status as string) && (
-            <Button className="gap-2 bg-blue-600 hover:bg-blue-700">
+            <Button className="gap-2 bg-blue-600 hover:bg-blue-700" onClick={() => setRemessaOpen(true)}>
               <Truck className="h-4 w-4" /> Registrar Remessa
             </Button>
           )}
+
         </div>
       </div>
 
@@ -168,6 +174,13 @@ function IndustrializacaoDetailPage() {
           </Table>
         </CardContent>
       </Card>
+
+      <RemessaDialog 
+        order={order} 
+        open={remessaOpen} 
+        onOpenChange={setRemessaOpen} 
+      />
     </div>
+
   );
 }

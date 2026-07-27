@@ -139,8 +139,9 @@ export function RemessaDialog({ order, open, onOpenChange }: RemessaDialogProps)
                       />
                     </TableCell>
                     <TableCell className="font-mono text-xs">{lote.numero_lote}</TableCell>
-                    <TableCell>{lote.cor_id || '-'}</TableCell>
-                    <TableCell>{lote.quantidade_disponivel} {lote.unidade || 'kg'}</TableCell>
+                    <TableCell>-</TableCell>
+                    <TableCell>{lote.quantidade_disponivel} kg</TableCell>
+
                     <TableCell>
                       <Input
                         type="number"
