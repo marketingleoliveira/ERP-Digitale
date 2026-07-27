@@ -2878,6 +2878,188 @@ export type Database = {
           },
         ]
       }
+      mrp_suggestion_origins: {
+        Row: {
+          created_at: string
+          demanda_manual_id: string | null
+          id: string
+          op_id: string | null
+          quantidade: number
+          suggestion_id: string
+        }
+        Insert: {
+          created_at?: string
+          demanda_manual_id?: string | null
+          id?: string
+          op_id?: string | null
+          quantidade: number
+          suggestion_id: string
+        }
+        Update: {
+          created_at?: string
+          demanda_manual_id?: string | null
+          id?: string
+          op_id?: string | null
+          quantidade?: number
+          suggestion_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mrp_suggestion_origins_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mrp_suggestion_origins_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "mrp_suggestion_origins_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custos_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "mrp_suggestion_origins_suggestion_id_fkey"
+            columns: ["suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "mrp_suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mrp_suggestions: {
+        Row: {
+          aprovada_em: string | null
+          aprovador_id: string | null
+          created_at: string
+          custo_total_estimado: number | null
+          custo_unitario_estimado: number | null
+          data_necessaria: string | null
+          data_sugerida_compra: string | null
+          descricao: string
+          estoque_disponivel: number
+          estoque_fisico: number
+          estoque_reservado: number
+          estoque_seguranca: number
+          fornecedor_sugerido_id: string | null
+          id: string
+          justificativa: string | null
+          motivo_cancelamento: string | null
+          motivo_rejeicao: string | null
+          necessidade_bruta: number
+          necessidade_liquida: number
+          origem_custo: string | null
+          pedido_compra_id: string | null
+          perda: number
+          prioridade: string
+          quantidade_aprovada: number
+          quantidade_convertida: number
+          quantidade_em_transito: number
+          quantidade_sugerida: number
+          ref_id: string | null
+          ref_tipo: string
+          responsavel_id: string | null
+          status: Database["public"]["Enums"]["mrp_suggestion_status"]
+          unidade: string
+          updated_at: string
+          versao_calculo: number
+        }
+        Insert: {
+          aprovada_em?: string | null
+          aprovador_id?: string | null
+          created_at?: string
+          custo_total_estimado?: number | null
+          custo_unitario_estimado?: number | null
+          data_necessaria?: string | null
+          data_sugerida_compra?: string | null
+          descricao: string
+          estoque_disponivel?: number
+          estoque_fisico?: number
+          estoque_reservado?: number
+          estoque_seguranca?: number
+          fornecedor_sugerido_id?: string | null
+          id?: string
+          justificativa?: string | null
+          motivo_cancelamento?: string | null
+          motivo_rejeicao?: string | null
+          necessidade_bruta?: number
+          necessidade_liquida?: number
+          origem_custo?: string | null
+          pedido_compra_id?: string | null
+          perda?: number
+          prioridade?: string
+          quantidade_aprovada?: number
+          quantidade_convertida?: number
+          quantidade_em_transito?: number
+          quantidade_sugerida?: number
+          ref_id?: string | null
+          ref_tipo: string
+          responsavel_id?: string | null
+          status?: Database["public"]["Enums"]["mrp_suggestion_status"]
+          unidade: string
+          updated_at?: string
+          versao_calculo?: number
+        }
+        Update: {
+          aprovada_em?: string | null
+          aprovador_id?: string | null
+          created_at?: string
+          custo_total_estimado?: number | null
+          custo_unitario_estimado?: number | null
+          data_necessaria?: string | null
+          data_sugerida_compra?: string | null
+          descricao?: string
+          estoque_disponivel?: number
+          estoque_fisico?: number
+          estoque_reservado?: number
+          estoque_seguranca?: number
+          fornecedor_sugerido_id?: string | null
+          id?: string
+          justificativa?: string | null
+          motivo_cancelamento?: string | null
+          motivo_rejeicao?: string | null
+          necessidade_bruta?: number
+          necessidade_liquida?: number
+          origem_custo?: string | null
+          pedido_compra_id?: string | null
+          perda?: number
+          prioridade?: string
+          quantidade_aprovada?: number
+          quantidade_convertida?: number
+          quantidade_em_transito?: number
+          quantidade_sugerida?: number
+          ref_id?: string | null
+          ref_tipo?: string
+          responsavel_id?: string | null
+          status?: Database["public"]["Enums"]["mrp_suggestion_status"]
+          unidade?: string
+          updated_at?: string
+          versao_calculo?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mrp_suggestions_fornecedor_sugerido_id_fkey"
+            columns: ["fornecedor_sugerido_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mrp_suggestions_pedido_compra_id_fkey"
+            columns: ["pedido_compra_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos_compra"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ncm_catalogo: {
         Row: {
           aliq_cofins_padrao: number | null
@@ -7124,7 +7306,88 @@ export type Database = {
       }
     }
     Functions: {
+      approve_mrp_suggestion: {
+        Args: {
+          p_justificativa?: string
+          p_quantidade_aprovada: number
+          p_suggestion_id: string
+        }
+        Returns: {
+          aprovada_em: string | null
+          aprovador_id: string | null
+          created_at: string
+          custo_total_estimado: number | null
+          custo_unitario_estimado: number | null
+          data_necessaria: string | null
+          data_sugerida_compra: string | null
+          descricao: string
+          estoque_disponivel: number
+          estoque_fisico: number
+          estoque_reservado: number
+          estoque_seguranca: number
+          fornecedor_sugerido_id: string | null
+          id: string
+          justificativa: string | null
+          motivo_cancelamento: string | null
+          motivo_rejeicao: string | null
+          necessidade_bruta: number
+          necessidade_liquida: number
+          origem_custo: string | null
+          pedido_compra_id: string | null
+          perda: number
+          prioridade: string
+          quantidade_aprovada: number
+          quantidade_convertida: number
+          quantidade_em_transito: number
+          quantidade_sugerida: number
+          ref_id: string | null
+          ref_tipo: string
+          responsavel_id: string | null
+          status: Database["public"]["Enums"]["mrp_suggestion_status"]
+          unidade: string
+          updated_at: string
+          versao_calculo: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "mrp_suggestions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       baixar_estoque_nf: { Args: { _nota_id: string }; Returns: number }
+      convert_mrp_suggestions_to_order: {
+        Args: {
+          p_condicao_pagamento?: string
+          p_fornecedor_id: string
+          p_prazo_entrega?: string
+          p_suggestion_ids: string[]
+        }
+        Returns: {
+          condicao_pagamento: string | null
+          confirmado_em: string | null
+          cotacao_id: string | null
+          created_at: string
+          criado_por: string | null
+          desconto: number | null
+          enviado_em: string | null
+          fornecedor_id: string
+          frete: number | null
+          id: string
+          numero: number
+          observacao: string | null
+          prazo_entrega: string | null
+          status: string
+          updated_at: string
+          valor_total: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "pedidos_compra"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       exp_registrar_evento: {
         Args: {
           _descricao?: string
@@ -7191,6 +7454,17 @@ export type Database = {
           quantidade_liquida: number
           status_custo: string
           unidade: string
+        }[]
+      }
+      generate_purchase_suggestions: {
+        Args: {
+          p_data_fim?: string
+          p_data_inicio?: string
+          p_modo_persistencia?: boolean
+        }
+        Returns: {
+          total_gerado: number
+          total_necessidade_liquida: number
         }[]
       }
       get_best_article_cost: {
@@ -7373,6 +7647,16 @@ export type Database = {
         | "logistica"
         | "qualidade"
         | "desenvolvedor"
+      mrp_suggestion_status:
+        | "SUGERIDA"
+        | "EM_ANALISE"
+        | "APROVADA"
+        | "REJEITADA"
+        | "EM_COTACAO"
+        | "PARCIALMENTE_CONVERTIDA"
+        | "CONVERTIDA"
+        | "CANCELADA"
+        | "DESATUALIZADA"
       op_status:
         | "planejada"
         | "programada"
@@ -7523,6 +7807,17 @@ export const Constants = {
         "logistica",
         "qualidade",
         "desenvolvedor",
+      ],
+      mrp_suggestion_status: [
+        "SUGERIDA",
+        "EM_ANALISE",
+        "APROVADA",
+        "REJEITADA",
+        "EM_COTACAO",
+        "PARCIALMENTE_CONVERTIDA",
+        "CONVERTIDA",
+        "CANCELADA",
+        "DESATUALIZADA",
       ],
       op_status: [
         "planejada",

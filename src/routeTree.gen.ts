@@ -90,6 +90,7 @@ import { Route as AppDevFocusNfeRouteImport } from './routes/_app.dev.focus-nfe'
 import { Route as AppDevE2eRouteImport } from './routes/_app.dev.e2e'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
 import { Route as AppDashboardIndustrialRouteImport } from './routes/_app.dashboard.industrial'
+import { Route as AppComprasSugestoesRouteImport } from './routes/_app.compras.sugestoes'
 import { Route as AppComprasSolicitacoesRouteImport } from './routes/_app.compras.solicitacoes'
 import { Route as AppComprasRecebimentosRouteImport } from './routes/_app.compras.recebimentos'
 import { Route as AppComprasPedidosRouteImport } from './routes/_app.compras.pedidos'
@@ -521,6 +522,11 @@ const AppDashboardIndustrialRoute = AppDashboardIndustrialRouteImport.update({
   path: '/dashboard/industrial',
   getParentRoute: () => AppRoute,
 } as any)
+const AppComprasSugestoesRoute = AppComprasSugestoesRouteImport.update({
+  id: '/compras/sugestoes',
+  path: '/compras/sugestoes',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppComprasSolicitacoesRoute = AppComprasSolicitacoesRouteImport.update({
   id: '/compras/solicitacoes',
   path: '/compras/solicitacoes',
@@ -666,6 +672,7 @@ export interface FileRoutesByFullPath {
   '/compras/pedidos': typeof AppComprasPedidosRouteWithChildren
   '/compras/recebimentos': typeof AppComprasRecebimentosRouteWithChildren
   '/compras/solicitacoes': typeof AppComprasSolicitacoesRouteWithChildren
+  '/compras/sugestoes': typeof AppComprasSugestoesRoute
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/dev/e2e': typeof AppDevE2eRoute
@@ -768,6 +775,7 @@ export interface FileRoutesByTo {
   '/compras/pedidos': typeof AppComprasPedidosRouteWithChildren
   '/compras/recebimentos': typeof AppComprasRecebimentosRouteWithChildren
   '/compras/solicitacoes': typeof AppComprasSolicitacoesRouteWithChildren
+  '/compras/sugestoes': typeof AppComprasSugestoesRoute
   '/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/dev/cargos': typeof AppDevCargosRoute
   '/dev/e2e': typeof AppDevE2eRoute
@@ -872,6 +880,7 @@ export interface FileRoutesById {
   '/_app/compras/pedidos': typeof AppComprasPedidosRouteWithChildren
   '/_app/compras/recebimentos': typeof AppComprasRecebimentosRouteWithChildren
   '/_app/compras/solicitacoes': typeof AppComprasSolicitacoesRouteWithChildren
+  '/_app/compras/sugestoes': typeof AppComprasSugestoesRoute
   '/_app/dashboard/industrial': typeof AppDashboardIndustrialRoute
   '/_app/dev/cargos': typeof AppDevCargosRoute
   '/_app/dev/e2e': typeof AppDevE2eRoute
@@ -976,6 +985,7 @@ export interface FileRouteTypes {
     | '/compras/pedidos'
     | '/compras/recebimentos'
     | '/compras/solicitacoes'
+    | '/compras/sugestoes'
     | '/dashboard/industrial'
     | '/dev/cargos'
     | '/dev/e2e'
@@ -1078,6 +1088,7 @@ export interface FileRouteTypes {
     | '/compras/pedidos'
     | '/compras/recebimentos'
     | '/compras/solicitacoes'
+    | '/compras/sugestoes'
     | '/dashboard/industrial'
     | '/dev/cargos'
     | '/dev/e2e'
@@ -1181,6 +1192,7 @@ export interface FileRouteTypes {
     | '/_app/compras/pedidos'
     | '/_app/compras/recebimentos'
     | '/_app/compras/solicitacoes'
+    | '/_app/compras/sugestoes'
     | '/_app/dashboard/industrial'
     | '/_app/dev/cargos'
     | '/_app/dev/e2e'
@@ -1823,6 +1835,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardIndustrialRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/compras/sugestoes': {
+      id: '/_app/compras/sugestoes'
+      path: '/compras/sugestoes'
+      fullPath: '/compras/sugestoes'
+      preLoaderRoute: typeof AppComprasSugestoesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/compras/solicitacoes': {
       id: '/_app/compras/solicitacoes'
       path: '/compras/solicitacoes'
@@ -2122,6 +2141,7 @@ interface AppRouteChildren {
   AppComprasPedidosRoute: typeof AppComprasPedidosRouteWithChildren
   AppComprasRecebimentosRoute: typeof AppComprasRecebimentosRouteWithChildren
   AppComprasSolicitacoesRoute: typeof AppComprasSolicitacoesRouteWithChildren
+  AppComprasSugestoesRoute: typeof AppComprasSugestoesRoute
   AppDashboardIndustrialRoute: typeof AppDashboardIndustrialRoute
   AppDevCargosRoute: typeof AppDevCargosRoute
   AppDevE2eRoute: typeof AppDevE2eRoute
@@ -2209,6 +2229,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppComprasPedidosRoute: AppComprasPedidosRouteWithChildren,
   AppComprasRecebimentosRoute: AppComprasRecebimentosRouteWithChildren,
   AppComprasSolicitacoesRoute: AppComprasSolicitacoesRouteWithChildren,
+  AppComprasSugestoesRoute: AppComprasSugestoesRoute,
   AppDashboardIndustrialRoute: AppDashboardIndustrialRoute,
   AppDevCargosRoute: AppDevCargosRoute,
   AppDevE2eRoute: AppDevE2eRoute,
