@@ -7,6 +7,7 @@ import {
   Building2, FlaskConical, Spool, UserSquare2, Palette, Droplet,
   Sparkles, Layers, Wrench, Syringe, Target, Code2, Briefcase,
   Server, IdCard, KeyRound, Clock, Network, PlugZap, Filter,
+  ClipboardCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -52,6 +53,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Pedidos", url: "/producao/pedidos", icon: ShoppingCart, group: "Produção (PCP)" },
   { title: "Ordens de Produção", url: "/producao/op", icon: Scissors, group: "Produção (PCP)" },
   { title: "Qualidade", url: "/producao/qualidade", icon: BadgeCheck, group: "Produção (PCP)" },
+  { title: "Planos de Inspeção", url: "/pcp/planos-inspecao", icon: ClipboardCheck, group: "Produção (PCP)" },
   { title: "Expedição", url: "/producao/expedicao", icon: Truck, group: "Produção (PCP)" },
   { title: "Análise Industrial (OEE)", url: "/producao/industrial", icon: Factory, group: "Produção (PCP)" },
   { title: "Planejamento (PCP)", url: "/producao/plano", icon: Scissors, group: "Produção (PCP)" },
