@@ -71,13 +71,20 @@ function BomPage() {
 
   // Agrupamento para tabela consolidada
   const consolidatedData = useMemo(() => {
-    const map = new Map<string, ExplodeBomItem & { total_liq: number; total_bru: number }>();
-    explosion.forEach(item => {
+    const dataToConsolidate = activeTab === "structure" ? explosion : costExplosion;
+    const map = new Map<string, any>();
+    
+    dataToConsolidate.forEach((item: any) => {
       const key = `${item.component_ref_id}-${item.component_ref_tipo}`;
       const existing = map.get(key);
       if (existing) {
         existing.total_liq += Number(item.quantidade_liquida);
         existing.total_bru += Number(item.quantidade_bruta);
+        if (activeTab === "costs") {
+          existing.custo_liquido += Number(item.custo_liquido || 0);
+          existing.custo_perda += Number(item.custo_perda || 0);
+          existing.custo_total_linha += Number(item.custo_total_linha || 0);
+        }
       } else {
         map.set(key, { 
           ...item, 
@@ -87,7 +94,8 @@ function BomPage() {
       }
     });
     return Array.from(map.values()).sort((a, b) => (a.codigo || "").localeCompare(b.codigo || ""));
-  }, [explosion]);
+  }, [explosion, costExplosion, activeTab]);
+
 
   if (selectedArticle) {
     return (
