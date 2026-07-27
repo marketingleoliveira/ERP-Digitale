@@ -1047,6 +1047,39 @@ export type Database = {
         }
         Relationships: []
       }
+      config_tolerancia: {
+        Row: {
+          categoria_id: string | null
+          created_at: string | null
+          exigir_justificativa_excesso: boolean | null
+          id: string
+          percentual_consumo_tolerado: number | null
+          percentual_perda_tolerada: number | null
+          ref_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          categoria_id?: string | null
+          created_at?: string | null
+          exigir_justificativa_excesso?: boolean | null
+          id?: string
+          percentual_consumo_tolerado?: number | null
+          percentual_perda_tolerada?: number | null
+          ref_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          categoria_id?: string | null
+          created_at?: string | null
+          exigir_justificativa_excesso?: boolean | null
+          id?: string
+          percentual_consumo_tolerado?: number | null
+          percentual_perda_tolerada?: number | null
+          ref_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       contas_bancarias: {
         Row: {
           agencia: string | null
@@ -3649,9 +3682,11 @@ export type Database = {
       op_apontamentos: {
         Row: {
           created_at: string
+          etapa: string | null
           fim: string | null
           funcionario_id: string | null
           id: string
+          idempotency_key: string | null
           inicio: string
           maquina_id: string | null
           motivo_refugo: string | null
@@ -3659,12 +3694,15 @@ export type Database = {
           op_id: string
           quantidade_produzida: number
           quantidade_refugo: number
+          status: string | null
         }
         Insert: {
           created_at?: string
+          etapa?: string | null
           fim?: string | null
           funcionario_id?: string | null
           id?: string
+          idempotency_key?: string | null
           inicio: string
           maquina_id?: string | null
           motivo_refugo?: string | null
@@ -3672,12 +3710,15 @@ export type Database = {
           op_id: string
           quantidade_produzida?: number
           quantidade_refugo?: number
+          status?: string | null
         }
         Update: {
           created_at?: string
+          etapa?: string | null
           fim?: string | null
           funcionario_id?: string | null
           id?: string
+          idempotency_key?: string | null
           inicio?: string
           maquina_id?: string | null
           motivo_refugo?: string | null
@@ -3685,6 +3726,7 @@ export type Database = {
           op_id?: string
           quantidade_produzida?: number
           quantidade_refugo?: number
+          status?: string | null
         }
         Relationships: [
           {
@@ -3761,6 +3803,8 @@ export type Database = {
           observacao: string | null
           op_id: string
           quantidade: number
+          reserva_id: string | null
+          tipo_consumo: string | null
           user_id: string | null
         }
         Insert: {
@@ -3771,6 +3815,8 @@ export type Database = {
           observacao?: string | null
           op_id: string
           quantidade: number
+          reserva_id?: string | null
+          tipo_consumo?: string | null
           user_id?: string | null
         }
         Update: {
@@ -3781,6 +3827,8 @@ export type Database = {
           observacao?: string | null
           op_id?: string
           quantidade?: number
+          reserva_id?: string | null
+          tipo_consumo?: string | null
           user_id?: string | null
         }
         Relationships: [
@@ -3818,6 +3866,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vw_custos_op"
             referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "op_consumos_reserva_id_fkey"
+            columns: ["reserva_id"]
+            isOneToOne: false
+            referencedRelation: "reservas"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -4772,6 +4827,7 @@ export type Database = {
           observacao: string | null
           pedido_id: string | null
           prioridade: number
+          quantidade_produzida: number | null
           responsavel_id: string | null
           status: Database["public"]["Enums"]["op_status"]
           updated_at: string
@@ -4789,6 +4845,7 @@ export type Database = {
           observacao?: string | null
           pedido_id?: string | null
           prioridade?: number
+          quantidade_produzida?: number | null
           responsavel_id?: string | null
           status?: Database["public"]["Enums"]["op_status"]
           updated_at?: string
@@ -4806,6 +4863,7 @@ export type Database = {
           observacao?: string | null
           pedido_id?: string | null
           prioridade?: number
+          quantidade_produzida?: number | null
           responsavel_id?: string | null
           status?: Database["public"]["Enums"]["op_status"]
           updated_at?: string
@@ -5848,6 +5906,7 @@ export type Database = {
           lote_id: string | null
           op_id: string
           quantidade: number
+          quantidade_consumida: number | null
           status: string
           updated_at: string | null
         }
@@ -5859,6 +5918,7 @@ export type Database = {
           lote_id?: string | null
           op_id: string
           quantidade: number
+          quantidade_consumida?: number | null
           status?: string
           updated_at?: string | null
         }
@@ -5870,6 +5930,7 @@ export type Database = {
           lote_id?: string | null
           op_id?: string
           quantidade?: number
+          quantidade_consumida?: number | null
           status?: string
           updated_at?: string | null
         }
@@ -7757,6 +7818,18 @@ export type Database = {
         }
         Returns: Database["public"]["Enums"]["op_status"]
       }
+      post_production_consumption: {
+        Args: {
+          p_consumos: Json
+          p_etapa: string
+          p_idempotency_key?: string
+          p_maquina_id?: string
+          p_op_id: string
+          p_quantidade_produzida: number
+          p_quantidade_refugo: number
+        }
+        Returns: Json
+      }
       proximo_numero_nfe: {
         Args: {
           _ambiente?: string
@@ -7793,11 +7866,19 @@ export type Database = {
           regra_id: string
         }[]
       }
+      reverse_production_posting: {
+        Args: { p_apontamento_id: string; p_motivo: string }
+        Returns: undefined
+      }
       romaneio_transicionar: {
         Args: { _novo_status: string; _romaneio_id: string }
         Returns: string
       }
       seed_rollback: { Args: never; Returns: Json }
+      simulate_production_posting: {
+        Args: { p_consumos: Json; p_op_id: string; p_quantidade_boa: number }
+        Returns: Json
+      }
       user_has_menu_permission: {
         Args: { _url: string; _user_id: string }
         Returns: boolean
