@@ -50,14 +50,14 @@ export const completeLotQualityInspection = createServerFn({ method: "POST" })
   .inputValidator((data) => completeInspecaoSchema.parse(data))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const { data: res, error } = await supabase.rpc("complete_lot_quality_inspection", {
+    const { data: res, error } = await supabase.rpc("complete_lot_quality_inspection" as any, {
       p_lote_id: data.lote_id,
       p_inspecao_id: data.inspecao_id,
       p_resultados: data.resultados,
       p_defeitos: data.defeitos,
       p_classificacoes: data.classificacoes,
-      p_parecer: data.parecer ?? undefined,
-      p_idempotency_key: data.idempotency_key ?? undefined
+      p_parecer: data.parecer || undefined,
+      p_idempotency_key: data.idempotency_key || undefined
     });
     if (error) throw error;
     return res;
@@ -68,10 +68,10 @@ export const releaseLotForCommercialUse = createServerFn({ method: "POST" })
   .inputValidator((data: { lote_id: string; deposito: string; idempotency_key?: string }) => data)
   .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const { data: res, error } = await supabase.rpc("release_lot_for_commercial_use", {
+    const { data: res, error } = await supabase.rpc("release_lot_for_commercial_use" as any, {
       p_lote_id: data.lote_id,
       p_deposito: data.deposito,
-      p_idempotency_key: data.idempotency_key || null
+      p_idempotency_key: data.idempotency_key || undefined
     });
     if (error) throw error;
     return res;
