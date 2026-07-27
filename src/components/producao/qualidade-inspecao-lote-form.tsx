@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { CheckCircle, AlertCircle, PackageCheck, ClipboardCheck, History } from "lucide-react";
 import { getPlanosInspecao, completeLotQualityInspection } from "@/lib/qualidade-v2.functions";
 import { cn } from "@/lib/utils";
