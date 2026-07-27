@@ -57,8 +57,10 @@ function RegrasPage() {
         <Table>
           <TableHeader>
             <TableRow className="bg-primary hover:bg-primary">
-              {["Prioridade","Nome","Origem→Destino","Operação",<AcronymTooltip key="ncm">NCM</AcronymTooltip>,<AcronymTooltip key="cfop">CFOP</AcronymTooltip>,"CST/CSOSN","ICMS%","ST","Ativa","Ações"].map((h) => (
-                <TableHead key={h} className="text-primary-foreground">{h}</TableHead>
+              {["Prioridade","Nome","Origem→Destino","Operação","NCM","CFOP","CST/CSOSN","ICMS%","ST","Ativa","Ações"].map((h) => (
+                <TableHead key={typeof h === 'string' ? h : (h as any).key} className="text-primary-foreground">
+                  {h === "NCM" ? <AcronymTooltip>NCM</AcronymTooltip> : h === "CFOP" ? <AcronymTooltip>CFOP</AcronymTooltip> : h}
+                </TableHead>
               ))}
             </TableRow>
           </TableHeader>
