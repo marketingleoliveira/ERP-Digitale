@@ -7300,6 +7300,30 @@ export type Database = {
         Args: { _url: string; _user_id: string }
         Returns: boolean
       }
+      where_used_bom: {
+        Args: {
+          p_component_ref_id: string
+          p_include_inactive?: boolean
+          p_max_depth?: number
+        }
+        Returns: {
+          article_codigo: string
+          article_nome: string
+          artigo_status: boolean
+          final_article_id: string
+          has_cycle: boolean
+          nivel: number
+          parent_article_id: string
+          path_ids: string[]
+          path_names: string[]
+          perda_percentual: number
+          quantidade_acumulada: number
+          quantidade_no_vinculo: number
+          searched_component_id: string
+          uso_tipo: string
+          vinculo_status: boolean
+        }[]
+      }
     }
     Enums: {
       app_role:
