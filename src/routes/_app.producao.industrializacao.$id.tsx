@@ -17,11 +17,12 @@ export const Route = createFileRoute('/_app/producao/industrializacao/$id')({
   loader: async ({ context, params }) => {
     await context.queryClient.ensureQueryData({
       queryKey: ['industrialization-order', params.id],
-      queryFn: () => getIndustrializationOrderById(params.id),
+      queryFn: () => getIndustrializationOrderById({ data: params.id }),
     });
   },
   component: IndustrializacaoDetailPage,
 });
+
 
 function IndustrializacaoDetailPage() {
   const { id } = Route.useParams();
@@ -29,8 +30,9 @@ function IndustrializacaoDetailPage() {
   const queryClient = useQueryClient();
   const { data: order } = useSuspenseQuery({
     queryKey: ['industrialization-order', id],
-    queryFn: () => getIndustrializationOrderById(id),
+    queryFn: () => getIndustrializationOrderById({ data: id }),
   });
+
 
   const getStatusVariant = (status: string) => {
     switch (status) {
