@@ -32,6 +32,8 @@ function BomPage() {
   const [filter, setFilter] = useState("");
   const [plannedQty, setPlannedQty] = useState(1);
   const [viewMode, setViewMode] = useState<"tree" | "consolidated" | "levels">("tree");
+  const [activeTab, setActiveTab] = useState<"structure" | "costs">("structure");
+
 
   const { data: articles = [], isLoading: loadingArticles } = useQuery({
     queryKey: ["articles-bom-list"],
