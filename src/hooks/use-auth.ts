@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 export type AppRole = "desenvolvedor" | "gerente" | "vendedor" | "producao" | "financeiro" | "logistica" | "qualidade";
 
@@ -22,7 +23,22 @@ export function useAuth() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  return { session, user, loading };
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  return { session, user, loading, profile };
 }
 
 export function useUserRoles(userId?: string) {

@@ -14,7 +14,7 @@ import { useAuth } from "@/hooks/use-auth";
 
 export function AppTopbar() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
 
   const signOut = async () => {
@@ -22,8 +22,9 @@ export function AppTopbar() {
     navigate({ to: "/auth" });
   };
 
-  const initials = (user?.user_metadata?.nome ?? user?.email ?? "DT")
-    .toString().split(/\s+|@/).filter(Boolean).slice(0, 2).map((s: string) => s[0]?.toUpperCase()).join("");
+  const displayName = profile?.nome || user?.user_metadata?.nome || user?.email || "Usuário";
+  const initials = displayName
+    .split(/\s+|@/).filter(Boolean).slice(0, 2).map((s: string) => s[0]?.toUpperCase()).join("");
 
 
   return (
@@ -61,7 +62,7 @@ export function AppTopbar() {
             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">
               {initials || "DT"}
             </div>
-            <span className="hidden text-sm md:inline max-w-[160px] truncate">{user?.user_metadata?.nome ?? user?.email ?? "Usuário"}</span>
+            <span className="hidden text-sm md:inline max-w-[160px] truncate">{displayName}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
