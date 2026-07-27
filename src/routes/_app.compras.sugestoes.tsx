@@ -53,8 +53,10 @@ function MrpSuggestionsPage() {
   const queryClient = useQueryClient();
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSuggestion, setSelectedSuggestion] = useState<any | null>(null);
 
   const { data: suggestions, isLoading } = useQuery({
+
     queryKey: ['mrp-suggestions', filterStatus],
     queryFn: () => fetchMrpSuggestions(filterStatus !== 'all' ? { status: filterStatus } : {}),
   });
