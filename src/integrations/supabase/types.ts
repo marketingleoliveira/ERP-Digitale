@@ -6925,6 +6925,16 @@ export type Database = {
         }
         Relationships: []
       }
+      vw_mrp_explosion: {
+        Row: {
+          em_transito: number | null
+          estoque_disponivel: number | null
+          estoque_reservado: number | null
+          ref_id: string | null
+          saldo_liquido: number | null
+        }
+        Relationships: []
+      }
       vw_oee_artigo: {
         Row: {
           codigo: string | null
@@ -7136,6 +7146,24 @@ export type Database = {
       exp_transicionar: {
         Args: { _expedicao_id: string; _motivo?: string; _novo_status: string }
         Returns: undefined
+      }
+      explode_bom: {
+        Args: {
+          p_article_id: string
+          p_max_depth?: number
+          p_quantidade_base?: number
+        }
+        Returns: {
+          article_id: string
+          component_descricao: string
+          component_id: string
+          component_ref_id: string
+          component_ref_tipo: string
+          nivel: number
+          quantidade_bruta: number
+          quantidade_liquida: number
+          unidade: string
+        }[]
       }
       has_any_role: {
         Args: {
