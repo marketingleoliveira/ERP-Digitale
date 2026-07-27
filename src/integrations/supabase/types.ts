@@ -7165,6 +7165,44 @@ export type Database = {
           unidade: string
         }[]
       }
+      explode_bom_cost: {
+        Args: {
+          p_article_id: string
+          p_max_depth?: number
+          p_quantidade_base?: number
+        }
+        Returns: {
+          article_id: string
+          codigo: string
+          component_descricao: string
+          component_ref_id: string
+          component_ref_tipo: string
+          custo_liquido: number
+          custo_perda: number
+          custo_total_linha: number
+          custo_unitario: number
+          data_custo: string
+          is_missing: boolean
+          is_outdated: boolean
+          nivel: number
+          origem_custo: string
+          path: string[]
+          quantidade_bruta: number
+          quantidade_liquida: number
+          status_custo: string
+          unidade: string
+        }[]
+      }
+      get_best_article_cost: {
+        Args: { p_article_id: string }
+        Returns: {
+          cost_date: string
+          cost_source: string
+          cost_value: number
+          is_missing: boolean
+          is_outdated: boolean
+        }[]
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
