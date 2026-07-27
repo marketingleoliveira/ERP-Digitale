@@ -18,12 +18,14 @@ describe('Etapa 11.2: Homologação Fiscal e Certificação (Direct SQL Validati
   it('ETAPA 0: Auditoria de Segurança do Token', async () => {
     expect(testData.tokenPresent).toBe(true);
     
-    // Verificar se o token não está exposto via RLS ou acessos indevidos
-    const { data: check, error } = await supabaseAdmin.rpc('read_query', {
-      query: `SELECT focus_nfe_token FROM public.empresa LIMIT 1`
-    });
+    const { data, error } = await supabaseAdmin
+      .from('empresa')
+      .select('focus_nfe_token')
+      .limit(1)
+      .single();
+
     expect(error).toBeNull();
-    expect(check[0].focus_nfe_token).toBeDefined();
+    expect(data?.focus_nfe_token).toBeDefined();
   });
 
   it('ETAPA 7: Validar RPC de Simulação', async () => {
@@ -33,14 +35,15 @@ describe('Etapa 11.2: Homologação Fiscal e Certificação (Direct SQL Validati
     }).select().single();
 
     if (exp) {
-      const { data: sim, error } = await supabaseAdmin.rpc('simulate_sales_invoice', {
+      const { data: sim, error } = await supabaseAdmin.rpc('simulate_sales_invoice' as any, {
         p_expedicao_id: exp.id,
         p_natureza_id: testData.naturezaId
       });
 
       expect(error).toBeNull();
       expect(sim).toBeDefined();
-      expect(sim.valor_total).toBeGreaterThan(0);
+      const s = sim as any;
+      expect(s.valor_total).toBeGreaterThan(0);
       
       await supabaseAdmin.from('op_expedicoes').delete().eq('id', exp.id);
     }
@@ -51,7 +54,6 @@ describe('Etapa 11.2: Homologação Fiscal e Certificação (Direct SQL Validati
     const idempotencyKey = crypto.randomUUID();
 
     if (exp) {
-      // Simulação da lógica da server function via SQL direto
       const insert = async () => {
         return supabaseAdmin.from('pre_faturamentos').upsert({
           expedicao_id: exp.id,
@@ -66,11 +68,12 @@ describe('Etapa 11.2: Homologação Fiscal e Certificação (Direct SQL Validati
       const res1 = await insert();
       const res2 = await insert();
 
-      expect(res1.data.id).toBe(res2.data.id);
+      expect(res1.data?.id).toBe(res2.data?.id);
       
-      await supabaseAdmin.from('pre_faturamentos').delete().eq('idempotency_key', idempotencyKey);
+      if (res1.data) {
+        await supabaseAdmin.from('pre_faturamentos').delete().eq('id', res1.data.id);
+      }
       await supabaseAdmin.from('op_expedicoes').delete().eq('id', exp.id);
     }
   });
 });
-
