@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { getRNCs } from "@/lib/comercial.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -25,13 +25,16 @@ function RNCPage() {
     queryFn: () => fetchRNCs(),
   });
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "aberta":
+  const getStatusBadge = (status: string | null) => {
+    if (!status) return <Badge variant="secondary">N/A</Badge>;
+    
+    const s = status.toUpperCase();
+    switch (s) {
+      case "ABERTA":
         return <Badge variant="destructive">Aberta</Badge>;
-      case "em_analise":
+      case "EM_ANALISE":
         return <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">Em Análise</Badge>;
-      case "concluida":
+      case "CONCLUIDA":
         return <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">Concluída</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
@@ -68,7 +71,7 @@ function RNCPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-destructive">
-              {rncs?.filter(r => r.status === 'aberta').length || 0}
+              {rncs?.filter(r => r.status?.toUpperCase() === 'ABERTA').length || 0}
             </div>
           </CardContent>
         </Card>
@@ -79,7 +82,7 @@ function RNCPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-amber-600">
-              {rncs?.filter(r => r.status === 'em_analise').length || 0}
+              {rncs?.filter(r => r.status?.toUpperCase() === 'EM_ANALISE').length || 0}
             </div>
           </CardContent>
         </Card>
@@ -90,7 +93,7 @@ function RNCPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-emerald-600">
-              {rncs?.filter(r => r.status === 'concluida').length || 0}
+              {rncs?.filter(r => r.status?.toUpperCase() === 'CONCLUIDA').length || 0}
             </div>
           </CardContent>
         </Card>
@@ -101,9 +104,9 @@ function RNCPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Título</TableHead>
+                <TableHead className="w-24">Número</TableHead>
+                <TableHead>Descrição</TableHead>
                 <TableHead>Lote</TableHead>
-                <TableHead>Responsável</TableHead>
                 <TableHead>Prazo</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
@@ -119,9 +122,9 @@ function RNCPage() {
               ) : (
                 rncs?.map((r) => (
                   <TableRow key={r.id}>
-                    <TableCell className="font-medium">{r.titulo}</TableCell>
-                    <TableCell>{r.lote?.numero_lote || "N/A"}</TableCell>
-                    <TableCell>{r.responsavel?.full_name || "Não atribuído"}</TableCell>
+                    <TableCell className="font-bold">#{r.numero}</TableCell>
+                    <TableCell className="max-w-md truncate">{r.descricao}</TableCell>
+                    <TableCell>{(r.lote as any)?.numero_lote || "N/A"}</TableCell>
                     <TableCell>{r.prazo ? new Date(r.prazo).toLocaleDateString() : "-"}</TableCell>
                     <TableCell>{getStatusBadge(r.status)}</TableCell>
                     <TableCell className="text-right">
