@@ -54,7 +54,7 @@ export function OpRastreabilidade({ opId }: Props) {
       <Step title="Consumos de matéria-prima" count={data.consumos.length} />
       <Step title="Qualidade" count={data.qualidade.length} />
       <Step title="Entradas de Estoque" count={data.entradas.length}>
-        {(data.entradas as EntradaRow[]).map((en) => (
+        {(data.entradas as any[]).map((en) => (
           <div key={en.id} className="flex justify-between">
             <span>{new Date(en.data_entrada).toLocaleDateString()}</span>
             <span className="font-mono font-bold">{en.quantidade} un</span>
@@ -62,7 +62,7 @@ export function OpRastreabilidade({ opId }: Props) {
         ))}
       </Step>
       <Step title="Lotes Produzidos" count={data.lotes.length}>
-        {(data.lotes as LoteRow[]).map((l) => (
+        {(data.lotes as any[]).map((l) => (
           <div key={l.id} className="space-y-0.5 border-b pb-1 mb-1 last:border-0">
             <div className="flex justify-between items-center">
               <span className="font-mono font-bold">Lote {l.numero_lote}</span>
