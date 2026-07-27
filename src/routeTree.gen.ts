@@ -55,6 +55,7 @@ import { Route as AppPcpVinculosArtigoRouteImport } from './routes/_app.pcp.vinc
 import { Route as AppPcpTurnosRouteImport } from './routes/_app.pcp.turnos'
 import { Route as AppPcpRoteirosRouteImport } from './routes/_app.pcp.roteiros'
 import { Route as AppPcpReservasRouteImport } from './routes/_app.pcp.reservas'
+import { Route as AppPcpPlanosInspecaoRouteImport } from './routes/_app.pcp.planos-inspecao'
 import { Route as AppPcpOperacoesRouteImport } from './routes/_app.pcp.operacoes'
 import { Route as AppPcpOeeRouteImport } from './routes/_app.pcp.oee'
 import { Route as AppPcpMrpOpRouteImport } from './routes/_app.pcp.mrp-op'
@@ -342,6 +343,11 @@ const AppPcpRoteirosRoute = AppPcpRoteirosRouteImport.update({
 const AppPcpReservasRoute = AppPcpReservasRouteImport.update({
   id: '/pcp/reservas',
   path: '/pcp/reservas',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpPlanosInspecaoRoute = AppPcpPlanosInspecaoRouteImport.update({
+  id: '/pcp/planos-inspecao',
+  path: '/pcp/planos-inspecao',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPcpOperacoesRoute = AppPcpOperacoesRouteImport.update({
@@ -723,6 +729,7 @@ export interface FileRoutesByFullPath {
   '/pcp/mrp-op': typeof AppPcpMrpOpRoute
   '/pcp/oee': typeof AppPcpOeeRoute
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
+  '/pcp/planos-inspecao': typeof AppPcpPlanosInspecaoRoute
   '/pcp/reservas': typeof AppPcpReservasRoute
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
@@ -828,6 +835,7 @@ export interface FileRoutesByTo {
   '/pcp/mrp-op': typeof AppPcpMrpOpRoute
   '/pcp/oee': typeof AppPcpOeeRoute
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
+  '/pcp/planos-inspecao': typeof AppPcpPlanosInspecaoRoute
   '/pcp/reservas': typeof AppPcpReservasRoute
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
@@ -935,6 +943,7 @@ export interface FileRoutesById {
   '/_app/pcp/mrp-op': typeof AppPcpMrpOpRoute
   '/_app/pcp/oee': typeof AppPcpOeeRoute
   '/_app/pcp/operacoes': typeof AppPcpOperacoesRoute
+  '/_app/pcp/planos-inspecao': typeof AppPcpPlanosInspecaoRoute
   '/_app/pcp/reservas': typeof AppPcpReservasRoute
   '/_app/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/_app/pcp/turnos': typeof AppPcpTurnosRoute
@@ -1042,6 +1051,7 @@ export interface FileRouteTypes {
     | '/pcp/mrp-op'
     | '/pcp/oee'
     | '/pcp/operacoes'
+    | '/pcp/planos-inspecao'
     | '/pcp/reservas'
     | '/pcp/roteiros'
     | '/pcp/turnos'
@@ -1147,6 +1157,7 @@ export interface FileRouteTypes {
     | '/pcp/mrp-op'
     | '/pcp/oee'
     | '/pcp/operacoes'
+    | '/pcp/planos-inspecao'
     | '/pcp/reservas'
     | '/pcp/roteiros'
     | '/pcp/turnos'
@@ -1253,6 +1264,7 @@ export interface FileRouteTypes {
     | '/_app/pcp/mrp-op'
     | '/_app/pcp/oee'
     | '/_app/pcp/operacoes'
+    | '/_app/pcp/planos-inspecao'
     | '/_app/pcp/reservas'
     | '/_app/pcp/roteiros'
     | '/_app/pcp/turnos'
@@ -1614,6 +1626,13 @@ declare module '@tanstack/react-router' {
       path: '/pcp/reservas'
       fullPath: '/pcp/reservas'
       preLoaderRoute: typeof AppPcpReservasRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/planos-inspecao': {
+      id: '/_app/pcp/planos-inspecao'
+      path: '/pcp/planos-inspecao'
+      fullPath: '/pcp/planos-inspecao'
+      preLoaderRoute: typeof AppPcpPlanosInspecaoRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/pcp/operacoes': {
@@ -2232,6 +2251,7 @@ interface AppRouteChildren {
   AppPcpMrpOpRoute: typeof AppPcpMrpOpRoute
   AppPcpOeeRoute: typeof AppPcpOeeRoute
   AppPcpOperacoesRoute: typeof AppPcpOperacoesRoute
+  AppPcpPlanosInspecaoRoute: typeof AppPcpPlanosInspecaoRoute
   AppPcpReservasRoute: typeof AppPcpReservasRoute
   AppPcpRoteirosRoute: typeof AppPcpRoteirosRouteWithChildren
   AppPcpTurnosRoute: typeof AppPcpTurnosRoute
@@ -2321,6 +2341,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPcpMrpOpRoute: AppPcpMrpOpRoute,
   AppPcpOeeRoute: AppPcpOeeRoute,
   AppPcpOperacoesRoute: AppPcpOperacoesRoute,
+  AppPcpPlanosInspecaoRoute: AppPcpPlanosInspecaoRoute,
   AppPcpReservasRoute: AppPcpReservasRoute,
   AppPcpRoteirosRoute: AppPcpRoteirosRouteWithChildren,
   AppPcpTurnosRoute: AppPcpTurnosRoute,
