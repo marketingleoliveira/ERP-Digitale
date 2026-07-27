@@ -1,11 +1,17 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Info } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
   SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, useSidebar,
 } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import logoAsset from "@/assets/digitale-logo-white.png.asset.json";
 import { ALL_MENU_ITEMS, GROUP_ORDER, useMenuVisibility } from "@/lib/menu-config";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
@@ -51,10 +57,21 @@ export function AppSidebar() {
             className={collapsed ? "h-8 w-8 object-contain" : "h-12 w-auto object-contain"}
           />
           {!collapsed && (
-            <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 text-[10px] font-semibold text-accent-foreground ring-1 ring-accent/30">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              #Sustentabilidade
-            </span>
+            <TooltipProvider>
+              <Tooltip delayDuration={300}>
+                <TooltipTrigger asChild>
+                  <span className="ml-auto inline-flex cursor-help items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 text-[10px] font-semibold text-accent-foreground ring-1 ring-accent/30">
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                    #ERP DIGITALE
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-xs p-3 text-xs leading-relaxed">
+                  <p>
+                    O ERP foi projetado para atender integralmente ao processo produtivo da Digitale Têxtil, desde a aquisição do fio até a expedição do tecido acabado. O sistema integra planejamento de produção, fichas técnicas, controle de estoque por lotes, custos industriais, compras, rastreabilidade e auditoria, além de suportar operações terceirizadas, como a tinturaria, mantendo o controle completo das remessas, retornos e custos de beneficiamento. Dessa forma, cada lote pode ser acompanhado durante todo o ciclo produtivo, proporcionando maior controle operacional, redução de perdas, rastreabilidade e informações confiáveis para a tomada de decisão.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </Link>
       </SidebarHeader>
