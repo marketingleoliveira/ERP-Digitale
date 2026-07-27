@@ -50,7 +50,7 @@ export const emitirNfeHomologacao = createServerFn({ method: "POST" })
 
     // Payload básico para homologação Focus NFe
     const payload = {
-      ...(pre.payload_fiscal as object),
+      ...(pre.payload_fiscal as Record<string, any>),
       referencia: data.referencia,
       data_emissao: new Date().toISOString(),
       presenca_comprador: 1,
@@ -70,7 +70,7 @@ export const emitirNfeHomologacao = createServerFn({ method: "POST" })
 
     return {
       status: response.status,
-      body: response.body,
+      body: response.body as Record<string, any>,
       ok: response.ok
     };
   });
@@ -94,5 +94,5 @@ export const consultarNfeHomologacao = createServerFn({ method: "POST" })
       user_id: userId
     });
 
-    return response.body;
+    return response.body as Record<string, any>;
   });
