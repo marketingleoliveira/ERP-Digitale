@@ -271,17 +271,30 @@ function BomPage() {
                       <TableRow>
                         <TableHead>Estrutura / Descrição</TableHead>
                         <TableHead>Código</TableHead>
-                        <TableHead>Nível</TableHead>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead className="text-right">Qtd Liq</TableHead>
-                        <TableHead className="text-right">Qtd Bruta (c/ perda)</TableHead>
-                        <TableHead>Un</TableHead>
-                        <TableHead>Status</TableHead>
+                        {activeTab === "structure" ? (
+                          <>
+                            <TableHead>Nível</TableHead>
+                            <TableHead>Tipo</TableHead>
+                            <TableHead className="text-right">Qtd Liq</TableHead>
+                            <TableHead className="text-right">Qtd Bruta</TableHead>
+                            <TableHead>Un</TableHead>
+                            <TableHead>Status</TableHead>
+                          </>
+                        ) : (
+                          <>
+                            <TableHead className="text-right">Custo Un.</TableHead>
+                            <TableHead className="text-right">Custo Liq.</TableHead>
+                            <TableHead className="text-right">Custo Perda</TableHead>
+                            <TableHead className="text-right font-bold">Custo Total</TableHead>
+                            <TableHead>Origem</TableHead>
+                            <TableHead>Status</TableHead>
+                          </>
+                        )}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {explosion.map((item, idx) => (
-                        <TableRow key={idx} className={cn(!item.ativo && "opacity-60 bg-muted/30")}>
+                      {(activeTab === "structure" ? explosion : costExplosion).map((item: any, idx) => (
+                        <TableRow key={idx} className={cn(!item.ativo && item.ativo !== undefined && "opacity-60 bg-muted/30")}>
                           <TableCell className="font-medium whitespace-nowrap">
                             <div className="flex items-center" style={{ paddingLeft: `${(item.nivel - 1) * 20}px` }}>
                               {item.nivel > 1 && <div className="w-4 h-px bg-border mr-2" />}
@@ -295,29 +308,75 @@ function BomPage() {
                             </div>
                           </TableCell>
                           <TableCell className="font-mono text-xs">{item.codigo || "—"}</TableCell>
-                          <TableCell>
-                             <Badge variant="outline" className="font-mono">{item.nivel}</Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="secondary" className="capitalize text-[10px] h-5 px-1.5">
-                              {item.component_ref_tipo}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right font-mono text-xs">
-                            {Number(item.quantidade_liquida).toLocaleString(undefined, { minimumFractionDigits: 4 })}
-                          </TableCell>
-                          <TableCell className="text-right font-mono text-xs font-semibold">
-                             {Number(item.quantidade_bruta).toLocaleString(undefined, { minimumFractionDigits: 4 })}
-                          </TableCell>
-                          <TableCell className="text-xs">{item.unidade}</TableCell>
-                          <TableCell>
-                             {!item.ativo && <Badge variant="destructive" className="text-[10px] h-5 px-1.5">Inativo</Badge>}
-                             {item.ativo && <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-green-600 border-green-200">OK</Badge>}
-                          </TableCell>
+                          
+                          {activeTab === "structure" ? (
+                            <>
+                              <TableCell>
+                                <Badge variant="outline" className="font-mono">{item.nivel}</Badge>
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="secondary" className="capitalize text-[10px] h-5 px-1.5">
+                                  {item.component_ref_tipo}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-right font-mono text-xs">
+                                {Number(item.quantidade_liquida).toLocaleString(undefined, { minimumFractionDigits: 4 })}
+                              </TableCell>
+                              <TableCell className="text-right font-mono text-xs font-semibold">
+                                {Number(item.quantidade_bruta).toLocaleString(undefined, { minimumFractionDigits: 4 })}
+                              </TableCell>
+                              <TableCell className="text-xs">{item.unidade}</TableCell>
+                              <TableCell>
+                                {!item.ativo && <Badge variant="destructive" className="text-[10px] h-5 px-1.5">Inativo</Badge>}
+                                {item.ativo && <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-green-600 border-green-200">OK</Badge>}
+                              </TableCell>
+                            </>
+                          ) : (
+                            <>
+                              <TableCell className="text-right font-mono text-xs">
+                                {Number(item.custo_unitario || 0).toLocaleString('pt-BR', { minimumFractionDigits: 4 })}
+                              </TableCell>
+                              <TableCell className="text-right font-mono text-xs">
+                                {Number(item.custo_liquido || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                              </TableCell>
+                              <TableCell className="text-right font-mono text-xs text-orange-600">
+                                {Number(item.custo_perda || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                              </TableCell>
+                              <TableCell className="text-right font-mono text-xs font-bold text-primary">
+                                {Number(item.custo_total_linha || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                              </TableCell>
+                              <TableCell className="text-[10px] max-w-[120px] truncate text-muted-foreground">
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger className="text-left truncate w-full">
+                                      {item.origem_custo}
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>{item.origem_custo}</p>
+                                      {item.data_custo && (
+                                        <p className="text-[10px] opacity-70">
+                                          Data: {new Date(item.data_custo).toLocaleDateString()}
+                                        </p>
+                                      )}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant={
+                                  item.status_custo === 'OK' ? "outline" : 
+                                  item.status_custo === 'DESATUALIZADO' ? "secondary" : "destructive"
+                                } className="text-[9px] h-4 px-1 leading-none">
+                                  {item.status_custo}
+                                </Badge>
+                              </TableCell>
+                            </>
+                          )}
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
+
                 </div>
               )}
 
