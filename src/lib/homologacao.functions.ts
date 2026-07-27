@@ -71,8 +71,7 @@ export const emitirNfeHomologacao = createServerFn({ method: "POST" })
 
     const response = await focusAdapter.emitir(config, data.referencia, payload);
 
-    await supabase.from("nfe_logs").insert({
-      nota_fiscal_id: null,
+    await supabase.rpc('log_nfe_event', {
       acao: "envio_nfe",
       http_status: response.status,
       request: payload as any,
