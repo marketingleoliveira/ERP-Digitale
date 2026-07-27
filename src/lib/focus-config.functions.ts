@@ -129,8 +129,9 @@ export const clearFocusToken = createServerFn({ method: "POST" })
 export const testFocusConnection = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    const { supabase, userId } = context;
     await assertDev(context as never);
-    const { data: emp } = await context.supabase
+    const { data: emp } = await supabase
       .from("empresa")
       .select("focus_nfe_token, focus_nfe_token_ciphertext, focus_nfe_token_iv, focus_nfe_token_encryption_version, ambiente_nfe, cnpj")
       .limit(1)
@@ -138,10 +139,8 @@ export const testFocusConnection = createServerFn({ method: "POST" })
     const empRec = (emp as Record<string, unknown> | null) ?? {};
     
     let token = (empRec.focus_nfe_token as string | null);
-    if (!token) token = null; // Normalize undefined to null
+    if (!token) token = null;
 
-    
-    // Tenta descriptografar se houver token seguro
     if (empRec.focus_nfe_token_ciphertext && empRec.focus_nfe_token_iv) {
       const { decryptToken } = await import("@/services/fiscal/encryption.server");
       token = await decryptToken(
@@ -153,7 +152,6 @@ export const testFocusConnection = createServerFn({ method: "POST" })
     
     if (!token) token = process.env.FOCUS_NFE_TOKEN ?? null;
     if (!token) return { ok: false as const, mensagem: "Token não configurado." };
-
 
     const ambiente = (empRec.ambiente_nfe as string) ?? "homologacao";
     const baseUrl = ambiente === "producao"
@@ -169,7 +167,26 @@ export const testFocusConnection = createServerFn({ method: "POST" })
         headers: { Authorization: auth },
       });
       const durationMs = Date.now() - start;
-      const body = await res.text();
+      const body = await res.json().catch(() => ({}));
+      
+      // Registrar log usando a nova função RPC que também atualiza o status do token
+      await supabase.rpc('log_nfe_event', {
+        _acao: 'teste_conexao',
+        _http_status: res.status,
+        _request: { cnpj, ambiente },
+        _response: body,
+        _user_id: userId
+      });
+
+      // Se 200, marcar como VALID
+      if (res.ok) {
+        await supabase.from('empresa').update({
+          focus_nfe_token_status: 'VALID',
+          focus_nfe_token_last_error_code: null,
+          focus_nfe_token_last_error_at: null
+        } as any).eq('provedor_nfe', 'focus_nfe');
+      }
+
       return {
         ok: res.ok,
         status: res.status,
@@ -177,7 +194,7 @@ export const testFocusConnection = createServerFn({ method: "POST" })
         durationMs,
         mensagem: res.ok
           ? `Conexão OK (${res.status} em ${durationMs}ms)`
-          : `Falha ${res.status}: ${body.slice(0, 200)}`,
+          : `Falha ${res.status}: ${JSON.stringify(body).slice(0, 200)}`,
       };
     } catch (e) {
       return {
@@ -185,6 +202,5 @@ export const testFocusConnection = createServerFn({ method: "POST" })
         mensagem: `Erro de rede: ${e instanceof Error ? e.message : String(e)}`,
       };
     }
-
   });
 
