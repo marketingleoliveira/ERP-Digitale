@@ -62,7 +62,7 @@ export const getExpedicoesPendentes = createServerFn({ method: "GET" })
     const { supabase } = context;
     const { data, error } = await supabase
       .from("op_expedicoes")
-      .select("*, customer:transportadora_id(razao_social), pedido:pedido_id(numero_pedido)")
+      .select("*, transportadora:transportadora_id(razao_social), pedido:pedido_id(numero)")
       .is("nota_fiscal_id", null);
 
     if (error) throw new Error(error.message);

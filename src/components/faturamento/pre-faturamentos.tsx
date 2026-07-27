@@ -27,7 +27,7 @@ export function PreFaturamentoDashboard() {
   const [loadingSim, setLoadingSim] = useState(false);
 
   const simulateMutation = useMutation({
-    mutationFn: (data: { expedicaoId: string; naturezaId: string }) => simulateInvoice(data),
+    mutationFn: (data: { expedicaoId: string; naturezaId: string }) => simulateInvoice({ data }),
     onSuccess: (data) => setSimulacao(data),
   });
 
@@ -125,7 +125,7 @@ export function PreFaturamentoDashboard() {
 
             {selectedExp && (
               <div className="rounded-lg border p-4 bg-muted/50">
-                <p className="text-sm"><strong>Destinatário:</strong> {selectedExp.customer?.razao_social}</p>
+                <p className="text-sm"><strong>Destinatário:</strong> {selectedExp.transportadora?.razao_social || "N/A"}</p>
                 <p className="text-sm"><strong>Volumes:</strong> {selectedExp.volumes}</p>
                 <p className="text-sm"><strong>Peso:</strong> {selectedExp.peso_bruto} kg</p>
               </div>
