@@ -98,11 +98,12 @@ export const consultarNfeHomologacao = createServerFn({ method: "POST" })
     
     const response = await focusAdapter.consultar(config, data.referencia);
 
-    await supabase.from("nfe_logs").insert({
-      acao: "consulta_nfe",
-      http_status: response.status,
-      response: response.body as any,
-      user_id: userId
+    await supabase.rpc('log_nfe_event', {
+      _acao: "consulta_nfe",
+      _http_status: response.status,
+      _request: { referencia: data.referencia },
+      _response: response.body as any,
+      _user_id: userId
     });
 
     return response.body as Record<string, any>;

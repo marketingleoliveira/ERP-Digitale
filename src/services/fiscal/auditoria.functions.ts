@@ -70,7 +70,8 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
 
     // 7. Bloqueadores Reais
     const bloqueadores: string[] = [];
-    if (!empresa?.focus_nfe_token_ciphertext && !empresa?.focus_nfe_token) bloqueadores.push("Token Focus NFe não configurado na tabela empresa");
+    if (empresa?.focus_nfe_token_status === 'MISSING') bloqueadores.push("Token Focus NFe não configurado na tabela empresa");
+    if (empresa?.focus_nfe_token_status === 'INVALID') bloqueadores.push("Token Focus NFe atual é inválido (Erro 401 detectado)");
     if (!empresa?.cnpj) bloqueadores.push("CNPJ da empresa não configurado");
     if (!empresa?.uf) bloqueadores.push("UF da empresa não configurada");
     if (rpcsAusentes.length > 0) bloqueadores.push(`RPCs ausentes: ${rpcsAusentes.join(", ")}`);
