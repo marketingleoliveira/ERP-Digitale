@@ -10,6 +10,10 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useState } from 'react';
+import { CreateOrderDialog } from '@/components/producao/industrializacao/create-order-dialog';
+import { useNavigate } from '@tanstack/react-router';
+
 
 export const Route = createFileRoute('/_app/producao/industrializacao')({
   loader: async ({ context }) => {
@@ -22,7 +26,10 @@ export const Route = createFileRoute('/_app/producao/industrializacao')({
 });
 
 function IndustrializacaoPage() {
+  const navigate = useNavigate();
+  const [createOpen, setCreateOpen] = useState(false);
   const { data: orders } = useSuspenseQuery({
+
     queryKey: ['industrialization-orders'],
     queryFn: () => getIndustrializationOrders(),
   });
@@ -44,10 +51,11 @@ function IndustrializacaoPage() {
           <h1 className="text-3xl font-bold tracking-tight">Industrialização por Terceiros</h1>
           <p className="text-muted-foreground">Gestão de remessas e retornos de beneficiamento externo.</p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => setCreateOpen(true)}>
           <Plus className="h-4 w-4" /> Nova Ordem
         </Button>
       </div>
+
 
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
@@ -112,9 +120,16 @@ function IndustrializacaoPage() {
                     {format(new Date(order.data_emissao!), 'dd/MM/yyyy', { locale: ptBR })}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">Ver Detalhes</Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => navigate({ to: '/producao/industrializacao/$id', params: { id: order.id } })}
+                    >
+                      Ver Detalhes
+                    </Button>
                   </TableCell>
                 </TableRow>
+
               ))}
               {orders.length === 0 && (
                 <TableRow>
@@ -127,6 +142,12 @@ function IndustrializacaoPage() {
           </Table>
         </CardContent>
       </Card>
+
+      <CreateOrderDialog 
+        open={createOpen} 
+        onOpenChange={setCreateOpen} 
+      />
     </div>
+
   );
 }
