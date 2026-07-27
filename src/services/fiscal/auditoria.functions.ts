@@ -1,10 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { focusAdapter } from "./focus.adapter";
 
 /**
- * Função segura que consolide o estado técnico do módulo fiscal.
- * Não retorna segredos (tokens, chaves).
+ * Função segura que consolida o estado técnico do módulo fiscal.
+ * Realiza auditoria em tempo real sem mocks.
  */
 export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -17,7 +18,7 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
       _role: "desenvolvedor",
     });
     
-    // 2. Ambiente e Configuração básica
+    // 2. Dados da Empresa e Ambiente
     const { data: empresa } = await supabase
       .from("empresa")
       .select("provedor_nfe, ambiente_nfe, focus_nfe_token, serie_nfe, proximo_numero_nfe, cnpj, razao_social, uf, crt")
@@ -25,7 +26,6 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
       .maybeSingle();
 
     // 3. Auditoria de Funções (RPCs)
-    // Buscamos as RPCs críticas para certificar se existem
     const rpcsCriticas = [
       "simulate_sales_invoice",
       "finalize_authorized_sales_invoice",
@@ -33,11 +33,12 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
       "ship_sales_order"
     ];
 
-    const { data: functions } = await (supabase.rpc("read_query" as any, {
+    const { data: functionsFound } = await (supabase.rpc("read_query" as any, {
       query: `SELECT proname FROM pg_proc WHERE proname = ANY(ARRAY['${rpcsCriticas.join("','")}'])`
     } as any) as any);
 
-    const rpcsEncontradas = (functions as any[])?.map(f => f.proname) || [];
+
+    const rpcsEncontradas = (functionsFound as any[])?.map(f => f.proname) || [];
     const rpcsAusentes = rpcsCriticas.filter(name => !rpcsEncontradas.includes(name));
 
     // 4. Auditoria de Tabelas
@@ -49,37 +50,38 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
     const { data: tablesFound } = await (supabase.rpc("read_query" as any, {
         query: `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = ANY(ARRAY['${tabelasCriticas.join("','")}'])`
     } as any) as any);
+
     
     const tabelasEncontradas = (tablesFound as any[])?.map(t => t.table_name) || [];
     const tabelasAusentes = tabelasCriticas.filter(name => !tabelasEncontradas.includes(name));
 
-    // 5. Cadastros Fiscais Válidos
-    const [{ count: naturezasCount }, { count: regrasCount }] = await Promise.all([
-      supabase.from("naturezas_operacao").select("*", { count: 'exact', head: true }).eq("ativo", true),
-      supabase.from("regras_tributarias").select("*", { count: 'exact', head: true }).eq("ativo", true),
+    // 5. Cadastros Fiscais Ativos
+    const [naturezas, regras] = await Promise.all([
+      supabase.from("naturezas_operacao").select("id", { count: 'exact', head: true }).eq("ativo", true),
+      supabase.from("regras_tributarias").select("id", { count: 'exact', head: true }).eq("ativo", true),
     ]);
 
-    // 6. Últimos eventos do log fiscal
+    // 6. Logs Reais
     const { data: logs } = await supabase
       .from("nfe_logs")
       .select("*")
       .order("created_at", { ascending: false })
-      .limit(5);
+      .limit(10);
 
     // 7. Bloqueadores Reais
     const bloqueadores: string[] = [];
-    if (!empresa?.focus_nfe_token && !process.env.FOCUS_NFE_TOKEN) bloqueadores.push("Token Focus NFe não configurado");
+    if (!empresa?.focus_nfe_token) bloqueadores.push("Token Focus NFe não configurado na tabela empresa");
     if (!empresa?.cnpj) bloqueadores.push("CNPJ da empresa não configurado");
     if (!empresa?.uf) bloqueadores.push("UF da empresa não configurada");
     if (rpcsAusentes.length > 0) bloqueadores.push(`RPCs ausentes: ${rpcsAusentes.join(", ")}`);
     if (tabelasAusentes.length > 0) bloqueadores.push(`Tabelas ausentes: ${tabelasAusentes.join(", ")}`);
-    if ((naturezasCount || 0) === 0) bloqueadores.push("Nenhuma Natureza de Operação ativa");
-    if ((regrasCount || 0) === 0) bloqueadores.push("Nenhuma Regra Tributária ativa");
+    if ((naturezas.count || 0) === 0) bloqueadores.push("Nenhuma Natureza de Operação ativa");
+    if ((regras.count || 0) === 0) bloqueadores.push("Nenhuma Regra Tributária ativa");
 
     return {
       isDev: !!isDev,
       ambiente: empresa?.ambiente_nfe || "homologacao",
-      tokenConfigurado: !!empresa?.focus_nfe_token || !!process.env.FOCUS_NFE_TOKEN,
+      tokenConfigurado: !!empresa?.focus_nfe_token,
       empresa: {
         razaoSocial: empresa?.razao_social,
         cnpj: empresa?.cnpj,
@@ -97,8 +99,8 @@ export const getFiscalCertificationStatus = createServerFn({ method: "GET" })
         tabelasAusentes,
       },
       cadastros: {
-        naturezasAtivas: naturezasCount || 0,
-        regrasAtivas: regrasCount || 0,
+        naturezasAtivas: naturezas.count || 0,
+        regrasAtivas: regras.count || 0,
       },
       logs: logs || [],
       bloqueadores,
