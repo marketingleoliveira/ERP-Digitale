@@ -109,6 +109,8 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Pedidos de Compra", url: "/compras/pedidos", icon: ShoppingCart, group: "Compras" },
   { title: "Recebimentos", url: "/compras/recebimentos", icon: PackageCheck, group: "Compras" },
   { title: "Contas a Pagar", url: "/compras/contas-pagar", icon: Wallet, group: "Compras" },
+  { title: "Sugestões do MRP", url: "/compras/sugestoes", icon: Package, group: "Compras" },
+
 ];
 
 export const GROUP_ORDER = [
