@@ -2529,11 +2529,90 @@ export type Database = {
         }
         Relationships: []
       }
+      lote_genealogia: {
+        Row: {
+          created_at: string | null
+          id: string
+          lote_origem_id: string | null
+          lote_resultante_id: string | null
+          op_id: string | null
+          quantidade_consumida: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          lote_origem_id?: string | null
+          lote_resultante_id?: string | null
+          op_id?: string | null
+          quantidade_consumida?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          lote_origem_id?: string | null
+          lote_resultante_id?: string | null
+          op_id?: string | null
+          quantidade_consumida?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lote_genealogia_lote_origem_id_fkey"
+            columns: ["lote_origem_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lote_genealogia_lote_origem_id_fkey"
+            columns: ["lote_origem_id"]
+            isOneToOne: false
+            referencedRelation: "vw_lotes_saldos"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "lote_genealogia_lote_resultante_id_fkey"
+            columns: ["lote_resultante_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lote_genealogia_lote_resultante_id_fkey"
+            columns: ["lote_resultante_id"]
+            isOneToOne: false
+            referencedRelation: "vw_lotes_saldos"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "lote_genealogia_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lote_genealogia_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "lote_genealogia_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custos_op"
+            referencedColumns: ["op_id"]
+          },
+        ]
+      }
       lotes: {
         Row: {
+          classificacao: string | null
           created_at: string
           custo_unitario: number | null
           data_entrada: string
+          deposito: string | null
           fornecedor_id: string | null
           habilitado: boolean
           id: string
@@ -2543,14 +2622,17 @@ export type Database = {
           op_id: string | null
           quantidade: number
           quantidade_disponivel: number
+          status_processo: string | null
           tinturaria_id: string | null
           tipo: string
           updated_at: string
         }
         Insert: {
+          classificacao?: string | null
           created_at?: string
           custo_unitario?: number | null
           data_entrada?: string
+          deposito?: string | null
           fornecedor_id?: string | null
           habilitado?: boolean
           id?: string
@@ -2560,14 +2642,17 @@ export type Database = {
           op_id?: string | null
           quantidade?: number
           quantidade_disponivel?: number
+          status_processo?: string | null
           tinturaria_id?: string | null
           tipo: string
           updated_at?: string
         }
         Update: {
+          classificacao?: string | null
           created_at?: string
           custo_unitario?: number | null
           data_entrada?: string
+          deposito?: string | null
           fornecedor_id?: string | null
           habilitado?: boolean
           id?: string
@@ -2577,6 +2662,7 @@ export type Database = {
           op_id?: string | null
           quantidade?: number
           quantidade_disponivel?: number
+          status_processo?: string | null
           tinturaria_id?: string | null
           tipo?: string
           updated_at?: string
@@ -4828,7 +4914,9 @@ export type Database = {
           pedido_id: string | null
           prioridade: number
           quantidade_produzida: number | null
+          quantidade_recebida: number | null
           responsavel_id: string | null
+          roteiro_id: string | null
           status: Database["public"]["Enums"]["op_status"]
           updated_at: string
         }
@@ -4846,7 +4934,9 @@ export type Database = {
           pedido_id?: string | null
           prioridade?: number
           quantidade_produzida?: number | null
+          quantidade_recebida?: number | null
           responsavel_id?: string | null
+          roteiro_id?: string | null
           status?: Database["public"]["Enums"]["op_status"]
           updated_at?: string
         }
@@ -4864,7 +4954,9 @@ export type Database = {
           pedido_id?: string | null
           prioridade?: number
           quantidade_produzida?: number | null
+          quantidade_recebida?: number | null
           responsavel_id?: string | null
+          roteiro_id?: string | null
           status?: Database["public"]["Enums"]["op_status"]
           updated_at?: string
         }
@@ -4916,6 +5008,13 @@ export type Database = {
             columns: ["pedido_id"]
             isOneToOne: false
             referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ordens_producao_roteiro_id_fkey"
+            columns: ["roteiro_id"]
+            isOneToOne: false
+            referencedRelation: "roteiros"
             referencedColumns: ["id"]
           },
         ]
@@ -7840,6 +7939,17 @@ export type Database = {
         Returns: number
       }
       proximo_numero_op: { Args: never; Returns: number }
+      receive_production_output: {
+        Args: {
+          p_classificacao: string
+          p_deposito: string
+          p_idempotency_key?: string
+          p_observacao?: string
+          p_op_id: string
+          p_quantidade: number
+        }
+        Returns: Json
+      }
       reserve_material_for_op: {
         Args: {
           p_item_id: string
@@ -7877,6 +7987,14 @@ export type Database = {
       seed_rollback: { Args: never; Returns: Json }
       simulate_production_posting: {
         Args: { p_consumos: Json; p_op_id: string; p_quantidade_boa: number }
+        Returns: Json
+      }
+      simulate_production_receipt: {
+        Args: {
+          p_classificacao?: string
+          p_op_id: string
+          p_quantidade_entrada: number
+        }
         Returns: Json
       }
       user_has_menu_permission: {

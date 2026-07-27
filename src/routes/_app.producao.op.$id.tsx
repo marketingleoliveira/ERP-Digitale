@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft } from "lucide-react";
 import { OpFaturarDialog } from "@/components/producao/op-faturar-dialog";
+import { OpEntradaDialog } from "@/components/producao/op-entrada-dialog";
 import { OpRastreabilidade } from "@/components/producao/op-rastreabilidade";
 import { OpApontamentosSection } from "@/components/producao/op-apontamentos-section";
 
@@ -59,7 +60,10 @@ function OpDetail() {
               <Badge variant="outline">Prioridade {op.prioridade}</Badge>
             </div>
           </div>
-          <OpFaturarDialog opId={op.id} opNumero={op.numero} disabled={!faturavel} />
+          <div className="flex gap-2">
+            <OpEntradaDialog opId={op.id} opNumero={op.numero} disabled={op.status === 'cancelada' || op.status === 'encerrada'} />
+            <OpFaturarDialog opId={op.id} opNumero={op.numero} disabled={!faturavel} />
+          </div>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-4 text-sm">
           <div>
