@@ -69,10 +69,10 @@ export const getEstoqueComercial = createServerFn({ method: "GET" })
 export const getRNCs = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async () => {
-    // Note: This requires the profiles table and profiles relation to work
+    // Simplified to avoid join issues for now
     const { data, error } = await supabase
       .from("nao_conformidades")
-      .select("*, responsavel:profiles(full_name), lote:lotes(numero_lote)");
+      .select("*, lote:lotes(numero_lote)");
 
     if (error) throw new Error(error.message);
     return data;
