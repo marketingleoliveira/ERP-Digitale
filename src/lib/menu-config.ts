@@ -110,6 +110,8 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Recebimentos", url: "/compras/recebimentos", icon: PackageCheck, group: "Compras" },
   { title: "Contas a Pagar", url: "/compras/contas-pagar", icon: Wallet, group: "Compras" },
   { title: "Sugestões do MRP", url: "/compras/sugestoes", icon: Package, group: "Compras" },
+  { title: "Industrialização", url: "/producao/industrializacao", icon: Handshake, group: "Produção (PCP)" },
+
 
 ];
 
