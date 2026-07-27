@@ -5839,6 +5839,99 @@ export type Database = {
         }
         Relationships: []
       }
+      reservas: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          id: string
+          item_id: string
+          lote_id: string | null
+          op_id: string
+          quantidade: number
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          item_id: string
+          lote_id?: string | null
+          op_id: string
+          quantidade: number
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          item_id?: string
+          lote_id?: string | null
+          op_id?: string
+          quantidade?: number
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservas_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservas_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_artigo"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "reservas_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "reservas_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservas_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "vw_lotes_saldos"
+            referencedColumns: ["lote_id"]
+          },
+          {
+            foreignKeyName: "reservas_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservas_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "reservas_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custos_op"
+            referencedColumns: ["op_id"]
+          },
+        ]
+      }
       romaneio_itens: {
         Row: {
           created_at: string
@@ -7404,6 +7497,10 @@ export type Database = {
         }
       }
       baixar_estoque_nf: { Args: { _nota_id: string }; Returns: number }
+      cancel_material_reservation: {
+        Args: { p_reserva_id: string }
+        Returns: undefined
+      }
       convert_mrp_suggestions_to_order:
         | {
             Args: {
@@ -7670,6 +7767,15 @@ export type Database = {
         Returns: number
       }
       proximo_numero_op: { Args: never; Returns: number }
+      reserve_material_for_op: {
+        Args: {
+          p_item_id: string
+          p_lote_id?: string
+          p_op_id: string
+          p_quantidade: number
+        }
+        Returns: string
+      }
       resolver_preco_cliente_artigo: {
         Args: {
           _artigo_id?: string
