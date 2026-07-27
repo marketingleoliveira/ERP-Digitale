@@ -149,7 +149,7 @@ export async function fetchMaterialReservations(opId?: string) {
     .from('reservas' as any)
     .select(`
       *,
-      item:item_id(descricao, sku),
+      item:products(nome, codigo),
       lote:lote_id(numero_lote, quantidade_disponivel),
       op:op_id(numero)
     ` as any);
