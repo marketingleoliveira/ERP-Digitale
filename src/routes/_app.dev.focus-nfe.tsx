@@ -124,10 +124,14 @@ function FocusNfeConfigPage() {
 
   return (
     <div className="space-y-6">
+      <div className="bg-amber-500 text-black text-center font-bold py-1 px-4 text-xs tracking-widest uppercase">
+        AMBIENTE DE HOMOLOGAÇÃO — SEM VALIDADE FISCAL
+      </div>
       <PageHeader
         title="Painel de Certificação Fiscal"
         description="Ambiente de homologação, auditoria de integridade e testes do provedor Focus NFe."
       />
+
 
       {/* Status da Certificação */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
