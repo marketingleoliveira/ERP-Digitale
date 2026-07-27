@@ -1,8 +1,5 @@
 /**
  * Detalhe da OP — cabeçalho + ações principais.
- * A Etapa 3b entrega o motor de Pré-Faturamento; timeline/apontamentos ficam
- * no roadmap 3c. O botão "Gerar Pré-Faturamento" só habilita quando a OP está
- * em `pronta_estoque` ou `pronta_faturamento`.
  */
 import { createFileRoute, useParams, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft } from "lucide-react";
 import { OpFaturarDialog } from "@/components/producao/op-faturar-dialog";
 import { OpRastreabilidade } from "@/components/producao/op-rastreabilidade";
+import { OpApontamentosSection } from "@/components/producao/op-apontamentos-section";
 
 export const Route = createFileRoute("/_app/producao/op/$id")({
   head: () => ({ meta: [{ title: "Detalhe da OP" }] }),
@@ -78,6 +76,13 @@ function OpDetail() {
               <div>{op.observacao}</div>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><CardTitle>Produção e Consumos (Etapa 6)</CardTitle></CardHeader>
+        <CardContent>
+          <OpApontamentosSection opId={op.id} opNumero={op.numero} />
         </CardContent>
       </Card>
 
