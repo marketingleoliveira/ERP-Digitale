@@ -179,5 +179,6 @@ export const testFocusConnection = createServerFn({ method: "POST" })
         mensagem: `Erro de rede: ${e instanceof Error ? e.message : String(e)}`,
       };
     }
+
   });
 
