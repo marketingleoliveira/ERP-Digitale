@@ -46,13 +46,27 @@ export const reserveOrderStock = createServerFn({ method: "POST" })
 export const shipOrder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => z.object({ pedidoId: z.string() }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
     const { data: result, error } = await supabase.rpc("ship_sales_order", {
       p_pedido_id: data.pedidoId
     });
 
     if (error) throw new Error(error.message);
     return result;
+  });
+
+export const getExpedicoesPendentes = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase } = context;
+    const { data, error } = await supabase
+      .from("op_expedicoes")
+      .select("*, customer:transportadora_id(razao_social), pedido:pedido_id(numero_pedido)")
+      .is("nota_fiscal_id", null);
+
+    if (error) throw new Error(error.message);
+    return data;
   });
 
 export const getEstoqueComercial = createServerFn({ method: "GET" })
