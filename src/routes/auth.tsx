@@ -43,7 +43,24 @@ function AuthPage() {
     setLoading(false);
     if (error) { 
       console.error("Login Error Full Object:", JSON.stringify(error, null, 2));
-      toast.error(error.message || "Credenciais inválidas ou conta não autorizada"); 
+      
+      let friendlyMessage = "Credenciais inválidas ou conta não autorizada";
+      
+      // Mapeamento de erros conhecidos para mensagens amigáveis
+      if (error.message === "Invalid login credentials") {
+        friendlyMessage = "E-mail ou senha incorretos. Verifique suas credenciais.";
+      } else if (error.message.includes("Email not confirmed")) {
+        friendlyMessage = "Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada.";
+      } else if (Object.keys(error).length === 0 || error.message === "") {
+        friendlyMessage = "Erro técnico de sessão ({}). Por favor, limpe o cache do navegador ou tente em uma aba anônima.";
+      } else {
+        friendlyMessage = error.message;
+      }
+
+      toast.error(friendlyMessage, {
+        description: "Se o problema persistir, contate o administrador.",
+        duration: 5000,
+      }); 
       return; 
     }
     navigate({ to: "/inicio" });
