@@ -56,8 +56,8 @@ export const completeLotQualityInspection = createServerFn({ method: "POST" })
       p_resultados: data.resultados,
       p_defeitos: data.defeitos,
       p_classificacoes: data.classificacoes,
-      p_parecer: data.parecer || null,
-      p_idempotency_key: data.idempotency_key || null
+      p_parecer: data.parecer ?? undefined,
+      p_idempotency_key: data.idempotency_key ?? undefined
     });
     if (error) throw error;
     return res;
