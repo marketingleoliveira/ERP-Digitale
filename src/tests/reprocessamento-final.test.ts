@@ -120,8 +120,7 @@ describe('EXECUÇÃO FINAL ETAPA 11.3: Inserção e Reprocessamento Real', () =>
       acao: 'reprocessamento_nfe_11_3',
       http_status: response.status,
       request: payload as any,
-      response: response.body as any,
-      metadata: { attempt: 2, correlation_id: crypto.randomUUID() }
-    });
+      response: response.body as any
+    } as any);
   });
 });
