@@ -81,4 +81,16 @@ describe("ERP BOM Logic - Multi-level Explosion & Consolidation", () => {
     expect(consolidated[0].total_bru).toBeCloseTo(3.4000, 4);
   });
 
+  it("Deve tratar perdas acumuladas corretamente em múltiplos níveis", () => {
+    // Simulação: A -> B (perda 10%) -> C (perda 10%)
+    const mockExplosion: ExplodeBomItem[] = [
+      { article_id: "A", component_id: "B", component_ref_id: "B", component_ref_tipo: "artigo", component_descricao: "B", unidade: "UN", quantidade_liquida: 1, quantidade_bruta: 1.1, nivel: 1 },
+      { article_id: "A", component_id: "C", component_ref_id: "C", component_ref_tipo: "artigo", component_descricao: "C", unidade: "UN", quantidade_liquida: 1, quantidade_bruta: 1.21, nivel: 2 }
+    ];
+    
+    const consolidated = consolidateData(mockExplosion);
+    const itemC = consolidated.find(i => i.component_ref_id === "C");
+    expect(itemC?.total_bru).toBe(1.21);
+  });
+
 });
