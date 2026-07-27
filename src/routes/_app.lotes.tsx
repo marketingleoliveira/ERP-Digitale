@@ -151,9 +151,11 @@ function LotesPage() {
                 <TableHead className="text-primary-foreground font-semibold">Item</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Nº Lote</TableHead>
                 <TableHead className="text-primary-foreground font-semibold text-right">Qtd.</TableHead>
+                <TableHead className="text-primary-foreground font-semibold text-right">Saldo Qualid.</TableHead>
+                <TableHead className="text-primary-foreground font-semibold text-right">Saldo Aprov.</TableHead>
                 <TableHead className="text-primary-foreground font-semibold text-right">Disponível</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Entrada</TableHead>
-                <TableHead className="text-primary-foreground font-semibold">Fornecedor</TableHead>
+                <TableHead className="text-primary-foreground font-semibold">Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
