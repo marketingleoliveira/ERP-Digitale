@@ -14,7 +14,7 @@ export const simulateProductionReceipt = createServerFn({ method: "POST" })
   .inputValidator((data) => simulateInputSchema.parse(data))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const { data: res, error } = await supabase.rpc("simulate_production_receipt", {
+    const { data: res, error } = await supabase.rpc("simulate_production_receipt" as any, {
       p_op_id: data.opId,
       p_quantidade_entrada: data.quantidadeEntrada,
       p_deposito: data.deposito || null,
@@ -38,7 +38,7 @@ export const receiveProductionOutput = createServerFn({ method: "POST" })
   .inputValidator((data) => receiveInputSchema.parse(data))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const { data: res, error } = await supabase.rpc("receive_production_output", {
+    const { data: res, error } = await supabase.rpc("receive_production_output" as any, {
       p_op_id: data.opId,
       p_quantidade: data.quantidade,
       p_deposito: data.deposito,
@@ -60,7 +60,7 @@ export const reverseProductionReceipt = createServerFn({ method: "POST" })
   .inputValidator((data) => reverseInputSchema.parse(data))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const { data: res, error } = await supabase.rpc("reverse_production_receipt", {
+    const { data: res, error } = await supabase.rpc("reverse_production_receipt" as any, {
       p_entrada_id: data.entradaId,
       p_motivo: data.motivo,
     });
