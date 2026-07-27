@@ -282,6 +282,93 @@ function MrpSuggestionsPage() {
           </div>
         </CardContent>
       </Card>
+      <Dialog open={!!selectedSuggestion} onOpenChange={(open) => !open && setSelectedSuggestion(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Detalhamento da Sugestão</DialogTitle>
+            <DialogDescription>
+              Origens e composição da necessidade para {selectedSuggestion?.descricao}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedSuggestion && (
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h4 className="text-sm font-medium text-muted-foreground">Necessidade Bruta</h4>
+                  <p className="text-lg font-bold">{selectedSuggestion.necessidade_bruta.toFixed(3)} {selectedSuggestion.unidade}</p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-muted-foreground">Estoque Disponível</h4>
+                  <p className="text-lg font-bold">{selectedSuggestion.estoque_disponivel.toFixed(3)} {selectedSuggestion.unidade}</p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-muted-foreground">Compras em Trânsito</h4>
+                  <p className="text-lg font-bold">{selectedSuggestion.quantidade_em_transito.toFixed(3)} {selectedSuggestion.unidade}</p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-muted-foreground">Necessidade Líquida</h4>
+                  <p className="text-lg font-bold text-primary">{selectedSuggestion.necessidade_liquida.toFixed(3)} {selectedSuggestion.unidade}</p>
+                </div>
+              </div>
+
+              <div className="border rounded-md p-4 bg-muted/50">
+                <h4 className="text-sm font-semibold mb-2">Composição por Ordens de Produção</h4>
+                <div className="space-y-2">
+                  <SuggestionOrigins suggestionId={selectedSuggestion.id} />
+                </div>
+              </div>
+
+              {selectedSuggestion.status === 'SUGERIDA' && (
+                <div className="flex items-center gap-2 pt-4">
+                  <div className="flex-1">
+                    <label className="text-sm font-medium">Quantidade a Aprovar</label>
+                    <Input 
+                      type="number" 
+                      defaultValue={selectedSuggestion.quantidade_sugerida}
+                      onChange={(e) => selectedSuggestion.tempQty = Number(e.target.value)}
+                    />
+                  </div>
+                  <Button 
+                    className="mt-6"
+                    onClick={() => {
+                      approveMutation.mutate({ 
+                        id: selectedSuggestion.id, 
+                        qty: selectedSuggestion.tempQty || selectedSuggestion.quantidade_sugerida 
+                      });
+                      setSelectedSuggestion(null);
+                    }}
+                  >
+                    Aprovar
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
+function SuggestionOrigins({ suggestionId }: { suggestionId: string }) {
+  const { data: origins, isLoading } = useQuery({
+    queryKey: ['mrp-suggestion-origins', suggestionId],
+    queryFn: () => fetchSuggestionOrigins(suggestionId),
+  });
+
+  if (isLoading) return <Skeleton className="h-20 w-full" />;
+  if (!origins || origins.length === 0) return <p className="text-sm text-muted-foreground">Sem dados de origem.</p>;
+
+  return (
+    <ul className="space-y-1">
+      {origins.map((o: any) => (
+        <li key={o.id} className="text-sm flex justify-between">
+          <span>OP #{o.op?.numero || 'Extra'}</span>
+          <span className="font-mono">{o.quantidade.toFixed(3)}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
