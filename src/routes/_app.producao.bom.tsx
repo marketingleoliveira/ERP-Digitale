@@ -412,7 +412,7 @@ function BomPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {(activeTab === "structure" ? consolidatedData : costExplosion).map((item: any, idx) => (
+                    {consolidatedData.map((item: any, idx) => (
                       <TableRow key={idx}>
                         <TableCell className="font-mono text-xs">{item.codigo || "—"}</TableCell>
                         <TableCell className="font-medium">{item.component_descricao}</TableCell>
