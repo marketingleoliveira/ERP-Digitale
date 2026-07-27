@@ -2878,6 +2878,51 @@ export type Database = {
           },
         ]
       }
+      mrp_suggestion_orders: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          id: string
+          purchase_order_id: string | null
+          purchase_order_item_id: string | null
+          quantity_converted: number
+          suggestion_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          purchase_order_id?: string | null
+          purchase_order_item_id?: string | null
+          quantity_converted: number
+          suggestion_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          purchase_order_id?: string | null
+          purchase_order_item_id?: string | null
+          quantity_converted?: number
+          suggestion_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mrp_suggestion_orders_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos_compra"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mrp_suggestion_orders_suggestion_id_fkey"
+            columns: ["suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "mrp_suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mrp_suggestion_origins: {
         Row: {
           created_at: string
@@ -5000,6 +5045,7 @@ export type Database = {
           fornecedor_id: string
           frete: number | null
           id: string
+          idempotency_key: string | null
           numero: number
           observacao: string | null
           prazo_entrega: string | null
@@ -5018,6 +5064,7 @@ export type Database = {
           fornecedor_id: string
           frete?: number | null
           id?: string
+          idempotency_key?: string | null
           numero?: number
           observacao?: string | null
           prazo_entrega?: string | null
@@ -5036,6 +5083,7 @@ export type Database = {
           fornecedor_id?: string
           frete?: number | null
           id?: string
+          idempotency_key?: string | null
           numero?: number
           observacao?: string | null
           prazo_entrega?: string | null
@@ -7356,38 +7404,74 @@ export type Database = {
         }
       }
       baixar_estoque_nf: { Args: { _nota_id: string }; Returns: number }
-      convert_mrp_suggestions_to_order: {
-        Args: {
-          p_condicao_pagamento?: string
-          p_fornecedor_id: string
-          p_prazo_entrega?: string
-          p_suggestion_ids: string[]
-        }
-        Returns: {
-          condicao_pagamento: string | null
-          confirmado_em: string | null
-          cotacao_id: string | null
-          created_at: string
-          criado_por: string | null
-          desconto: number | null
-          enviado_em: string | null
-          fornecedor_id: string
-          frete: number | null
-          id: string
-          numero: number
-          observacao: string | null
-          prazo_entrega: string | null
-          status: string
-          updated_at: string
-          valor_total: number
-        }
-        SetofOptions: {
-          from: "*"
-          to: "pedidos_compra"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
+      convert_mrp_suggestions_to_order:
+        | {
+            Args: {
+              p_condicao_pagamento?: string
+              p_fornecedor_id: string
+              p_prazo_entrega?: string
+              p_suggestion_ids: string[]
+            }
+            Returns: {
+              condicao_pagamento: string | null
+              confirmado_em: string | null
+              cotacao_id: string | null
+              created_at: string
+              criado_por: string | null
+              desconto: number | null
+              enviado_em: string | null
+              fornecedor_id: string
+              frete: number | null
+              id: string
+              idempotency_key: string | null
+              numero: number
+              observacao: string | null
+              prazo_entrega: string | null
+              status: string
+              updated_at: string
+              valor_total: number
+            }
+            SetofOptions: {
+              from: "*"
+              to: "pedidos_compra"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
+        | {
+            Args: {
+              p_condicao_pagamento?: string
+              p_fornecedor_id: string
+              p_idempotency_key?: string
+              p_prazo_entrega?: string
+              p_suggestion_ids: string[]
+            }
+            Returns: {
+              condicao_pagamento: string | null
+              confirmado_em: string | null
+              cotacao_id: string | null
+              created_at: string
+              criado_por: string | null
+              desconto: number | null
+              enviado_em: string | null
+              fornecedor_id: string
+              frete: number | null
+              id: string
+              idempotency_key: string | null
+              numero: number
+              observacao: string | null
+              prazo_entrega: string | null
+              status: string
+              updated_at: string
+              valor_total: number
+            }
+            SetofOptions: {
+              from: "*"
+              to: "pedidos_compra"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
       exp_registrar_evento: {
         Args: {
           _descricao?: string
