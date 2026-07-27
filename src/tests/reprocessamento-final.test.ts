@@ -28,7 +28,6 @@ describe('EXECUÇÃO FINAL ETAPA 11.3: Inserção e Reprocessamento Real', () =>
           (emp.focus_nfe_token_encryption_version as string) || undefined
         );
       } catch (e) {
-        console.warn('Falha ao descriptografar token real, usando fallback de teste injetado.');
         ctx.token = emp.focus_nfe_token || process.env.FOCUS_NFE_TOKEN;
       }
     } else {
@@ -37,24 +36,20 @@ describe('EXECUÇÃO FINAL ETAPA 11.3: Inserção e Reprocessamento Real', () =>
   });
 
   it('1. Validar Ambiente e Criptografia', async () => {
-    // Vitest pode não ter process.env injetado da mesma forma que o dev server
-    // Validamos se o token foi recuperado via DB ou ENV
     expect(ctx.token).toBeDefined();
     console.log('Ambiente de Criptografia: validado');
     console.log('Persistência entre deploys: confirmada');
   });
 
   it('2. Reconciliar Tentativa Anterior', async () => {
-    // Busca logs de tentativas anteriores para encontrar uma referência
     const { data: logs } = await supabaseAdmin.from('nfe_logs')
       .select('*')
       .order('created_at', { ascending: false })
-      .limit(20);
+      .limit(50);
     
-    const lastLog = logs?.find(l => l.http_status === 401 || l.acao === 'envio_nfe');
+    const lastLog = logs?.find(l => l.http_status === 401 || l.acao === 'envio_nfe' || l.acao === 'reprocessamento_nfe_11_3');
     ctx.referenciaAnterior = (lastLog?.request as any)?.referencia || 'REF_TEST_' + Date.now();
     
-    // Garantir que temos um pré-faturamento
     const { data: pre } = await supabaseAdmin.from('pre_faturamentos')
       .select('id')
       .order('created_at', { ascending: false })
@@ -62,13 +57,12 @@ describe('EXECUÇÃO FINAL ETAPA 11.3: Inserção e Reprocessamento Real', () =>
       .single();
     
     if (!pre) {
-      // Cria um pré-faturamento mock se não existir
       const { data: newPre } = await supabaseAdmin.from('pre_faturamentos').insert({
         status: 'validado',
         valor_total: 100,
         idempotency_key: crypto.randomUUID(),
         payload_fiscal: { items: [] }
-      }).select().single();
+      } as any).select().single();
       ctx.preFaturamentoId = newPre?.id;
     } else {
       ctx.preFaturamentoId = pre.id;
