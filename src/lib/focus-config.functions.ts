@@ -146,8 +146,9 @@ export const testFocusConnection = createServerFn({ method: "POST" })
       token = await decryptToken(empRec.focus_nfe_token_ciphertext as string, empRec.focus_nfe_token_iv as string);
     }
     
-    if (!token) token = process.env.FOCUS_NFE_TOKEN;
+    if (!token) token = process.env.FOCUS_NFE_TOKEN ?? null;
     if (!token) return { ok: false as const, mensagem: "Token não configurado." };
+
 
     const ambiente = (empRec.ambiente_nfe as string) ?? "homologacao";
     const baseUrl = ambiente === "producao"
