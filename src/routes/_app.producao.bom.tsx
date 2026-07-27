@@ -451,7 +451,7 @@ function BomPage() {
                         <Badge variant="default">Nível {level}</Badge>
                         {activeTab === "costs" && (
                           <span className="text-xs font-normal text-muted-foreground">
-                            Subtotal: {(activeTab === "structure" ? 0 : costExplosion.filter((i: any) => i.nivel === level).reduce((acc: number, i: any) => acc + Number(i.custo_total_linha || 0), 0)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            Subtotal: {costExplosion.filter((i: any) => i.nivel === level).reduce((acc: number, i: any) => acc + Number(i.custo_total_linha || 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                           </span>
                         )}
                       </h3>
