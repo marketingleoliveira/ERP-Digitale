@@ -61,8 +61,8 @@ function KpiCard({
     <Card className={cn("overflow-hidden border-border/50 hover:border-primary/50 transition-colors group", className)}>
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</p>
-          {Icon && <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />}
+          <p className="text-xs font-bold text-foreground uppercase tracking-wider">{label}</p>
+          {Icon && <Icon className="h-4 w-4 text-primary transition-colors" />}
         </div>
         <div className="flex items-baseline gap-2">
           <h3 className="text-2xl font-bold tracking-tight">{value}</h3>
@@ -79,7 +79,7 @@ function KpiCard({
             </div>
           )}
         </div>
-        {description && <p className="mt-1 text-xs text-muted-foreground line-clamp-1">{description}</p>}
+        {description && <p className="mt-1 text-xs text-foreground font-medium line-clamp-1">{description}</p>}
       </CardContent>
     </Card>
   );
@@ -116,7 +116,7 @@ function DashIndustrial() {
             <TrendingUp className="h-8 w-8 text-primary" />
             Dashboard Executivo Industrial
           </h1>
-          <p className="text-muted-foreground mt-1 text-lg font-light">
+          <p className="text-foreground mt-1 text-lg font-medium">
             Monitoramento em tempo real da Digitale Têxtil
           </p>
         </div>
@@ -253,23 +253,23 @@ function DashIndustrial() {
         <div className="bg-muted/30 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-1">
             <h4 className="text-sm font-bold text-foreground">Sistema Industrial Digitale Têxtil</h4>
-            <p className="text-xs text-muted-foreground">Todos os dados acima são extraídos em tempo real das tabelas transacionais (ERPs, WMS, MES e PCP).</p>
+            <p className="text-xs text-foreground font-medium">Todos os dados acima são extraídos em tempo real das tabelas transacionais (ERPs, WMS, MES e PCP).</p>
           </div>
           <div className="flex gap-4">
              <div className="flex flex-col items-center">
-                <span className="text-[10px] text-muted-foreground uppercase font-bold">WMS</span>
+                <span className="text-[10px] text-foreground uppercase font-bold">WMS</span>
                 <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
              </div>
              <div className="flex flex-col items-center">
-                <span className="text-[10px] text-muted-foreground uppercase font-bold">APS</span>
+                <span className="text-[10px] text-foreground uppercase font-bold">APS</span>
                 <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
              </div>
              <div className="flex flex-col items-center">
-                <span className="text-[10px] text-muted-foreground uppercase font-bold">MES</span>
+                <span className="text-[10px] text-foreground uppercase font-bold">MES</span>
                 <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
              </div>
              <div className="flex flex-col items-center">
-                <span className="text-[10px] text-muted-foreground uppercase font-bold">NFe</span>
+                <span className="text-[10px] text-foreground uppercase font-bold">NFe</span>
                 <span className="h-1.5 w-1.5 rounded-full bg-yellow-500"></span>
              </div>
           </div>
