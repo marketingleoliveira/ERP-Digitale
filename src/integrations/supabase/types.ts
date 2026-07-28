@@ -3670,6 +3670,208 @@ export type Database = {
           },
         ]
       }
+      mes_agents: {
+        Row: {
+          activation_code: string
+          created_at: string | null
+          equipment_id: string | null
+          id: string
+          last_communication: string | null
+          name: string
+          status: Database["public"]["Enums"]["mes_agent_status"] | null
+          token_hash: string | null
+          unit: string | null
+          updated_at: string | null
+          version: string | null
+        }
+        Insert: {
+          activation_code: string
+          created_at?: string | null
+          equipment_id?: string | null
+          id?: string
+          last_communication?: string | null
+          name: string
+          status?: Database["public"]["Enums"]["mes_agent_status"] | null
+          token_hash?: string | null
+          unit?: string | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Update: {
+          activation_code?: string
+          created_at?: string | null
+          equipment_id?: string | null
+          id?: string
+          last_communication?: string | null
+          name?: string
+          status?: Database["public"]["Enums"]["mes_agent_status"] | null
+          token_hash?: string | null
+          unit?: string | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Relationships: []
+      }
+      mes_events: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          error_message: string | null
+          event_id: string
+          event_type: Database["public"]["Enums"]["mes_event_type"]
+          id: string
+          machine_id: string | null
+          occurred_at: string
+          op_id: string | null
+          operator_id: string | null
+          payload: Json | null
+          processed_at: string | null
+          status: string | null
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          error_message?: string | null
+          event_id: string
+          event_type: Database["public"]["Enums"]["mes_event_type"]
+          id?: string
+          machine_id?: string | null
+          occurred_at: string
+          op_id?: string | null
+          operator_id?: string | null
+          payload?: Json | null
+          processed_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          error_message?: string | null
+          event_id?: string
+          event_type?: Database["public"]["Enums"]["mes_event_type"]
+          id?: string
+          machine_id?: string | null
+          occurred_at?: string
+          op_id?: string | null
+          operator_id?: string | null
+          payload?: Json | null
+          processed_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mes_events_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "mes_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mes_events_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mes_events_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "mes_events_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "mes_events_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "mes_events_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mes_events_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "mes_events_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custos_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "mes_events_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mes_events_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_operador"
+            referencedColumns: ["funcionario_id"]
+          },
+        ]
+      }
+      mes_heartbeats: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          id: string
+          last_sync: string | null
+          local_time: string | null
+          pending_events_count: number | null
+          status: string | null
+          version: string | null
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          id?: string
+          last_sync?: string | null
+          local_time?: string | null
+          pending_events_count?: number | null
+          status?: string | null
+          version?: string | null
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          id?: string
+          last_sync?: string | null
+          local_time?: string | null
+          pending_events_count?: number | null
+          status?: string | null
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mes_heartbeats_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "mes_agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       motivos_parada: {
         Row: {
           ativo: boolean | null
@@ -10241,6 +10443,7 @@ export type Database = {
         }
         Returns: Json
       }
+      process_mes_event: { Args: { p_event_id: string }; Returns: undefined }
       proximo_numero_nfe: {
         Args: {
           _ambiente?: string
@@ -10407,6 +10610,16 @@ export type Database = {
         | "REFUGO"
         | "BLOQUEADO"
         | "PRODUTO_ACABADO"
+      mes_agent_status: "pending" | "active" | "revoked" | "blocked"
+      mes_event_type:
+        | "production_started"
+        | "production_paused"
+        | "production_resumed"
+        | "production_quantity_reported"
+        | "production_loss_reported"
+        | "downtime_started"
+        | "downtime_finished"
+        | "production_finished"
       mrp_suggestion_status:
         | "SUGERIDA"
         | "EM_ANALISE"
@@ -10600,6 +10813,17 @@ export const Constants = {
         "REFUGO",
         "BLOQUEADO",
         "PRODUTO_ACABADO",
+      ],
+      mes_agent_status: ["pending", "active", "revoked", "blocked"],
+      mes_event_type: [
+        "production_started",
+        "production_paused",
+        "production_resumed",
+        "production_quantity_reported",
+        "production_loss_reported",
+        "downtime_started",
+        "downtime_finished",
+        "production_finished",
       ],
       mrp_suggestion_status: [
         "SUGERIDA",
