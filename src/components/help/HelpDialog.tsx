@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { BookOpen, Shield, Zap, Lightbulb, PlayCircle, Network, CheckCircle2 } from "lucide-react";
+import { AcronymTooltip } from "@/components/ui/acronym-tooltip";
 
 export function HelpDialog() {
   const { activeHelp, closeHelp, getHelp } = useHelp();
@@ -28,7 +30,7 @@ export function HelpDialog() {
             {activeHelp.summary}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground mt-2 leading-relaxed">
-            {activeHelp.description}
+            <AcronymText>{activeHelp.description}</AcronymText>
           </DialogDescription>
         </DialogHeader>
 
@@ -43,8 +45,8 @@ export function HelpDialog() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {activeHelp.features.map((feature, i) => (
                   <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-blue-500/5 border border-blue-500/10 text-sm">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                    {feature}
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+                    <AcronymText>{feature}</AcronymText>
                   </div>
                 ))}
               </div>
@@ -72,8 +74,9 @@ export function HelpDialog() {
                 </h4>
                 <ul className="space-y-2">
                   {activeHelp.tips.map((tip, i) => (
-                    <li key={i} className="text-sm text-amber-900/80 dark:text-amber-200/80 leading-snug">
-                      • {tip}
+                    <li key={i} className="text-sm text-amber-900/80 dark:text-amber-200/80 leading-snug flex gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <AcronymText>{tip}</AcronymText>
                     </li>
                   ))}
                 </ul>
@@ -157,8 +160,9 @@ export function HelpDialog() {
                 </h4>
                 <ul className="space-y-2">
                   {activeHelp.bestPractices.map((bp, i) => (
-                    <li key={i} className="text-sm text-emerald-900/80 dark:text-emerald-200/80 leading-snug">
-                      • {bp}
+                    <li key={i} className="text-sm text-emerald-900/80 dark:text-emerald-200/80 leading-snug flex gap-2">
+                      <span className="flex-shrink-0">•</span>
+                      <AcronymText>{bp}</AcronymText>
                     </li>
                   ))}
                 </ul>
