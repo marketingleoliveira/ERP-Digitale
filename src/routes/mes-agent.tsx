@@ -195,7 +195,10 @@ function MESAgentPWA() {
                   <Button 
                     size="lg" 
                     className="h-24 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xl gap-3 shadow-lg shadow-emerald-900/20 uppercase"
-                    onClick={() => setStatus('running')}
+                    onClick={() => {
+                      setStatus('running');
+                      handleAction('PRODUCTION_START', { op_id: activeOP?.id });
+                    }}
                     disabled={!activeOP}
                   >
                     <Play className="w-8 h-8 fill-current" /> Iniciar Produção
@@ -206,7 +209,10 @@ function MESAgentPWA() {
                   <Button 
                     size="lg" 
                     className="h-24 bg-amber-600 hover:bg-amber-700 text-white font-black text-xl gap-3 shadow-lg shadow-amber-900/20 uppercase"
-                    onClick={() => setStatus('paused')}
+                    onClick={() => {
+                      setStatus('paused');
+                      handleAction('MACHINE_PAUSE', { reason: 'OPERATOR_REQUEST' });
+                    }}
                   >
                     <Pause className="w-8 h-8 fill-current" /> Pausar Máquina
                   </Button>
@@ -216,7 +222,10 @@ function MESAgentPWA() {
                   <Button 
                     size="lg" 
                     className="h-24 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xl gap-3 shadow-lg shadow-emerald-900/20 uppercase"
-                    onClick={() => setStatus('running')}
+                    onClick={() => {
+                      setStatus('running');
+                      handleAction('MACHINE_RESUME', {});
+                    }}
                   >
                     <Play className="w-8 h-8 fill-current" /> Retomar
                   </Button>
@@ -230,6 +239,7 @@ function MESAgentPWA() {
                     onClick={() => {
                       if (confirm("Deseja realmente finalizar esta OP?")) {
                         setStatus('idle');
+                        handleAction('PRODUCTION_STOP', { ok: production.ok, loss: production.loss });
                         toast.success("Produção finalizada com sucesso!");
                       }
                     }}
@@ -244,20 +254,27 @@ function MESAgentPWA() {
                 <Button 
                   variant="outline" 
                   className="h-16 border-slate-700 bg-slate-800/40 hover:bg-slate-800 font-bold uppercase text-xs"
-                  onClick={() => setProduction(p => ({ ...p, ok: p.ok + 10 }))}
+                  onClick={() => {
+                    setProduction(p => ({ ...p, ok: p.ok + 10 }));
+                    handleAction('PRODUCTION_ENTRY', { amount: 10, type: 'OK' });
+                  }}
                 >
                   Registrar Produção (+10kg)
                 </Button>
                 <Button 
                   variant="outline" 
                   className="h-16 border-slate-700 bg-slate-800/40 hover:bg-slate-800 font-bold uppercase text-xs text-rose-400"
-                  onClick={() => setProduction(p => ({ ...p, loss: p.loss + 1 }))}
+                  onClick={() => {
+                    setProduction(p => ({ ...p, loss: p.loss + 1 }));
+                    handleAction('PRODUCTION_ENTRY', { amount: 1, type: 'LOSS' });
+                  }}
                 >
                   Registrar Perda (+1kg)
                 </Button>
                 <Button 
                   variant="outline" 
                   className="h-16 border-slate-700 bg-slate-800/40 hover:bg-slate-800 font-bold uppercase text-xs text-amber-400"
+                  onClick={() => handleAction('MACHINE_STOP', { reason: 'UNSPECIFIED' })}
                 >
                   Motivo de Parada
                 </Button>
@@ -265,15 +282,84 @@ function MESAgentPWA() {
             </CardContent>
           </Card>
 
-          {/* Sync Status Footer */}
-          <div className="bg-blue-900/20 border border-blue-500/20 rounded-lg p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <RefreshCw className="w-4 h-4 text-blue-400 animate-spin-slow" />
-              <p className="text-[10px] text-blue-200 font-bold uppercase tracking-widest">
-                Sincronização: <span className="text-emerald-400">Tudo Atualizado</span> (Há 2 min)
-              </p>
+          {/* Sync Status & Rejection Modal Trigger */}
+          <div className="space-y-2">
+            <div className="bg-blue-900/20 border border-blue-500/20 rounded-lg p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <RefreshCw className={`w-4 h-4 text-blue-400 ${pendingCount > 0 ? 'animate-spin-slow' : ''}`} />
+                <p className="text-[10px] text-blue-200 font-bold uppercase tracking-widest">
+                  Sincronização: {pendingCount > 0 ? (
+                    <span className="text-amber-400">{pendingCount} Pendentes</span>
+                  ) : (
+                    <span className="text-emerald-400">Tudo Atualizado</span>
+                  )}
+                </p>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {failedEvents.length > 0 && (
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    className="h-6 text-[9px] font-black uppercase px-2"
+                    onClick={() => setShowFailedEvents(true)}
+                  >
+                    <AlertTriangle className="w-3 h-3 mr-1" /> {failedEvents.length} FALHAS
+                  </Button>
+                )}
+                <p className="text-[10px] text-slate-500 font-bold">V 2.5.0-SYNC</p>
+              </div>
             </div>
-            <p className="text-[10px] text-slate-500 font-bold">V 2.4.0-STABLE</p>
+
+            {/* Error Review Panel (Step 7) */}
+            {showFailedEvents && (
+              <Card className="bg-rose-950/20 border-rose-500/30 overflow-hidden">
+                <CardHeader className="py-2 px-4 bg-rose-500/10 flex flex-row items-center justify-between">
+                  <CardTitle className="text-[10px] font-black uppercase text-rose-200">Revisão de Falhas Críticas</CardTitle>
+                  <Button variant="ghost" size="sm" onClick={() => setShowFailedEvents(false)} className="h-6 text-rose-200 hover:bg-rose-500/20">Fechar</Button>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="max-h-40 overflow-y-auto divide-y divide-rose-500/10">
+                    {failedEvents.map(event => (
+                      <div key={event.event_id} className="p-3 flex items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <p className="text-[10px] font-black text-rose-300 uppercase">{event.event_type}</p>
+                          <p className="text-[10px] text-slate-400 italic leading-tight">{event.last_error || 'Erro desconhecido'}</p>
+                          <p className="text-[8px] text-slate-500 font-mono mt-1">{new Date(event.occurred_at).toLocaleString()}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="h-7 text-[9px] font-bold border-rose-500/30 hover:bg-rose-500/20 text-rose-200"
+                            onClick={async () => {
+                              const db = await initMESDatabase();
+                              const e = await db.get('events', event.event_id);
+                              if (e) {
+                                e.sync_status = 'pending';
+                                e.retry_count = 0;
+                                await db.put('events', e);
+                                refreshStats();
+                                syncEvents();
+                              }
+                            }}
+                          >
+                            Tentar Novamente
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-7 text-[9px] font-bold text-slate-500 hover:text-white"
+                          >
+                            Corrigir
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
