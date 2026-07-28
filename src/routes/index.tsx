@@ -86,10 +86,14 @@ function HomologacaoOperacionalPage() {
               <span className="text-amber-500 font-bold">HOMOLOGAÇÃO (FOCUS NFE)</span>
             </div>
           </div>
-          <div className="mt-8 pt-4 border-t border-white/5">
+          <div className="mt-8 pt-4 border-t border-white/5 space-y-4">
+            <p className="text-slate-500 text-[10px] uppercase font-bold tracking-widest">Missão Atual: Infraestrutura</p>
+            <p className="text-slate-400 text-xs font-medium italic">
+              Hospedar os binários finais (Linux/Docker) em um CDN ou repositório oficial para atualizar os links de download.
+            </p>
             <a 
               href="/dashboard/industrial" 
-              className="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center gap-2"
+              className="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center gap-2 pt-2"
             >
               Ir para Dashboard Principal →
             </a>
