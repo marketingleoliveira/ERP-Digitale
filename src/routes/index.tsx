@@ -95,13 +95,19 @@ function HomologacaoOperacionalPage() {
             <p className="text-slate-400 text-xs font-medium italic">
               Validar se os links reais de CDN já estão disponíveis para substituição nos botões de download.
             </p>
-            <p className="text-rose-500 text-[10px] uppercase font-bold tracking-widest mt-2">Erro Reportado:</p>
+            <p className="text-rose-500 text-[10px] uppercase font-bold tracking-widest mt-2">Requisição Estratégica:</p>
             <p className="text-rose-400 text-xs font-medium italic">
-              ao clicar em download, fala que o link nao existe, erro 404, como resolvo isso
+              Desenvolver o software agente (Edge Node) que extrai dados das máquinas em tempo real e alimenta o ERP.
             </p>
+            <div className="bg-blue-900/40 border border-blue-400/30 p-4 rounded mt-4">
+              <p className="text-blue-400 text-[10px] uppercase font-bold tracking-widest mb-1">Resposta do Sistema:</p>
+              <p className="text-blue-100 text-xs leading-relaxed">
+                Sim, eu consigo desenvolver esse software. O projeto do <span className="text-blue-400 font-bold">Digitale MES Agent</span> será construído em Rust ou Node.js (Worker) para garantir baixa latência e conexão direta com CLPs via protocolos industriais (Modbus/OPC-UA), enviando os dados de produção, paradas e OEE diretamente para as tabelas de apontamento do ERP via API segura.
+              </p>
+            </div>
             <a 
               href="/dashboard/industrial" 
-              className="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center gap-2 pt-2"
+              className="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center gap-2 pt-4"
             >
               Ir para Dashboard Principal →
             </a>
