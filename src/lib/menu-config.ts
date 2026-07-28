@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { HELP_REGISTRY } from "@/lib/help-registry";
 import {
   LayoutDashboard, Users, Truck, UserCheck, Package, Warehouse,
   ShoppingCart, Receipt, Handshake, Wallet, Factory, Scissors,
@@ -28,7 +29,7 @@ export type MenuItem = {
 };
 
 /** Full catalog of available menus. Add new items here. */
-export const ALL_MENU_ITEMS: MenuItem[] = [
+const RAW_MENU_ITEMS: MenuItem[] = [
   { title: "Início", url: "/inicio", icon: LayoutDashboard, group: "", locked: true, description: "Visão geral e atalhos rápidos.", helpId: "inicio" },
   { title: "Funcionário", url: "/funcionario", icon: IdCard, group: "Sistema", description: "Gestão de cadastro de colaboradores." },
   { title: "Usuário", url: "/usuarios", icon: ShieldCheck, group: "Sistema", description: "Controle de acesso e permissões." },
@@ -130,6 +131,25 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Segunda Qualidade", url: "/qualidade/segunda", icon: BadgeCheck, group: "Produção (PCP)", description: "Classificação de produtos sub-padrão." },
   { title: "Relatórios Fiscais", url: "/fiscal/relatorios", icon: FileText, group: "Fiscal", description: "Geração de livros e apurações mensais." },
 ];
+
+/**
+ * Catálogo efetivo dos menus.
+ * Cada item recebe automaticamente:
+ *  - `helpId` = URL canônica (chave do HelpRegistry);
+ *  - `description` = descrição própria ou o resumo cadastrado no HelpRegistry.
+ * Isso garante cobertura completa e consistente sem duplicar texto.
+ */
+export const ALL_MENU_ITEMS: MenuItem[] = RAW_MENU_ITEMS.map((item) => {
+  const helpId = item.helpId && HELP_REGISTRY[item.helpId] ? item.helpId : item.url;
+  const registryEntry = HELP_REGISTRY[helpId];
+  return {
+    ...item,
+    helpId,
+    description: item.description ?? registryEntry?.summary,
+  };
+});
+
+
 
 export const GROUP_ORDER = [
   "Sistema",
