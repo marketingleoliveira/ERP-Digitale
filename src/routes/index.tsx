@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
-import { Loader2, ShieldAlert, Cpu, Database, Wifi, ShieldCheck, Activity, Trash2 } from "lucide-react";
+import { Loader2, ShieldAlert, Cpu, Database, Wifi, ShieldCheck, Activity, Trash2, Settings } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: HomologacaoOperacionalPage,
