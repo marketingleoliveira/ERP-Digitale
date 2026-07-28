@@ -3,6 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
 const processoSchema = z.object({
+  id: z.string().uuid().optional(),
   codigo: z.string().min(1),
   nome: z.string().min(1),
   descricao: z.string().optional().nullable(),
@@ -21,11 +22,11 @@ export const getProcessos = createServerFn({ method: "GET" })
     const { supabase } = context;
     const { data, error } = await supabase
       .from("processos_industriais" as any)
-      .select(\`
+      .select(`
         *,
         setor:setores(id, nome),
         centro_trabalho:centros_trabalho(id, nome)
-      \`)
+      `)
       .order("sequencia_sugerida", { ascending: true });
     if (error) throw error;
     return data as any[];
