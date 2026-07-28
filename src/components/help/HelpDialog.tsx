@@ -13,6 +13,27 @@ import { Separator } from "@/components/ui/separator";
 import { BookOpen, Shield, Zap, Lightbulb, PlayCircle, Network, CheckCircle2 } from "lucide-react";
 import { AcronymTooltip } from "@/components/ui/acronym-tooltip";
 
+function AcronymText({ children }: { children: string }) {
+  if (!children) return null;
+  
+  // Dividir por palavras e pontuação básica para encontrar termos técnicos
+  const tokens = children.split(/(\s+|[.,;!?()])/);
+  
+  return (
+    <>
+      {tokens.map((token, index) => {
+        // Se for espaço ou pontuação, apenas renderiza
+        if (/^(\s+|[.,;!?()])$/.test(token)) {
+          return token;
+        }
+        
+        // Tenta renderizar como acrônimo
+        return <AcronymTooltip key={index}>{token}</AcronymTooltip>;
+      })}
+    </>
+  );
+}
+
 export function HelpDialog() {
   const { activeHelp, closeHelp, getHelp } = useHelp();
 
