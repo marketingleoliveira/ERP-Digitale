@@ -184,7 +184,7 @@ export function AdminMesAgentsLayout() {
                   <TableBody>
                     {agents?.map((agent) => {
                       const lastHeartbeat = agent.mes_heartbeats?.[0];
-                      const isOnline = lastHeartbeat && 
+                      const isOnline = lastHeartbeat?.created_at && 
                         (new Date().getTime() - new Date(lastHeartbeat.created_at).getTime()) < 60000;
 
                       return (
