@@ -27,7 +27,7 @@ function HomologacaoOperacionalPage() {
       <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center bg-[#0a0f18]">
         <ShieldAlert className="w-16 h-16 text-destructive mb-4" />
         <h1 className="text-2xl font-bold text-white uppercase tracking-tighter">Acesso Restrito</h1>
-        <p className="text-white/60 mt-2 max-w-xs">Homologação Operacional exclusiva para Engenharia e Administração.</p>
+        <p className="text-white font-medium mt-2 max-w-xs">Homologação Operacional exclusiva para Engenharia e Administração.</p>
       </div>
     );
   }
@@ -37,15 +37,15 @@ function HomologacaoOperacionalPage() {
       <div className="max-w-4xl mx-auto space-y-8 py-12">
         <div className="bg-blue-900/20 border border-blue-500/30 p-6 rounded-lg">
           <h2 className="text-xl font-bold text-blue-400 mb-4">Status Industrial</h2>
-          <p className="text-white/90 leading-relaxed italic border-l-4 border-blue-500 pl-4 py-2 bg-blue-500/5">
-            "implemente um tutorial a esse menu de download orientando o passo a passo"
+          <p className="text-white leading-relaxed font-bold border-l-4 border-blue-500 pl-4 py-2 bg-blue-500/10">
+            Ajuste de contraste e legibilidade aplicado em todos os módulos operacionais (MRP/PCP/WMS) e na Central de Downloads.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-emerald-900/20 border border-emerald-500/30 p-6 rounded-lg">
             <h2 className="text-xl font-bold text-emerald-400 mb-4">Sincronização & Hierarquia</h2>
-            <ul className="space-y-2 text-sm text-emerald-100/70">
+            <ul className="space-y-2 text-sm text-emerald-100 font-medium">
               <li>✅ Cargos Operacionais Sincronizados</li>
               <li>✅ Organograma Industrial Funcional</li>
               <li>✅ Gestão de Usuários com RBAC</li>
@@ -54,7 +54,7 @@ function HomologacaoOperacionalPage() {
 
           <div className="bg-amber-900/20 border border-amber-500/30 p-6 rounded-lg">
             <h2 className="text-xl font-bold text-amber-400 mb-4">Central de Downloads</h2>
-            <p className="text-sm text-amber-100/70 mb-4">
+            <p className="text-sm text-amber-100 font-medium mb-4">
               Nova área restrita para implantação do software MES industrial em máquinas.
             </p>
             <a 
@@ -70,19 +70,19 @@ function HomologacaoOperacionalPage() {
           <h2 className="text-xl font-bold text-slate-400 mb-4">Auditoria Operacional</h2>
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-300 italic">PCP & Engenharia</span>
+              <span className="text-slate-100 font-medium italic">PCP & Engenharia</span>
               <span className="text-emerald-500 font-bold">100% FUNCIONAL</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-300 italic">Compras & Suprimentos</span>
+              <span className="text-slate-100 font-medium italic">Compras & Suprimentos</span>
               <span className="text-emerald-500 font-bold">100% FUNCIONAL</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-300 italic">Estoque & WMS</span>
+              <span className="text-slate-100 font-medium italic">Estoque & WMS</span>
               <span className="text-emerald-500 font-bold">100% FUNCIONAL</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-300 italic">Fiscal & Faturamento</span>
+              <span className="text-slate-100 font-medium italic">Fiscal & Faturamento</span>
               <span className="text-amber-500 font-bold">HOMOLOGAÇÃO (FOCUS NFE)</span>
             </div>
           </div>
