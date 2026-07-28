@@ -104,7 +104,7 @@ export function AppSidebar() {
                             <div className="flex flex-col">
                               <span className="font-semibold">{item.title}</span>
                               {item.description && !collapsed && (
-                                <span className="text-[10px] text-muted-foreground font-normal leading-tight group-data-[active=true]:text-white/70">
+                                <span className="text-[10px] text-white/60 font-normal leading-tight group-data-[active=true]:text-white/80">
                                   {item.description}
                                 </span>
                               )}
@@ -163,7 +163,7 @@ export function AppSidebar() {
                                       <div className="flex flex-col">
                                         <span className="font-semibold">{item.title}</span>
                                         {item.description && (
-                                          <span className="text-[10px] text-muted-foreground font-normal leading-tight group-data-[active=true]:text-white/70">
+                                          <span className="text-[10px] text-white/60 font-normal leading-tight group-data-[active=true]:text-white/80">
                                             {item.description}
                                           </span>
                                         )}
