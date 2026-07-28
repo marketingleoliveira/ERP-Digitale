@@ -13,7 +13,7 @@ export interface MESLocalEvent {
 
 export async function initMESDatabase() {
   return openDB(DB_NAME, DB_VERSION, {
-    upgrade(db) {
+    upgrade(db: IDBPDatabase) {
       if (!db.objectStoreNames.contains('events')) {
         const store = db.createObjectStore('events', { keyPath: 'event_id' });
         store.createIndex('synced', 'synced');
