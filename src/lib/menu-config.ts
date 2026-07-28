@@ -124,10 +124,11 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Industrialização", url: "/producao/industrializacao", icon: Handshake, group: "Produção (PCP)" },
   { title: "Estoque Comercial", url: "/comercial/estoque", icon: Warehouse, group: "Estoque" },
   { title: "Pedidos de Venda", url: "/comercial/pedidos", icon: ShoppingCart, group: "Compras" },
-  { title: "RNCs", url: "/qualidade/rnc", icon: AlertTriangle, group: "Produção (PCP)" },
-
-
-
+  { title: "RNCs", url: "/qualidade/rnc", icon: AlertTriangle, group: "Produção (PCP)", description: "Registro de não conformidades." },
+  { title: "Dashboard WMS", url: "/wms", icon: LayoutDashboard, group: "Estoque", description: "Gestão avançada de armazém e logística." },
+  { title: "Inventário Ciclo", url: "/wms/inventario", icon: ClipboardCheck, group: "Estoque", description: "Contagem cíclica e rotativa de materiais." },
+  { title: "Segunda Qualidade", url: "/qualidade/segunda", icon: BadgeCheck, group: "Produção (PCP)", description: "Classificação de produtos sub-padrão." },
+  { title: "Relatórios Fiscais", url: "/fiscal/relatorios", icon: FileText, group: "Fiscal", description: "Geração de livros e apurações mensais." },
 ];
 
 export const GROUP_ORDER = [
