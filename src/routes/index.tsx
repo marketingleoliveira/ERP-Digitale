@@ -35,11 +35,10 @@ function HomologacaoOperacionalPage() {
       <div className="max-w-4xl mx-auto space-y-8 py-12">
         <h1 className="text-4xl font-black text-blue-500 tracking-tighter uppercase mb-8">MISSÃO</h1>
         
-        <p className="text-xl font-bold text-white mb-6">Homologar exclusivamente o WMS.</p>
+        <p className="text-xl font-bold text-white mb-6">Homologar exclusivamente o Financeiro.</p>
         
         <div className="space-y-2 text-red-500 font-bold uppercase tracking-wide">
-          <p>Não alterar Dashboard.</p>
-          <p>Não alterar interface.</p>
+          <p>Não alterar layouts.</p>
         </div>
 
         <hr className="border-white/10 my-10" />
@@ -48,16 +47,14 @@ function HomologacaoOperacionalPage() {
           <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Validar:</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              "entrada",
-              "saída",
-              "transferência",
-              "inventário",
-              "kardex",
-              "localização",
-              "lotes",
-              "rolos",
-              "reservas",
-              "bloqueios"
+              "contas receber",
+              "contas pagar",
+              "baixas",
+              "estornos",
+              "fluxo caixa",
+              "DRE",
+              "centros custo",
+              "integração automática"
             ].map(item => (
               <div key={item} className="flex items-center gap-3">
                 <span className="text-green-500 font-bold">✓</span>
@@ -68,23 +65,25 @@ function HomologacaoOperacionalPage() {
         </section>
 
         <section className="space-y-4 pt-6 text-white/80 font-bold">
-          <p>Executar reconciliação completa dos saldos.</p>
-          <h3 className="text-white uppercase pt-4">Validar:</h3>
-          <ul className="list-none space-y-1 pl-4 border-l border-blue-500/30">
-            <li>Saldo físico</li>
-            <li>Saldo disponível</li>
-            <li>Saldo reservado</li>
-            <li>Saldo produção</li>
-            <li>Saldo qualidade</li>
-          </ul>
-          <p className="pt-4">Executar testes.</p>
+          <p>Executar testes.</p>
         </section>
 
         <hr className="border-white/10 my-10" />
 
-        <section className="space-y-6 pb-20 text-center">
-          <p className="text-blue-500 font-black text-xl uppercase tracking-widest">Apresentar somente backend.</p>
+        <section className="space-y-6 pb-20">
+          <h3 className="text-blue-500 font-black text-xl uppercase tracking-widest text-center">Apresentar:</h3>
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-white/60 uppercase text-sm font-bold">
+            <span>migrations</span>
+            <span>services</span>
+            <span>RPCs</span>
+            <span>build</span>
+            <span>testes</span>
+            <span>arquivos backend</span>
+          </div>
         </section>
+      </div>
+    </div>
+  );
 
         <hr className="border-white/10 my-10" />
 
