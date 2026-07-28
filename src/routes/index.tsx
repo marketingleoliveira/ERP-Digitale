@@ -1,25 +1,5 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { 
-  BarChart3, 
-  Factory, 
-  AlertTriangle, 
-  ClipboardList, 
-  ShoppingCart, 
-  TrendingUp,
-  Package,
-  Clock,
-  CheckCircle2,
-  Ban,
-  Settings,
-  ShieldCheck,
-  ChevronRight
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getHomeDashboardData } from "@/services/dashboard/home.functions";
-import { Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+
 
 export const Route = createFileRoute("/")({
   component: DashboardHome,
