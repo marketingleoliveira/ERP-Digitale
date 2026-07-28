@@ -89,6 +89,7 @@ import { Route as AppFinanceiroDashboardRouteImport } from './routes/_app.financ
 import { Route as AppFinanceiroContasBancariasRouteImport } from './routes/_app.financeiro.contas-bancarias'
 import { Route as AppFinanceiroCentrosCustoRouteImport } from './routes/_app.financeiro.centros-custo'
 import { Route as AppEstoqueKardexRouteImport } from './routes/_app.estoque.kardex'
+import { Route as AppEngenhariaProcessosRouteImport } from './routes/_app.engenharia.processos'
 import { Route as AppDevSprint0RouteImport } from './routes/_app.dev.sprint0'
 import { Route as AppDevFocusNfeRouteImport } from './routes/_app.dev.focus-nfe'
 import { Route as AppDevE2eRouteImport } from './routes/_app.dev.e2e'
@@ -525,6 +526,11 @@ const AppEstoqueKardexRoute = AppEstoqueKardexRouteImport.update({
   path: '/estoque/kardex',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEngenhariaProcessosRoute = AppEngenhariaProcessosRouteImport.update({
+  id: '/engenharia/processos',
+  path: '/engenharia/processos',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDevSprint0Route = AppDevSprint0RouteImport.update({
   id: '/dev/sprint0',
   path: '/dev/sprint0',
@@ -725,6 +731,7 @@ export interface FileRoutesByFullPath {
   '/dev/e2e': typeof AppDevE2eRoute
   '/dev/focus-nfe': typeof AppDevFocusNfeRoute
   '/dev/sprint0': typeof AppDevSprint0Route
+  '/engenharia/processos': typeof AppEngenhariaProcessosRoute
   '/estoque/kardex': typeof AppEstoqueKardexRoute
   '/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
   '/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
@@ -835,6 +842,7 @@ export interface FileRoutesByTo {
   '/dev/e2e': typeof AppDevE2eRoute
   '/dev/focus-nfe': typeof AppDevFocusNfeRoute
   '/dev/sprint0': typeof AppDevSprint0Route
+  '/engenharia/processos': typeof AppEngenhariaProcessosRoute
   '/estoque/kardex': typeof AppEstoqueKardexRoute
   '/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
   '/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
@@ -947,6 +955,7 @@ export interface FileRoutesById {
   '/_app/dev/e2e': typeof AppDevE2eRoute
   '/_app/dev/focus-nfe': typeof AppDevFocusNfeRoute
   '/_app/dev/sprint0': typeof AppDevSprint0Route
+  '/_app/engenharia/processos': typeof AppEngenhariaProcessosRoute
   '/_app/estoque/kardex': typeof AppEstoqueKardexRoute
   '/_app/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
   '/_app/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
@@ -1059,6 +1068,7 @@ export interface FileRouteTypes {
     | '/dev/e2e'
     | '/dev/focus-nfe'
     | '/dev/sprint0'
+    | '/engenharia/processos'
     | '/estoque/kardex'
     | '/financeiro/centros-custo'
     | '/financeiro/contas-bancarias'
@@ -1169,6 +1179,7 @@ export interface FileRouteTypes {
     | '/dev/e2e'
     | '/dev/focus-nfe'
     | '/dev/sprint0'
+    | '/engenharia/processos'
     | '/estoque/kardex'
     | '/financeiro/centros-custo'
     | '/financeiro/contas-bancarias'
@@ -1280,6 +1291,7 @@ export interface FileRouteTypes {
     | '/_app/dev/e2e'
     | '/_app/dev/focus-nfe'
     | '/_app/dev/sprint0'
+    | '/_app/engenharia/processos'
     | '/_app/estoque/kardex'
     | '/_app/financeiro/centros-custo'
     | '/_app/financeiro/contas-bancarias'
@@ -1915,6 +1927,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEstoqueKardexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/engenharia/processos': {
+      id: '/_app/engenharia/processos'
+      path: '/engenharia/processos'
+      fullPath: '/engenharia/processos'
+      preLoaderRoute: typeof AppEngenhariaProcessosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dev/sprint0': {
       id: '/_app/dev/sprint0'
       path: '/dev/sprint0'
@@ -2299,6 +2318,7 @@ interface AppRouteChildren {
   AppDevE2eRoute: typeof AppDevE2eRoute
   AppDevFocusNfeRoute: typeof AppDevFocusNfeRoute
   AppDevSprint0Route: typeof AppDevSprint0Route
+  AppEngenhariaProcessosRoute: typeof AppEngenhariaProcessosRoute
   AppEstoqueKardexRoute: typeof AppEstoqueKardexRoute
   AppFinanceiroCentrosCustoRoute: typeof AppFinanceiroCentrosCustoRoute
   AppFinanceiroContasBancariasRoute: typeof AppFinanceiroContasBancariasRoute
@@ -2392,6 +2412,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDevE2eRoute: AppDevE2eRoute,
   AppDevFocusNfeRoute: AppDevFocusNfeRoute,
   AppDevSprint0Route: AppDevSprint0Route,
+  AppEngenhariaProcessosRoute: AppEngenhariaProcessosRoute,
   AppEstoqueKardexRoute: AppEstoqueKardexRoute,
   AppFinanceiroCentrosCustoRoute: AppFinanceiroCentrosCustoRoute,
   AppFinanceiroContasBancariasRoute: AppFinanceiroContasBancariasRoute,
