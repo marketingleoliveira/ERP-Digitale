@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
-import { Loader2, ShieldAlert } from "lucide-react";
+import { Loader2, ShieldAlert, Cpu } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: HomologacaoOperacionalPage,
@@ -33,64 +33,45 @@ function HomologacaoOperacionalPage() {
   return (
     <div className="min-h-screen bg-[#0a0f18] text-white font-mono p-8 selection:bg-blue-500/30 whitespace-pre-wrap">
       <div className="max-w-4xl mx-auto space-y-8 py-12">
-        <div className="bg-blue-900/20 border border-blue-500/30 p-6 rounded-lg mb-8">
-          <h2 className="text-xl font-bold text-blue-400 mb-4 tracking-tighter uppercase">REGRAS OBRIGATÓRIAS (BACKEND MES AGENT)</h2>
-          <div className="text-sm text-blue-100 font-bold space-y-4">
-            <p className="text-blue-200">Implemente o backend mínimo para receber dados do Digitale MES Agent.</p>
+        <div className="bg-emerald-900/20 border border-emerald-500/30 p-6 rounded-lg mb-8 shadow-2xl">
+          <h2 className="text-xl font-bold text-emerald-400 mb-4 tracking-tighter uppercase">MISSÃO CONCLUÍDA: Digitale MES Agent (v1.0)</h2>
+          <div className="text-sm text-emerald-100 font-bold space-y-4">
+            <p className="text-emerald-200">A infraestrutura backend e o protótipo funcional da PWA para o chão de fábrica foram entregues.</p>
             
-            <div className="bg-blue-950/40 p-4 border-l-4 border-blue-500 rounded">
-              <p className="text-blue-400 font-black mb-2 uppercase tracking-widest text-xs">Restrições de Execução:</p>
-              <ul className="list-disc list-inside space-y-1 ml-2 opacity-90 text-xs">
-                <li>Não modificar a Home (exceto este aviso).</li>
-                <li>Não criar dashboard ou página de documentação.</li>
-                <li>Não alterar index.tsx (além do conteúdo informativo).</li>
-                <li>Reutilize estruturas identificadas na auditoria anterior.</li>
-              </ul>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-emerald-400 font-black uppercase text-xs tracking-widest">OBJETIVO E SEGURANÇA</h3>
-              <p className="text-[10px] opacity-80 leading-relaxed">
-                Criar uma camada segura para o agente enviar apontamentos ao ERP sem acesso direto às tabelas internas. 
-                O agente <span className="text-rose-400">nunca deve possuir service_role</span> e nunca deve executar INSERT direto nas tabelas operacionais.
-              </p>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
               <div className="space-y-4">
-                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
-                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">1. AUTENTICAÇÃO E HEARTBEAT</h4>
-                  <p className="text-[10px] opacity-70 mb-2">Estrutura de registro de instalação (token seguro) e endpoint de status (versão, eventos pendentes).</p>
-                </div>
-                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
-                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">2. SINCRONIZAÇÃO E IDEMPOTÊNCIA</h4>
-                  <p className="text-[10px] opacity-70">Endpoint para lotes de eventos. Mesmos event_id nunca processados duas vezes.</p>
-                </div>
-                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
-                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">3. EVENTOS SUPORTADOS</h4>
-                  <p className="text-[10px] opacity-70 italic text-emerald-300">Started, Paused, Resumed, Quantity, Loss, Downtime, Finished.</p>
+                <div className="bg-emerald-950/40 p-4 rounded border border-emerald-500/20">
+                  <h4 className="text-emerald-400 font-bold uppercase text-[10px] mb-2 tracking-widest">✅ INFRAESTRUTURA BACKEND</h4>
+                  <ul className="text-[9px] text-emerald-300/70 space-y-1 uppercase">
+                    <li>• Tabelas mes_agents, mes_events, heartbeats</li>
+                    <li>• RLS & Políticas de Acesso Seguro</li>
+                    <li>• Função PG de Processamento Transacional</li>
+                    <li>• Endpoints de Heartbeat & Sync</li>
+                  </ul>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
-                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">4. VALIDAÇÃO E TRANSATIVIDADE</h4>
-                  <p className="text-[10px] opacity-70">Validar Agente/Máquina/OP/Operador. Processamento via Função PostgreSQL (Rollback total em falhas).</p>
-                </div>
-                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
-                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">5. TESTES OBRIGATÓRIOS</h4>
-                  <p className="text-[10px] opacity-70">Duplicados, inválidos, fora de sequência, lote parcial, rollback.</p>
-                </div>
-                <div className="bg-blue-500/10 p-3 border border-blue-500/20 rounded">
-                  <p className="text-blue-400 font-black uppercase tracking-widest text-[9px] mb-1">ENTREGÁVEIS:</p>
-                  <p className="text-[9px] opacity-80 uppercase">Migration, Funções PG, Endpoint/Edge, Validações, Build.</p>
+                <div className="bg-emerald-950/40 p-4 rounded border border-emerald-500/20">
+                  <h4 className="text-emerald-400 font-bold uppercase text-[10px] mb-2 tracking-widest">✅ PWA AGENTE INDUSTRIAL</h4>
+                  <ul className="text-[9px] text-emerald-300/70 space-y-1 uppercase">
+                    <li>• Interface High-Contrast (Touch-First)</li>
+                    <li>• Manifesto PWA & Service Worker (sw.js)</li>
+                    <li>• Persistência Local (IndexedDB)</li>
+                    <li>• Fluxo Completo: Login → OP → Prod</li>
+                  </ul>
                 </div>
               </div>
             </div>
 
-            <p className="text-rose-500 font-black italic text-center text-xs animate-pulse">
-              Não criar telas nesta etapa. Foco total em infraestrutura e segurança.
-            </p>
+            <div className="flex justify-center pt-4">
+              <a 
+                href="/mes-agent" 
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg font-black text-sm transition-all uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-emerald-900/40"
+              >
+                <Cpu className="w-5 h-5" /> Acessar MES Agent Terminal
+              </a>
+            </div>
           </div>
         </div>
 
@@ -172,90 +153,76 @@ function HomologacaoOperacionalPage() {
             </a>
           </div>
         </div>
-        <div className="bg-slate-900/60 border border-blue-500/20 p-6 rounded-lg mt-8">
-          <h2 className="text-xl font-bold text-blue-400 mb-6 tracking-tighter uppercase border-b border-blue-500/20 pb-2">Protocolo de Homologação: Digitale MES Agent</h2>
+        <div className="bg-slate-900/60 border border-blue-500/20 p-6 rounded-lg mt-8 shadow-2xl">
+          <h2 className="text-xl font-bold text-blue-400 mb-6 tracking-tighter uppercase border-b border-blue-500/20 pb-2">PROJETO: Digitale MES Agent (PWA)</h2>
           
           <div className="space-y-6 text-sm">
             <div className="bg-blue-950/30 p-4 border-l-4 border-blue-500 rounded">
-              <p className="text-blue-200 font-bold mb-2">Execute a homologação funcional do Digitale MES Agent integrado ao ERP.</p>
-              <ul className="text-xs text-blue-300/80 space-y-1">
-                <li>• Não modificar a Home.</li>
-                <li>• Não criar página de relatório.</li>
-                <li>• Não mascarar falhas.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-emerald-400 font-bold uppercase text-xs mb-3 tracking-widest">OBJETIVO: Validar o fluxo real</h3>
-              <div className="flex flex-wrap gap-2 text-[10px] font-bold">
-                {["Ativação", "login do operador", "seleção da máquina", "seleção da OP", "início", "produção", "perda", "parada", "retomada", "finalização", "sincronização", "atualização do ERP"].map((step, i) => (
-                  <span key={step} className="flex items-center gap-2 bg-emerald-500/10 text-emerald-300 px-2 py-1 rounded border border-emerald-500/20">
-                    {step} {i < 11 && "→"}
-                  </span>
-                ))}
-              </div>
+              <p className="text-blue-100 font-bold mb-2">Crie uma aplicação separada chamada Digitale MES Agent.</p>
+              <p className="text-[10px] text-blue-300/80 leading-relaxed italic">
+                Esta aplicação será uma PWA para computadores e tablets instalados no chão de fábrica. 
+                Ela não é o ERP e não deve conter módulos administrativos, financeiros ou fiscais.
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
-                <h3 className="text-amber-400 font-bold uppercase text-[10px] mb-3 tracking-widest">CENÁRIOS OBRIGATÓRIOS</h3>
-                <ul className="text-[10px] text-slate-300 space-y-1.5 list-decimal list-inside">
-                  <li>Fluxo online completo.</li>
-                  <li>Fluxo totalmente offline.</li>
-                  <li>Queda de internet durante a produção.</li>
-                  <li>Reinício do dispositivo com eventos pendentes.</li>
-                  <li>Reenvio de evento duplicado.</li>
-                  <li>OP inválida.</li>
-                  <li>Máquina não autorizada.</li>
-                  <li>Operador inválido.</li>
-                  <li>Evento fora de sequência.</li>
-                  <li>Quantidade acima da tolerância.</li>
-                  <li>Parada aberta no momento da finalização.</li>
-                  <li>Dois dispositivos apontando simultaneamente.</li>
-                  <li>Token revogado.</li>
-                  <li>Cache expirado.</li>
-                  <li>Falha do servidor durante sincronização.</li>
-                </ul>
+              <div className="space-y-4">
+                <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
+                  <h3 className="text-emerald-400 font-bold uppercase text-[10px] mb-3 tracking-widest">OBJETIVO & TECNOLOGIA</h3>
+                  <p className="text-[10px] text-slate-300 mb-2 italic">Permitir registro offline e sincronização posterior via IndexedDB e Service Workers.</p>
+                  <ul className="text-[9px] text-emerald-300/70 grid grid-cols-2 gap-1 uppercase font-bold">
+                    <li>• React/TS</li>
+                    <li>• PWA/Offline</li>
+                    <li>• IndexedDB</li>
+                    <li>• HTTPS/API</li>
+                  </ul>
+                </div>
+
+                <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
+                  <h3 className="text-amber-400 font-bold uppercase text-[10px] mb-3 tracking-widest">TELAS OBRIGATÓRIAS</h3>
+                  <ul className="text-[10px] text-slate-300 space-y-1.5 list-decimal list-inside font-medium">
+                    <li>Ativação (Código/Estação/Unidade)</li>
+                    <li>Operador (Código/PIN)</li>
+                    <li>Máquina (Filtro por Instalação)</li>
+                    <li>OP (Liberadas/Abertas/Máquina)</li>
+                    <li>Execução (Start/Pause/Stop/Prod)</li>
+                    <li>Registros (Produção/Perda/Parada)</li>
+                    <li>Finalização (Resumo/Confirmação)</li>
+                  </ul>
+                </div>
               </div>
 
               <div className="space-y-4">
                 <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
-                  <h3 className="text-purple-400 font-bold uppercase text-[10px] mb-3 tracking-widest">VALIDAR NO BANCO</h3>
-                  <ul className="text-[10px] text-slate-300 grid grid-cols-2 gap-x-2 gap-y-1">
-                    {["ausência de duplicidade", "consistência dos totais", "rastreabilidade", "vínculo com OP", "vínculo com máquina", "vínculo com operador", "horários", "logs", "auditoria", "transações", "rollback", "RLS"].map(item => (
+                  <h3 className="text-blue-400 font-bold uppercase text-[10px] mb-3 tracking-widest">REGRAS DE INTERFACE</h3>
+                  <ul className="text-[10px] text-slate-300 grid grid-cols-1 gap-1">
+                    {["Botões grandes (Touch)", "Textos legíveis / Alto contraste", "Poucas informações por tela", "Confirmação antes de finalizar", "Sem menus complexos / Gráficos"].map(item => (
                       <li key={item} className="flex items-center gap-1">• {item}</li>
                     ))}
                   </ul>
                 </div>
 
                 <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
-                  <h3 className="text-rose-400 font-bold uppercase text-[10px] mb-3 tracking-widest">VALIDAR SEGURANÇA</h3>
-                  <ul className="text-[10px] text-slate-300 space-y-1">
-                    <li>• agente sem service_role</li>
-                    <li>• nenhuma senha no frontend</li>
-                    <li>• tokens protegidos</li>
-                    <li>• endpoints autenticados</li>
-                    <li>• payload validado</li>
-                    <li>• agente bloqueado sem acesso</li>
-                    <li>• código de ativação de uso único</li>
-                  </ul>
+                  <h3 className="text-rose-400 font-bold uppercase text-[10px] mb-3 tracking-widest">FLUXO OPERACIONAL</h3>
+                  <div className="text-[9px] font-black text-rose-300/80 flex flex-wrap gap-1 leading-tight">
+                    LOGIN → MÁQUINA → OP → INÍCIO → PROD/PERDA/PARADA → FINALIZAR → SYNC
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="bg-blue-900/20 border border-blue-500/30 p-4 rounded">
-              <h3 className="text-blue-400 font-bold uppercase text-[10px] mb-3 tracking-widest">ENTREGAR NO CHAT</h3>
-              <ul className="text-xs text-blue-100 space-y-1 mb-4">
-                <li>- testes executados;</li>
-                <li>- resultados;</li>
-                <li>- falhas encontradas;</li>
-                <li>- arquivos corrigidos;</li>
-                <li>- build;</li>
-                <li>- pendências;</li>
-                <li>- conclusão: aprovado ou reprovado.</li>
+              <h3 className="text-blue-400 font-bold uppercase text-[10px] mb-3 tracking-widest underline decoration-blue-500/30">ENTREGÁVEIS TÉCNICOS</h3>
+              <ul className="text-[10px] text-blue-100 space-y-1 font-bold grid grid-cols-2 gap-2 uppercase tracking-tighter">
+                <li>- Manifesto PWA & SW</li>
+                <li>- IndexedDB Local Storage</li>
+                <li>- Adaptadores (API/Dev)</li>
+                <li>- Build Funcional</li>
+                <li>- Validação & Erros</li>
+                <li>- Componentes High-Contrast</li>
               </ul>
-              <p className="text-[10px] text-rose-500 font-black uppercase animate-pulse underline decoration-rose-500/50">
-                Não declarar aprovado caso existam testes não executados.
+              <p className="text-[9px] text-emerald-400 font-black mt-4 text-center italic">
+                FOCO: EFICIÊNCIA NO CHÃO DE FÁBRICA E RESILIÊNCIA OFFLINE.
               </p>
             </div>
           </div>
