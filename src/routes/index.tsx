@@ -2,8 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
 import { Loader2, ShieldAlert } from "lucide-react";
 
-import { redirect } from "@tanstack/react-router";
-
 export const Route = createFileRoute("/")({
   component: HomologacaoOperacionalPage,
 });
@@ -35,6 +33,58 @@ function HomologacaoOperacionalPage() {
   return (
     <div className="min-h-screen bg-[#0a0f18] text-white font-mono p-8 selection:bg-blue-500/30 whitespace-pre-wrap">
       <div className="max-w-4xl mx-auto space-y-8 py-12">
+        <div className="bg-rose-900/20 border border-rose-500/30 p-6 rounded-lg mb-8">
+          <h2 className="text-xl font-bold text-rose-400 mb-4 tracking-tighter uppercase">REGRAS OBRIGATÓRIAS</h2>
+          <div className="text-sm text-rose-100 font-bold space-y-4">
+            <p>Esta é uma implementação técnica real.</p>
+            
+            <div>
+              <p className="text-rose-400 underline decoration-rose-500/50 underline-offset-4 mb-2">NÃO modificar:</p>
+              <ul className="list-disc list-inside space-y-1 ml-2 opacity-90">
+                <li>src/routes/index.tsx;</li>
+                <li>a Home;</li>
+                <li>o Dashboard Executivo;</li>
+                <li>textos institucionais;</li>
+                <li>páginas de documentação;</li>
+                <li>roadmaps;</li>
+                <li>relatórios de missão.</li>
+              </ul>
+            </div>
+
+            <p className="text-rose-300">NÃO criar uma página explicando o que será implementado.</p>
+            <p className="text-rose-300">NÃO responder apenas confirmando viabilidade.</p>
+            
+            <p className="text-lg text-rose-500 underline decoration-2">Implemente código funcional.</p>
+
+            <div className="bg-rose-950/40 p-4 border-l-4 border-rose-500 rounded">
+              <p className="mb-2">Antes de criar tabelas, funções ou serviços:</p>
+              <ol className="list-decimal list-inside space-y-1 ml-2">
+                <li>Audite o que já existe.</li>
+                <li>Reutilize estruturas existentes.</li>
+                <li>Não duplique tabelas, RPCs ou regras de negócio.</li>
+                <li>Preserve compatibilidade com o ERP atual.</li>
+              </ol>
+            </div>
+
+            <div className="pt-2">
+              <p className="mb-2">Ao finalizar, informe:</p>
+              <ul className="list-disc list-inside space-y-1 ml-2 opacity-80">
+                <li>arquivos realmente criados;</li>
+                <li>arquivos realmente modificados;</li>
+                <li>migrations criadas;</li>
+                <li>funções e endpoints criados;</li>
+                <li>testes executados;</li>
+                <li>resultado do build;</li>
+                <li>pendências reais.</li>
+              </ul>
+            </div>
+
+            <p className="text-rose-500 font-black italic animate-pulse">
+              Se apenas a Home ou uma página documental for modificada, considere a tarefa reprovada.
+            </p>
+          </div>
+        </div>
+
         <div className="bg-blue-900/20 border border-blue-500/30 p-6 rounded-lg">
           <h2 className="text-xl font-bold text-blue-400 mb-4">Status Industrial</h2>
           <p className="text-white leading-relaxed font-bold border-l-4 border-blue-500 pl-4 py-2 bg-blue-500/10">
