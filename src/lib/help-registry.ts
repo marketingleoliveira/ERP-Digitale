@@ -69,6 +69,7 @@ export const HELP_REGISTRY: Record<string, HelpContent> = {
   "/senha": help("/senha", "Alteração de senha", "Troca segura das credenciais do usuário autenticado, com validação de força e confirmação.", ["Troca de senha", "Validação de força", "Sessão preservada"]),
   "/time-log": help("/time-log", "Registro de tempos", "Histórico de tempos e eventos registrados pelos usuários nas operações do sistema.", ["Histórico por usuário", "Filtros por período", "Exportação"]),
   "/menus": help("/menus", "Gerenciar menus", "Controle de visibilidade dos itens do menu lateral por instalação, permitindo simplificar a navegação.", ["Ligar/desligar itens", "Itens bloqueados", "Preferência persistida"], { permissions: ["admin"] }),
+  "/dev/organograma": help("/dev/organograma", "Organograma", "Visualização da hierarquia da empresa, agrupando usuários por seus cargos e responsabilidades.", ["Visão por cargo", "Mapeamento de usuários", "Hierarquia funcional"]),
   "/configuracoes": help("/configuracoes", "Configurações da conta", "Dados do perfil do usuário autenticado e alteração segura de senha.", ["Meu perfil", "Alteração de senha"]),
 
   // ───────────────────────────── Cadastros
