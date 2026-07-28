@@ -34,7 +34,7 @@ function DownloadsPage() {
       <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center bg-[#0a0f18]">
         <AlertCircle className="w-16 h-16 text-destructive mb-4" />
         <h1 className="text-2xl font-bold text-white uppercase tracking-tighter">Acesso Restrito</h1>
-        <p className="text-white/60 mt-2 max-w-xs">A área de downloads industriais é exclusiva para Desenvolvedores e Super Admins.</p>
+        <p className="text-white font-medium mt-2 max-w-xs">A área de downloads industriais é exclusiva para Desenvolvedores e Super Admins.</p>
       </div>
     );
   }
@@ -55,7 +55,7 @@ function DownloadsPage() {
             <Download className="w-8 h-8 text-blue-500" />
             Central de Downloads Industriais
           </h1>
-          <p className="text-white/80 mt-1 text-lg font-medium">
+          <p className="text-white mt-1 text-lg font-bold">
             Softwares e drivers para alimentação automática do ERP pelas máquinas do chão de fábrica.
           </p>
         </div>
@@ -68,10 +68,10 @@ function DownloadsPage() {
               <Monitor className="w-6 h-6 text-blue-400" />
             </div>
             <CardTitle>Windows Edge Node</CardTitle>
-            <CardDescription className="text-white/50">Para máquinas rodando Windows 10/11 IoT Enterprise.</CardDescription>
+            <CardDescription className="text-white font-medium">Para máquinas rodando Windows 10/11 IoT Enterprise.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="text-sm space-y-2 text-white/70">
+            <ul className="text-sm space-y-2 text-white font-medium">
               <li className="flex items-center gap-2">• Suporte a porta serial nativa</li>
               <li className="flex items-center gap-2">• Drivers Zebra/Argox inclusos</li>
               <li className="flex items-center gap-2">• SQL Lite local para buffer</li>
@@ -90,10 +90,10 @@ function DownloadsPage() {
               <Terminal className="w-6 h-6 text-emerald-400" />
             </div>
             <CardTitle>Linux Terminal</CardTitle>
-            <CardDescription className="text-white/50">Otimizado para Raspberry Pi e Controladores Industriais.</CardDescription>
+            <CardDescription className="text-white font-medium">Otimizado para Raspberry Pi e Controladores Industriais.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="text-sm space-y-2 text-white/70">
+            <ul className="text-sm space-y-2 text-white font-medium">
               <li className="flex items-center gap-2">• Baixíssimo consumo de RAM</li>
               <li className="flex items-center gap-2">• Execução em background (systemd)</li>
               <li className="flex items-center gap-2">• Auto-update via repositório</li>
@@ -112,10 +112,10 @@ function DownloadsPage() {
               <Cpu className="w-6 h-6 text-amber-400" />
             </div>
             <CardTitle>Docker Gateway</CardTitle>
-            <CardDescription className="text-white/50">Para ambientes virtualizados e clusters industriais.</CardDescription>
+            <CardDescription className="text-white font-medium">Para ambientes virtualizados e clusters industriais.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="text-sm space-y-2 text-white/70">
+            <ul className="text-sm space-y-2 text-white font-medium">
               <li className="flex items-center gap-2">• Isolamento total de processos</li>
               <li className="flex items-center gap-2">• Orquestração centralizada</li>
               <li className="flex items-center gap-2">• Variáveis de ambiente configuráveis</li>
@@ -142,7 +142,7 @@ function DownloadsPage() {
                 <div className="relative pl-8 border-l-2 border-blue-500/30">
                   <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-4 border-[#0a0f18]" />
                   <h4 className="text-white font-bold mb-2">1. Preparação do Ambiente</h4>
-                  <p className="text-white/70 text-sm leading-relaxed">
+                  <p className="text-white font-medium text-sm leading-relaxed">
                     Certifique-se que a máquina possui acesso à rede industrial e que as portas 443 (HTTPS) e 1883 (MQTT - Opcional) estão liberadas no firewall.
                   </p>
                 </div>
@@ -150,7 +150,7 @@ function DownloadsPage() {
                 <div className="relative pl-8 border-l-2 border-blue-500/30">
                   <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-4 border-[#0a0f18]" />
                   <h4 className="text-white font-bold mb-2">2. Instalação do Agente</h4>
-                  <p className="text-white/70 text-sm leading-relaxed">
+                  <p className="text-white font-medium text-sm leading-relaxed">
                     Execute o instalador baixado acima. Em Linux, utilize <code className="text-blue-300">sudo dpkg -i mes-edge.deb</code>. Em Windows, siga o assistente MSI até a conclusão.
                   </p>
                 </div>
@@ -158,7 +158,7 @@ function DownloadsPage() {
                 <div className="relative pl-8 border-l-2 border-blue-500/30">
                   <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-4 border-[#0a0f18]" />
                   <h4 className="text-white font-bold mb-2">3. Vinculação Criptográfica</h4>
-                  <p className="text-white/70 text-sm leading-relaxed">
+                  <p className="text-white font-medium text-sm leading-relaxed">
                     O nó industrial exige uma chave de criptografia AES-256 (CERT_ENC_KEY) para assinar os registros enviados ao ERP.
                   </p>
                 </div>
@@ -167,7 +167,7 @@ function DownloadsPage() {
               <div className="bg-black/40 p-6 rounded-lg border border-white/10 space-y-4">
                 <h4 className="text-xs font-bold uppercase tracking-widest text-blue-400">Terminal de Configuração</h4>
                 <div className="space-y-3">
-                  <p className="text-[11px] text-white/50 uppercase">Comando de Ativação:</p>
+                  <p className="text-[11px] text-white font-bold uppercase">Comando de Ativação:</p>
                   <code className="block text-blue-300 text-xs bg-black/60 p-3 rounded border border-blue-500/20 leading-loose">
                     digitale-mes configure \<br/>
                     &nbsp;&nbsp;--token "SUA_CHAVE_AES_AQUI" \<br/>
@@ -177,7 +177,7 @@ function DownloadsPage() {
                 </div>
                 
                 <div className="pt-4 space-y-2">
-                  <p className="text-[11px] text-white/50 uppercase">Verificação de Status:</p>
+                  <p className="text-[11px] text-white font-bold uppercase">Verificação de Status:</p>
                   <code className="block text-emerald-400 text-xs bg-black/60 p-3 rounded border border-emerald-500/20">
                     digitale-mes status --check-sync
                   </code>
@@ -186,7 +186,7 @@ function DownloadsPage() {
                 <Alert className="bg-amber-500/10 border-amber-500/20 mt-4">
                   <AlertCircle className="h-4 w-4 text-amber-500" />
                   <AlertTitle className="text-amber-500 text-xs font-bold">Nota de Segurança</AlertTitle>
-                  <AlertDescription className="text-white/60 text-[10px]">
+                  <AlertDescription className="text-white font-medium text-[10px]">
                     Nunca compartilhe a CERT_ENC_KEY fora do ambiente seguro do chão de fábrica.
                   </AlertDescription>
                 </Alert>
