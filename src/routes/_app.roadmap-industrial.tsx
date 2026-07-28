@@ -61,9 +61,9 @@ function RoadmapIndustrialPage() {
           <h2 className="text-2xl font-semibold border-l-4 border-blue-500 pl-4 uppercase tracking-wider text-blue-400">Status das Fases</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <PhaseStatus phase="Fase 1: Modelo Industrial" status="Concluída" progress={100} />
-            <PhaseStatus phase="Sprint 2: Eng. de Produto" status="Em Progresso" progress={10} />
+            <PhaseStatus phase="Sprint 2: Eng. de Produto" status="Concluída" progress={100} />
+            <PhaseStatus phase="Sprint 2.5: Consolidação" status="Em Progresso" progress={90} />
             <PhaseStatus phase="Fase 3: APS (PCP Avançado)" status="Pendente" progress={0} />
-            <PhaseStatus phase="Fase 4: MES (Chão de Fábrica)" status="Pendente" progress={0} />
           </div>
         </section>
 
