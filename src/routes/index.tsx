@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
-import { Loader2, ShieldAlert, Cpu } from "lucide-react";
+import { Loader2, ShieldAlert, Cpu, Database, Wifi, ShieldCheck, Activity, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: HomologacaoOperacionalPage,
@@ -33,199 +33,142 @@ function HomologacaoOperacionalPage() {
   return (
     <div className="min-h-screen bg-[#0a0f18] text-white font-mono p-8 selection:bg-blue-500/30 whitespace-pre-wrap">
       <div className="max-w-4xl mx-auto space-y-8 py-12">
+        {/* Step 11 Summary Header */}
         <div className="bg-emerald-900/20 border border-emerald-500/30 p-6 rounded-lg mb-8 shadow-2xl">
-          <h2 className="text-xl font-bold text-emerald-400 mb-4 tracking-tighter uppercase">MISSÃO CONCLUÍDA: Digitale MES Agent (v1.0)</h2>
-          <div className="text-sm text-emerald-100 font-bold space-y-4">
-            <p className="text-emerald-200">A infraestrutura backend e o protótipo funcional da PWA para o chão de fábrica foram entregues.</p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              <div className="space-y-4">
-                <div className="bg-emerald-950/40 p-4 rounded border border-emerald-500/20">
-                  <h4 className="text-emerald-400 font-bold uppercase text-[10px] mb-2 tracking-widest">✅ INFRAESTRUTURA BACKEND</h4>
-                  <ul className="text-[9px] text-emerald-300/70 space-y-1 uppercase">
-                    <li>• Tabelas mes_agents, mes_events, heartbeats</li>
-                    <li>• RLS & Políticas de Acesso Seguro</li>
-                    <li>• Função PG de Processamento Transacional</li>
-                    <li>• Endpoints de Heartbeat & Sync</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="bg-emerald-950/40 p-4 rounded border border-emerald-500/20">
-                  <h4 className="text-emerald-400 font-bold uppercase text-[10px] mb-2 tracking-widest">✅ PWA AGENTE INDUSTRIAL</h4>
-                  <ul className="text-[9px] text-emerald-300/70 space-y-1 uppercase">
-                    <li>• Interface High-Contrast (Touch-First)</li>
-                    <li>• Manifesto PWA & Service Worker (sw.js)</li>
-                    <li>• Persistência Local (IndexedDB)</li>
-                    <li>• Fluxo Completo: Login → OP → Prod</li>
-                  </ul>
-                </div>
-              </div>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="bg-emerald-500 p-2 rounded">
+              <ShieldCheck className="w-6 h-6 text-[#0a0f18]" />
             </div>
-
-            <div className="flex justify-center pt-4">
-              <a 
-                href="/mes-agent" 
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg font-black text-sm transition-all uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-emerald-900/40"
-              >
-                <Cpu className="w-5 h-5" /> Acessar MES Agent Terminal
-              </a>
+            <div>
+              <h2 className="text-xl font-black text-emerald-400 tracking-tighter uppercase leading-none">ETAPA 11 CONCLUÍDA: MECANISMO DE RESILIÊNCIA</h2>
+              <p className="text-[10px] text-emerald-300/70 font-bold uppercase tracking-widest mt-1">Implementação de Sincronização & Persistência Offline</p>
             </div>
           </div>
-        </div>
 
-        <div className="bg-blue-900/20 border border-blue-500/30 p-6 rounded-lg">
-          <h2 className="text-xl font-bold text-blue-400 mb-4">Status Industrial</h2>
-          <p className="text-white leading-relaxed font-bold border-l-4 border-blue-500 pl-4 py-2 bg-blue-500/10">
-            Ajuste de contraste e legibilidade aplicado em todos os módulos operacionais (MRP/PCP/WMS) e na Central de Downloads.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-emerald-900/20 border border-emerald-500/30 p-6 rounded-lg">
-            <h2 className="text-xl font-bold text-emerald-400 mb-4">Sincronização & Hierarquia</h2>
-            <ul className="space-y-2 text-sm text-emerald-100 font-medium">
-              <li>✅ Cargos Operacionais Sincronizados</li>
-              <li>✅ Organograma Industrial Funcional</li>
-              <li>✅ Gestão de Usuários com RBAC</li>
-            </ul>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-emerald-950/40 p-3 rounded border border-emerald-500/20">
+              <Database className="w-4 h-4 text-emerald-400 mb-2" />
+              <h4 className="text-[10px] font-black uppercase text-emerald-200">IndexedDB v2</h4>
+              <p className="text-[9px] text-emerald-300/60 leading-tight">Stores para agent_config, session, machines, OPs e logs de eventos.</p>
+            </div>
+            <div className="bg-emerald-950/40 p-3 rounded border border-emerald-500/20">
+              <Activity className="w-4 h-4 text-emerald-400 mb-2" />
+              <h4 className="text-[10px] font-black uppercase text-emerald-200">Fila FIFO</h4>
+              <p className="text-[9px] text-emerald-300/60 leading-tight">Sequenciamento garantido por OP com retry exponencial progressivo.</p>
+            </div>
+            <div className="bg-emerald-950/40 p-3 rounded border border-emerald-500/20">
+              <Wifi className="w-4 h-4 text-emerald-400 mb-2" />
+              <h4 className="text-[10px] font-black uppercase text-emerald-200">Sync Manager</h4>
+              <p className="text-[9px] text-emerald-300/60 leading-tight">Detecção automática de rede e sincronização em background.</p>
+            </div>
           </div>
 
-          <div className="bg-amber-900/20 border border-amber-500/30 p-6 rounded-lg">
-            <h2 className="text-xl font-bold text-amber-400 mb-4">Central de Downloads</h2>
-            <p className="text-sm text-amber-100 font-medium mb-4">
-              Nova área restrita para implantação do software MES industrial em máquinas.
-            </p>
+          <div className="flex justify-center pt-2">
             <a 
-              href="/downloads" 
-              className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded font-bold text-xs transition-all uppercase tracking-wider"
+              href="/mes-agent" 
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg font-black text-sm transition-all uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-emerald-900/40"
             >
-              Acessar Downloads Industrial
+              <Cpu className="w-5 h-5" /> Acessar MES Agent Terminal (v2.5.0)
             </a>
           </div>
         </div>
 
-        <div className="bg-slate-900/40 border border-slate-500/20 p-6 rounded-lg">
-          <h2 className="text-xl font-bold text-slate-400 mb-4">Auditoria Operacional</h2>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-100 font-medium italic">PCP & Engenharia</span>
-              <span className="text-emerald-500 font-bold">100% FUNCIONAL</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-100 font-medium italic">Compras & Suprimentos</span>
-              <span className="text-emerald-500 font-bold">100% FUNCIONAL</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-100 font-medium italic">Estoque & WMS</span>
-              <span className="text-emerald-500 font-bold">100% FUNCIONAL</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-100 font-medium italic">Fiscal & Faturamento</span>
-              <span className="text-amber-500 font-bold">HOMOLOGAÇÃO (FOCUS NFE)</span>
-            </div>
+        {/* Requirements Text Requested by User */}
+        <div className="bg-slate-900/80 border border-slate-700 p-8 rounded-lg shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <Cpu className="w-32 h-32" />
           </div>
-          <div className="mt-8 pt-4 border-t border-white/5 space-y-4">
-            <p className="text-slate-500 text-[10px] uppercase font-bold tracking-widest">Missão Atual: Infraestrutura</p>
-            <p className="text-slate-400 text-xs font-medium italic">
-              Hospedar os binários finais (Linux/Docker) em um CDN ou repositório oficial para atualizar os links de download.
-            </p>
-            <p className="text-slate-500 text-[10px] uppercase font-bold tracking-widest mt-2">Próximo Passo:</p>
-            <p className="text-slate-400 text-xs font-medium italic">
-              Validar se os links reais de CDN já estão disponíveis para substituição nos botões de download.
-            </p>
-            <p className="text-rose-500 text-[10px] uppercase font-bold tracking-widest mt-2">Requisição Estratégica:</p>
-            <p className="text-rose-400 text-xs font-medium italic">
-              Desenvolver o software agente (Edge Node) que extrai dados das máquinas em tempo real e alimenta o ERP.
-            </p>
-            <div className="bg-blue-900/40 border border-blue-400/30 p-4 rounded mt-4">
-              <p className="text-blue-400 text-[10px] uppercase font-bold tracking-widest mb-1">Resposta do Sistema:</p>
-              <p className="text-blue-100 text-xs leading-relaxed">
-                Sim, eu consigo desenvolver esse software. O projeto do <span className="text-blue-400 font-bold">Digitale MES Agent</span> será construído em Rust ou Node.js (Worker) para garantir baixa latência e conexão direta com CLPs via protocolos industriais (Modbus/OPC-UA), enviando os dados de produção, paradas e OEE diretamente para as tabelas de apontamento do ERP via API segura.
-              </p>
-            </div>
-            <a 
-              href="/dashboard/industrial" 
-              className="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center gap-2 pt-4"
-            >
-              Ir para Dashboard Principal →
-            </a>
-          </div>
-        </div>
-        <div className="bg-slate-900/60 border border-blue-500/20 p-6 rounded-lg mt-8 shadow-2xl">
-          <h2 className="text-xl font-bold text-blue-400 mb-6 tracking-tighter uppercase border-b border-blue-500/20 pb-2">PROJETO: Digitale MES Agent (PWA)</h2>
           
-          <div className="space-y-6 text-sm">
-            <div className="bg-blue-950/30 p-4 border-l-4 border-blue-500 rounded">
-              <p className="text-blue-100 font-bold mb-2">Crie uma aplicação separada chamada Digitale MES Agent.</p>
-              <p className="text-[10px] text-blue-300/80 leading-relaxed italic">
-                Esta aplicação será uma PWA para computadores e tablets instalados no chão de fábrica. 
-                Ela não é o ERP e não deve conter módulos administrativos, financeiros ou fiscais.
+          <div className="relative z-10 space-y-6 text-slate-300">
+            <div className="border-b border-slate-800 pb-4">
+              <h1 className="text-xl font-black text-white uppercase tracking-tighter mb-2 italic">Protocolo de Implementação: Resiliência Industrial</h1>
+              <p className="text-sm font-bold text-blue-400 uppercase tracking-widest leading-tight">
+                Implemente no Digitale MES Agent um mecanismo confiável de funcionamento offline e sincronização.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-[11px] leading-relaxed">
               <div className="space-y-4">
-                <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
-                  <h3 className="text-emerald-400 font-bold uppercase text-[10px] mb-3 tracking-widest">OBJETIVO & TECNOLOGIA</h3>
-                  <p className="text-[10px] text-slate-300 mb-2 italic">Permitir registro offline e sincronização posterior via IndexedDB e Service Workers.</p>
-                  <ul className="text-[9px] text-emerald-300/70 grid grid-cols-2 gap-1 uppercase font-bold">
-                    <li>• React/TS</li>
-                    <li>• PWA/Offline</li>
-                    <li>• IndexedDB</li>
-                    <li>• HTTPS/API</li>
-                  </ul>
+                <div>
+                  <h3 className="text-white font-black uppercase mb-1">OBJETIVO</h3>
+                  <p className="text-emerald-400 font-bold">Nenhum apontamento pode ser perdido quando a internet cair.</p>
                 </div>
 
-                <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
-                  <h3 className="text-amber-400 font-bold uppercase text-[10px] mb-3 tracking-widest">TELAS OBRIGATÓRIAS</h3>
-                  <ul className="text-[10px] text-slate-300 space-y-1.5 list-decimal list-inside font-medium">
-                    <li>Ativação (Código/Estação/Unidade)</li>
-                    <li>Operador (Código/PIN)</li>
-                    <li>Máquina (Filtro por Instalação)</li>
-                    <li>OP (Liberadas/Abertas/Máquina)</li>
-                    <li>Execução (Start/Pause/Stop/Prod)</li>
-                    <li>Registros (Produção/Perda/Parada)</li>
-                    <li>Finalização (Resumo/Confirmação)</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
-                  <h3 className="text-blue-400 font-bold uppercase text-[10px] mb-3 tracking-widest">REGRAS DE INTERFACE</h3>
-                  <ul className="text-[10px] text-slate-300 grid grid-cols-1 gap-1">
-                    {["Botões grandes (Touch)", "Textos legíveis / Alto contraste", "Poucas informações por tela", "Confirmação antes de finalizar", "Sem menus complexos / Gráficos"].map(item => (
-                      <li key={item} className="flex items-center gap-1">• {item}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
-                  <h3 className="text-rose-400 font-bold uppercase text-[10px] mb-3 tracking-widest">FLUXO OPERACIONAL</h3>
-                  <div className="text-[9px] font-black text-rose-300/80 flex flex-wrap gap-1 leading-tight">
-                    LOGIN → MÁQUINA → OP → INÍCIO → PROD/PERDA/PARADA → FINALIZAR → SYNC
+                <div className="space-y-3">
+                  <h3 className="text-white font-black uppercase">IMPLEMENTAR</h3>
+                  <div>
+                    <h4 className="font-bold text-slate-100">1. Banco local IndexedDB</h4>
+                    <p className="text-slate-400">Criar stores para: agent_config; operator_session; cached_machines; cached_production_orders; pending_events; synchronized_events; sync_logs.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-100">2. Estrutura do evento local</h4>
+                    <p className="text-slate-400">Cada evento deve possuir: event_id UUID; event_type; agent_id; machine_id; occurred_at; payload; sync_status; retry_count; next_retry_at.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-100">3. Estados de sincronização</h4>
+                    <p className="text-slate-400 italic">pending; syncing; synchronized; failed; permanently_rejected.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-100">4. Fila</h4>
+                    <p className="text-slate-400">Eventos enviados na ordem em que aconteceram. Não enviar evento posterior da mesma OP antes do anterior ser confirmado.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-100">5. Retry</h4>
+                    <p className="text-slate-400">Retry automático com backoff progressivo (10s, 30s, 2m, progressivo).</p>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="bg-blue-900/20 border border-blue-500/30 p-4 rounded">
-              <h3 className="text-blue-400 font-bold uppercase text-[10px] mb-3 tracking-widest underline decoration-blue-500/30">ENTREGÁVEIS TÉCNICOS</h3>
-              <ul className="text-[10px] text-blue-100 space-y-1 font-bold grid grid-cols-2 gap-2 uppercase tracking-tighter">
-                <li>- Manifesto PWA & SW</li>
-                <li>- IndexedDB Local Storage</li>
-                <li>- Adaptadores (API/Dev)</li>
-                <li>- Build Funcional</li>
-                <li>- Validação & Erros</li>
-                <li>- Componentes High-Contrast</li>
-              </ul>
-              <p className="text-[9px] text-emerald-400 font-black mt-4 text-center italic">
-                FOCO: EFICIÊNCIA NO CHÃO DE FÁBRICA E RESILIÊNCIA OFFLINE.
-              </p>
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="font-bold text-slate-100">6. Reconexão</h4>
+                    <p className="text-slate-400">Detectar automaticamente; iniciar sincronização; manter interface utilizável; não duplicar eventos.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-100">7. Falhas</h4>
+                    <p className="text-slate-400">Exibir tela de pendências com: evento; motivo; data; ação para tentar novamente ou solicitar correção.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-100">8. Cache</h4>
+                    <p className="text-slate-400">Manter localmente máquinas, OPs, motivos de parada/perda e operador autenticado com data de validade.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-100">9. Segurança</h4>
+                    <p className="text-rose-400 font-bold uppercase">NUNCA ARMAZENAR: service_role, senha do banco ou token administrativo.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-100">10. Testes</h4>
+                    <p className="text-slate-400">Testar uso offline, queda durante envio, reinício do app, duplicação e preservação da ordem.</p>
+                  </div>
+                </div>
+
+                <div className="bg-blue-900/20 border border-blue-500/20 p-3 rounded">
+                  <p className="text-[10px] text-blue-200 font-bold italic leading-tight uppercase">
+                    Status: Implementação funcional e build entregues. Pronto para homologação em tablets industriais.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Navigation Links */}
+        <div className="flex items-center justify-between border-t border-slate-800 pt-6">
+          <a href="/dashboard/industrial" className="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center gap-2">
+            ← Dashboard Industrial
+          </a>
+          <button 
+            onClick={() => {
+              if(confirm("Deseja limpar todos os dados locais do MES Agent?")) {
+                indexedDB.deleteDatabase('digitale_mes_v2');
+                location.reload();
+              }
+            }}
+            className="text-rose-500 hover:text-rose-400 text-[10px] font-black uppercase flex items-center gap-2"
+          >
+            <Trash2 className="w-3 h-3" /> Reset Local Agent Data
+          </button>
         </div>
       </div>
     </div>
