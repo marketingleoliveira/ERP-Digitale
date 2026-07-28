@@ -99,6 +99,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Gerenciar Menus", url: "/menus", icon: SlidersHorizontal, group: "Administração", locked: true },
   { title: "Certificados A1", url: "/fiscal/certificados", icon: ShieldCheck, group: "Fiscal" },
   { title: "Configurações", url: "/configuracoes", icon: Settings, group: "DEV" },
+  { title: "Roadmap Industrial", url: "/admin/roadmap-industrial", icon: FileText, group: "DEV", locked: true },
   { title: "Focus NFe", url: "/dev/focus-nfe", icon: PlugZap, group: "DEV", locked: true },
   { title: "Sprint 0 Checklist", url: "/dev/sprint0", icon: BadgeCheck, group: "DEV", locked: true },
   { title: "Suíte E2E SEED", url: "/dev/e2e", icon: BadgeCheck, group: "DEV", locked: true },
