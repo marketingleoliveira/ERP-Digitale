@@ -24,11 +24,11 @@ function PageHelpContent() {
       <Button 
         variant="ghost" 
         size="sm" 
-        className="h-7 gap-1.5 px-2 text-primary hover:bg-primary/10 font-semibold"
+        className="h-7 gap-1.5 px-2 text-destructive hover:bg-destructive/10 font-bold animate-pulse ring-2 ring-destructive/30 ring-offset-1"
         onClick={() => openHelpForPath(pathname)}
       >
         <CircleHelp className="h-3.5 w-3.5" />
-        Ajuda Contextual
+        Explicação do Menu
       </Button>
       <Separator orientation="vertical" className="h-4" />
       <span className="text-muted-foreground font-medium truncate max-w-[600px]">
