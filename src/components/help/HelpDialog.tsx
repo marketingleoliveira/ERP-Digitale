@@ -9,10 +9,10 @@ import { useHelp } from "@/components/help/HelpProvider";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { BookOpen, Shield, Zap, Lightbulb, PlayCircle } from "lucide-react";
+import { BookOpen, Shield, Zap, Lightbulb, PlayCircle, Network, CheckCircle2 } from "lucide-react";
 
 export function HelpDialog() {
-  const { activeHelp, closeHelp } = useHelp();
+  const { activeHelp, closeHelp, getHelp } = useHelp();
 
   if (!activeHelp) return null;
 
