@@ -2183,6 +2183,42 @@ export type Database = {
           },
         ]
       }
+      engenharia_documentos: {
+        Row: {
+          autor_id: string | null
+          created_at: string | null
+          entidade_id: string
+          entidade_tipo: string
+          id: string
+          nome: string
+          tipo_arquivo: string | null
+          url: string
+          versao: string | null
+        }
+        Insert: {
+          autor_id?: string | null
+          created_at?: string | null
+          entidade_id: string
+          entidade_tipo: string
+          id?: string
+          nome: string
+          tipo_arquivo?: string | null
+          url: string
+          versao?: string | null
+        }
+        Update: {
+          autor_id?: string | null
+          created_at?: string | null
+          entidade_id?: string
+          entidade_tipo?: string
+          id?: string
+          nome?: string
+          tipo_arquivo?: string | null
+          url?: string
+          versao?: string | null
+        }
+        Relationships: []
+      }
       entrega_eventos: {
         Row: {
           comprovante_mime: string | null
@@ -8211,42 +8247,51 @@ export type Database = {
       roteiros: {
         Row: {
           article_id: string | null
+          artigo_id: string | null
           ativo: boolean
           codigo: string
           created_at: string
           descricao: string
           id: string
           observacoes: string | null
-          revisao: number
+          revisao: string
           setup_min: number
+          status: string | null
           tempo_padrao_min: number
           updated_at: string
+          versao: number | null
         }
         Insert: {
           article_id?: string | null
+          artigo_id?: string | null
           ativo?: boolean
           codigo: string
           created_at?: string
           descricao: string
           id?: string
           observacoes?: string | null
-          revisao?: number
+          revisao?: string
           setup_min?: number
+          status?: string | null
           tempo_padrao_min?: number
           updated_at?: string
+          versao?: number | null
         }
         Update: {
           article_id?: string | null
+          artigo_id?: string | null
           ativo?: boolean
           codigo?: string
           created_at?: string
           descricao?: string
           id?: string
           observacoes?: string | null
-          revisao?: number
+          revisao?: string
           setup_min?: number
+          status?: string | null
           tempo_padrao_min?: number
           updated_at?: string
+          versao?: number | null
         }
         Relationships: [
           {
@@ -8266,6 +8311,27 @@ export type Database = {
           {
             foreignKeyName: "roteiros_article_id_fkey"
             columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_nome_id"]
+          },
+          {
+            foreignKeyName: "roteiros_artigo_id_fkey"
+            columns: ["artigo_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roteiros_artigo_id_fkey"
+            columns: ["artigo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_produtos_sugestao_artigo"
+            referencedColumns: ["sugestao_por_codigo_id"]
+          },
+          {
+            foreignKeyName: "roteiros_artigo_id_fkey"
+            columns: ["artigo_id"]
             isOneToOne: false
             referencedRelation: "vw_produtos_sugestao_artigo"
             referencedColumns: ["sugestao_por_nome_id"]
