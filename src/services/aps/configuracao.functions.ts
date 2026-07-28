@@ -13,13 +13,13 @@ const CalendarioSchema = z.object({
 
 const TurnoSchema = z.object({
   id: z.string().optional(),
-  codigo: z.string().min(1),
   nome: z.string().min(1),
   hora_inicio: z.string(),
   hora_fim: z.string(),
-  intervalo_minutos: z.number().int().nonnegative().default(60),
+  intervalo_min: z.number().int().nonnegative().default(60),
   dias_semana: z.array(z.number().int().min(1).max(7)).default([1, 2, 3, 4, 5]),
   ativo: z.boolean().default(true),
+  observacao: z.string().optional().nullable(),
 });
 
 export const getCalendario = createServerFn({ method: "GET" })
@@ -41,10 +41,10 @@ export const saveCalendario = createServerFn({ method: "POST" })
     const { supabase } = context;
     const { id, ...rest } = data;
     if (id) {
-      const { error } = await supabase.from("calendario_industrial").update(rest).eq("id", id);
+      const { error } = await supabase.from("calendario_industrial").update(rest as any).eq("id", id);
       if (error) throw error;
     } else {
-      const { error } = await supabase.from("calendario_industrial").insert(rest);
+      const { error } = await supabase.from("calendario_industrial").insert(rest as any);
       if (error) throw error;
     }
     return { success: true };
@@ -54,7 +54,7 @@ export const getTurnos = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase } = context;
-    const { data, error } = await supabase.from("turnos").select("*").order("codigo");
+    const { data, error } = await supabase.from("turnos").select("*").order("nome");
     if (error) throw error;
     return data;
   });
@@ -66,10 +66,10 @@ export const saveTurno = createServerFn({ method: "POST" })
     const { supabase } = context;
     const { id, ...rest } = data;
     if (id) {
-      const { error } = await supabase.from("turnos").update(rest).eq("id", id);
+      const { error } = await supabase.from("turnos").update(rest as any).eq("id", id);
       if (error) throw error;
     } else {
-      const { error } = await supabase.from("turnos").insert(rest);
+      const { error } = await supabase.from("turnos").insert(rest as any);
       if (error) throw error;
     }
     return { success: true };
