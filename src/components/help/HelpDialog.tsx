@@ -135,7 +135,56 @@ export function HelpDialog() {
               </section>
             )}
 
+            {activeHelp.integrations && activeHelp.integrations.length > 0 && (
+              <section>
+                <h4 className="flex items-center gap-2 text-sm font-bold text-blue-800 dark:text-blue-300 uppercase tracking-wider mb-3">
+                  <Network className="w-4 h-4" /> Integrações
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {activeHelp.integrations.map((it, i) => (
+                    <Badge key={i} variant="outline" className="border-blue-500/30 text-blue-700 dark:text-blue-300">
+                      {it}
+                    </Badge>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {activeHelp.bestPractices && activeHelp.bestPractices.length > 0 && (
+              <section className="bg-emerald-500/5 border border-emerald-500/10 p-4 rounded-xl">
+                <h4 className="flex items-center gap-2 text-sm font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-3">
+                  <CheckCircle2 className="w-4 h-4" /> Boas Práticas
+                </h4>
+                <ul className="space-y-2">
+                  {activeHelp.bestPractices.map((bp, i) => (
+                    <li key={i} className="text-sm text-emerald-900/80 dark:text-emerald-200/80 leading-snug">
+                      • {bp}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {activeHelp.relatedModules && activeHelp.relatedModules.length > 0 && (
+              <section>
+                <h4 className="flex items-center gap-2 text-sm font-bold text-blue-800 dark:text-blue-300 uppercase tracking-wider mb-3">
+                  <Network className="w-4 h-4" /> Módulos Relacionados
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {activeHelp.relatedModules.map((rm, i) => {
+                    const related = getHelp(rm);
+                    return (
+                      <Badge key={i} variant="secondary" className="font-normal">
+                        {related?.summary ?? rm}
+                      </Badge>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
           </div>
+
         </ScrollArea>
 
         <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-t flex justify-end">
