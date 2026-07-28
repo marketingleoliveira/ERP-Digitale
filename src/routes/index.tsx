@@ -89,8 +89,44 @@ function HomologacaoOperacionalPage() {
 
         <hr className="border-white/10 my-10" />
 
-        <section className="space-y-6 pb-20 text-center">
-          <p className="text-blue-500 font-black text-xl uppercase tracking-widest">Apresentar apenas evidências técnicas.</p>
+        <section className="space-y-6 pb-20">
+          <h2 className="text-2xl font-black text-red-500 uppercase tracking-tighter">CRITÉRIO DE REPROVAÇÃO AUTOMÁTICA</h2>
+          
+          <div className="p-6 bg-red-900/20 border border-red-500/40 rounded space-y-4">
+            <p className="text-white font-bold">A implementação será considerada REPROVADA caso:</p>
+            <ul className="list-disc list-inside text-white/70 space-y-2">
+              <li>altere apenas arquivos TSX, JSX, CSS ou componentes visuais;</li>
+              <li>crie dashboards, páginas de documentação ou layouts;</li>
+              <li>não modifique banco de dados, backend ou testes;</li>
+              <li>não apresente evidências técnicas.</li>
+            </ul>
+            <p className="text-red-400 font-black uppercase text-sm mt-4 italic">Arquivos exclusivamente de interface NÃO contam como implementação.</p>
+          </div>
+
+          <div className="mt-10 space-y-6">
+            <h3 className="text-xl font-black text-white uppercase tracking-tight">Toda resposta deverá conter obrigatoriamente:</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                "migrations criadas",
+                "funções PostgreSQL",
+                "RPCs",
+                "services alterados",
+                "regras de negócio implementadas",
+                "testes executados",
+                "resultado do build",
+                "lista de arquivos backend modificados"
+              ].map(item => (
+                <div key={item} className="flex items-center gap-3">
+                  <span className="text-green-500 font-bold">✓</span>
+                  <span className="text-white/80">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <p className="text-white/40 text-center text-xs mt-12 italic">
+            Não serão aceitas respostas contendo apenas "UI Architect executado" ou "Dashboard atualizado".
+          </p>
         </section>
       </div>
     </div>
