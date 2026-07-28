@@ -21,14 +21,18 @@ export type MenuItem = {
   locked?: boolean;
   /** Off by default (legacy items) */
   defaultHidden?: boolean;
+  /** Short description for the sidebar */
+  description?: string;
+  /** Unique ID for help mapping */
+  helpId?: string;
 };
 
 /** Full catalog of available menus. Add new items here. */
 export const ALL_MENU_ITEMS: MenuItem[] = [
-  { title: "Início", url: "/inicio", icon: LayoutDashboard, group: "", locked: true },
-  { title: "Funcionário", url: "/funcionario", icon: IdCard, group: "Sistema" },
-  { title: "Usuário", url: "/usuarios", icon: ShieldCheck, group: "Sistema" },
-  { title: "Senha", url: "/senha", icon: KeyRound, group: "Sistema" },
+  { title: "Início", url: "/inicio", icon: LayoutDashboard, group: "", locked: true, description: "Visão geral e atalhos rápidos.", helpId: "inicio" },
+  { title: "Funcionário", url: "/funcionario", icon: IdCard, group: "Sistema", description: "Gestão de cadastro de colaboradores." },
+  { title: "Usuário", url: "/usuarios", icon: ShieldCheck, group: "Sistema", description: "Controle de acesso e permissões." },
+  { title: "Senha", url: "/senha", icon: KeyRound, group: "Sistema", description: "Alteração de credenciais de acesso." },
   { title: "Time Log", url: "/time-log", icon: Clock, group: "Sistema" },
   { title: "Clientes", url: "/empresa", icon: Building2, group: "Cadastros" },
   { title: "Composição", url: "/composicao", icon: FlaskConical, group: "Cadastros", defaultHidden: true },
@@ -43,15 +47,15 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Máquina", url: "/maquina", icon: Wrench, group: "Cadastros" },
   { title: "Agulha", url: "/agulha", icon: Syringe, group: "Cadastros" },
   { title: "Correias", url: "/correia", icon: Wrench, group: "Cadastros" },
-  { title: "Tecidos", url: "/estoque-tecidos", icon: Shirt, group: "Estoque" },
-  { title: "Fios", url: "/estoque-fios", icon: Spool, group: "Estoque" },
-  { title: "Lotes", url: "/lotes", icon: PackageCheck, group: "Estoque" },
-  { title: "Kardex", url: "/estoque/kardex", icon: FileText, group: "Estoque" },
+  { title: "Tecidos", url: "/estoque-tecidos", icon: Shirt, group: "Estoque", description: "Saldo e movimentação de rolos.", helpId: "estoque-tecidos" },
+  { title: "Fios", url: "/estoque-fios", icon: Spool, group: "Estoque", description: "Controle de estoque de fios e cones." },
+  { title: "Lotes", url: "/lotes", icon: PackageCheck, group: "Estoque", description: "Rastreabilidade e gestão de lotes." },
+  { title: "Kardex", url: "/estoque/kardex", icon: FileText, group: "Estoque", description: "Histórico de movimentações físicas." },
   { title: "Rep. Meta R$", url: "/rep-meta", icon: Target, group: "Cadastros" },
   { title: "Representantes (legado)", url: "/representantes", icon: UserCheck, group: "Cadastros", defaultHidden: true },
-  { title: "Painel OP", url: "/producao", icon: Factory, group: "Produção (PCP)" },
-  { title: "Pedidos", url: "/producao/pedidos", icon: ShoppingCart, group: "Produção (PCP)" },
-  { title: "Ordens de Produção", url: "/producao/op", icon: Scissors, group: "Produção (PCP)" },
+  { title: "Painel OP", url: "/producao", icon: Factory, group: "Produção (PCP)", description: "Monitoramento em tempo real do chão de fábrica." },
+  { title: "Pedidos", url: "/producao/pedidos", icon: ShoppingCart, group: "Produção (PCP)", description: "Gestão de carteira de pedidos comerciais." },
+  { title: "Ordens de Produção", url: "/producao/op", icon: Scissors, group: "Produção (PCP)", description: "Controle de emissão e execução de OPs.", helpId: "producao-op" },
   { title: "Qualidade", url: "/producao/qualidade", icon: BadgeCheck, group: "Produção (PCP)" },
   { title: "Planos de Inspeção", url: "/pcp/planos-inspecao", icon: ClipboardCheck, group: "Produção (PCP)" },
   { title: "Expedição", url: "/producao/expedicao", icon: Truck, group: "Produção (PCP)" },
@@ -68,13 +72,13 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Ficha Técnica (Engenharia)", url: "/producao/bom", icon: FileText, group: "Produção (PCP)" },
   { title: "OEE Industrial", url: "/pcp/oee", icon: Factory, group: "Produção (PCP)" },
   { title: "Custos Industriais", url: "/pcp/custos", icon: Wallet, group: "Produção (PCP)" },
- { title: "MRP — Materiais", url: "/pcp/mrp", icon: Package, group: "Produção (PCP)" },
- { title: "MRP → Sugestão de OP", url: "/pcp/mrp-op", icon: Factory, group: "Produção (PCP)" },
+  { title: "MRP — Materiais", url: "/pcp/mrp", icon: Package, group: "Produção (PCP)", description: "Explosão de necessidades de matéria-prima.", helpId: "pcp-mrp" },
+  { title: "MRP → Sugestão de OP", url: "/pcp/mrp-op", icon: Factory, group: "Produção (PCP)", description: "Sugestões automáticas de ordens de produção." },
   { title: "Vínculos Produto → Artigo", url: "/pcp/vinculos-artigo", icon: Package, group: "Produção (PCP)" },
   { title: "Reservas de Material", url: "/pcp/reservas", icon: Package, group: "Produção (PCP)" },
   { title: "Dashboard Industrial", url: "/dashboard/industrial", icon: LayoutDashboard, group: "" },
-  { title: "Dashboard Financeiro", url: "/financeiro/dashboard", icon: LayoutDashboard, group: "Financeiro & Logística" },
-  { title: "Contas a Receber", url: "/financeiro", icon: Wallet, group: "Financeiro & Logística" },
+  { title: "Dashboard Financeiro", url: "/financeiro/dashboard", icon: LayoutDashboard, group: "Financeiro & Logística", description: "Visão executiva de saúde financeira." },
+  { title: "Contas a Receber", url: "/financeiro", icon: Wallet, group: "Financeiro & Logística", description: "Gestão de recebíveis e faturamento.", helpId: "financeiro" },
   { title: "Fluxo de Caixa", url: "/financeiro/fluxo-caixa", icon: Wallet, group: "Financeiro & Logística" },
   { title: "Movimentos", url: "/financeiro/movimentos", icon: FileText, group: "Financeiro & Logística" },
   { title: "Centros de Custo", url: "/financeiro/centros-custo", icon: Briefcase, group: "Financeiro & Logística" },
@@ -86,7 +90,7 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Transportadoras", url: "/logistica/transportadoras", icon: Truck, group: "Financeiro & Logística" },
   { title: "Rastreabilidade", url: "/rastreabilidade/pedido/00000000-0000-0000-0000-000000000000", icon: Network, group: "Financeiro & Logística" },
     { title: "Dashboard Fiscal", url: "/fiscal/dashboard", icon: LayoutDashboard, group: "Fiscal" },
-    { title: "Nota Fiscal", url: "/fiscal/nota-fiscal", icon: FileText, group: "Fiscal" },
+    { title: "Nota Fiscal", url: "/fiscal/nota-fiscal", icon: FileText, group: "Fiscal", description: "Emissão e controle de NF-e.", helpId: "fiscal-nota-fiscal" },
   { title: "Nota Fiscal Importação", url: "/fiscal/nota-fiscal-importacao", icon: FileText, group: "Fiscal" },
   { title: "Nota Fiscal Upload", url: "/fiscal/nota-fiscal-upload", icon: FileText, group: "Fiscal" },
   { title: "Impostos", url: "/fiscal/impostos", icon: Receipt, group: "Fiscal" },
