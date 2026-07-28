@@ -35,93 +35,188 @@ function HomologacaoOperacionalPage() {
       <div className="max-w-4xl mx-auto space-y-8 py-12">
         <h1 className="text-4xl font-black text-blue-500 tracking-tighter uppercase mb-8">MISSÃO</h1>
         
-        <p className="text-xl font-bold text-white mb-6">Homologar exclusivamente o módulo Fiscal.</p>
-        
-        <div className="space-y-2 text-red-500 font-bold uppercase tracking-wide">
-          <p>Não transmitir NF.</p>
-          <p>Não integrar ainda com Focus.</p>
+        <div className="space-y-6">
+          <p className="text-xl font-bold text-white">Implementar um Sistema Global de Ajuda Contextual para todo o ERP da Digitale Têxtil.</p>
+          
+          <p className="text-white/80">O objetivo NÃO é apenas adicionar um botão "AJUDA".</p>
+          
+          <div className="bg-blue-500/10 border-l-4 border-blue-500 p-4 space-y-2">
+            <p className="text-sm font-bold uppercase tracking-wider text-blue-400">Objetivo Estrutural:</p>
+            <p className="text-white/70">Criar uma infraestrutura reutilizável para que qualquer módulo atual ou futuro possua automaticamente:</p>
+            <ul className="list-disc list-inside text-white/60 text-sm space-y-1 ml-2">
+              <li>descrição resumida</li>
+              <li>ajuda detalhada</li>
+              <li>documentação contextual</li>
+              <li>dicas de utilização</li>
+              <li>melhores práticas</li>
+              <li>permissões necessárias</li>
+              <li>integração com outros módulos</li>
+            </ul>
+          </div>
+
+          <div className="flex flex-wrap gap-4 text-xs font-bold uppercase tracking-widest text-red-400">
+            <span>Toda a implementação deverá ser reutilizável.</span>
+            <span>Não duplicar código.</span>
+            <span>Não criar uma solução específica para apenas uma tela.</span>
+          </div>
         </div>
 
         <hr className="border-white/10 my-10" />
 
         <section className="space-y-6">
-          <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Preparar completamente:</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <h2 className="text-2xl font-black text-white uppercase tracking-tighter border-b border-white/10 pb-2">REGRAS IMPORTANTES</h2>
+          <ul className="space-y-3 text-white/80">
+            <li className="flex items-start gap-3">
+              <span className="text-red-500 font-bold">!</span>
+              <span>É proibido criar uma implementação diferente para cada página.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-500 font-bold">→</span>
+              <span>Criar apenas um componente global reutilizável.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-500 font-bold">→</span>
+              <span>Toda página deverá consumir este componente.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-red-500 font-bold">!</span>
+              <span>Não copiar texto diretamente dentro das páginas.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-500 font-bold">→</span>
+              <span>Todas as descrições deverão vir de uma estrutura centralizada.</span>
+            </li>
+          </ul>
+        </section>
+
+        <section className="space-y-6">
+          <h2 className="text-2xl font-black text-white uppercase tracking-tighter border-b border-white/10 pb-2">ARQUITETURA</h2>
+          <p className="text-white/60">Criar um sistema composto por:</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {[
-              "XML",
-              "payload",
-              "DANFE",
-              "CFOP",
-              "NCM",
-              "CST",
-              "CSOSN",
-              "impostos",
-              "sequência",
-              "logs",
-              "validação"
+              "HelpSection",
+              "HelpDialog",
+              "HelpContent",
+              "HelpRegistry",
+              "HelpProvider",
+              "Hook useHelp()"
+            ].map(item => (
+              <div key={item} className="flex items-center gap-2 text-sm">
+                <span className="text-green-500 font-bold">✓</span>
+                <span className="text-white/80">{item}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 p-4 bg-white/5 rounded text-xs font-mono text-white/50">
+            <p className="text-blue-400 mb-2">// Exemplo de Identificadores:</p>
+            <p>employees.list | customers.list | orders.list | inventory.products | inventory.stock | production.orders | quality.inspections | finance.accounts | fiscal.nfe</p>
+          </div>
+        </section>
+
+        <section className="space-y-6">
+          <h2 className="text-2xl font-black text-white uppercase tracking-tighter border-b border-white/10 pb-2">CABEÇALHO E BOTÃO</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-4">
+              <h3 className="text-blue-400 font-bold uppercase text-xs tracking-widest">Páginas:</h3>
+              <p className="text-sm text-white/70 italic">"Gerencie os colaboradores da empresa, cadastre novos funcionários..."</p>
+              <ul className="text-xs text-white/50 space-y-1 list-disc list-inside">
+                <li>Aparência discreta</li>
+                <li>Fonte menor que o título</li>
+                <li>Cor secundária</li>
+                <li>Máximo de duas linhas</li>
+              </ul>
+            </div>
+            <div className="space-y-4">
+              <h3 className="text-blue-400 font-bold uppercase text-xs tracking-widest">Ajuda:</h3>
+              <p className="text-sm text-white/70 flex items-center gap-2">
+                <span className="border border-white/20 px-2 py-0.5 rounded text-[10px] uppercase">AJUDA</span>
+                <span className="text-white/40">(CircleHelp Lucide)</span>
+              </p>
+              <ul className="text-xs text-white/50 space-y-1 list-disc list-inside">
+                <li>Estilo Outline / Pequeno</li>
+                <li>Abre Dialog padronizado</li>
+                <li>Nunca abrir nova página ou redirecionar</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-6">
+          <h2 className="text-2xl font-black text-white uppercase tracking-tighter border-b border-white/10 pb-2">HELP REGISTRY & ESCALABILIDADE</h2>
+          <div className="p-6 bg-white/5 rounded space-y-4 text-sm">
+            <p className="font-bold text-blue-400">helpRegistry.ts</p>
+            <p className="text-white/70">Estrutura obrigatória por módulo:</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] uppercase font-bold text-white/40">
+              <span>id</span>
+              <span>title</span>
+              <span>summary</span>
+              <span>description</span>
+              <span>features</span>
+              <span>permissions</span>
+              <span>integrations</span>
+              <span>bestPractices</span>
+              <span>tips</span>
+              <span>relatedModules</span>
+            </div>
+            <p className="text-xs italic text-red-400 mt-4">Jamais escrever texto diretamente dentro das páginas.</p>
+          </div>
+        </section>
+
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-y border-white/10">
+          <div className="space-y-2">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-500">Responsividade</h4>
+            <p className="text-xs text-white/60">Desktop, Tablet e Mobile automáticos.</p>
+          </div>
+          <div className="space-y-2">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-500">Acessibilidade</h4>
+            <p className="text-xs text-white/60">ARIA, Focus Trap, ESC/Enter, Tab.</p>
+          </div>
+          <div className="space-y-2">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-500">Performance</h4>
+            <p className="text-xs text-white/60">Lazy loading sob demanda.</p>
+          </div>
+          <div className="space-y-2">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-500">i18n</h4>
+            <p className="text-xs text-white/60">Multi-idioma e sem textos fixos.</p>
+          </div>
+        </section>
+
+        <section className="space-y-6 pt-10">
+          <h2 className="text-2xl font-black text-green-500 uppercase tracking-tighter">CRITÉRIOS DE ACEITE</h2>
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-2 text-sm text-white/70">
+            {[
+              "Descrição abaixo do título em todas as páginas",
+              "Botão AJUDA em todas as páginas",
+              "Popup contextual padronizado",
+              "Conteúdo 100% via Help Registry",
+              "Sem textos duplicados",
+              "Componente reutilizável e responsivo",
+              "Acessibilidade completa",
+              "Não alterar Home nem arquitetura existente"
             ].map(item => (
               <div key={item} className="flex items-center gap-3">
                 <span className="text-green-500 font-bold">✓</span>
-                <span className="text-white/80 uppercase text-sm">{item}</span>
+                <span>{item}</span>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="space-y-4 pt-6 text-white/80 font-bold border-l-4 border-yellow-500 pl-6 bg-yellow-500/5 py-4">
-          <p className="text-yellow-500 uppercase tracking-widest text-sm">Atenção:</p>
-          <p>Jamais simular autorização.</p>
-          <p className="text-sm font-normal">A única pendência permitida deverá ser:</p>
-          <p className="text-blue-400">Configuração das credenciais válidas da Focus NFe.</p>
-          <p className="pt-4">Executar testes completos.</p>
-        </section>
-
-        <hr className="border-white/10 my-10" />
-
-        <section className="space-y-6 pb-20 text-center">
-          <p className="text-blue-500 font-black text-xl uppercase tracking-widest">Apresentar apenas evidências técnicas.</p>
-        </section>
-
-        <hr className="border-white/10 my-10" />
-
-        <section className="space-y-6 pb-20">
-          <h2 className="text-2xl font-black text-red-500 uppercase tracking-tighter">CRITÉRIO DE REPROVAÇÃO AUTOMÁTICA</h2>
+        <section className="space-y-8 pt-20 pb-20">
+          <div className="text-center space-y-4">
+            <h3 className="text-blue-500 font-black text-xl uppercase tracking-widest">RELATÓRIO FINAL OBRIGATÓRIO</h3>
+            <p className="text-white/40 text-xs italic">A implementação deverá ser estrutural, reutilizável e preparada para todos os módulos.</p>
+          </div>
           
-          <div className="p-6 bg-red-900/20 border border-red-500/40 rounded space-y-4">
-            <p className="text-white font-bold">A implementação será considerada REPROVADA caso:</p>
-            <ul className="list-disc list-inside text-white/70 space-y-2">
-              <li>altere apenas arquivos TSX, JSX, CSS ou componentes visuais;</li>
-              <li>crie dashboards, páginas de documentação ou layouts;</li>
-              <li>não modifique banco de dados, backend ou testes;</li>
-              <li>não apresente evidências técnicas.</li>
-            </ul>
-            <p className="text-red-400 font-black uppercase text-sm mt-4 italic">Arquivos exclusivamente de interface NÃO contam como implementação.</p>
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-[10px] font-black uppercase tracking-tighter text-white/60">
+            <span>Arquivos criados</span>
+            <span>Componentes</span>
+            <span>Hooks</span>
+            <span>Help Registry</span>
+            <span>Páginas integradas</span>
+            <span>Testes</span>
+            <span>Build</span>
           </div>
-
-          <div className="mt-10 space-y-6">
-            <h3 className="text-xl font-black text-white uppercase tracking-tight">Toda resposta deverá conter obrigatoriamente:</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[
-                "migrations criadas",
-                "funções PostgreSQL",
-                "RPCs",
-                "services alterados",
-                "regras de negócio implementadas",
-                "testes executados",
-                "resultado do build",
-                "lista de arquivos backend modificados"
-              ].map(item => (
-                <div key={item} className="flex items-center gap-3">
-                  <span className="text-green-500 font-bold">✓</span>
-                  <span className="text-white/80">{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <p className="text-white/40 text-center text-xs mt-12 italic">
-            Não serão aceitas respostas contendo apenas "UI Architect executado" ou "Dashboard atualizado".
-          </p>
         </section>
       </div>
     </div>
