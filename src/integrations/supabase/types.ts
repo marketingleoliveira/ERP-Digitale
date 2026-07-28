@@ -3721,11 +3721,13 @@ export type Database = {
           event_type: Database["public"]["Enums"]["mes_event_type"]
           id: string
           machine_id: string | null
+          next_retry_at: string | null
           occurred_at: string
           op_id: string | null
           operator_id: string | null
           payload: Json | null
           processed_at: string | null
+          retry_count: number | null
           status: string | null
         }
         Insert: {
@@ -3736,11 +3738,13 @@ export type Database = {
           event_type: Database["public"]["Enums"]["mes_event_type"]
           id?: string
           machine_id?: string | null
+          next_retry_at?: string | null
           occurred_at: string
           op_id?: string | null
           operator_id?: string | null
           payload?: Json | null
           processed_at?: string | null
+          retry_count?: number | null
           status?: string | null
         }
         Update: {
@@ -3751,11 +3755,13 @@ export type Database = {
           event_type?: Database["public"]["Enums"]["mes_event_type"]
           id?: string
           machine_id?: string | null
+          next_retry_at?: string | null
           occurred_at?: string
           op_id?: string | null
           operator_id?: string | null
           payload?: Json | null
           processed_at?: string | null
+          retry_count?: number | null
           status?: string | null
         }
         Relationships: [
