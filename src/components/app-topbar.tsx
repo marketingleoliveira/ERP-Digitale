@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { PageHelpButton } from "@/components/help/PageHelpButton";
 
 
 export function AppTopbar() {
@@ -39,6 +40,8 @@ export function AppTopbar() {
         />
       </div>
       <div className="flex-1" />
+
+      <PageHelpButton showLabel />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
