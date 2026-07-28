@@ -5,9 +5,7 @@ import { Loader2, ShieldAlert } from "lucide-react";
 import { redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: () => {
-    throw redirect({ to: "/dashboard/industrial" });
-  },
+  component: HomologacaoOperacionalPage,
 });
 
 function HomologacaoOperacionalPage() {
