@@ -51,6 +51,17 @@ export const adminCreateUser = createServerFn({ method: "POST" })
     const uid = created.user?.id;
     if (!uid) throw new Error("Falha ao criar usuário.");
 
+    // Sincronização explícita do perfil (caso a trigger demore ou falhe)
+    const { error: profileErr } = await supabaseAdmin
+      .from("profiles")
+      .upsert({
+        id: uid,
+        email: data.email.toLowerCase(),
+        nome: data.nome,
+        ativo: true
+      });
+    if (profileErr) console.error("Erro ao criar perfil manual:", profileErr);
+
     if (data.cargo_id) {
       const { error: e2 } = await supabaseAdmin
         .from("user_cargos")

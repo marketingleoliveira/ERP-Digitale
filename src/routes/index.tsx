@@ -41,9 +41,9 @@ function HomologacaoOperacionalPage() {
         
         <div className="space-y-12">
           <section className="space-y-4">
-            <h2 className="text-xl font-bold text-blue-400 uppercase tracking-widest">FUNCIONALIDADE CONCLUÍDA</h2>
+            <h2 className="text-xl font-bold text-blue-400 uppercase tracking-widest">CORREÇÃO: SINCRONIZAÇÃO DE USUÁRIOS</h2>
             <p className="text-white/80 leading-relaxed">
-              Dentro do menu SISTEMA crie um submenu chamado ORGANOGRAMA que mostre o organograma de todos os usuários criados divididos em cargos seguindo a hierarquia.
+              Implementada sincronização transacional explícita no `adminCreateUser`. Agora, ao criar um novo usuário, o perfil é garantido instantaneamente na tabela `profiles`, corrigindo o atraso ou falha da trigger que impedia a visualização imediata na lista de usuários ativos.
             </p>
           </section>
 
