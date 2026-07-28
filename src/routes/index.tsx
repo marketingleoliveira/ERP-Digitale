@@ -37,391 +37,175 @@ function HomologacaoOperacionalPage() {
       <div className="max-w-4xl mx-auto space-y-8 py-12">
         MISSÃO
 
-        NÃO implemente nenhuma funcionalidade.
+        Você NÃO deve analisar a página inicial (/).
 
-        NÃO altere nenhum arquivo.
+        Você NÃO deve analisar index.tsx.
 
-        NÃO modifique banco de dados.
+        Você NÃO deve validar textos de interface.
 
-        NÃO execute migrations.
+        Você NÃO deve auditar layouts.
 
-        NÃO altere layouts.
+        Você NÃO deve modificar qualquer arquivo.
 
-        NÃO altere componentes.
+        Sua única missão é INVENTARIAR TODO O PROJETO.
 
-        NÃO corrija bugs.
+        Esta tarefa é exclusivamente de leitura e documentação.
 
-        NÃO gere código.
+        ==================================================
 
-        Sua única missão é realizar uma auditoria completa do ERP e gerar uma documentação técnica e funcional extremamente detalhada do estado atual do sistema.
+        É PROIBIDO
 
-        O objetivo é permitir que outro especialista analise todo o ERP e consiga orientar os usuários sobre como utilizar cada módulo corretamente.
+        ❌ Auditar apenas a Home.
 
-        Não resuma informações.
+        ❌ Auditar apenas index.tsx.
 
-        Quanto mais detalhes forem apresentados, melhor.
+        ❌ Responder falando sobre layout.
 
-        ══════════════════════════════════════════════
+        ❌ Responder falando sobre UI.
 
-        PARTE 1 — VISÃO GERAL
+        ❌ Responder falando sobre Dashboard.
 
-        Descreva:
+        ❌ Responder sobre textos.
 
-        • arquitetura do sistema
+        ❌ Responder sem percorrer todo o código-fonte.
 
-        • framework utilizado
+        ==================================================
 
-        • banco de dados
+        VOCÊ DEVE ANALISAR TODO O PROJETO
 
-        • autenticação
+        Percorra completamente:
 
-        • autorização
+        - src/
+        - routes/
+        - components/
+        - hooks/
+        - services/
+        - lib/
+        - integrations/
+        - utils/
+        - database/
+        - supabase/
+        - migrations/
+        - sql/
+        - functions/
+        - rpc/
+        - storage/
+        - policies/
+        - triggers/
 
-        • integrações
+        Também analise:
 
-        • storage
+        - package.json
+        - tsconfig
+        - vite.config
+        - arquivos de configuração
+        - estrutura do menu
+        - autenticação
+        - RBAC
+        - RLS
 
-        • realtime
+        ==================================================
 
-        • filas
+        PARA CADA ROTA ENCONTRADA INFORME
 
-        • jobs
+        - nome
+        - caminho
+        - objetivo
+        - arquivos utilizados
+        - componentes
+        - serviços
+        - RPCs
+        - permissões
 
-        • APIs
+        ==================================================
 
-        • organização das pastas
+        PARA CADA MÓDULO INFORME
 
-        ══════════════════════════════════════════════
+        - para que serve
+        - funcionalidades existentes
+        - funcionalidades ausentes
+        - dependências
+        - integrações
 
-        PARTE 2 — MAPA COMPLETO DO MENU
+        ==================================================
 
-        Liste absolutamente todos os menus existentes.
+        PARA O BANCO INFORME
 
-        Para cada menu informar:
+        - tabelas
+        - views
+        - triggers
+        - funções
+        - RPCs
+        - policies
+        - buckets
 
-        Nome
+        ==================================================
 
-        Rota
+        PARA O MENU INFORME
 
-        Descrição
+        Todos os menus existentes.
 
-        Objetivo
+        Todas as páginas existentes.
 
-        Quem pode acessar
+        Todas as opções existentes.
 
-        Módulos relacionados
+        ==================================================
 
-        Status
+        PARA O ERP INFORME
 
-        (Completo / Parcial / Não implementado)
-
-        ══════════════════════════════════════════════
-
-        PARTE 3 — PÁGINAS
-
-        Liste TODAS as páginas existentes.
-
-        Para cada página informar:
-
-        Título
-
-        Arquivo
-
-        Rota
-
-        Descrição
-
-        Objetivo
-
-        Componentes utilizados
-
-        Serviços utilizados
-
-        RPCs utilizadas
-
-        Permissões
-
-        Integrações
-
-        ══════════════════════════════════════════════
-
-        PARTE 4 — CADASTROS
-
-        Listar todos os cadastros existentes.
+        Quais processos completos já existem.
 
         Exemplo:
 
-        Clientes
+        Cadastro
 
-        Funcionários
-
-        Produtos
-
-        Artigos
-
-        Tecidos
-
-        Cores
-
-        Variantes
-
-        Fornecedores
-
-        Máquinas
-
-        Centros de Trabalho
-
-        Lotes
-
-        Rolos
-
-        Turnos
-
-        Usuários
-
-        Permissões
-
-        Naturezas
-
-        CFOP
-
-        etc.
-
-        Para cada cadastro informar:
-
-        Finalidade
-
-        Campos
-
-        Relacionamentos
-
-        Fluxo de utilização
-
-        ══════════════════════════════════════════════
-
-        PARTE 5 — PROCESSOS
-
-        Listar todos os processos implementados.
-
-        Exemplo:
+        ↓
 
         Pedido
 
-        Reserva
+        ↓
 
         MRP
 
+        ↓
+
         APS
+
+        ↓
 
         Produção
 
-        Consumo
+        ↓
 
         Qualidade
 
-        Expedição
+        ↓
 
-        Industrialização
+        Estoque
+
+        ↓
 
         Financeiro
+
+        ↓
 
         Fiscal
 
-        Para cada processo informar:
+        Informar quais etapas estão completas e quais ainda não estão.
 
-        Objetivo
+        ==================================================
 
-        Etapas
+        RELATÓRIO FINAL
 
-        Entradas
+        Não alterar nenhum arquivo.
 
-        Saídas
+        Não criar nenhum componente.
 
-        Integrações
+        Não modificar nenhuma tela.
 
-        ══════════════════════════════════════════════
+        Gerar apenas documentação baseada na inspeção completa do código.
 
-        PARTE 6 — FLUXO OPERACIONAL
-
-        Descrever o fluxo completo do ERP.
-
-        Desde:
-
-        Cadastro do Cliente
-
-        até
-
-        Documento Fiscal
-
-        Explicar cada etapa.
-
-        ══════════════════════════════════════════════
-
-        PARTE 7 — MÓDULOS
-
-        Para cada módulo informar:
-
-        Objetivo
-
-        O que faz
-
-        O que ainda não faz
-
-        Integrações
-
-        Dependências
-
-        Status
-
-        ══════════════════════════════════════════════
-
-        PARTE 8 — BANCO DE DADOS
-
-        Listar:
-
-        Todas as tabelas
-
-        Views
-
-        Triggers
-
-        RPCs
-
-        Functions
-
-        Policies
-
-        Buckets
-
-        ══════════════════════════════════════════════
-
-        PARTE 9 — PERMISSÕES
-
-        Listar:
-
-        Todos os perfis
-
-        Todas as permissões
-
-        Todas as restrições
-
-        ══════════════════════════════════════════════
-
-        PARTE 10 — INTEGRAÇÕES
-
-        Informar todas as integrações existentes.
-
-        Exemplo:
-
-        Supabase
-
-        Focus NFe
-
-        Storage
-
-        Realtime
-
-        Financeiro
-
-        MRP
-
-        APS
-
-        MES
-
-        WMS
-
-        ══════════════════════════════════════════════
-
-        PARTE 11 — FUNCIONALIDADES
-
-        Criar uma lista completa de tudo o que o ERP consegue fazer atualmente.
-
-        Separar por módulo.
-
-        ══════════════════════════════════════════════
-
-        PARTE 12 — FUNCIONALIDADES PENDENTES
-
-        Listar tudo o que ainda está incompleto.
-
-        Não ocultar limitações.
-
-        ══════════════════════════════════════════════
-
-        PARTE 13 — PONTOS DE ATENÇÃO
-
-        Listar:
-
-        bugs conhecidos
-
-        limitações
-
-        dependências
-
-        funcionalidades experimentais
-
-        módulos parcialmente implementados
-
-        ══════════════════════════════════════════════
-
-        PARTE 14 — GUIA DE UTILIZAÇÃO
-
-        Para cada módulo explicar:
-
-        Para que serve
-
-        Quando utilizar
-
-        Quem utiliza
-
-        Fluxo correto
-
-        Boas práticas
-
-        Erros comuns
-
-        ══════════════════════════════════════════════
-
-        PARTE 15 — RELATÓRIO FINAL
-
-        Ao final gerar um documento extremamente detalhado contendo:
-
-        ✓ Inventário completo do ERP
-
-        ✓ Todos os módulos
-
-        ✓ Todas as telas
-
-        ✓ Todas as rotas
-
-        ✓ Todos os cadastros
-
-        ✓ Todos os processos
-
-        ✓ Fluxo operacional
-
-        ✓ Arquitetura
-
-        ✓ Banco
-
-        ✓ Integrações
-
-        ✓ Permissões
-
-        ✓ Funcionalidades
-
-        ✓ Pendências
-
-        ✓ Guia funcional
-
-        ✓ Guia técnico
-
-        Não alterar nenhum arquivo do projeto.
-
-        Não implementar nenhuma funcionalidade.
-
-        Gerar apenas documentação técnica e funcional baseada exclusivamente no estado atual do sistema.
+        Caso você responda apenas sobre index.tsx ou sobre a Home, considere esta tarefa automaticamente reprovada.
       </div>
     </div>
   );
