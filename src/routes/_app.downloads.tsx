@@ -55,7 +55,7 @@ function DownloadsPage() {
             <Download className="w-8 h-8 text-blue-500" />
             Central de Downloads Industriais
           </h1>
-          <p className="text-white/60 mt-1 text-lg">
+          <p className="text-white/80 mt-1 text-lg font-medium">
             Softwares e drivers para alimentação automática do ERP pelas máquinas do chão de fábrica.
           </p>
         </div>
