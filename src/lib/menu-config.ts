@@ -113,6 +113,7 @@ const RAW_MENU_ITEMS: MenuItem[] = [
 
   { title: "Suíte E2E SEED", url: "/dev/e2e", icon: BadgeCheck, group: "DEV", locked: true },
   { title: "Cargos", url: "/dev/cargos", icon: Briefcase, group: "DEV", locked: true },
+  { title: "Organograma", url: "/dev/organograma", icon: Network, group: "Sistema", description: "Visualização da hierarquia e usuários por cargo." },
   // Compras
   { title: "Dashboard Compras", url: "/compras", icon: LayoutDashboard, group: "Compras" },
   { title: "Fornecedores (Compras)", url: "/compras/fornecedores", icon: Handshake, group: "Compras" },
