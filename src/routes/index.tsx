@@ -5,9 +5,7 @@ import { Loader2, ShieldAlert } from "lucide-react";
 import { redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: () => {
-    throw redirect({ to: "/dashboard/industrial" });
-  },
+  component: HomologacaoOperacionalPage,
 });
 
 function HomologacaoOperacionalPage() {
@@ -37,35 +35,393 @@ function HomologacaoOperacionalPage() {
   return (
     <div className="min-h-screen bg-[#0a0f18] text-white font-mono p-8 selection:bg-blue-500/30 whitespace-pre-wrap">
       <div className="max-w-4xl mx-auto space-y-8 py-12">
-        <h1 className="text-4xl font-black text-blue-500 tracking-tighter uppercase mb-8">ERPADM — LIMPEZA ESTRUTURAL</h1>
-        
-        <div className="space-y-12">
-          <section className="space-y-4">
-            <h2 className="text-xl font-bold text-red-500 uppercase tracking-widest">DESTAQUE VISUAL: EXPLICAÇÃO DO MENU</h2>
-            <p className="text-white/80 leading-relaxed">
-              O botão de assistência foi renomeado para "Explicação do Menu" e recebeu um tratamento visual de alta visibilidade: cor vermelha (destructive), animação pulsante constante e bordas destacadas. Este padrão foi aplicado globalmente para garantir que o usuário identifique imediatamente onde obter auxílio operacional sobre a tela atual.
-            </p>
-          </section>
+        MISSÃO
 
-          <section className="space-y-4">
-            <h2 className="text-xl font-bold text-blue-400 uppercase tracking-widest">EVIDÊNCIA TÉCNICA</h2>
-            <div className="bg-blue-500/10 border border-blue-500/20 p-6 rounded-lg space-y-4">
-              <ul className="list-disc list-inside space-y-2 text-white/70">
-                <li><span className="text-blue-400 font-bold">SIDEBAR:</span> Exclusão completa do componente `CircleHelp` nos botões de menu</li>
-                <li><span className="text-blue-400 font-bold">TOPBAR:</span> Manutenção do acesso centralizado à documentação</li>
-                <li><span className="text-blue-400 font-bold">UX:</span> Redução de ruído visual e simplificação da hierarquia de ações</li>
-              </ul>
-            </div>
-          </section>
-        </div>
+        NÃO implemente nenhuma funcionalidade.
 
-        <hr className="border-white/10 my-16" />
+        NÃO altere nenhum arquivo.
 
-        <footer className="text-center pb-20">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-white/30 italic">
-            Engenharia Industrial Digitale Têxtil — Minimalismo e Foco Operacional
-          </p>
-        </footer>
+        NÃO modifique banco de dados.
+
+        NÃO execute migrations.
+
+        NÃO altere layouts.
+
+        NÃO altere componentes.
+
+        NÃO corrija bugs.
+
+        NÃO gere código.
+
+        Sua única missão é realizar uma auditoria completa do ERP e gerar uma documentação técnica e funcional extremamente detalhada do estado atual do sistema.
+
+        O objetivo é permitir que outro especialista analise todo o ERP e consiga orientar os usuários sobre como utilizar cada módulo corretamente.
+
+        Não resuma informações.
+
+        Quanto mais detalhes forem apresentados, melhor.
+
+        ══════════════════════════════════════════════
+
+        PARTE 1 — VISÃO GERAL
+
+        Descreva:
+
+        • arquitetura do sistema
+
+        • framework utilizado
+
+        • banco de dados
+
+        • autenticação
+
+        • autorização
+
+        • integrações
+
+        • storage
+
+        • realtime
+
+        • filas
+
+        • jobs
+
+        • APIs
+
+        • organização das pastas
+
+        ══════════════════════════════════════════════
+
+        PARTE 2 — MAPA COMPLETO DO MENU
+
+        Liste absolutamente todos os menus existentes.
+
+        Para cada menu informar:
+
+        Nome
+
+        Rota
+
+        Descrição
+
+        Objetivo
+
+        Quem pode acessar
+
+        Módulos relacionados
+
+        Status
+
+        (Completo / Parcial / Não implementado)
+
+        ══════════════════════════════════════════════
+
+        PARTE 3 — PÁGINAS
+
+        Liste TODAS as páginas existentes.
+
+        Para cada página informar:
+
+        Título
+
+        Arquivo
+
+        Rota
+
+        Descrição
+
+        Objetivo
+
+        Componentes utilizados
+
+        Serviços utilizados
+
+        RPCs utilizadas
+
+        Permissões
+
+        Integrações
+
+        ══════════════════════════════════════════════
+
+        PARTE 4 — CADASTROS
+
+        Listar todos os cadastros existentes.
+
+        Exemplo:
+
+        Clientes
+
+        Funcionários
+
+        Produtos
+
+        Artigos
+
+        Tecidos
+
+        Cores
+
+        Variantes
+
+        Fornecedores
+
+        Máquinas
+
+        Centros de Trabalho
+
+        Lotes
+
+        Rolos
+
+        Turnos
+
+        Usuários
+
+        Permissões
+
+        Naturezas
+
+        CFOP
+
+        etc.
+
+        Para cada cadastro informar:
+
+        Finalidade
+
+        Campos
+
+        Relacionamentos
+
+        Fluxo de utilização
+
+        ══════════════════════════════════════════════
+
+        PARTE 5 — PROCESSOS
+
+        Listar todos os processos implementados.
+
+        Exemplo:
+
+        Pedido
+
+        Reserva
+
+        MRP
+
+        APS
+
+        Produção
+
+        Consumo
+
+        Qualidade
+
+        Expedição
+
+        Industrialização
+
+        Financeiro
+
+        Fiscal
+
+        Para cada processo informar:
+
+        Objetivo
+
+        Etapas
+
+        Entradas
+
+        Saídas
+
+        Integrações
+
+        ══════════════════════════════════════════════
+
+        PARTE 6 — FLUXO OPERACIONAL
+
+        Descrever o fluxo completo do ERP.
+
+        Desde:
+
+        Cadastro do Cliente
+
+        até
+
+        Documento Fiscal
+
+        Explicar cada etapa.
+
+        ══════════════════════════════════════════════
+
+        PARTE 7 — MÓDULOS
+
+        Para cada módulo informar:
+
+        Objetivo
+
+        O que faz
+
+        O que ainda não faz
+
+        Integrações
+
+        Dependências
+
+        Status
+
+        ══════════════════════════════════════════════
+
+        PARTE 8 — BANCO DE DADOS
+
+        Listar:
+
+        Todas as tabelas
+
+        Views
+
+        Triggers
+
+        RPCs
+
+        Functions
+
+        Policies
+
+        Buckets
+
+        ══════════════════════════════════════════════
+
+        PARTE 9 — PERMISSÕES
+
+        Listar:
+
+        Todos os perfis
+
+        Todas as permissões
+
+        Todas as restrições
+
+        ══════════════════════════════════════════════
+
+        PARTE 10 — INTEGRAÇÕES
+
+        Informar todas as integrações existentes.
+
+        Exemplo:
+
+        Supabase
+
+        Focus NFe
+
+        Storage
+
+        Realtime
+
+        Financeiro
+
+        MRP
+
+        APS
+
+        MES
+
+        WMS
+
+        ══════════════════════════════════════════════
+
+        PARTE 11 — FUNCIONALIDADES
+
+        Criar uma lista completa de tudo o que o ERP consegue fazer atualmente.
+
+        Separar por módulo.
+
+        ══════════════════════════════════════════════
+
+        PARTE 12 — FUNCIONALIDADES PENDENTES
+
+        Listar tudo o que ainda está incompleto.
+
+        Não ocultar limitações.
+
+        ══════════════════════════════════════════════
+
+        PARTE 13 — PONTOS DE ATENÇÃO
+
+        Listar:
+
+        bugs conhecidos
+
+        limitações
+
+        dependências
+
+        funcionalidades experimentais
+
+        módulos parcialmente implementados
+
+        ══════════════════════════════════════════════
+
+        PARTE 14 — GUIA DE UTILIZAÇÃO
+
+        Para cada módulo explicar:
+
+        Para que serve
+
+        Quando utilizar
+
+        Quem utiliza
+
+        Fluxo correto
+
+        Boas práticas
+
+        Erros comuns
+
+        ══════════════════════════════════════════════
+
+        PARTE 15 — RELATÓRIO FINAL
+
+        Ao final gerar um documento extremamente detalhado contendo:
+
+        ✓ Inventário completo do ERP
+
+        ✓ Todos os módulos
+
+        ✓ Todas as telas
+
+        ✓ Todas as rotas
+
+        ✓ Todos os cadastros
+
+        ✓ Todos os processos
+
+        ✓ Fluxo operacional
+
+        ✓ Arquitetura
+
+        ✓ Banco
+
+        ✓ Integrações
+
+        ✓ Permissões
+
+        ✓ Funcionalidades
+
+        ✓ Pendências
+
+        ✓ Guia funcional
+
+        ✓ Guia técnico
+
+        Não alterar nenhum arquivo do projeto.
+
+        Não implementar nenhuma funcionalidade.
+
+        Gerar apenas documentação técnica e funcional baseada exclusivamente no estado atual do sistema.
       </div>
     </div>
   );
