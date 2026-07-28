@@ -8,7 +8,7 @@ import {
   Building2, FlaskConical, Spool, UserSquare2, Palette, Droplet,
   Sparkles, Layers, Wrench, Syringe, Target, Code2, Briefcase,
   Server, IdCard, KeyRound, Clock, Network, PlugZap, Filter,
-  ClipboardCheck, AlertTriangle,
+  ClipboardCheck, AlertTriangle, Cpu,
   type LucideIcon,
 } from "lucide-react";
 
@@ -105,6 +105,7 @@ const RAW_MENU_ITEMS: MenuItem[] = [
   { title: "Gerenciar Menus", url: "/menus", icon: SlidersHorizontal, group: "Administração", locked: true },
   { title: "Certificados A1", url: "/fiscal/certificados", icon: ShieldCheck, group: "Fiscal" },
   { title: "Processos Industriais", url: "/pcp/processos", icon: SlidersHorizontal, group: "Produção (PCP)" },
+  { title: "Software de Chão de Fábrica", url: "/pcp/mes-software", icon: Cpu, group: "Produção (PCP)", description: "Instalador MES para máquinas (24h/Offline)." },
   { title: "Configurações", url: "/configuracoes", icon: Settings, group: "DEV" },
   { title: "Roadmap Industrial", url: "/roadmap-industrial", icon: FileText, group: "DEV", locked: true },
   { title: "Auditoria ERP", url: "/admin/auditoria", icon: ShieldCheck, group: "DEV", locked: true },

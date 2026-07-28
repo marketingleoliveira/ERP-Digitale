@@ -51,6 +51,21 @@ function HomologacaoOperacionalPage() {
             <li>• Apontador de Produção</li>
           </ul>
         </div>
+
+        <div className="bg-emerald-900/20 border border-emerald-500/30 p-6 rounded-lg">
+          <h2 className="text-xl font-bold text-emerald-400 mb-4">Software MES Industrial</h2>
+          <p className="text-white/90 leading-relaxed italic border-l-4 border-emerald-500 pl-4 py-2 bg-emerald-500/5">
+            "as máquinas, do chão de fábrica, tem uma espécie de software nelas, que funciona 24h e offline também, que manda os registros para o sistema ERP, também emitem etiquetas etc, execute essa função aqui no ERP, fornecendo esse possível sofftware que deverá ser instalado nas maquinas."
+          </p>
+          <div className="mt-6">
+            <a 
+              href="/pcp/mes-software" 
+              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded font-bold transition-all"
+            >
+              Acessar Módulo e Download do Software
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );
