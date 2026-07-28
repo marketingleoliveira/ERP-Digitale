@@ -51,11 +51,11 @@ function DownloadsPage() {
     <div className="container mx-auto py-8 px-4 space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-blue-500/20 pb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-            <Download className="w-8 h-8 text-blue-500" />
+          <h1 className="text-3xl font-extrabold tracking-tight text-blue-900 flex items-center gap-3">
+            <Download className="w-8 h-8 text-blue-700" />
             Central de Downloads Industriais
           </h1>
-          <p className="text-white mt-1 text-lg font-bold">
+          <p className="text-blue-800 mt-1 text-lg font-bold">
             Softwares e drivers para alimentação automática do ERP pelas máquinas do chão de fábrica.
           </p>
         </div>
