@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Card, CardContent } from "@/components/ui/card";
+
 
 
 
