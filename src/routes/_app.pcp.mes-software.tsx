@@ -7,7 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 
-export const Route = createFileRoute("/pcp/mes-software")({
+export const Route = createFileRoute("/_app/pcp/mes-software")({
   component: MESSoftwarePage,
 });
 
