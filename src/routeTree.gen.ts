@@ -91,6 +91,7 @@ import { Route as AppFinanceiroContasBancariasRouteImport } from './routes/_app.
 import { Route as AppFinanceiroCentrosCustoRouteImport } from './routes/_app.financeiro.centros-custo'
 import { Route as AppEstoqueKardexRouteImport } from './routes/_app.estoque.kardex'
 import { Route as AppDevSprint0RouteImport } from './routes/_app.dev.sprint0'
+import { Route as AppDevOrganogramaRouteImport } from './routes/_app.dev.organograma'
 import { Route as AppDevFocusNfeRouteImport } from './routes/_app.dev.focus-nfe'
 import { Route as AppDevE2eRouteImport } from './routes/_app.dev.e2e'
 import { Route as AppDevCargosRouteImport } from './routes/_app.dev.cargos'
@@ -536,6 +537,11 @@ const AppDevSprint0Route = AppDevSprint0RouteImport.update({
   path: '/dev/sprint0',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDevOrganogramaRoute = AppDevOrganogramaRouteImport.update({
+  id: '/dev/organograma',
+  path: '/dev/organograma',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDevFocusNfeRoute = AppDevFocusNfeRouteImport.update({
   id: '/dev/focus-nfe',
   path: '/dev/focus-nfe',
@@ -730,6 +736,7 @@ export interface FileRoutesByFullPath {
   '/dev/cargos': typeof AppDevCargosRoute
   '/dev/e2e': typeof AppDevE2eRoute
   '/dev/focus-nfe': typeof AppDevFocusNfeRoute
+  '/dev/organograma': typeof AppDevOrganogramaRoute
   '/dev/sprint0': typeof AppDevSprint0Route
   '/estoque/kardex': typeof AppEstoqueKardexRoute
   '/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
@@ -841,6 +848,7 @@ export interface FileRoutesByTo {
   '/dev/cargos': typeof AppDevCargosRoute
   '/dev/e2e': typeof AppDevE2eRoute
   '/dev/focus-nfe': typeof AppDevFocusNfeRoute
+  '/dev/organograma': typeof AppDevOrganogramaRoute
   '/dev/sprint0': typeof AppDevSprint0Route
   '/estoque/kardex': typeof AppEstoqueKardexRoute
   '/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
@@ -954,6 +962,7 @@ export interface FileRoutesById {
   '/_app/dev/cargos': typeof AppDevCargosRoute
   '/_app/dev/e2e': typeof AppDevE2eRoute
   '/_app/dev/focus-nfe': typeof AppDevFocusNfeRoute
+  '/_app/dev/organograma': typeof AppDevOrganogramaRoute
   '/_app/dev/sprint0': typeof AppDevSprint0Route
   '/_app/estoque/kardex': typeof AppEstoqueKardexRoute
   '/_app/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
@@ -1067,6 +1076,7 @@ export interface FileRouteTypes {
     | '/dev/cargos'
     | '/dev/e2e'
     | '/dev/focus-nfe'
+    | '/dev/organograma'
     | '/dev/sprint0'
     | '/estoque/kardex'
     | '/financeiro/centros-custo'
@@ -1178,6 +1188,7 @@ export interface FileRouteTypes {
     | '/dev/cargos'
     | '/dev/e2e'
     | '/dev/focus-nfe'
+    | '/dev/organograma'
     | '/dev/sprint0'
     | '/estoque/kardex'
     | '/financeiro/centros-custo'
@@ -1290,6 +1301,7 @@ export interface FileRouteTypes {
     | '/_app/dev/cargos'
     | '/_app/dev/e2e'
     | '/_app/dev/focus-nfe'
+    | '/_app/dev/organograma'
     | '/_app/dev/sprint0'
     | '/_app/estoque/kardex'
     | '/_app/financeiro/centros-custo'
@@ -1940,6 +1952,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDevSprint0RouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/dev/organograma': {
+      id: '/_app/dev/organograma'
+      path: '/dev/organograma'
+      fullPath: '/dev/organograma'
+      preLoaderRoute: typeof AppDevOrganogramaRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dev/focus-nfe': {
       id: '/_app/dev/focus-nfe'
       path: '/dev/focus-nfe'
@@ -2317,6 +2336,7 @@ interface AppRouteChildren {
   AppDevCargosRoute: typeof AppDevCargosRoute
   AppDevE2eRoute: typeof AppDevE2eRoute
   AppDevFocusNfeRoute: typeof AppDevFocusNfeRoute
+  AppDevOrganogramaRoute: typeof AppDevOrganogramaRoute
   AppDevSprint0Route: typeof AppDevSprint0Route
   AppEstoqueKardexRoute: typeof AppEstoqueKardexRoute
   AppFinanceiroCentrosCustoRoute: typeof AppFinanceiroCentrosCustoRoute
@@ -2412,6 +2432,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDevCargosRoute: AppDevCargosRoute,
   AppDevE2eRoute: AppDevE2eRoute,
   AppDevFocusNfeRoute: AppDevFocusNfeRoute,
+  AppDevOrganogramaRoute: AppDevOrganogramaRoute,
   AppDevSprint0Route: AppDevSprint0Route,
   AppEstoqueKardexRoute: AppEstoqueKardexRoute,
   AppFinanceiroCentrosCustoRoute: AppFinanceiroCentrosCustoRoute,
