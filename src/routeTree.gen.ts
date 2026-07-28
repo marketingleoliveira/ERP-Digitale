@@ -18,6 +18,7 @@ import { Route as AppUsuariosRouteImport } from './routes/_app.usuarios'
 import { Route as AppTimeLogRouteImport } from './routes/_app.time-log'
 import { Route as AppTabelaCorRouteImport } from './routes/_app.tabela-cor'
 import { Route as AppSenhaRouteImport } from './routes/_app.senha'
+import { Route as AppRoadmapIndustrialRouteImport } from './routes/_app.roadmap-industrial'
 import { Route as AppRepresentantesRouteImport } from './routes/_app.representantes'
 import { Route as AppRepMetaRouteImport } from './routes/_app.rep-meta'
 import { Route as AppProdutosRouteImport } from './routes/_app.produtos'
@@ -56,6 +57,7 @@ import { Route as AppPcpVinculosArtigoRouteImport } from './routes/_app.pcp.vinc
 import { Route as AppPcpTurnosRouteImport } from './routes/_app.pcp.turnos'
 import { Route as AppPcpRoteirosRouteImport } from './routes/_app.pcp.roteiros'
 import { Route as AppPcpReservasRouteImport } from './routes/_app.pcp.reservas'
+import { Route as AppPcpProcessosRouteImport } from './routes/_app.pcp.processos'
 import { Route as AppPcpPlanosInspecaoRouteImport } from './routes/_app.pcp.planos-inspecao'
 import { Route as AppPcpOperacoesRouteImport } from './routes/_app.pcp.operacoes'
 import { Route as AppPcpOeeRouteImport } from './routes/_app.pcp.oee'
@@ -160,6 +162,11 @@ const AppTabelaCorRoute = AppTabelaCorRouteImport.update({
 const AppSenhaRoute = AppSenhaRouteImport.update({
   id: '/senha',
   path: '/senha',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRoadmapIndustrialRoute = AppRoadmapIndustrialRouteImport.update({
+  id: '/roadmap-industrial',
+  path: '/roadmap-industrial',
   getParentRoute: () => AppRoute,
 } as any)
 const AppRepresentantesRoute = AppRepresentantesRouteImport.update({
@@ -351,6 +358,11 @@ const AppPcpRoteirosRoute = AppPcpRoteirosRouteImport.update({
 const AppPcpReservasRoute = AppPcpReservasRouteImport.update({
   id: '/pcp/reservas',
   path: '/pcp/reservas',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPcpProcessosRoute = AppPcpProcessosRouteImport.update({
+  id: '/pcp/processos',
+  path: '/pcp/processos',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPcpPlanosInspecaoRoute = AppPcpPlanosInspecaoRouteImport.update({
@@ -697,6 +709,7 @@ export interface FileRoutesByFullPath {
   '/produtos': typeof AppProdutosRoute
   '/rep-meta': typeof AppRepMetaRoute
   '/representantes': typeof AppRepresentantesRoute
+  '/roadmap-industrial': typeof AppRoadmapIndustrialRoute
   '/senha': typeof AppSenhaRoute
   '/tabela-cor': typeof AppTabelaCorRoute
   '/time-log': typeof AppTimeLogRoute
@@ -750,6 +763,7 @@ export interface FileRoutesByFullPath {
   '/pcp/oee': typeof AppPcpOeeRoute
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/pcp/planos-inspecao': typeof AppPcpPlanosInspecaoRoute
+  '/pcp/processos': typeof AppPcpProcessosRoute
   '/pcp/reservas': typeof AppPcpReservasRoute
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
@@ -806,6 +820,7 @@ export interface FileRoutesByTo {
   '/produtos': typeof AppProdutosRoute
   '/rep-meta': typeof AppRepMetaRoute
   '/representantes': typeof AppRepresentantesRoute
+  '/roadmap-industrial': typeof AppRoadmapIndustrialRoute
   '/senha': typeof AppSenhaRoute
   '/tabela-cor': typeof AppTabelaCorRoute
   '/time-log': typeof AppTimeLogRoute
@@ -859,6 +874,7 @@ export interface FileRoutesByTo {
   '/pcp/oee': typeof AppPcpOeeRoute
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/pcp/planos-inspecao': typeof AppPcpPlanosInspecaoRoute
+  '/pcp/processos': typeof AppPcpProcessosRoute
   '/pcp/reservas': typeof AppPcpReservasRoute
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
@@ -917,6 +933,7 @@ export interface FileRoutesById {
   '/_app/produtos': typeof AppProdutosRoute
   '/_app/rep-meta': typeof AppRepMetaRoute
   '/_app/representantes': typeof AppRepresentantesRoute
+  '/_app/roadmap-industrial': typeof AppRoadmapIndustrialRoute
   '/_app/senha': typeof AppSenhaRoute
   '/_app/tabela-cor': typeof AppTabelaCorRoute
   '/_app/time-log': typeof AppTimeLogRoute
@@ -970,6 +987,7 @@ export interface FileRoutesById {
   '/_app/pcp/oee': typeof AppPcpOeeRoute
   '/_app/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/_app/pcp/planos-inspecao': typeof AppPcpPlanosInspecaoRoute
+  '/_app/pcp/processos': typeof AppPcpProcessosRoute
   '/_app/pcp/reservas': typeof AppPcpReservasRoute
   '/_app/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/_app/pcp/turnos': typeof AppPcpTurnosRoute
@@ -1028,6 +1046,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/rep-meta'
     | '/representantes'
+    | '/roadmap-industrial'
     | '/senha'
     | '/tabela-cor'
     | '/time-log'
@@ -1081,6 +1100,7 @@ export interface FileRouteTypes {
     | '/pcp/oee'
     | '/pcp/operacoes'
     | '/pcp/planos-inspecao'
+    | '/pcp/processos'
     | '/pcp/reservas'
     | '/pcp/roteiros'
     | '/pcp/turnos'
@@ -1137,6 +1157,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/rep-meta'
     | '/representantes'
+    | '/roadmap-industrial'
     | '/senha'
     | '/tabela-cor'
     | '/time-log'
@@ -1190,6 +1211,7 @@ export interface FileRouteTypes {
     | '/pcp/oee'
     | '/pcp/operacoes'
     | '/pcp/planos-inspecao'
+    | '/pcp/processos'
     | '/pcp/reservas'
     | '/pcp/roteiros'
     | '/pcp/turnos'
@@ -1247,6 +1269,7 @@ export interface FileRouteTypes {
     | '/_app/produtos'
     | '/_app/rep-meta'
     | '/_app/representantes'
+    | '/_app/roadmap-industrial'
     | '/_app/senha'
     | '/_app/tabela-cor'
     | '/_app/time-log'
@@ -1300,6 +1323,7 @@ export interface FileRouteTypes {
     | '/_app/pcp/oee'
     | '/_app/pcp/operacoes'
     | '/_app/pcp/planos-inspecao'
+    | '/_app/pcp/processos'
     | '/_app/pcp/reservas'
     | '/_app/pcp/roteiros'
     | '/_app/pcp/turnos'
@@ -1403,6 +1427,13 @@ declare module '@tanstack/react-router' {
       path: '/senha'
       fullPath: '/senha'
       preLoaderRoute: typeof AppSenhaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/roadmap-industrial': {
+      id: '/_app/roadmap-industrial'
+      path: '/roadmap-industrial'
+      fullPath: '/roadmap-industrial'
+      preLoaderRoute: typeof AppRoadmapIndustrialRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/representantes': {
@@ -1669,6 +1700,13 @@ declare module '@tanstack/react-router' {
       path: '/pcp/reservas'
       fullPath: '/pcp/reservas'
       preLoaderRoute: typeof AppPcpReservasRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pcp/processos': {
+      id: '/_app/pcp/processos'
+      path: '/pcp/processos'
+      fullPath: '/pcp/processos'
+      preLoaderRoute: typeof AppPcpProcessosRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/pcp/planos-inspecao': {
@@ -2260,6 +2298,7 @@ interface AppRouteChildren {
   AppProdutosRoute: typeof AppProdutosRoute
   AppRepMetaRoute: typeof AppRepMetaRoute
   AppRepresentantesRoute: typeof AppRepresentantesRoute
+  AppRoadmapIndustrialRoute: typeof AppRoadmapIndustrialRoute
   AppSenhaRoute: typeof AppSenhaRoute
   AppTabelaCorRoute: typeof AppTabelaCorRoute
   AppTimeLogRoute: typeof AppTimeLogRoute
@@ -2311,6 +2350,7 @@ interface AppRouteChildren {
   AppPcpOeeRoute: typeof AppPcpOeeRoute
   AppPcpOperacoesRoute: typeof AppPcpOperacoesRoute
   AppPcpPlanosInspecaoRoute: typeof AppPcpPlanosInspecaoRoute
+  AppPcpProcessosRoute: typeof AppPcpProcessosRoute
   AppPcpReservasRoute: typeof AppPcpReservasRoute
   AppPcpRoteirosRoute: typeof AppPcpRoteirosRouteWithChildren
   AppPcpTurnosRoute: typeof AppPcpTurnosRoute
@@ -2353,6 +2393,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProdutosRoute: AppProdutosRoute,
   AppRepMetaRoute: AppRepMetaRoute,
   AppRepresentantesRoute: AppRepresentantesRoute,
+  AppRoadmapIndustrialRoute: AppRoadmapIndustrialRoute,
   AppSenhaRoute: AppSenhaRoute,
   AppTabelaCorRoute: AppTabelaCorRoute,
   AppTimeLogRoute: AppTimeLogRoute,
@@ -2404,6 +2445,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPcpOeeRoute: AppPcpOeeRoute,
   AppPcpOperacoesRoute: AppPcpOperacoesRoute,
   AppPcpPlanosInspecaoRoute: AppPcpPlanosInspecaoRoute,
+  AppPcpProcessosRoute: AppPcpProcessosRoute,
   AppPcpReservasRoute: AppPcpReservasRoute,
   AppPcpRoteirosRoute: AppPcpRoteirosRouteWithChildren,
   AppPcpTurnosRoute: AppPcpTurnosRoute,
