@@ -1,9 +1,9 @@
-import { createServerFn } from "@tanstack/react-stack";
+import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getHomeDashboardData = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .handler(async ({ context }: { context: any }) => {
     const { supabase } = context;
     
     // Obter data atual em UTC para filtros de hoje
@@ -29,19 +29,19 @@ export const getHomeDashboardData = createServerFn({ method: "GET" })
 
     return {
       producao: {
-        realizada_hoje: 0, // Placeholder até termos apontamentos consolidados
+        realizada_hoje: 0, 
         planejada_hoje: 0,
-        ops_andamento: ops.data?.filter(o => o.status === "em_producao").length ?? 0,
+        ops_andamento: ops.data?.filter((o: any) => o.status === "em_producao").length ?? 0,
         ops_atrasadas: pedidosAtrasados.count ?? 0
       },
       maquinas: {
-        operacao: maquinas.data?.filter(m => m.status_operacional === "produzindo").length ?? 0,
-        paradas: maquinas.data?.filter(m => ["parada", "bloqueada"].includes(m.status_operacional)).length ?? 0,
-        manutencao: maquinas.data?.filter(m => m.status_operacional === "manutencao").length ?? 0,
+        operacao: maquinas.data?.filter((m: any) => m.status_operacional === "produzindo").length ?? 0,
+        paradas: maquinas.data?.filter((m: any) => ["parada", "bloqueada"].includes(m.status_operacional)).length ?? 0,
+        manutencao: maquinas.data?.filter((m: any) => m.status_operacional === "manutencao").length ?? 0,
         total: maquinas.data?.length ?? 0
       },
       financeiro: {
-        vencidos: contasReceber.data?.reduce((s, r) => s + Number(r.valor), 0) ?? 0
+        vencidos: contasReceber.data?.reduce((s: number, r: any) => s + Number(r.valor), 0) ?? 0
       }
     };
   });
