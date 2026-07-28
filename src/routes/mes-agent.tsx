@@ -1,14 +1,15 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { 
   Play, Pause, Square, AlertTriangle, 
-  Wifi, WifiOff, RefreshCw, LogOut, Cpu
+  Wifi, WifiOff, RefreshCw, LogOut, Cpu, Settings
 } from "lucide-react";
+import { saveLocalEvent, initMESDatabase, type MESLocalEvent, SyncStatus } from "@/services/mes/local-db";
+import { startBackgroundSync, syncEvents } from "@/services/mes/sync-manager";
 
 export const Route = createFileRoute("/mes-agent")({
   component: MESAgentPWA,
@@ -20,8 +21,27 @@ function MESAgentPWA() {
   const [status, setStatus] = useState<'idle' | 'running' | 'paused'>('idle');
   const [production, setProduction] = useState({ ok: 0, loss: 0 });
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [showFailedEvents, setShowFailedEvents] = useState(false);
+  const [failedEvents, setFailedEvents] = useState<MESLocalEvent[]>([]);
+
+  // Monitor DB for pending/failed events
+  const refreshStats = useCallback(async () => {
+    const db = await initMESDatabase();
+    const tx = db.transaction('events', 'readonly');
+    const store = tx.objectStore('events');
+    const all = await store.getAll();
+    
+    setPendingCount(all.filter(e => e.sync_status === 'pending' || e.sync_status === 'syncing').length);
+    setFailedEvents(all.filter(e => e.sync_status === 'failed' || e.sync_status === 'permanently_rejected'));
+  }, []);
 
   useEffect(() => {
+    initMESDatabase();
+    const stopSync = startBackgroundSync();
+    
+    const statsInterval = setInterval(refreshStats, 5000);
+
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
     window.addEventListener('online', handleOnline);
@@ -33,11 +53,30 @@ function MESAgentPWA() {
     }
 
     return () => {
+      stopSync();
+      clearInterval(statsInterval);
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
       clearInterval(interval);
     };
-  }, [status]);
+  }, [status, refreshStats]);
+
+  const handleAction = async (type: string, payload: any) => {
+    const eventId = crypto.randomUUID();
+    await saveLocalEvent({
+      event_id: eventId,
+      event_type: type,
+      agent_id: 'AGENT-001', // Should come from local config
+      machine_id: 'MACH-001',
+      production_order_id: activeOP?.id?.toString(),
+      operator_id: 'OP-001',
+      occurred_at: new Date().toISOString(),
+      payload
+    });
+    
+    refreshStats();
+    syncEvents(); // Trigger immediate sync attempt
+  };
 
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
