@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/downloads")({
   beforeLoad: async ({ context }) => {
@@ -43,7 +44,13 @@ function DownloadsPage() {
     setDownloading(true);
     setTimeout(() => {
       setDownloading(false);
-      alert(`O instalador do MES Digitale (${platform}) v2.4.0 está sendo preparado para download seguro.`);
+      const link = document.createElement("a");
+      link.href = "https://github.com/lovable-dev/industrial-agent/releases/download/v2.4.0/DigitaleMES_Setup.exe";
+      link.setAttribute("download", `MES_Digitale_${platform}_v2.4.0.exe`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success(`Download do instalador (${platform}) iniciado.`);
     }, 1500);
   };
 
