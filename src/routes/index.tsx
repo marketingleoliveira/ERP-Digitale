@@ -163,6 +163,94 @@ function HomologacaoOperacionalPage() {
             </a>
           </div>
         </div>
+        <div className="bg-slate-900/60 border border-blue-500/20 p-6 rounded-lg mt-8">
+          <h2 className="text-xl font-bold text-blue-400 mb-6 tracking-tighter uppercase border-b border-blue-500/20 pb-2">Protocolo de Homologação: Digitale MES Agent</h2>
+          
+          <div className="space-y-6 text-sm">
+            <div className="bg-blue-950/30 p-4 border-l-4 border-blue-500 rounded">
+              <p className="text-blue-200 font-bold mb-2">Execute a homologação funcional do Digitale MES Agent integrado ao ERP.</p>
+              <ul className="text-xs text-blue-300/80 space-y-1">
+                <li>• Não modificar a Home.</li>
+                <li>• Não criar página de relatório.</li>
+                <li>• Não mascarar falhas.</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-emerald-400 font-bold uppercase text-xs mb-3 tracking-widest">OBJETIVO: Validar o fluxo real</h3>
+              <div className="flex flex-wrap gap-2 text-[10px] font-bold">
+                {["Ativação", "login do operador", "seleção da máquina", "seleção da OP", "início", "produção", "perda", "parada", "retomada", "finalização", "sincronização", "atualização do ERP"].map((step, i) => (
+                  <span key={step} className="flex items-center gap-2 bg-emerald-500/10 text-emerald-300 px-2 py-1 rounded border border-emerald-500/20">
+                    {step} {i < 11 && "→"}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
+                <h3 className="text-amber-400 font-bold uppercase text-[10px] mb-3 tracking-widest">CENÁRIOS OBRIGATÓRIOS</h3>
+                <ul className="text-[10px] text-slate-300 space-y-1.5 list-decimal list-inside">
+                  <li>Fluxo online completo.</li>
+                  <li>Fluxo totalmente offline.</li>
+                  <li>Queda de internet durante a produção.</li>
+                  <li>Reinício do dispositivo com eventos pendentes.</li>
+                  <li>Reenvio de evento duplicado.</li>
+                  <li>OP inválida.</li>
+                  <li>Máquina não autorizada.</li>
+                  <li>Operador inválido.</li>
+                  <li>Evento fora de sequência.</li>
+                  <li>Quantidade acima da tolerância.</li>
+                  <li>Parada aberta no momento da finalização.</li>
+                  <li>Dois dispositivos apontando simultaneamente.</li>
+                  <li>Token revogado.</li>
+                  <li>Cache expirado.</li>
+                  <li>Falha do servidor durante sincronização.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
+                  <h3 className="text-purple-400 font-bold uppercase text-[10px] mb-3 tracking-widest">VALIDAR NO BANCO</h3>
+                  <ul className="text-[10px] text-slate-300 grid grid-cols-2 gap-x-2 gap-y-1">
+                    {["ausência de duplicidade", "consistência dos totais", "rastreabilidade", "vínculo com OP", "vínculo com máquina", "vínculo com operador", "horários", "logs", "auditoria", "transações", "rollback", "RLS"].map(item => (
+                      <li key={item} className="flex items-center gap-1">• {item}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
+                  <h3 className="text-rose-400 font-bold uppercase text-[10px] mb-3 tracking-widest">VALIDAR SEGURANÇA</h3>
+                  <ul className="text-[10px] text-slate-300 space-y-1">
+                    <li>• agente sem service_role</li>
+                    <li>• nenhuma senha no frontend</li>
+                    <li>• tokens protegidos</li>
+                    <li>• endpoints autenticados</li>
+                    <li>• payload validado</li>
+                    <li>• agente bloqueado sem acesso</li>
+                    <li>• código de ativação de uso único</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-900/20 border border-blue-500/30 p-4 rounded">
+              <h3 className="text-blue-400 font-bold uppercase text-[10px] mb-3 tracking-widest">ENTREGAR NO CHAT</h3>
+              <ul className="text-xs text-blue-100 space-y-1 mb-4">
+                <li>- testes executados;</li>
+                <li>- resultados;</li>
+                <li>- falhas encontradas;</li>
+                <li>- arquivos corrigidos;</li>
+                <li>- build;</li>
+                <li>- pendências;</li>
+                <li>- conclusão: aprovado ou reprovado.</li>
+              </ul>
+              <p className="text-[10px] text-rose-500 font-black uppercase animate-pulse underline decoration-rose-500/50">
+                Não declarar aprovado caso existam testes não executados.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
