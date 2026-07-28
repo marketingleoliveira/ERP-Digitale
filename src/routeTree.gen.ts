@@ -13,12 +13,12 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRoadmapIndustrialRouteImport } from './routes/admin.roadmap-industrial'
 import { Route as AppVarianteRouteImport } from './routes/_app.variante'
 import { Route as AppUsuariosRouteImport } from './routes/_app.usuarios'
 import { Route as AppTimeLogRouteImport } from './routes/_app.time-log'
 import { Route as AppTabelaCorRouteImport } from './routes/_app.tabela-cor'
 import { Route as AppSenhaRouteImport } from './routes/_app.senha'
+import { Route as AppRoadmapIndustrialRouteImport } from './routes/_app.roadmap-industrial'
 import { Route as AppRepresentantesRouteImport } from './routes/_app.representantes'
 import { Route as AppRepMetaRouteImport } from './routes/_app.rep-meta'
 import { Route as AppProdutosRouteImport } from './routes/_app.produtos'
@@ -57,6 +57,7 @@ import { Route as AppPcpVinculosArtigoRouteImport } from './routes/_app.pcp.vinc
 import { Route as AppPcpTurnosRouteImport } from './routes/_app.pcp.turnos'
 import { Route as AppPcpRoteirosRouteImport } from './routes/_app.pcp.roteiros'
 import { Route as AppPcpReservasRouteImport } from './routes/_app.pcp.reservas'
+import { Route as AppPcpProcessosRouteImport } from './routes/_app.pcp.processos'
 import { Route as AppPcpPlanosInspecaoRouteImport } from './routes/_app.pcp.planos-inspecao'
 import { Route as AppPcpOperacoesRouteImport } from './routes/_app.pcp.operacoes'
 import { Route as AppPcpOeeRouteImport } from './routes/_app.pcp.oee'
@@ -89,7 +90,6 @@ import { Route as AppFinanceiroDashboardRouteImport } from './routes/_app.financ
 import { Route as AppFinanceiroContasBancariasRouteImport } from './routes/_app.financeiro.contas-bancarias'
 import { Route as AppFinanceiroCentrosCustoRouteImport } from './routes/_app.financeiro.centros-custo'
 import { Route as AppEstoqueKardexRouteImport } from './routes/_app.estoque.kardex'
-import { Route as AppEngenhariaProcessosRouteImport } from './routes/_app.engenharia.processos'
 import { Route as AppDevSprint0RouteImport } from './routes/_app.dev.sprint0'
 import { Route as AppDevFocusNfeRouteImport } from './routes/_app.dev.focus-nfe'
 import { Route as AppDevE2eRouteImport } from './routes/_app.dev.e2e'
@@ -139,11 +139,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRoadmapIndustrialRoute = AdminRoadmapIndustrialRouteImport.update({
-  id: '/admin/roadmap-industrial',
-  path: '/admin/roadmap-industrial',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AppVarianteRoute = AppVarianteRouteImport.update({
   id: '/variante',
   path: '/variante',
@@ -167,6 +162,11 @@ const AppTabelaCorRoute = AppTabelaCorRouteImport.update({
 const AppSenhaRoute = AppSenhaRouteImport.update({
   id: '/senha',
   path: '/senha',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRoadmapIndustrialRoute = AppRoadmapIndustrialRouteImport.update({
+  id: '/roadmap-industrial',
+  path: '/roadmap-industrial',
   getParentRoute: () => AppRoute,
 } as any)
 const AppRepresentantesRoute = AppRepresentantesRouteImport.update({
@@ -360,6 +360,11 @@ const AppPcpReservasRoute = AppPcpReservasRouteImport.update({
   path: '/pcp/reservas',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPcpProcessosRoute = AppPcpProcessosRouteImport.update({
+  id: '/pcp/processos',
+  path: '/pcp/processos',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPcpPlanosInspecaoRoute = AppPcpPlanosInspecaoRouteImport.update({
   id: '/pcp/planos-inspecao',
   path: '/pcp/planos-inspecao',
@@ -524,11 +529,6 @@ const AppFinanceiroCentrosCustoRoute =
 const AppEstoqueKardexRoute = AppEstoqueKardexRouteImport.update({
   id: '/estoque/kardex',
   path: '/estoque/kardex',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppEngenhariaProcessosRoute = AppEngenhariaProcessosRouteImport.update({
-  id: '/engenharia/processos',
-  path: '/engenharia/processos',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDevSprint0Route = AppDevSprint0RouteImport.update({
@@ -709,12 +709,12 @@ export interface FileRoutesByFullPath {
   '/produtos': typeof AppProdutosRoute
   '/rep-meta': typeof AppRepMetaRoute
   '/representantes': typeof AppRepresentantesRoute
+  '/roadmap-industrial': typeof AppRoadmapIndustrialRoute
   '/senha': typeof AppSenhaRoute
   '/tabela-cor': typeof AppTabelaCorRoute
   '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
-  '/admin/roadmap-industrial': typeof AdminRoadmapIndustrialRoute
   '/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
   '/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
   '/comercial/estoque': typeof AppComercialEstoqueRoute
@@ -731,7 +731,6 @@ export interface FileRoutesByFullPath {
   '/dev/e2e': typeof AppDevE2eRoute
   '/dev/focus-nfe': typeof AppDevFocusNfeRoute
   '/dev/sprint0': typeof AppDevSprint0Route
-  '/engenharia/processos': typeof AppEngenhariaProcessosRoute
   '/estoque/kardex': typeof AppEstoqueKardexRoute
   '/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
   '/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
@@ -764,6 +763,7 @@ export interface FileRoutesByFullPath {
   '/pcp/oee': typeof AppPcpOeeRoute
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/pcp/planos-inspecao': typeof AppPcpPlanosInspecaoRoute
+  '/pcp/processos': typeof AppPcpProcessosRoute
   '/pcp/reservas': typeof AppPcpReservasRoute
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
@@ -820,12 +820,12 @@ export interface FileRoutesByTo {
   '/produtos': typeof AppProdutosRoute
   '/rep-meta': typeof AppRepMetaRoute
   '/representantes': typeof AppRepresentantesRoute
+  '/roadmap-industrial': typeof AppRoadmapIndustrialRoute
   '/senha': typeof AppSenhaRoute
   '/tabela-cor': typeof AppTabelaCorRoute
   '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
-  '/admin/roadmap-industrial': typeof AdminRoadmapIndustrialRoute
   '/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
   '/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
   '/comercial/estoque': typeof AppComercialEstoqueRoute
@@ -842,7 +842,6 @@ export interface FileRoutesByTo {
   '/dev/e2e': typeof AppDevE2eRoute
   '/dev/focus-nfe': typeof AppDevFocusNfeRoute
   '/dev/sprint0': typeof AppDevSprint0Route
-  '/engenharia/processos': typeof AppEngenhariaProcessosRoute
   '/estoque/kardex': typeof AppEstoqueKardexRoute
   '/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
   '/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
@@ -875,6 +874,7 @@ export interface FileRoutesByTo {
   '/pcp/oee': typeof AppPcpOeeRoute
   '/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/pcp/planos-inspecao': typeof AppPcpPlanosInspecaoRoute
+  '/pcp/processos': typeof AppPcpProcessosRoute
   '/pcp/reservas': typeof AppPcpReservasRoute
   '/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/pcp/turnos': typeof AppPcpTurnosRoute
@@ -933,12 +933,12 @@ export interface FileRoutesById {
   '/_app/produtos': typeof AppProdutosRoute
   '/_app/rep-meta': typeof AppRepMetaRoute
   '/_app/representantes': typeof AppRepresentantesRoute
+  '/_app/roadmap-industrial': typeof AppRoadmapIndustrialRoute
   '/_app/senha': typeof AppSenhaRoute
   '/_app/tabela-cor': typeof AppTabelaCorRoute
   '/_app/time-log': typeof AppTimeLogRoute
   '/_app/usuarios': typeof AppUsuariosRoute
   '/_app/variante': typeof AppVarianteRoute
-  '/admin/roadmap-industrial': typeof AdminRoadmapIndustrialRoute
   '/_app/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
   '/_app/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
   '/_app/comercial/estoque': typeof AppComercialEstoqueRoute
@@ -955,7 +955,6 @@ export interface FileRoutesById {
   '/_app/dev/e2e': typeof AppDevE2eRoute
   '/_app/dev/focus-nfe': typeof AppDevFocusNfeRoute
   '/_app/dev/sprint0': typeof AppDevSprint0Route
-  '/_app/engenharia/processos': typeof AppEngenhariaProcessosRoute
   '/_app/estoque/kardex': typeof AppEstoqueKardexRoute
   '/_app/financeiro/centros-custo': typeof AppFinanceiroCentrosCustoRoute
   '/_app/financeiro/contas-bancarias': typeof AppFinanceiroContasBancariasRoute
@@ -988,6 +987,7 @@ export interface FileRoutesById {
   '/_app/pcp/oee': typeof AppPcpOeeRoute
   '/_app/pcp/operacoes': typeof AppPcpOperacoesRoute
   '/_app/pcp/planos-inspecao': typeof AppPcpPlanosInspecaoRoute
+  '/_app/pcp/processos': typeof AppPcpProcessosRoute
   '/_app/pcp/reservas': typeof AppPcpReservasRoute
   '/_app/pcp/roteiros': typeof AppPcpRoteirosRouteWithChildren
   '/_app/pcp/turnos': typeof AppPcpTurnosRoute
@@ -1046,12 +1046,12 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/rep-meta'
     | '/representantes'
+    | '/roadmap-industrial'
     | '/senha'
     | '/tabela-cor'
     | '/time-log'
     | '/usuarios'
     | '/variante'
-    | '/admin/roadmap-industrial'
     | '/cliente-artigo/$id'
     | '/cliente-artigo/simulador'
     | '/comercial/estoque'
@@ -1068,7 +1068,6 @@ export interface FileRouteTypes {
     | '/dev/e2e'
     | '/dev/focus-nfe'
     | '/dev/sprint0'
-    | '/engenharia/processos'
     | '/estoque/kardex'
     | '/financeiro/centros-custo'
     | '/financeiro/contas-bancarias'
@@ -1101,6 +1100,7 @@ export interface FileRouteTypes {
     | '/pcp/oee'
     | '/pcp/operacoes'
     | '/pcp/planos-inspecao'
+    | '/pcp/processos'
     | '/pcp/reservas'
     | '/pcp/roteiros'
     | '/pcp/turnos'
@@ -1157,12 +1157,12 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/rep-meta'
     | '/representantes'
+    | '/roadmap-industrial'
     | '/senha'
     | '/tabela-cor'
     | '/time-log'
     | '/usuarios'
     | '/variante'
-    | '/admin/roadmap-industrial'
     | '/cliente-artigo/$id'
     | '/cliente-artigo/simulador'
     | '/comercial/estoque'
@@ -1179,7 +1179,6 @@ export interface FileRouteTypes {
     | '/dev/e2e'
     | '/dev/focus-nfe'
     | '/dev/sprint0'
-    | '/engenharia/processos'
     | '/estoque/kardex'
     | '/financeiro/centros-custo'
     | '/financeiro/contas-bancarias'
@@ -1212,6 +1211,7 @@ export interface FileRouteTypes {
     | '/pcp/oee'
     | '/pcp/operacoes'
     | '/pcp/planos-inspecao'
+    | '/pcp/processos'
     | '/pcp/reservas'
     | '/pcp/roteiros'
     | '/pcp/turnos'
@@ -1269,12 +1269,12 @@ export interface FileRouteTypes {
     | '/_app/produtos'
     | '/_app/rep-meta'
     | '/_app/representantes'
+    | '/_app/roadmap-industrial'
     | '/_app/senha'
     | '/_app/tabela-cor'
     | '/_app/time-log'
     | '/_app/usuarios'
     | '/_app/variante'
-    | '/admin/roadmap-industrial'
     | '/_app/cliente-artigo/$id'
     | '/_app/cliente-artigo/simulador'
     | '/_app/comercial/estoque'
@@ -1291,7 +1291,6 @@ export interface FileRouteTypes {
     | '/_app/dev/e2e'
     | '/_app/dev/focus-nfe'
     | '/_app/dev/sprint0'
-    | '/_app/engenharia/processos'
     | '/_app/estoque/kardex'
     | '/_app/financeiro/centros-custo'
     | '/_app/financeiro/contas-bancarias'
@@ -1324,6 +1323,7 @@ export interface FileRouteTypes {
     | '/_app/pcp/oee'
     | '/_app/pcp/operacoes'
     | '/_app/pcp/planos-inspecao'
+    | '/_app/pcp/processos'
     | '/_app/pcp/reservas'
     | '/_app/pcp/roteiros'
     | '/_app/pcp/turnos'
@@ -1362,7 +1362,6 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   LoginRoute: typeof LoginRoute
-  AdminRoadmapIndustrialRoute: typeof AdminRoadmapIndustrialRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1393,13 +1392,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/roadmap-industrial': {
-      id: '/admin/roadmap-industrial'
-      path: '/admin/roadmap-industrial'
-      fullPath: '/admin/roadmap-industrial'
-      preLoaderRoute: typeof AdminRoadmapIndustrialRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/variante': {
@@ -1435,6 +1427,13 @@ declare module '@tanstack/react-router' {
       path: '/senha'
       fullPath: '/senha'
       preLoaderRoute: typeof AppSenhaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/roadmap-industrial': {
+      id: '/_app/roadmap-industrial'
+      path: '/roadmap-industrial'
+      fullPath: '/roadmap-industrial'
+      preLoaderRoute: typeof AppRoadmapIndustrialRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/representantes': {
@@ -1703,6 +1702,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPcpReservasRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/pcp/processos': {
+      id: '/_app/pcp/processos'
+      path: '/pcp/processos'
+      fullPath: '/pcp/processos'
+      preLoaderRoute: typeof AppPcpProcessosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/pcp/planos-inspecao': {
       id: '/_app/pcp/planos-inspecao'
       path: '/pcp/planos-inspecao'
@@ -1925,13 +1931,6 @@ declare module '@tanstack/react-router' {
       path: '/estoque/kardex'
       fullPath: '/estoque/kardex'
       preLoaderRoute: typeof AppEstoqueKardexRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/engenharia/processos': {
-      id: '/_app/engenharia/processos'
-      path: '/engenharia/processos'
-      fullPath: '/engenharia/processos'
-      preLoaderRoute: typeof AppEngenhariaProcessosRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/dev/sprint0': {
@@ -2299,6 +2298,7 @@ interface AppRouteChildren {
   AppProdutosRoute: typeof AppProdutosRoute
   AppRepMetaRoute: typeof AppRepMetaRoute
   AppRepresentantesRoute: typeof AppRepresentantesRoute
+  AppRoadmapIndustrialRoute: typeof AppRoadmapIndustrialRoute
   AppSenhaRoute: typeof AppSenhaRoute
   AppTabelaCorRoute: typeof AppTabelaCorRoute
   AppTimeLogRoute: typeof AppTimeLogRoute
@@ -2318,7 +2318,6 @@ interface AppRouteChildren {
   AppDevE2eRoute: typeof AppDevE2eRoute
   AppDevFocusNfeRoute: typeof AppDevFocusNfeRoute
   AppDevSprint0Route: typeof AppDevSprint0Route
-  AppEngenhariaProcessosRoute: typeof AppEngenhariaProcessosRoute
   AppEstoqueKardexRoute: typeof AppEstoqueKardexRoute
   AppFinanceiroCentrosCustoRoute: typeof AppFinanceiroCentrosCustoRoute
   AppFinanceiroContasBancariasRoute: typeof AppFinanceiroContasBancariasRoute
@@ -2351,6 +2350,7 @@ interface AppRouteChildren {
   AppPcpOeeRoute: typeof AppPcpOeeRoute
   AppPcpOperacoesRoute: typeof AppPcpOperacoesRoute
   AppPcpPlanosInspecaoRoute: typeof AppPcpPlanosInspecaoRoute
+  AppPcpProcessosRoute: typeof AppPcpProcessosRoute
   AppPcpReservasRoute: typeof AppPcpReservasRoute
   AppPcpRoteirosRoute: typeof AppPcpRoteirosRouteWithChildren
   AppPcpTurnosRoute: typeof AppPcpTurnosRoute
@@ -2393,6 +2393,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProdutosRoute: AppProdutosRoute,
   AppRepMetaRoute: AppRepMetaRoute,
   AppRepresentantesRoute: AppRepresentantesRoute,
+  AppRoadmapIndustrialRoute: AppRoadmapIndustrialRoute,
   AppSenhaRoute: AppSenhaRoute,
   AppTabelaCorRoute: AppTabelaCorRoute,
   AppTimeLogRoute: AppTimeLogRoute,
@@ -2412,7 +2413,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppDevE2eRoute: AppDevE2eRoute,
   AppDevFocusNfeRoute: AppDevFocusNfeRoute,
   AppDevSprint0Route: AppDevSprint0Route,
-  AppEngenhariaProcessosRoute: AppEngenhariaProcessosRoute,
   AppEstoqueKardexRoute: AppEstoqueKardexRoute,
   AppFinanceiroCentrosCustoRoute: AppFinanceiroCentrosCustoRoute,
   AppFinanceiroContasBancariasRoute: AppFinanceiroContasBancariasRoute,
@@ -2445,6 +2445,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPcpOeeRoute: AppPcpOeeRoute,
   AppPcpOperacoesRoute: AppPcpOperacoesRoute,
   AppPcpPlanosInspecaoRoute: AppPcpPlanosInspecaoRoute,
+  AppPcpProcessosRoute: AppPcpProcessosRoute,
   AppPcpReservasRoute: AppPcpReservasRoute,
   AppPcpRoteirosRoute: AppPcpRoteirosRouteWithChildren,
   AppPcpTurnosRoute: AppPcpTurnosRoute,
@@ -2474,7 +2475,6 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   LoginRoute: LoginRoute,
-  AdminRoadmapIndustrialRoute: AdminRoadmapIndustrialRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
