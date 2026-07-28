@@ -37,175 +37,171 @@ function HomologacaoOperacionalPage() {
       <div className="max-w-4xl mx-auto space-y-8 py-12">
         MISSÃO
 
-        Você NÃO deve analisar a página inicial (/).
+        ATENÇÃO:
 
-        Você NÃO deve analisar index.tsx.
+        Esta tarefa é uma AUDITORIA.
 
-        Você NÃO deve validar textos de interface.
+        Você NÃO está autorizado a implementar nenhuma funcionalidade.
 
-        Você NÃO deve auditar layouts.
+        Você NÃO está autorizado a alterar nenhum arquivo.
 
-        Você NÃO deve modificar qualquer arquivo.
+        Você NÃO está autorizado a modificar:
 
-        Sua única missão é INVENTARIAR TODO O PROJETO.
-
-        Esta tarefa é exclusivamente de leitura e documentação.
-
-        ==================================================
-
-        É PROIBIDO
-
-        ❌ Auditar apenas a Home.
-
-        ❌ Auditar apenas index.tsx.
-
-        ❌ Responder falando sobre layout.
-
-        ❌ Responder falando sobre UI.
-
-        ❌ Responder falando sobre Dashboard.
-
-        ❌ Responder sobre textos.
-
-        ❌ Responder sem percorrer todo o código-fonte.
-
-        ==================================================
-
-        VOCÊ DEVE ANALISAR TODO O PROJETO
-
-        Percorra completamente:
-
-        - src/
-        - routes/
-        - components/
-        - hooks/
-        - services/
-        - lib/
-        - integrations/
-        - utils/
-        - database/
-        - supabase/
-        - migrations/
-        - sql/
-        - functions/
-        - rpc/
-        - storage/
-        - policies/
-        - triggers/
-
-        Também analise:
-
-        - package.json
-        - tsconfig
-        - vite.config
-        - arquivos de configuração
-        - estrutura do menu
-        - autenticação
-        - RBAC
-        - RLS
-
-        ==================================================
-
-        PARA CADA ROTA ENCONTRADA INFORME
-
-        - nome
-        - caminho
-        - objetivo
-        - arquivos utilizados
+        - index.tsx
+        - qualquer rota
         - componentes
-        - serviços
-        - RPCs
-        - permissões
+        - banco
+        - migrations
+        - layouts
+        - estilos
+        - textos
+        - documentação
 
-        ==================================================
+        Sua única função é INSPECIONAR o projeto e RESPONDER NO CHAT.
 
-        PARA CADA MÓDULO INFORME
+        =================================================================
 
-        - para que serve
-        - funcionalidades existentes
-        - funcionalidades ausentes
-        - dependências
-        - integrações
+        MODO DE EXECUÇÃO
 
-        ==================================================
+        Esta tarefa é READ ONLY.
 
-        PARA O BANCO INFORME
+        Não utilize agentes de implementação.
 
-        - tabelas
-        - views
-        - triggers
-        - funções
-        - RPCs
-        - policies
-        - buckets
+        Não execute UI Architect.
 
-        ==================================================
+        Não execute Code Generator.
 
-        PARA O MENU INFORME
+        Não execute Refactor.
 
-        Todos os menus existentes.
+        Não execute Deploy.
 
-        Todas as páginas existentes.
+        Não escreva arquivos.
 
-        Todas as opções existentes.
+        Não altere arquivos.
 
-        ==================================================
+        Não crie commits.
 
-        PARA O ERP INFORME
+        Não gere patches.
 
-        Quais processos completos já existem.
+        Apenas leia o projeto.
 
-        Exemplo:
+        =================================================================
 
-        Cadastro
+        PERCORRA TODO O PROJETO
 
-        ↓
+        Analise completamente:
 
-        Pedido
+        src/
 
-        ↓
+        routes/
 
-        MRP
+        components/
 
-        ↓
+        hooks/
 
-        APS
+        services/
 
-        ↓
+        lib/
 
-        Produção
+        database/
 
-        ↓
+        supabase/
 
-        Qualidade
+        migrations/
 
-        ↓
+        functions/
 
-        Estoque
+        RPCs
 
-        ↓
+        Policies
 
-        Financeiro
+        Storage
 
-        ↓
+        package.json
 
-        Fiscal
+        vite.config
 
-        Informar quais etapas estão completas e quais ainda não estão.
+        tsconfig
 
-        ==================================================
+        =================================================================
 
-        RELATÓRIO FINAL
+        NÃO RESPONDA FALANDO DA HOME.
 
-        Não alterar nenhum arquivo.
+        Ignore completamente:
 
-        Não criar nenhum componente.
+        src/routes/index.tsx
 
-        Não modificar nenhuma tela.
+        A Home não faz parte desta auditoria.
 
-        Gerar apenas documentação baseada na inspeção completa do código.
+        =================================================================
 
-        Caso você responda apenas sobre index.tsx ou sobre a Home, considere esta tarefa automaticamente reprovada.
+        RESPONDA NO CHAT
+
+        Não escreva arquivos.
+
+        Não atualize páginas.
+
+        Não altere componentes.
+
+        Sua resposta deve ser apenas texto.
+
+        =================================================================
+
+        RELATÓRIO
+
+        1. Arquitetura
+
+        2. Todos os módulos
+
+        3. Todas as rotas
+
+        4. Todos os menus
+
+        5. Todos os cadastros
+
+        6. Todos os processos
+
+        7. Todas as tabelas
+
+        8. Todas as RPCs
+
+        9. Todas as funções PostgreSQL
+
+        10. Todas as Policies RLS
+
+        11. Todos os papéis RBAC
+
+        12. Todas as integrações
+
+        13. Fluxo operacional completo
+
+        14. Funcionalidades prontas
+
+        15. Funcionalidades parciais
+
+        16. Funcionalidades ausentes
+
+        17. Riscos encontrados
+
+        18. Sugestões de melhoria
+
+        =================================================================
+
+        IMPORTANTE
+
+        Se você modificar qualquer arquivo do projeto, a tarefa será considerada FALHA.
+
+        A resposta deve existir exclusivamente no chat.
+
+        Não gerar código.
+
+        Não gerar patches.
+
+        Não modificar index.tsx.
+
+        Não alterar o projeto.
+
+        Apenas responder com o inventário técnico completo do sistema.
       </div>
     </div>
   );
