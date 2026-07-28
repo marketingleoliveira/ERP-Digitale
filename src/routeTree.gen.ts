@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRoadmapIndustrialRouteImport } from './routes/admin.roadmap-industrial'
 import { Route as AppVarianteRouteImport } from './routes/_app.variante'
 import { Route as AppUsuariosRouteImport } from './routes/_app.usuarios'
 import { Route as AppTimeLogRouteImport } from './routes/_app.time-log'
@@ -135,6 +136,11 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoadmapIndustrialRoute = AdminRoadmapIndustrialRouteImport.update({
+  id: '/admin/roadmap-industrial',
+  path: '/admin/roadmap-industrial',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppVarianteRoute = AppVarianteRouteImport.update({
@@ -702,6 +708,7 @@ export interface FileRoutesByFullPath {
   '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
+  '/admin/roadmap-industrial': typeof AdminRoadmapIndustrialRoute
   '/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
   '/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
   '/comercial/estoque': typeof AppComercialEstoqueRoute
@@ -811,6 +818,7 @@ export interface FileRoutesByTo {
   '/time-log': typeof AppTimeLogRoute
   '/usuarios': typeof AppUsuariosRoute
   '/variante': typeof AppVarianteRoute
+  '/admin/roadmap-industrial': typeof AdminRoadmapIndustrialRoute
   '/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
   '/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
   '/comercial/estoque': typeof AppComercialEstoqueRoute
@@ -922,6 +930,7 @@ export interface FileRoutesById {
   '/_app/time-log': typeof AppTimeLogRoute
   '/_app/usuarios': typeof AppUsuariosRoute
   '/_app/variante': typeof AppVarianteRoute
+  '/admin/roadmap-industrial': typeof AdminRoadmapIndustrialRoute
   '/_app/cliente-artigo/$id': typeof AppClienteArtigoIdRoute
   '/_app/cliente-artigo/simulador': typeof AppClienteArtigoSimuladorRoute
   '/_app/comercial/estoque': typeof AppComercialEstoqueRoute
@@ -1033,6 +1042,7 @@ export interface FileRouteTypes {
     | '/time-log'
     | '/usuarios'
     | '/variante'
+    | '/admin/roadmap-industrial'
     | '/cliente-artigo/$id'
     | '/cliente-artigo/simulador'
     | '/comercial/estoque'
@@ -1142,6 +1152,7 @@ export interface FileRouteTypes {
     | '/time-log'
     | '/usuarios'
     | '/variante'
+    | '/admin/roadmap-industrial'
     | '/cliente-artigo/$id'
     | '/cliente-artigo/simulador'
     | '/comercial/estoque'
@@ -1252,6 +1263,7 @@ export interface FileRouteTypes {
     | '/_app/time-log'
     | '/_app/usuarios'
     | '/_app/variante'
+    | '/admin/roadmap-industrial'
     | '/_app/cliente-artigo/$id'
     | '/_app/cliente-artigo/simulador'
     | '/_app/comercial/estoque'
@@ -1338,6 +1350,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   LoginRoute: typeof LoginRoute
+  AdminRoadmapIndustrialRoute: typeof AdminRoadmapIndustrialRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1368,6 +1381,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/roadmap-industrial': {
+      id: '/admin/roadmap-industrial'
+      path: '/admin/roadmap-industrial'
+      fullPath: '/admin/roadmap-industrial'
+      preLoaderRoute: typeof AdminRoadmapIndustrialRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/variante': {
@@ -2433,6 +2453,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   LoginRoute: LoginRoute,
+  AdminRoadmapIndustrialRoute: AdminRoadmapIndustrialRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
