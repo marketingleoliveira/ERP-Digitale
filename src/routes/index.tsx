@@ -1,15 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-
-
-
 export const Route = createFileRoute("/")({
   component: DashboardHome,
 });
-
-function fmtBRL(n: number) {
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
-}
 
 function DashboardHome() {
   return (
@@ -68,7 +61,7 @@ function DashboardHome() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
               <div className="space-y-3">
-                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-[0.2em]">Estatísticas</p>
+                <p className="text-[10px] uppercase font-bold text-white/40 tracking-[0.2em]">Estatísticas</p>
                 <div className="bg-white/5 p-4 rounded-lg border border-white/10 flex items-center justify-between">
                   <span className="text-xs">Arquivos modificados</span>
                   <span className="text-xl font-bold text-blue-400">3</span>
@@ -76,7 +69,7 @@ function DashboardHome() {
               </div>
               
               <div className="space-y-3">
-                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-[0.2em]">Próximos passos sugeridos</p>
+                <p className="text-[10px] uppercase font-bold text-white/40 tracking-[0.2em]">Próximos passos sugeridos</p>
                 <ul className="text-xs space-y-1 text-white/70">
                   <li className="flex items-center gap-2">• Desenvolver o formulário de configuração do Calendário Industrial.</li>
                   <li className="flex items-center gap-2">• Implementar o motor de cálculo de carga horária por Ordem de Produção.</li>
@@ -98,42 +91,6 @@ function DashboardHome() {
           </footer>
         </div>
       </div>
-    </div>
-  );
-}
-
-function KpiCard({ label, value, icon: Icon, color, subtext }: { label: string; value: string; icon: any; color?: string; subtext?: string }) {
-  return (
-    <Card className="shadow-sm hover:shadow-md transition-all duration-300 border-muted/60 bg-card/50 backdrop-blur-sm group overflow-hidden">
-      <CardContent className="pt-6 relative">
-        <div className="absolute -right-2 -bottom-2 opacity-5 group-hover:opacity-10 transition-opacity">
-           <Icon className="h-16 w-16" />
-        </div>
-        <div className="flex justify-between items-start">
-          <div>
-            <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest group-hover:text-primary transition-colors">{label}</div>
-            <div className={`mt-2 text-2xl font-bold ${color || "text-foreground"}`}>{value}</div>
-            {subtext && <div className="text-[9px] text-muted-foreground mt-1 font-medium">{subtext}</div>}
-          </div>
-          <div className="p-2 bg-muted rounded-lg group-hover:bg-primary/10 transition-colors">
-             <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function StatusItem({ label, count, icon: Icon, color }: { label: string; count: number; icon: any; color: string }) {
-  return (
-    <div className="flex items-center gap-3 p-3 rounded-xl border border-muted/40 hover:border-primary/20 hover:bg-primary/5 transition-all group">
-       <div className={`p-2 rounded-lg ${color} text-white shadow-sm group-hover:scale-110 transition-transform`}>
-          <Icon className="h-3 w-3" />
-       </div>
-       <div className="flex flex-col">
-          <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-tighter leading-none mb-1 group-hover:text-primary transition-colors">{label}</span>
-          <span className="text-sm font-bold">{count}</span>
-       </div>
     </div>
   );
 }
