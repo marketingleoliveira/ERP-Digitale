@@ -9,8 +9,9 @@ import { FileText, Users, Receipt, FileUp, FileDown, Search } from "lucide-react
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/inicio")({
+export const Route = createFileRoute("/inicio" as any)({
   component: InicioPage,
 });
 
