@@ -53,6 +53,9 @@ const acronyms: Record<string, string> = {
   "OEE": "Overall Equipment Effectiveness - Eficácia Global do Equipamento.",
   "Setup": "Tempo de preparação de uma máquina para iniciar a produção de um novo item.",
   "Lead Time": "Tempo total entre o pedido e a entrega ou conclusão de um processo.",
+  "MES": "Manufacturing Execution System - Sistemas focados na execução e controle da produção em tempo real.",
+  "HEARTBEAT": "Batimento - Sinal periódico enviado pelo agente para confirmar que está online e funcional.",
+  "RBAC": "Role-Based Access Control - Controle de acesso baseado em cargos ou funções do usuário.",
 }
 
 interface AcronymTooltipProps {
