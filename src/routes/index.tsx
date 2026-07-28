@@ -95,6 +95,10 @@ function HomologacaoOperacionalPage() {
             <p className="text-slate-400 text-xs font-medium italic">
               Validar se os links reais de CDN já estão disponíveis para substituição nos botões de download.
             </p>
+            <p className="text-rose-500 text-[10px] uppercase font-bold tracking-widest mt-2">Erro Reportado:</p>
+            <p className="text-rose-400 text-xs font-medium italic">
+              ao clicar em download, fala que o link nao existe, erro 404, como resolvo isso
+            </p>
             <a 
               href="/dashboard/industrial" 
               className="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center gap-2 pt-2"
