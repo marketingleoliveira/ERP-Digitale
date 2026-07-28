@@ -22,9 +22,6 @@ import { getHomeDashboardData } from "@/services/dashboard/home.functions";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: () => {
-    throw redirect({ to: "/dashboard/industrial" });
-  },
   component: DashboardHome,
 });
 
