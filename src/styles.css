@@ -79,7 +79,7 @@
   --secondary-foreground: oklch(0.24 0.05 260);
 
   --muted: oklch(0.94 0.01 260);
-  --muted-foreground: oklch(0.45 0.05 260);
+  --muted-foreground: oklch(0.24 0.05 260); /* High contrast for light mode */
 
   --accent: oklch(0.68 0.14 158);
   --accent-foreground: oklch(0.98 0.01 160);
