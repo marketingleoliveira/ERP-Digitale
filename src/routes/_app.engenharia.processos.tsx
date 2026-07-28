@@ -63,16 +63,16 @@ function ProcessosPage() {
   const { data: setores = [] } = useQuery({
     queryKey: ["setores"],
     queryFn: async () => {
-      const { data } = await supabase.from("setores").select("id, nome").order("nome");
-      return data || [];
+      const { data } = await supabase.from("setores" as any).select("id, nome").order("nome");
+      return (data || []) as any[];
     }
   });
 
   const { data: centros = [] } = useQuery({
     queryKey: ["centros_trabalho"],
     queryFn: async () => {
-      const { data } = await supabase.from("centros_trabalho").select("id, nome").order("nome");
-      return data || [];
+      const { data } = await supabase.from("centros_trabalho" as any).select("id, nome").order("nome");
+      return (data || []) as any[];
     }
   });
 
@@ -89,7 +89,7 @@ function ProcessosPage() {
 
   const delMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("processos_industriais").delete().eq("id", id);
+      const { error } = await supabase.from("processos_industriais" as any).delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
