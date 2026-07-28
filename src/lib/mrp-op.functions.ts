@@ -114,7 +114,7 @@ export const computeOpSuggestions = createServerFn({ method: "POST" })
       supabase.from("roteiros").select("id, codigo, article_id, revisao").in("article_id", articleIds).eq("ativo", true),
     ]);
     const roteiroPorArt = new Map<string, { id: string; codigo: string }>();
-    for (const r of (roteiros ?? []).sort((a, b) => b.revisao - a.revisao)) {
+    for (const r of (roteiros ?? []).sort((a, b) => String(b.revisao).localeCompare(String(a.revisao)))) {
       if (r.article_id && !roteiroPorArt.has(r.article_id)) roteiroPorArt.set(r.article_id, { id: r.id, codigo: r.codigo });
     }
     const roteiroIds = [...roteiroPorArt.values()].map(r => r.id);
