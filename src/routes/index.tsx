@@ -40,26 +40,26 @@ function HomologacaoOperacionalPage() {
               <ShieldCheck className="w-6 h-6 text-[#0a0f18]" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-emerald-400 tracking-tighter uppercase leading-none">ETAPA 11 CONCLUÍDA: MECANISMO DE RESILIÊNCIA</h2>
-              <p className="text-[10px] text-emerald-300/70 font-bold uppercase tracking-widest mt-1">Implementação de Sincronização & Persistência Offline</p>
+              <h2 className="text-xl font-black text-emerald-400 tracking-tighter uppercase leading-none">ETAPA 12 CONCLUÍDA: INTEGRAÇÃO OPERACIONAL ERP</h2>
+              <p className="text-[10px] text-emerald-300/70 font-bold uppercase tracking-widest mt-1">Sincronização Ativa entre Chão de Fábrica & Gestão</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-emerald-950/40 p-3 rounded border border-emerald-500/20">
-              <Database className="w-4 h-4 text-emerald-400 mb-2" />
-              <h4 className="text-[10px] font-black uppercase text-emerald-200">IndexedDB v2</h4>
-              <p className="text-[9px] text-emerald-300/60 leading-tight">Stores para agent_config, session, machines, OPs e logs de eventos.</p>
-            </div>
-            <div className="bg-emerald-950/40 p-3 rounded border border-emerald-500/20">
               <Activity className="w-4 h-4 text-emerald-400 mb-2" />
-              <h4 className="text-[10px] font-black uppercase text-emerald-200">Fila FIFO</h4>
-              <p className="text-[9px] text-emerald-300/60 leading-tight">Sequenciamento garantido por OP com retry exponencial progressivo.</p>
+              <h4 className="text-[10px] font-black uppercase text-emerald-200">Processamento Transacional</h4>
+              <p className="text-[9px] text-emerald-300/60 leading-tight">Garantia de atomicidade para cada evento (Start/Pause/Stop/Prod).</p>
             </div>
             <div className="bg-emerald-950/40 p-3 rounded border border-emerald-500/20">
-              <Wifi className="w-4 h-4 text-emerald-400 mb-2" />
-              <h4 className="text-[10px] font-black uppercase text-emerald-200">Sync Manager</h4>
-              <p className="text-[9px] text-emerald-300/60 leading-tight">Detecção automática de rede e sincronização em background.</p>
+              <ShieldAlert className="w-4 h-4 text-emerald-400 mb-2" />
+              <h4 className="text-[10px] font-black uppercase text-emerald-200">Regras de Negócio</h4>
+              <p className="text-[9px] text-emerald-300/60 leading-tight">Validação de status de OP, tolerância de produção e rastreabilidade.</p>
+            </div>
+            <div className="bg-emerald-950/40 p-3 rounded border border-emerald-500/20">
+              <Cpu className="w-4 h-4 text-emerald-400 mb-2" />
+              <h4 className="text-[10px] font-black uppercase text-emerald-200">Rastreabilidade Total</h4>
+              <p className="text-[9px] text-emerald-300/60 leading-tight">Vínculo direto entre Lote, Operador, Máquina e Evento Original.</p>
             </div>
           </div>
 
@@ -68,7 +68,7 @@ function HomologacaoOperacionalPage() {
               href="/mes-agent" 
               className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg font-black text-sm transition-all uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-emerald-900/40"
             >
-              <Cpu className="w-5 h-5" /> Acessar MES Agent Terminal (v2.5.0)
+              <Cpu className="w-5 h-5" /> Acessar MES Agent Terminal (v2.6.0)
             </a>
           </div>
         </div>
