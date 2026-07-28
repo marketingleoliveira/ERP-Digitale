@@ -81,35 +81,6 @@ function HomologacaoOperacionalPage() {
             <span>arquivos backend</span>
           </div>
         </section>
-      </div>
-    </div>
-  );
-
-        <hr className="border-white/10 my-10" />
-
-        <section className="space-y-6 pb-20 text-center">
-          <p className="text-blue-500 font-black text-xl uppercase tracking-widest">Apresentar apenas alterações técnicas.</p>
-        </section>
-
-        <hr className="border-white/10 my-10" />
-
-        <section className="space-y-6 pb-20 text-center">
-          <p className="text-blue-500 font-black text-xl uppercase tracking-widest">Apresentar somente evidências técnicas.</p>
-        </section>
-
-        <hr className="border-white/10 my-10" />
-
-        <section className="space-y-4">
-          <h2 className="text-2xl font-black text-blue-500 uppercase tracking-tighter">Apresentar:</h2>
-          <div className="flex flex-wrap gap-x-8 gap-y-2 text-white/70">
-            <span>RPCs</span>
-            <span>Services</span>
-            <span>Migrations</span>
-            <span>Testes</span>
-            <span>Build</span>
-            <span>Arquivos backend</span>
-          </div>
-        </section>
 
         <hr className="border-white/10 my-10" />
 
