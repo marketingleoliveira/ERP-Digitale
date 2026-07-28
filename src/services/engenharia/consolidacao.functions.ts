@@ -23,23 +23,23 @@ const MaquinaSubstituicaoSchema = z.object({
 export const getOperacaoParametros = createServerFn({ method: "GET" })
   .inputValidator((data) => z.object({ operacaoId: z.string() }).parse(data))
   .middleware([requireSupabaseAuth])
-  .handler(async ({ input, context }) => {
+  .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const { data, error } = await supabase
+    const { data: res, error } = await supabase
       .from("roteiro_operacao_parametros")
       .select("*")
-      .eq("operacao_id", input.operacaoId)
+      .eq("operacao_id", data.operacaoId)
       .order("nome");
     if (error) throw error;
-    return data;
+    return res;
   });
 
 export const saveOperacaoParametro = createServerFn({ method: "POST" })
   .inputValidator((data) => ParametroSchema.parse(data))
   .middleware([requireSupabaseAuth])
-  .handler(async ({ input, context }) => {
+  .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const { id, ...rest } = input;
+    const { id, ...rest } = data;
     if (id) {
       const { error } = await supabase.from("roteiro_operacao_parametros").update(rest).eq("id", id);
       if (error) throw error;
@@ -53,21 +53,21 @@ export const saveOperacaoParametro = createServerFn({ method: "POST" })
 export const getMaquinasSubstituicao = createServerFn({ method: "GET" })
   .inputValidator((data) => z.object({ maquinaPrincipalId: z.string().optional() }).parse(data))
   .middleware([requireSupabaseAuth])
-  .handler(async ({ input, context }) => {
+  .handler(async ({ data, context }) => {
     const { supabase } = context;
     let query = supabase.from("maquina_substituicao").select("*, maquina_reserva:maquinas!maquina_reserva_id(*)");
-    if (input.maquinaPrincipalId) query = query.eq("maquina_principal_id", input.maquinaPrincipalId);
-    const { data, error } = await query.order("prioridade");
+    if (data.maquinaPrincipalId) query = query.eq("maquina_principal_id", data.maquinaPrincipalId);
+    const { data: res, error } = await query.order("prioridade");
     if (error) throw error;
-    return data;
+    return res;
   });
 
 export const saveMaquinaSubstituicao = createServerFn({ method: "POST" })
   .inputValidator((data) => MaquinaSubstituicaoSchema.parse(data))
   .middleware([requireSupabaseAuth])
-  .handler(async ({ input, context }) => {
+  .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const { id, ...rest } = input;
+    const { id, ...rest } = data;
     if (id) {
       const { error } = await supabase.from("maquina_substituicao").update(rest).eq("id", id);
       if (error) throw error;
