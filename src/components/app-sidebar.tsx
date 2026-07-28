@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ChevronDown, Info } from "lucide-react";
+import { ChevronDown, Info, CircleHelp } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
@@ -13,8 +13,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import logoAsset from "@/assets/digitale-logo-white.png.asset.json";
-import { ALL_MENU_ITEMS, GROUP_ORDER, useMenuVisibility } from "@/lib/menu-config";
+import { ALL_MENU_ITEMS, GROUP_ORDER, useMenuVisibility, MenuItem } from "@/lib/menu-config";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
+import { useHelp } from "@/components/help/HelpProvider";
 import { LayoutDashboard, Users, ShoppingCart, Factory, Wallet, ShieldCheck, Code2, Server, type LucideIcon } from "lucide-react";
 
 const GROUP_ICONS: Record<string, LucideIcon> = {
@@ -38,6 +39,7 @@ export function AppSidebar() {
   const { user } = useAuth();
   const roles = useUserRoles(user?.id);
   const isDev = roles.includes("desenvolvedor");
+  const { openHelp } = useHelp();
 
   const visibleItems = ALL_MENU_ITEMS.filter((i) => visibility[i.url]);
   const standalone = visibleItems.filter((i) => !i.group);
@@ -95,10 +97,32 @@ export function AppSidebar() {
                   const active = pathname === item.url || pathname.startsWith(item.url + "/");
                   return (
                     <SidebarMenuItem key={item.url}>
-                      <SidebarMenuButton asChild tooltip={item.title} isActive={active}>
-                        <Link to={item.url}>
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
+                      <SidebarMenuButton asChild tooltip={item.title} isActive={active} className="py-2 h-auto">
+                        <Link to={item.url} className="flex items-center justify-between group/item">
+                          <div className="flex items-center gap-2">
+                            <item.icon className="h-4 w-4 shrink-0" />
+                            <div className="flex flex-col">
+                              <span className="font-semibold">{item.title}</span>
+                              {item.description && !collapsed && (
+                                <span className="text-[10px] text-muted-foreground font-normal leading-tight group-data-[active=true]:text-white/70">
+                                  {item.description}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          {item.helpId && !collapsed && (
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                openHelp(item.helpId!);
+                              }}
+                              className="p-1 rounded-md hover:bg-blue-500/20 text-blue-500 opacity-0 group-hover/item:opacity-100 transition-opacity"
+                              title="Ajuda detalhada"
+                            >
+                              <CircleHelp className="h-3.5 w-3.5" />
+                            </button>
+                          )}
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -132,10 +156,32 @@ export function AppSidebar() {
                             const active = pathname === item.url || pathname.startsWith(item.url + "/");
                             return (
                               <SidebarMenuSubItem key={item.url}>
-                                <SidebarMenuSubButton asChild isActive={active}>
-                                  <Link to={item.url}>
-                                    <item.icon className="h-4 w-4" />
-                                    <span>{item.title}</span>
+                                <SidebarMenuSubButton asChild isActive={active} className="py-2 h-auto flex-col items-start gap-1">
+                                  <Link to={item.url} className="w-full flex items-center justify-between group/item">
+                                    <div className="flex items-center gap-2">
+                                      <item.icon className="h-4 w-4 shrink-0" />
+                                      <div className="flex flex-col">
+                                        <span className="font-semibold">{item.title}</span>
+                                        {item.description && (
+                                          <span className="text-[10px] text-muted-foreground font-normal leading-tight group-data-[active=true]:text-white/70">
+                                            {item.description}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                    {item.helpId && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          openHelp(item.helpId!);
+                                        }}
+                                        className="p-1 rounded-md hover:bg-blue-500/20 text-blue-500 opacity-0 group-hover/item:opacity-100 transition-opacity"
+                                        title="Ajuda detalhada"
+                                      >
+                                        <CircleHelp className="h-3.5 w-3.5" />
+                                      </button>
+                                    )}
                                   </Link>
                                 </SidebarMenuSubButton>
                               </SidebarMenuSubItem>
