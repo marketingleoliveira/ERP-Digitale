@@ -47,6 +47,105 @@ export type Database = {
         }
         Relationships: []
       }
+      aps_programacao: {
+        Row: {
+          carga_minutos: number
+          cenario_id: string | null
+          created_at: string | null
+          data_fim: string
+          data_inicio: string
+          id: string
+          maquina_id: string | null
+          op_id: string | null
+          operacao_id: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          carga_minutos: number
+          cenario_id?: string | null
+          created_at?: string | null
+          data_fim: string
+          data_inicio: string
+          id?: string
+          maquina_id?: string | null
+          op_id?: string | null
+          operacao_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          carga_minutos?: number
+          cenario_id?: string | null
+          created_at?: string | null
+          data_fim?: string
+          data_inicio?: string
+          id?: string
+          maquina_id?: string | null
+          op_id?: string | null
+          operacao_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aps_programacao_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aps_programacao_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "aps_programacao_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "aps_programacao_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "aps_programacao_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aps_programacao_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custo_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "aps_programacao_op_id_fkey"
+            columns: ["op_id"]
+            isOneToOne: false
+            referencedRelation: "vw_custos_op"
+            referencedColumns: ["op_id"]
+          },
+          {
+            foreignKeyName: "aps_programacao_operacao_id_fkey"
+            columns: ["operacao_id"]
+            isOneToOne: false
+            referencedRelation: "roteiro_operacoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       article_bom: {
         Row: {
           article_id: string
@@ -604,6 +703,44 @@ export type Database = {
           vigencia_inicio?: string | null
         }
         Relationships: []
+      }
+      calendario_industrial: {
+        Row: {
+          capacidade_percentual: number | null
+          created_at: string | null
+          data: string
+          descricao: string | null
+          id: string
+          tipo: string
+          unidade_id: string | null
+        }
+        Insert: {
+          capacidade_percentual?: number | null
+          created_at?: string | null
+          data: string
+          descricao?: string | null
+          id?: string
+          tipo: string
+          unidade_id?: string | null
+        }
+        Update: {
+          capacidade_percentual?: number | null
+          created_at?: string | null
+          data?: string
+          descricao?: string | null
+          id?: string
+          tipo?: string
+          unidade_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendario_industrial_unidade_id_fkey"
+            columns: ["unidade_id"]
+            isOneToOne: false
+            referencedRelation: "unidades_industriais"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       calendario_produtivo: {
         Row: {

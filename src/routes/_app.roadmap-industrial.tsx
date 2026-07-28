@@ -34,25 +34,24 @@ function RoadmapIndustrialPage() {
           <p className="text-lg text-white/80 leading-relaxed">Documentação Técnica e Plano de Evolução Estratégica</p>
         </header>
 
-        {/* Sprint 2 — Engenharia de Produto */}
+        {/* Sprint 3 — APS Foundation */}
         <section className="space-y-6">
-          <h2 className="text-2xl font-semibold border-l-4 border-blue-500 pl-4 uppercase tracking-wider text-blue-400">SPRINT 2 — ENGENHARIA DE PRODUTO E ROTEIROS DE PRODUÇÃO</h2>
+          <h2 className="text-2xl font-semibold border-l-4 border-blue-500 pl-4 uppercase tracking-wider text-blue-400">SPRINT 3 — APS FOUNDATION (ADVANCED PLANNING & SCHEDULING)</h2>
           <div className="bg-white/5 rounded-xl p-6 border border-white/10 space-y-4">
              <div className="prose prose-invert max-w-none text-sm text-white/80">
                 <p className="font-bold text-blue-300">MISSÃO</p>
-                <p>Dar continuidade ao ERP da Digitale Têxtil implementando a fonte oficial de todas as informações produtivas: a Engenharia de Produto.</p>
+                <p>Iniciar a implementação do APS do ERP Digitale Têxtil construindo a infraestrutura necessária para o planejamento avançado.</p>
                 
-                <p className="font-bold text-blue-300 mt-4">OBJETIVO DA SPRINT</p>
-                <p>Nenhuma Ordem de Produção deverá possuir parâmetros próprios; ela deverá consumir os dados cadastrados na Engenharia de Produto.</p>
-
-                <ul className="list-disc pl-5 space-y-2 mt-4">
-                  <li><strong>MÓDULO 1:</strong> Processos Industriais configuráveis (Estamparia, Rama, etc).</li>
-                  <li><strong>MÓDULO 2:</strong> Roteiros de Produção com versionamento.</li>
-                  <li><strong>MÓDULO 3:</strong> Operações do Roteiro (sequência, CT, máquinas compatíveis).</li>
-                  <li><strong>MÓDULO 4:</strong> Máquinas Compatíveis com restrições técnicas.</li>
-                  <li><strong>MÓDULO 5:</strong> Ficha Técnica (composição, gramatura, rendimento).</li>
-                  <li><strong>MÓDULO 6:</strong> Integração com BOM, Custos, MRP e OPs.</li>
+                <p className="font-bold text-blue-300 mt-4">OBJETIVOS PRINCIPAIS</p>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li><strong>CALENDÁRIO:</strong> Controle de dias úteis, feriados e paradas programadas por unidade.</li>
+                  <li><strong>TURNOS:</strong> Gestão completa de jornadas, intervalos e equipes padrão.</li>
+                  <li><strong>CAPACIDADE:</strong> Cálculo automático de carga/capacidade por máquina e centro de trabalho.</li>
+                  <li><strong>PROGRAMAÇÃO:</strong> Motor de cálculo de carga baseada em roteiro e simulação de cenários.</li>
+                  <li><strong>GARGALOS:</strong> Identificação visual de sobrecargas e recursos ociosos.</li>
                 </ul>
+                
+                <p className="mt-4 text-[10px] uppercase text-yellow-500 font-bold">⚠️ Esta sprint foca em infraestrutura e cálculo, não em sequenciamento automático.</p>
              </div>
           </div>
         </section>
@@ -63,7 +62,7 @@ function RoadmapIndustrialPage() {
             <PhaseStatus phase="Fase 1: Modelo Industrial" status="Concluída" progress={100} />
             <PhaseStatus phase="Sprint 2: Eng. de Produto" status="Concluída" progress={100} />
             <PhaseStatus phase="Sprint 2.5: Consolidação" status="Concluída" progress={100} />
-            <PhaseStatus phase="Fase 3: APS (PCP Avançado)" status="Pendente" progress={0} />
+            <PhaseStatus phase="Fase 3: APS (PCP Avançado)" status="Em Execução" progress={10} />
           </div>
         </section>
 
