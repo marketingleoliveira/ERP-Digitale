@@ -172,90 +172,76 @@ function HomologacaoOperacionalPage() {
             </a>
           </div>
         </div>
-        <div className="bg-slate-900/60 border border-blue-500/20 p-6 rounded-lg mt-8">
-          <h2 className="text-xl font-bold text-blue-400 mb-6 tracking-tighter uppercase border-b border-blue-500/20 pb-2">Protocolo de Homologação: Digitale MES Agent</h2>
+        <div className="bg-slate-900/60 border border-blue-500/20 p-6 rounded-lg mt-8 shadow-2xl">
+          <h2 className="text-xl font-bold text-blue-400 mb-6 tracking-tighter uppercase border-b border-blue-500/20 pb-2">PROJETO: Digitale MES Agent (PWA)</h2>
           
           <div className="space-y-6 text-sm">
             <div className="bg-blue-950/30 p-4 border-l-4 border-blue-500 rounded">
-              <p className="text-blue-200 font-bold mb-2">Execute a homologação funcional do Digitale MES Agent integrado ao ERP.</p>
-              <ul className="text-xs text-blue-300/80 space-y-1">
-                <li>• Não modificar a Home.</li>
-                <li>• Não criar página de relatório.</li>
-                <li>• Não mascarar falhas.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-emerald-400 font-bold uppercase text-xs mb-3 tracking-widest">OBJETIVO: Validar o fluxo real</h3>
-              <div className="flex flex-wrap gap-2 text-[10px] font-bold">
-                {["Ativação", "login do operador", "seleção da máquina", "seleção da OP", "início", "produção", "perda", "parada", "retomada", "finalização", "sincronização", "atualização do ERP"].map((step, i) => (
-                  <span key={step} className="flex items-center gap-2 bg-emerald-500/10 text-emerald-300 px-2 py-1 rounded border border-emerald-500/20">
-                    {step} {i < 11 && "→"}
-                  </span>
-                ))}
-              </div>
+              <p className="text-blue-100 font-bold mb-2">Crie uma aplicação separada chamada Digitale MES Agent.</p>
+              <p className="text-[10px] text-blue-300/80 leading-relaxed italic">
+                Esta aplicação será uma PWA para computadores e tablets instalados no chão de fábrica. 
+                Ela não é o ERP e não deve conter módulos administrativos, financeiros ou fiscais.
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
-                <h3 className="text-amber-400 font-bold uppercase text-[10px] mb-3 tracking-widest">CENÁRIOS OBRIGATÓRIOS</h3>
-                <ul className="text-[10px] text-slate-300 space-y-1.5 list-decimal list-inside">
-                  <li>Fluxo online completo.</li>
-                  <li>Fluxo totalmente offline.</li>
-                  <li>Queda de internet durante a produção.</li>
-                  <li>Reinício do dispositivo com eventos pendentes.</li>
-                  <li>Reenvio de evento duplicado.</li>
-                  <li>OP inválida.</li>
-                  <li>Máquina não autorizada.</li>
-                  <li>Operador inválido.</li>
-                  <li>Evento fora de sequência.</li>
-                  <li>Quantidade acima da tolerância.</li>
-                  <li>Parada aberta no momento da finalização.</li>
-                  <li>Dois dispositivos apontando simultaneamente.</li>
-                  <li>Token revogado.</li>
-                  <li>Cache expirado.</li>
-                  <li>Falha do servidor durante sincronização.</li>
-                </ul>
+              <div className="space-y-4">
+                <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
+                  <h3 className="text-emerald-400 font-bold uppercase text-[10px] mb-3 tracking-widest">OBJETIVO & TECNOLOGIA</h3>
+                  <p className="text-[10px] text-slate-300 mb-2 italic">Permitir registro offline e sincronização posterior via IndexedDB e Service Workers.</p>
+                  <ul className="text-[9px] text-emerald-300/70 grid grid-cols-2 gap-1 uppercase font-bold">
+                    <li>• React/TS</li>
+                    <li>• PWA/Offline</li>
+                    <li>• IndexedDB</li>
+                    <li>• HTTPS/API</li>
+                  </ul>
+                </div>
+
+                <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
+                  <h3 className="text-amber-400 font-bold uppercase text-[10px] mb-3 tracking-widest">TELAS OBRIGATÓRIAS</h3>
+                  <ul className="text-[10px] text-slate-300 space-y-1.5 list-decimal list-inside font-medium">
+                    <li>Ativação (Código/Estação/Unidade)</li>
+                    <li>Operador (Código/PIN)</li>
+                    <li>Máquina (Filtro por Instalação)</li>
+                    <li>OP (Liberadas/Abertas/Máquina)</li>
+                    <li>Execução (Start/Pause/Stop/Prod)</li>
+                    <li>Registros (Produção/Perda/Parada)</li>
+                    <li>Finalização (Resumo/Confirmação)</li>
+                  </ul>
+                </div>
               </div>
 
               <div className="space-y-4">
                 <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
-                  <h3 className="text-purple-400 font-bold uppercase text-[10px] mb-3 tracking-widest">VALIDAR NO BANCO</h3>
-                  <ul className="text-[10px] text-slate-300 grid grid-cols-2 gap-x-2 gap-y-1">
-                    {["ausência de duplicidade", "consistência dos totais", "rastreabilidade", "vínculo com OP", "vínculo com máquina", "vínculo com operador", "horários", "logs", "auditoria", "transações", "rollback", "RLS"].map(item => (
+                  <h3 className="text-blue-400 font-bold uppercase text-[10px] mb-3 tracking-widest">REGRAS DE INTERFACE</h3>
+                  <ul className="text-[10px] text-slate-300 grid grid-cols-1 gap-1">
+                    {["Botões grandes (Touch)", "Textos legíveis / Alto contraste", "Poucas informações por tela", "Confirmação antes de finalizar", "Sem menus complexos / Gráficos"].map(item => (
                       <li key={item} className="flex items-center gap-1">• {item}</li>
                     ))}
                   </ul>
                 </div>
 
                 <div className="bg-slate-950/40 p-4 rounded border border-slate-800">
-                  <h3 className="text-rose-400 font-bold uppercase text-[10px] mb-3 tracking-widest">VALIDAR SEGURANÇA</h3>
-                  <ul className="text-[10px] text-slate-300 space-y-1">
-                    <li>• agente sem service_role</li>
-                    <li>• nenhuma senha no frontend</li>
-                    <li>• tokens protegidos</li>
-                    <li>• endpoints autenticados</li>
-                    <li>• payload validado</li>
-                    <li>• agente bloqueado sem acesso</li>
-                    <li>• código de ativação de uso único</li>
-                  </ul>
+                  <h3 className="text-rose-400 font-bold uppercase text-[10px] mb-3 tracking-widest">FLUXO OPERACIONAL</h3>
+                  <div className="text-[9px] font-black text-rose-300/80 flex flex-wrap gap-1 leading-tight">
+                    LOGIN → MÁQUINA → OP → INÍCIO → PROD/PERDA/PARADA → FINALIZAR → SYNC
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="bg-blue-900/20 border border-blue-500/30 p-4 rounded">
-              <h3 className="text-blue-400 font-bold uppercase text-[10px] mb-3 tracking-widest">ENTREGAR NO CHAT</h3>
-              <ul className="text-xs text-blue-100 space-y-1 mb-4">
-                <li>- testes executados;</li>
-                <li>- resultados;</li>
-                <li>- falhas encontradas;</li>
-                <li>- arquivos corrigidos;</li>
-                <li>- build;</li>
-                <li>- pendências;</li>
-                <li>- conclusão: aprovado ou reprovado.</li>
+              <h3 className="text-blue-400 font-bold uppercase text-[10px] mb-3 tracking-widest underline decoration-blue-500/30">ENTREGÁVEIS TÉCNICOS</h3>
+              <ul className="text-[10px] text-blue-100 space-y-1 font-bold grid grid-cols-2 gap-2 uppercase tracking-tighter">
+                <li>- Manifesto PWA & SW</li>
+                <li>- IndexedDB Local Storage</li>
+                <li>- Adaptadores (API/Dev)</li>
+                <li>- Build Funcional</li>
+                <li>- Validação & Erros</li>
+                <li>- Componentes High-Contrast</li>
               </ul>
-              <p className="text-[10px] text-rose-500 font-black uppercase animate-pulse underline decoration-rose-500/50">
-                Não declarar aprovado caso existam testes não executados.
+              <p className="text-[9px] text-emerald-400 font-black mt-4 text-center italic">
+                FOCO: EFICIÊNCIA NO CHÃO DE FÁBRICA E RESILIÊNCIA OFFLINE.
               </p>
             </div>
           </div>
