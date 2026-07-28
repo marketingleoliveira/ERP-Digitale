@@ -35,51 +35,51 @@ function HomologacaoOperacionalPage() {
       <div className="max-w-4xl mx-auto space-y-8 py-12">
         <h1 className="text-4xl font-black text-blue-500 tracking-tighter uppercase mb-8">MISSÃO</h1>
         
-        <p className="text-xl font-bold text-white mb-6">Homologar exclusivamente o Financeiro.</p>
+        <p className="text-xl font-bold text-white mb-6">Homologar exclusivamente o módulo Fiscal.</p>
         
         <div className="space-y-2 text-red-500 font-bold uppercase tracking-wide">
-          <p>Não alterar layouts.</p>
+          <p>Não transmitir NF.</p>
+          <p>Não integrar ainda com Focus.</p>
         </div>
 
         <hr className="border-white/10 my-10" />
 
         <section className="space-y-6">
-          <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Validar:</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Preparar completamente:</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              "contas receber",
-              "contas pagar",
-              "baixas",
-              "estornos",
-              "fluxo caixa",
-              "DRE",
-              "centros custo",
-              "integração automática"
+              "XML",
+              "payload",
+              "DANFE",
+              "CFOP",
+              "NCM",
+              "CST",
+              "CSOSN",
+              "impostos",
+              "sequência",
+              "logs",
+              "validação"
             ].map(item => (
               <div key={item} className="flex items-center gap-3">
                 <span className="text-green-500 font-bold">✓</span>
-                <span className="text-white/80">{item}</span>
+                <span className="text-white/80 uppercase text-sm">{item}</span>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="space-y-4 pt-6 text-white/80 font-bold">
-          <p>Executar testes.</p>
+        <section className="space-y-4 pt-6 text-white/80 font-bold border-l-4 border-yellow-500 pl-6 bg-yellow-500/5 py-4">
+          <p className="text-yellow-500 uppercase tracking-widest text-sm">Atenção:</p>
+          <p>Jamais simular autorização.</p>
+          <p className="text-sm font-normal">A única pendência permitida deverá ser:</p>
+          <p className="text-blue-400">Configuração das credenciais válidas da Focus NFe.</p>
+          <p className="pt-4">Executar testes completos.</p>
         </section>
 
         <hr className="border-white/10 my-10" />
 
-        <section className="space-y-6 pb-20">
-          <h3 className="text-blue-500 font-black text-xl uppercase tracking-widest text-center">Apresentar:</h3>
-          <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-white/60 uppercase text-sm font-bold">
-            <span>migrations</span>
-            <span>services</span>
-            <span>RPCs</span>
-            <span>build</span>
-            <span>testes</span>
-            <span>arquivos backend</span>
-          </div>
+        <section className="space-y-6 pb-20 text-center">
+          <p className="text-blue-500 font-black text-xl uppercase tracking-widest">Apresentar apenas evidências técnicas.</p>
         </section>
 
         <hr className="border-white/10 my-10" />
