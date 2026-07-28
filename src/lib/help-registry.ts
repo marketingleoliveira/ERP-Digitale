@@ -50,10 +50,10 @@ export const HELP_REGISTRY: Record<string, HelpContent> = {
   // ───────────────────────────── Visão geral
   "/inicio": help(
     "/inicio",
-    "Visão Geral de Vendas e Notas",
-    "Painel executivo com resumo de clientes, ranking de faturamento e listagem de notas fiscais recentes.",
-    ["Indicadores de Clientes (Ativos/Inativos)", "Ranking de Vendas por Cliente", "Monitoramento de NF-e"],
-    { tips: ["Clique nos ícones de arquivo na listagem de notas para acessar PDF ou XML rapidamente."] },
+    "Visão geral e acesso rápido",
+    "Painel central com indicadores do dia, alertas críticos e atalhos para as funções mais utilizadas do ERP.",
+    ["Widgets de indicadores", "Alertas operacionais", "Atalhos por perfil de usuário"],
+    { tips: ["Use este painel como ponto de partida diário para identificar pendências antes de abrir cada módulo."] },
   ),
   "/dashboard/industrial": help(
     "/dashboard/industrial",
