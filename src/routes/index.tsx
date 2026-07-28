@@ -57,7 +57,7 @@ function DashboardHome() {
            <p className="text-xs text-muted-foreground mt-1">Digitale Têxtil — Operações em Tempo Real</p>
         </div>
         <div className="flex items-center gap-3">
-           <Link to="/admin/roadmap-industrial" className="text-[10px] flex items-center gap-1 uppercase font-bold text-blue-500 hover:text-blue-600 transition-colors bg-blue-50 px-2 py-1 rounded border border-blue-100">
+           <Link to="/roadmap-industrial" className="text-[10px] flex items-center gap-1 uppercase font-bold text-blue-500 hover:text-blue-600 transition-colors bg-blue-50 px-2 py-1 rounded border border-blue-100">
               <ShieldCheck className="h-3 w-3" /> Sprint 2 Roadmap
            </Link>
            <div className="text-[10px] text-muted-foreground bg-muted px-2 py-1 rounded border font-mono">
