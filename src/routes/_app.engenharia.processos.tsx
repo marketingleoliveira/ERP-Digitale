@@ -20,7 +20,7 @@ import { getProcessos, saveProcesso } from "@/services/engenharia/processos.func
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/_app/engenharia/processos" as any)({
+export const Route = createFileRoute('/_app/engenharia/processos')({
   ssr: false,
   component: ProcessosPage,
 });
