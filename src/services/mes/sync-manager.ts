@@ -25,7 +25,7 @@ export async function syncEvents() {
     }, {} as Record<string, MESLocalEvent[]>);
 
     for (const opId in grouped) {
-      const events = grouped[opId].sort((a, b) => 
+      const events = grouped[opId].sort((a: MESLocalEvent, b: MESLocalEvent) => 
         new Date(a.occurred_at).getTime() - new Date(b.occurred_at).getTime()
       );
 
