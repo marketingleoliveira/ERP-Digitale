@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
 import { Loader2, ShieldAlert } from "lucide-react";
 
-export const Route = createFileRoute("/admin/roadmap-industrial" as never)({
+export const Route = createFileRoute('/admin/roadmap-industrial')({
   component: RoadmapIndustrialPage,
 });
 
