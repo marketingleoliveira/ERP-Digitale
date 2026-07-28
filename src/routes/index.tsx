@@ -41,9 +41,9 @@ function HomologacaoOperacionalPage() {
         
         <div className="space-y-12">
           <section className="space-y-4">
-            <h2 className="text-xl font-bold text-blue-400 uppercase tracking-widest">REMOÇÃO DE ÍCONES DE AJUDA NA SIDEBAR</h2>
+            <h2 className="text-xl font-bold text-red-500 uppercase tracking-widest">DESTAQUE VISUAL: EXPLICAÇÃO DO MENU</h2>
             <p className="text-white/80 leading-relaxed">
-              Todos os ícones de ajuda contextual (CircleHelp) foram removidos dos itens de menu da sidebar para proporcionar uma interface mais limpa e focada. A funcionalidade de ajuda permanece disponível de forma centralizada no Topbar através do botão "Ajuda Contextual", mantendo a assistência ao usuário sem poluir o menu de navegação.
+              O botão de assistência foi renomeado para "Explicação do Menu" e recebeu um tratamento visual de alta visibilidade: cor vermelha (destructive), animação pulsante constante e bordas destacadas. Este padrão foi aplicado globalmente para garantir que o usuário identifique imediatamente onde obter auxílio operacional sobre a tela atual.
             </p>
           </section>
 
