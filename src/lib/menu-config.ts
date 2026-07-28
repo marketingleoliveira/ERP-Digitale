@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { HELP_REGISTRY } from "@/lib/help-registry";
 import {
   LayoutDashboard, Users, Truck, UserCheck, Package, Warehouse,
   ShoppingCart, Receipt, Handshake, Wallet, Factory, Scissors,
