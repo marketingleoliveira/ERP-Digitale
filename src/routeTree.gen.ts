@@ -41,6 +41,7 @@ import { Route as AppComposicaoRouteImport } from './routes/_app.composicao'
 import { Route as AppClienteArtigoRouteImport } from './routes/_app.cliente-artigo'
 import { Route as AppArtigosRouteImport } from './routes/_app.artigos'
 import { Route as AppAgulhaRouteImport } from './routes/_app.agulha'
+import { Route as AdminMesAgentsIndexRouteImport } from './routes/admin/mes-agents/index'
 import { Route as AppProducaoIndexRouteImport } from './routes/_app.producao.index'
 import { Route as AppLogisticaIndexRouteImport } from './routes/_app.logistica.index'
 import { Route as AppFinanceiroIndexRouteImport } from './routes/_app.financeiro.index'
@@ -282,6 +283,11 @@ const AppAgulhaRoute = AppAgulhaRouteImport.update({
   id: '/agulha',
   path: '/agulha',
   getParentRoute: () => AppRoute,
+} as any)
+const AdminMesAgentsIndexRoute = AdminMesAgentsIndexRouteImport.update({
+  id: '/admin/mes-agents/',
+  path: '/admin/mes-agents/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AppProducaoIndexRoute = AppProducaoIndexRouteImport.update({
   id: '/producao/',
@@ -810,6 +816,7 @@ export interface FileRoutesByFullPath {
   '/financeiro/': typeof AppFinanceiroIndexRoute
   '/logistica/': typeof AppLogisticaIndexRoute
   '/producao/': typeof AppProducaoIndexRoute
+  '/admin/mes-agents/': typeof AdminMesAgentsIndexRoute
   '/compras/cotacoes/$id': typeof AppComprasCotacoesIdRoute
   '/compras/pedidos/$id': typeof AppComprasPedidosIdRoute
   '/compras/recebimentos/$id': typeof AppComprasRecebimentosIdRoute
@@ -925,6 +932,7 @@ export interface FileRoutesByTo {
   '/financeiro': typeof AppFinanceiroIndexRoute
   '/logistica': typeof AppLogisticaIndexRoute
   '/producao': typeof AppProducaoIndexRoute
+  '/admin/mes-agents': typeof AdminMesAgentsIndexRoute
   '/compras/cotacoes/$id': typeof AppComprasCotacoesIdRoute
   '/compras/pedidos/$id': typeof AppComprasPedidosIdRoute
   '/compras/recebimentos/$id': typeof AppComprasRecebimentosIdRoute
@@ -1042,6 +1050,7 @@ export interface FileRoutesById {
   '/_app/financeiro/': typeof AppFinanceiroIndexRoute
   '/_app/logistica/': typeof AppLogisticaIndexRoute
   '/_app/producao/': typeof AppProducaoIndexRoute
+  '/admin/mes-agents/': typeof AdminMesAgentsIndexRoute
   '/_app/compras/cotacoes/$id': typeof AppComprasCotacoesIdRoute
   '/_app/compras/pedidos/$id': typeof AppComprasPedidosIdRoute
   '/_app/compras/recebimentos/$id': typeof AppComprasRecebimentosIdRoute
@@ -1159,6 +1168,7 @@ export interface FileRouteTypes {
     | '/financeiro/'
     | '/logistica/'
     | '/producao/'
+    | '/admin/mes-agents/'
     | '/compras/cotacoes/$id'
     | '/compras/pedidos/$id'
     | '/compras/recebimentos/$id'
@@ -1274,6 +1284,7 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/logistica'
     | '/producao'
+    | '/admin/mes-agents'
     | '/compras/cotacoes/$id'
     | '/compras/pedidos/$id'
     | '/compras/recebimentos/$id'
@@ -1390,6 +1401,7 @@ export interface FileRouteTypes {
     | '/_app/financeiro/'
     | '/_app/logistica/'
     | '/_app/producao/'
+    | '/admin/mes-agents/'
     | '/_app/compras/cotacoes/$id'
     | '/_app/compras/pedidos/$id'
     | '/_app/compras/recebimentos/$id'
@@ -1411,6 +1423,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   LoginRoute: typeof LoginRoute
   MesAgentRoute: typeof MesAgentRoute
+  AdminMesAgentsIndexRoute: typeof AdminMesAgentsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1638,6 +1651,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/agulha'
       preLoaderRoute: typeof AppAgulhaRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/admin/mes-agents/': {
+      id: '/admin/mes-agents/'
+      path: '/admin/mes-agents'
+      fullPath: '/admin/mes-agents/'
+      preLoaderRoute: typeof AdminMesAgentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_app/producao/': {
       id: '/_app/producao/'
@@ -2559,6 +2579,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   LoginRoute: LoginRoute,
   MesAgentRoute: MesAgentRoute,
+  AdminMesAgentsIndexRoute: AdminMesAgentsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
