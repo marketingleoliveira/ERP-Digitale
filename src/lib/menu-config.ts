@@ -102,9 +102,10 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
   { title: "Processos Industriais", url: "/pcp/processos", icon: SlidersHorizontal, group: "Produção (PCP)" },
   { title: "Configurações", url: "/configuracoes", icon: Settings, group: "DEV" },
   { title: "Roadmap Industrial", url: "/roadmap-industrial", icon: FileText, group: "DEV", locked: true },
-  { title: "Focus NFe", url: "/dev/focus-nfe", icon: PlugZap, group: "DEV", locked: true },
+  { title: "Auditoria ERP", url: "/admin/auditoria", icon: ShieldCheck, group: "DEV", locked: true },
   { title: "Focus NFe", url: "/dev/focus-nfe", icon: PlugZap, group: "DEV", locked: true },
   { title: "Sprint 0 Checklist", url: "/dev/sprint0", icon: BadgeCheck, group: "DEV", locked: true },
+
   { title: "Suíte E2E SEED", url: "/dev/e2e", icon: BadgeCheck, group: "DEV", locked: true },
   { title: "Cargos", url: "/dev/cargos", icon: Briefcase, group: "DEV", locked: true },
   // Compras
