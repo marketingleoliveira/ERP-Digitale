@@ -20,7 +20,7 @@ export const getProcessos = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { supabase } = context;
     const { data, error } = await supabase
-      .from("processos_industriais")
+      .from("processos_industriais" as any)
       .select(`
         *,
         setor:setores(id, nome),
@@ -28,7 +28,7 @@ export const getProcessos = createServerFn({ method: "GET" })
       `)
       .order("sequencia_sugerida", { ascending: true });
     if (error) throw error;
-    return data;
+    return data as any[];
   });
 
 export const saveProcesso = createServerFn({ method: "POST" })
@@ -37,7 +37,7 @@ export const saveProcesso = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { supabase } = context;
     const { error } = await supabase
-      .from("processos_industriais")
+      .from("processos_industriais" as any)
       .upsert(data, { onConflict: "codigo" });
     if (error) throw error;
     return { success: true };
