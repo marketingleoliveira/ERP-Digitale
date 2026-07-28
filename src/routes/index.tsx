@@ -35,7 +35,22 @@ function HomologacaoOperacionalPage() {
   return (
     <div className="min-h-screen bg-[#0a0f18] text-white font-mono p-8 selection:bg-blue-500/30 whitespace-pre-wrap">
       <div className="max-w-4xl mx-auto space-y-8 py-12">
-        Crie cargos automaticamente de acordo com suas funções na vida real em um chão de fábrica, Desenvolvedor, Diretoria e Gerência já tem, não é possível criar.
+        <div className="bg-blue-900/20 border border-blue-500/30 p-6 rounded-lg">
+          <h2 className="text-xl font-bold text-blue-400 mb-4">Sincronização de Cargos</h2>
+          <p className="text-white/90 leading-relaxed">
+            Cargos operacionais de chão de fábrica foram sincronizados automaticamente com o banco de dados. 
+            Cargos de hierarquia superior (Desenvolvedor, Diretoria, Gerência) permanecem inalterados.
+          </p>
+          <ul className="mt-4 grid grid-cols-2 gap-2 text-sm text-blue-200/70">
+            <li>• Operador de Máquina</li>
+            <li>• Auxiliar de Produção</li>
+            <li>• Inspetor de Qualidade</li>
+            <li>• Encarregado de Produção</li>
+            <li>• Técnico de Manutenção</li>
+            <li>• Operador de Logística</li>
+            <li>• Apontador de Produção</li>
+          </ul>
+        </div>
       </div>
     </div>
   );
