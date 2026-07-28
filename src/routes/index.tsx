@@ -38,7 +38,7 @@ function HomologacaoOperacionalPage() {
         <div className="bg-blue-900/20 border border-blue-500/30 p-6 rounded-lg">
           <h2 className="text-xl font-bold text-blue-400 mb-4">Status Industrial</h2>
           <p className="text-white/90 leading-relaxed italic border-l-4 border-blue-500 pl-4 py-2 bg-blue-500/5">
-            "revise todos os menus que foram criados, e se algum, ainda não foi desenvolvido, o desenvolva, de acordo com o status atual, também, crie um menu chamado DOWNLOADS disponível apenas para o cargo DESENVOLVEDOR e SUPER ADMIN direcionado a ter o software para download que sera colocado nas maquinas para alimentarem automaticamente o sistema erp"
+            "implemente um tutorial a esse menu de download orientando o passo a passo"
           </p>
         </div>
 
