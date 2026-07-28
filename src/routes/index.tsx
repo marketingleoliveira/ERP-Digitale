@@ -35,42 +35,30 @@ function HomologacaoOperacionalPage() {
       <div className="max-w-4xl mx-auto space-y-8 py-12">
         <h1 className="text-4xl font-black text-blue-500 tracking-tighter uppercase mb-8">MISSÃO</h1>
         
-        <p className="text-xl font-bold text-white mb-6">Homologar exclusivamente o Motor MRP.</p>
+        <p className="text-xl font-bold text-white mb-6">Homologar exclusivamente o APS.</p>
         
         <div className="space-y-2 text-red-500 font-bold uppercase tracking-wide">
-          <p>É proibido alterar qualquer componente visual.</p>
-          <p>Não modificar Dashboard.</p>
-          <p>Não modificar Home.</p>
-          <p>Não criar gráficos.</p>
+          <p>Não alterar interface.</p>
+          <p>Não alterar Dashboard.</p>
+          <p>Não alterar Home.</p>
         </div>
 
         <hr className="border-white/10 my-10" />
 
         <section className="space-y-6">
-          <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Auditar:</h2>
-          <ul className="list-disc list-inside space-y-2 text-white/70">
-            <li>BOM</li>
-            <li>Estoque</li>
-            <li>Reservas</li>
-            <li>Compras</li>
-            <li>Lead Time</li>
-            <li>Estoque Segurança</li>
-          </ul>
-        </section>
-
-        <section className="space-y-6">
           <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Implementar:</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              "cálculo da necessidade líquida",
-              "explosão multinível da BOM",
-              "materiais substitutos",
-              "perdas",
-              "estoque reservado",
-              "estoque bloqueado",
-              "pedidos em aberto",
-              "ordens em produção",
-              "sugestões de compra"
+              "capacidade",
+              "carga",
+              "calendário",
+              "turnos",
+              "gargalos",
+              "conflitos",
+              "programação",
+              "reprogramação",
+              "ocupação",
+              "setup"
             ].map(item => (
               <div key={item} className="flex items-center gap-3">
                 <span className="text-green-500 font-bold">✓</span>
@@ -80,11 +68,25 @@ function HomologacaoOperacionalPage() {
           </div>
         </section>
 
-        <section className="space-y-4 pt-6 text-white/80">
-          <p>Comparar todos os resultados com SQL direto.</p>
-          <p>Criar testes unitários.</p>
-          <p>Criar testes de integração.</p>
-          <p>Executar build.</p>
+        <section className="space-y-4 pt-6 text-white/80 font-bold">
+          <p className="text-red-500">Não utilizar IA.</p>
+          <p>Executar testes utilizando OPs reais.</p>
+          <p>Validar capacidade antes e depois da programação.</p>
+          <p>Executar testes de concorrência.</p>
+        </section>
+
+        <hr className="border-white/10 my-10" />
+
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-blue-500 uppercase tracking-tighter">Apresentar:</h2>
+          <div className="flex flex-wrap gap-x-8 gap-y-2 text-white/70">
+            <span>RPCs</span>
+            <span>Services</span>
+            <span>Migrations</span>
+            <span>Testes</span>
+            <span>Build</span>
+            <span>Arquivos backend</span>
+          </div>
         </section>
 
         <hr className="border-white/10 my-10" />
