@@ -103,11 +103,6 @@ export function AppSidebar() {
                             <item.icon className="h-4 w-4 shrink-0" />
                             <div className="flex flex-col">
                               <span className="font-semibold">{item.title}</span>
-                              {item.description && !collapsed && (
-                                <span className="text-[10px] text-white/90 font-medium leading-tight group-data-[active=true]:text-white/100">
-                                  {item.description}
-                                </span>
-                              )}
                             </div>
                           </div>
                           {item.helpId && !collapsed && (
@@ -157,32 +152,27 @@ export function AppSidebar() {
                             return (
                               <SidebarMenuSubItem key={item.url}>
                                 <SidebarMenuSubButton asChild isActive={active} className="py-2 h-auto flex-col items-start gap-1">
-                                  <Link to={item.url} className="w-full flex items-center justify-between group/item">
-                                    <div className="flex items-center gap-2">
-                                      <item.icon className="h-4 w-4 shrink-0" />
-                                      <div className="flex flex-col">
-                                        <span className="font-semibold">{item.title}</span>
-                                        {item.description && (
-                                          <span className="text-[10px] text-white/90 font-medium leading-tight group-data-[active=true]:text-white/100">
-                                            {item.description}
-                                          </span>
-                                        )}
+                                    <Link to={item.url} className="w-full flex items-center justify-between group/item">
+                                      <div className="flex items-center gap-2">
+                                        <item.icon className="h-4 w-4 shrink-0" />
+                                        <div className="flex flex-col">
+                                          <span className="font-semibold">{item.title}</span>
+                                        </div>
                                       </div>
-                                    </div>
-                                    {item.helpId && (
-                                      <button
-                                        onClick={(e) => {
-                                          e.preventDefault();
-                                          e.stopPropagation();
-                                          openHelp(item.helpId!);
-                                        }}
-                                        className="p-1 rounded-md hover:bg-blue-500/20 text-blue-500 opacity-0 group-hover/item:opacity-100 transition-opacity"
-                                        title="Ajuda detalhada"
-                                      >
-                                        <CircleHelp className="h-3.5 w-3.5" />
-                                      </button>
-                                    )}
-                                  </Link>
+                                      {item.helpId && (
+                                        <button
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            openHelp(item.helpId!);
+                                          }}
+                                          className="p-1 rounded-md hover:bg-blue-500/20 text-blue-500 opacity-0 group-hover/item:opacity-100 transition-opacity"
+                                          title="Ajuda detalhada"
+                                        >
+                                          <CircleHelp className="h-3.5 w-3.5" />
+                                        </button>
+                                      )}
+                                    </Link>
                                 </SidebarMenuSubButton>
                               </SidebarMenuSubItem>
                             );

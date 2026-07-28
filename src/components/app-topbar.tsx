@@ -29,19 +29,20 @@ export function AppTopbar() {
 
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/80 px-3 backdrop-blur">
-      <SidebarTrigger />
-      <Separator orientation="vertical" className="mx-1 h-6" />
-      <div className="relative flex-1 max-w-xl">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Buscar clientes, produtos, pedidos, OPs…"
-          className="pl-9 h-9 bg-muted/40"
-        />
-      </div>
-      <div className="flex-1" />
+    <header className="sticky top-0 z-30 flex flex-col border-b border-border bg-background/80 backdrop-blur">
+      <div className="flex h-14 items-center gap-2 px-3">
+        <SidebarTrigger />
+        <Separator orientation="vertical" className="mx-1 h-6" />
+        <div className="relative flex-1 max-w-xl">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Buscar clientes, produtos, pedidos, OPs…"
+            className="pl-9 h-9 bg-muted/40"
+          />
+        </div>
+        <div className="flex-1" />
 
-      <PageHelpButton showLabel />
+        <PageHelpButton showLabel />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
