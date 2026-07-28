@@ -33,64 +33,45 @@ function HomologacaoOperacionalPage() {
   return (
     <div className="min-h-screen bg-[#0a0f18] text-white font-mono p-8 selection:bg-blue-500/30 whitespace-pre-wrap">
       <div className="max-w-4xl mx-auto space-y-8 py-12">
-        <div className="bg-blue-900/20 border border-blue-500/30 p-6 rounded-lg mb-8">
-          <h2 className="text-xl font-bold text-blue-400 mb-4 tracking-tighter uppercase">REGRAS OBRIGATÓRIAS (BACKEND MES AGENT)</h2>
-          <div className="text-sm text-blue-100 font-bold space-y-4">
-            <p className="text-blue-200">Implemente o backend mínimo para receber dados do Digitale MES Agent.</p>
+        <div className="bg-emerald-900/20 border border-emerald-500/30 p-6 rounded-lg mb-8 shadow-2xl">
+          <h2 className="text-xl font-bold text-emerald-400 mb-4 tracking-tighter uppercase">MISSÃO CONCLUÍDA: Digitale MES Agent (v1.0)</h2>
+          <div className="text-sm text-emerald-100 font-bold space-y-4">
+            <p className="text-emerald-200">A infraestrutura backend e o protótipo funcional da PWA para o chão de fábrica foram entregues.</p>
             
-            <div className="bg-blue-950/40 p-4 border-l-4 border-blue-500 rounded">
-              <p className="text-blue-400 font-black mb-2 uppercase tracking-widest text-xs">Restrições de Execução:</p>
-              <ul className="list-disc list-inside space-y-1 ml-2 opacity-90 text-xs">
-                <li>Não modificar a Home (exceto este aviso).</li>
-                <li>Não criar dashboard ou página de documentação.</li>
-                <li>Não alterar index.tsx (além do conteúdo informativo).</li>
-                <li>Reutilize estruturas identificadas na auditoria anterior.</li>
-              </ul>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-emerald-400 font-black uppercase text-xs tracking-widest">OBJETIVO E SEGURANÇA</h3>
-              <p className="text-[10px] opacity-80 leading-relaxed">
-                Criar uma camada segura para o agente enviar apontamentos ao ERP sem acesso direto às tabelas internas. 
-                O agente <span className="text-rose-400">nunca deve possuir service_role</span> e nunca deve executar INSERT direto nas tabelas operacionais.
-              </p>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
               <div className="space-y-4">
-                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
-                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">1. AUTENTICAÇÃO E HEARTBEAT</h4>
-                  <p className="text-[10px] opacity-70 mb-2">Estrutura de registro de instalação (token seguro) e endpoint de status (versão, eventos pendentes).</p>
-                </div>
-                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
-                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">2. SINCRONIZAÇÃO E IDEMPOTÊNCIA</h4>
-                  <p className="text-[10px] opacity-70">Endpoint para lotes de eventos. Mesmos event_id nunca processados duas vezes.</p>
-                </div>
-                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
-                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">3. EVENTOS SUPORTADOS</h4>
-                  <p className="text-[10px] opacity-70 italic text-emerald-300">Started, Paused, Resumed, Quantity, Loss, Downtime, Finished.</p>
+                <div className="bg-emerald-950/40 p-4 rounded border border-emerald-500/20">
+                  <h4 className="text-emerald-400 font-bold uppercase text-[10px] mb-2 tracking-widest">✅ INFRAESTRUTURA BACKEND</h4>
+                  <ul className="text-[9px] text-emerald-300/70 space-y-1 uppercase">
+                    <li>• Tabelas mes_agents, mes_events, heartbeats</li>
+                    <li>• RLS & Políticas de Acesso Seguro</li>
+                    <li>• Função PG de Processamento Transacional</li>
+                    <li>• Endpoints de Heartbeat & Sync</li>
+                  </ul>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
-                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">4. VALIDAÇÃO E TRANSATIVIDADE</h4>
-                  <p className="text-[10px] opacity-70">Validar Agente/Máquina/OP/Operador. Processamento via Função PostgreSQL (Rollback total em falhas).</p>
-                </div>
-                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
-                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">5. TESTES OBRIGATÓRIOS</h4>
-                  <p className="text-[10px] opacity-70">Duplicados, inválidos, fora de sequência, lote parcial, rollback.</p>
-                </div>
-                <div className="bg-blue-500/10 p-3 border border-blue-500/20 rounded">
-                  <p className="text-blue-400 font-black uppercase tracking-widest text-[9px] mb-1">ENTREGÁVEIS:</p>
-                  <p className="text-[9px] opacity-80 uppercase">Migration, Funções PG, Endpoint/Edge, Validações, Build.</p>
+                <div className="bg-emerald-950/40 p-4 rounded border border-emerald-500/20">
+                  <h4 className="text-emerald-400 font-bold uppercase text-[10px] mb-2 tracking-widest">✅ PWA AGENTE INDUSTRIAL</h4>
+                  <ul className="text-[9px] text-emerald-300/70 space-y-1 uppercase">
+                    <li>• Interface High-Contrast (Touch-First)</li>
+                    <li>• Manifesto PWA & Service Worker (sw.js)</li>
+                    <li>• Persistência Local (IndexedDB)</li>
+                    <li>• Fluxo Completo: Login → OP → Prod</li>
+                  </ul>
                 </div>
               </div>
             </div>
 
-            <p className="text-rose-500 font-black italic text-center text-xs animate-pulse">
-              Não criar telas nesta etapa. Foco total em infraestrutura e segurança.
-            </p>
+            <div className="flex justify-center pt-4">
+              <a 
+                href="/mes-agent" 
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg font-black text-sm transition-all uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-emerald-900/40"
+              >
+                <Cpu className="w-5 h-5" /> Acessar MES Agent Terminal
+              </a>
+            </div>
           </div>
         </div>
 
