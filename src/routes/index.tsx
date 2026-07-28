@@ -54,187 +54,169 @@ function HomologacaoOperacionalPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0f18] text-white font-sans selection:bg-blue-500/30">
-      {/* Background Decorative */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-20">
-        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/20 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/20 blur-[120px] rounded-full" />
-      </div>
-
-      <div className="relative z-10 max-w-5xl mx-auto p-6 md:p-12 space-y-16">
+    <div className="min-h-screen bg-[#0a0f18] text-white font-mono p-8 selection:bg-blue-500/30 whitespace-pre-wrap">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <h1 className="text-3xl font-black text-blue-500 tracking-tighter uppercase"># PROMPT MASTER FINAL — HOMOLOGAÇÃO E CONCLUSÃO DO ERP INDUSTRIAL DIGITALE TÊXTIL</h1>
         
-        {/* HERO SECTION */}
-        <header className="space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400">
-            <Zap className="w-3 h-3 fill-blue-400" />
-            Sprint Final de Homologação
-          </div>
-          <h1 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-[0.9] text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/40">
-            Homologação Operacional & <br/>
-            <span className="text-blue-500">Integração Total ERP</span>
-          </h1>
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="p-6 bg-white/5 border border-white/10 rounded-2xl flex-1 backdrop-blur-md">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-blue-400 mb-4 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4" /> Missão
-              </h2>
-              <p className="text-lg font-light leading-relaxed text-white/80 italic">
-                "Validar, integrar e homologar todo o ecossistema industrial da Digitale Têxtil. Garantir que cada módulo opere como uma engrenagem única de um ERP industrial de alta performance."
-              </p>
-            </div>
-          </div>
-        </header>
-
-        {/* REGRA DE OURO */}
-        <section className="bg-red-500/10 border border-red-500/20 rounded-3xl p-8 relative overflow-hidden group">
-          <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center">
-            <div className="bg-red-500 p-4 rounded-2xl shadow-lg shadow-red-500/20">
-              <AlertTriangle className="w-8 h-8 text-white" />
-            </div>
-            <div className="space-y-2 text-center md:text-left">
-              <h2 className="text-2xl font-black uppercase tracking-tighter text-red-400">Regra de Ouro: Persistência Real</h2>
-              <p className="text-sm text-red-200/60 max-w-2xl leading-relaxed">
-                Proibido criar páginas demonstrativas, dados mockados ou placeholders. Todo desenvolvimento deve possuir persistência real no banco de dados e respeitar as permissões RLS/RBAC.
-              </p>
-            </div>
-          </div>
-          <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none group-hover:scale-110 transition-transform">
-            <Database className="w-32 h-32" />
-          </div>
+        <section>
+          <h2 className="text-xl font-bold text-red-500 uppercase tracking-tight mb-4">## LEIA COM ATENÇÃO</h2>
+          <p className="text-white/80">Este prompt NÃO solicita novas telas.</p>
+          <p className="text-white/80">Este prompt NÃO solicita um novo Dashboard.</p>
+          <p className="text-white/80">Este prompt NÃO solicita um novo Roadmap.</p>
+          <p className="text-white/80">Este prompt NÃO solicita documentação visual.</p>
+          <p className="text-white/80">Este prompt NÃO solicita páginas técnicas.</p>
+          <p className="text-white/80">Este prompt NÃO solicita alterar novamente a Home.</p>
+          <p className="text-white/90 mt-4 font-bold">O objetivo é finalizar tecnicamente o ERP.</p>
         </section>
 
-        {/* FLUXO INDUSTRIAL PONTA A PONTA */}
-        <section className="space-y-8">
-          <div className="flex items-center gap-4">
-            <div className="bg-blue-500 p-3 rounded-xl shadow-lg shadow-blue-500/20">
-              <Network className="w-6 h-6 text-white" />
-            </div>
-            <h2 className="text-3xl font-bold uppercase tracking-tight">Fluxo Industrial Ponta a Ponta</h2>
-          </div>
+        <hr className="border-white/10" />
 
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-sm">
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-y-12 gap-x-4 relative">
-              <FlowItem label="Cliente" icon={Users} delay="0" />
-              <FlowItem label="Orçamento" icon={FileText} delay="100" />
-              <FlowItem label="Pedido" icon={ShoppingCart} delay="200" />
-              <FlowItem label="Reserva" icon={Lock} delay="300" />
-              <FlowItem label="MRP" icon={Zap} delay="400" />
-              <FlowItem label="Compras" icon={ShoppingCart} delay="500" />
-              <FlowItem label="Recebimento" icon={Package} delay="600" />
-              <FlowItem label="APS" icon={GanttChartSquare} delay="700" />
-              <FlowItem label="Produção" icon={Factory} delay="800" />
-              <FlowItem label="Qualidade" icon={ClipboardCheck} delay="900" />
-              <FlowItem label="Expedição" icon={Truck} delay="1000" />
-              <FlowItem label="Financeiro" icon={DollarSign} delay="1100" />
-            </div>
-            <div className="mt-12 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-               <p className="text-[10px] uppercase font-bold tracking-widest text-blue-300 text-center">
-                 O sistema deve executar o ciclo completo utilizando dados reais de transação.
-               </p>
-            </div>
-          </div>
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-white uppercase"># REGRA ABSOLUTA Nº 1</h2>
+          <p className="text-red-400 font-bold">É PROIBIDO responder este prompt alterando apenas arquivos TSX, JSX, CSS, Tailwind, componentes visuais ou layouts.</p>
+          <p className="text-white/70">Uma Sprint NÃO será considerada implementada caso apenas a interface seja alterada.</p>
+          <p className="text-white/70 italic">Alterações exclusivamente em: index.tsx, dashboard.tsx, componentes React, CSS, Tailwind, Cards, Gráficos, Layouts, Menus, Ícones NÃO serão aceitas como implementação.</p>
         </section>
 
-        {/* AUDITORIA E KPIs */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6">
-            <div className="flex items-center gap-3">
-              <Search className="w-6 h-6 text-blue-400" />
-              <h3 className="text-xl font-bold uppercase tracking-tight">Protocolo de Auditoria</h3>
-            </div>
-            <ul className="space-y-3 text-sm text-white/60">
-              <li className="flex items-center gap-2"><ArrowRight className="w-3 h-3 text-blue-500" /> Banco de Dados & Migrations</li>
-              <li className="flex items-center gap-2"><ArrowRight className="w-3 h-3 text-blue-500" /> RPCs & Funções PostgreSQL</li>
-              <li className="flex items-center gap-2"><ArrowRight className="w-3 h-3 text-blue-500" /> Políticas RLS & RBAC</li>
-              <li className="flex items-center gap-2"><ArrowRight className="w-3 h-3 text-blue-500" /> Performance & Consultas N+1</li>
-            </ul>
-          </div>
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-white uppercase"># REGRA ABSOLUTA Nº 2</h2>
+          <p className="text-white/90">A rota: / já está homologada. Ela permanecerá sendo exclusivamente o Dashboard Executivo Industrial.</p>
+          <p className="text-red-400 font-bold">É proibido transformar novamente a Home em Roadmap, Sprint, Relatório Técnico, Guia, Protocolo, Auditoria, Documentação ou Página de Status.</p>
+          <p className="text-white/70">Toda documentação deverá permanecer em /admin ou /dev. Nunca na Home.</p>
+        </section>
 
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6">
-            <div className="flex items-center gap-3">
-              <Activity className="w-6 h-6 text-blue-400" />
-              <h3 className="text-xl font-bold uppercase tracking-tight">Validação de KPIs</h3>
-            </div>
-            <p className="text-sm text-white/50 leading-relaxed">
-              Todos os indicadores devem ser comparados com consultas SQL diretas. Proibido o uso de mocks ou fallbacks simulados.
-            </p>
-            <div className="bg-black/40 rounded-xl p-4 border border-white/5 space-y-2">
-              <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-white/40">
-                <span>KPI Dashboard</span>
-                <span>VS</span>
-                <span>Consulta SQL</span>
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-white uppercase"># REGRA ABSOLUTA Nº 3</h2>
+          <p className="text-white/90 italic">Cada funcionalidade somente poderá ser considerada concluída quando possuir simultaneamente: Banco de Dados, Migration, Relacionamentos, Constraints, Índices, RPC, Backend, Serviços, Integração, Regras de Negócio, Interface, RBAC, RLS, Auditoria, Testes, Build.</p>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-white uppercase"># MISSÃO</h2>
+          <p className="text-blue-400 font-bold">Executar a homologação completa do ERP Industrial. Não criar novas funcionalidades apenas para aumentar escopo. Corrigir. Integrar. Validar. Homologar. Eliminar inconsistências. Garantir funcionamento ponta a ponta.</p>
+        </section>
+
+        <hr className="border-white/10" />
+
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-white uppercase"># PRIMEIRA ETAPA</h2>
+          <p className="text-white/70 leading-relaxed">Executar uma auditoria completa. Auditar: Banco, Migrations, Triggers, Policies, RPCs, Functions, Views, Storage, Buckets, Serviços, Hooks, Queries, Caches, Realtime, Rotas, RBAC, Menus, Integrações, Eventos, Dashboard, KPIs, MRP, APS, MES, WMS, Custos, Financeiro, Fiscal, Qualidade, Industrialização, Estoque, Compras, Comercial, Produção, OP, Ordens, Lotes, Rolos.</p>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-white uppercase"># IDENTIFICAR</h2>
+          <p className="text-white/60">Componentes não utilizados, Código morto, Duplicidade, Tabelas sem uso, Campos órfãos, Triggers órfãs, RPCs sem utilização, Policies abertas, Menus duplicados, Rotas mortas, Layouts antigos, KPIs mockados, Dados simulados, Arrays estáticos, Botões sem ação, Páginas ilustrativas, Fluxos interrompidos.</p>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-white uppercase"># REMOVER</h2>
+          <p className="text-red-400">Tudo que for: Mock, Placeholder, Demo, Status falso, Sprint visual, Dashboard demonstrativo, Protocolos na Home, Roadmaps na Home, KPIs fictícios.</p>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-white uppercase"># HOMOLOGAÇÃO DO FLUXO COMPLETO</h2>
+          <div className="text-blue-400 font-bold text-center py-4 border border-blue-500/20 bg-blue-500/5 rounded">
+            Cliente ↓ Orçamento ↓ Pedido ↓ Reserva ↓ MRP ↓ Compra ↓ Recebimento ↓ APS ↓ Programação ↓ OP ↓ Reserva Material ↓ Apontamento ↓ Consumo ↓ Qualidade ↓ Entrada Produto ↓ Lote ↓ Rolo ↓ Estoque ↓ Separação ↓ Conferência ↓ Pré-Faturamento ↓ Financeiro ↓ Documento Fiscal ↓ Pronto para Focus
+          </div>
+          <p className="text-white/70 text-center">Cada etapa deverá gravar dados reais.</p>
+        </section>
+
+        <hr className="border-white/10" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs text-white/60">
+          <div className="space-y-2">
+            <h3 className="text-white font-bold uppercase">HOMOLOGAÇÃO DO COMERCIAL</h3>
+            <p>Validar: Clientes, Endereços, Representantes, Tabela de Preço, Condição Pagamento, Limite Crédito, Orçamento, Pedido, Reserva, Conversão, Histórico, Anexos, Workflow.</p>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-white font-bold uppercase">HOMOLOGAÇÃO DO MRP</h3>
+            <p>Validar: BOM, Estoque, Reservas, Pedidos, Lead Time, Perdas, Segurança, Sugestões, Necessidade Líquida. Comparar todos os cálculos com SQL.</p>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-white font-bold uppercase">HOMOLOGAÇÃO DO APS</h3>
+            <p>Validar: Calendários, Turnos, Capacidade, Carga, Máquinas, Centros, Programação, Conflitos, Simulações, Gargalos. Não utilizar IA. Validar somente regras determinísticas.</p>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-white font-bold uppercase">HOMOLOGAÇÃO DO MES</h3>
+            <p>Executar: Setup, Produção, Pausa, Retomada, Parada, Consumo, Refugo, Perdas, Retrabalho, Encerramento. Todos os eventos deverão persistir no banco.</p>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-white font-bold uppercase">HOMOLOGAÇÃO DO ESTOQUE</h3>
+            <p>Validar: Entrada, Saída, Transferência, Reserva, Inventário, Consumo, Estorno, Kardex, Lotes, Rolos, Saldo. Nenhum saldo poderá ficar inconsistente.</p>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-white font-bold uppercase">HOMOLOGAÇÃO DA QUALIDADE</h3>
+            <p>Executar: Inspeção, Bloqueio, Liberação, Retrabalho, Segunda Qualidade, Não Conformidade. Validar integração automática com estoque.</p>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-white font-bold uppercase">HOMOLOGAÇÃO DA INDUSTRIALIZAÇÃO</h3>
+            <p>Executar: Remessa, Fornecedor, Retorno, Conferência, Qualidade, Custos, Financeiro, Entrada.</p>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-white font-bold uppercase">HOMOLOGAÇÃO DO FINANCEIRO</h3>
+            <p>Validar: Receber, Pagar, Baixas, Fluxo Caixa, DRE, Centros de Custo, Integrações automáticas.</p>
+          </div>
+        </div>
+
+        <section className="p-6 bg-white/5 border border-white/10 rounded">
+          <h2 className="text-xl font-black text-white uppercase mb-4"># HOMOLOGAÇÃO FISCAL</h2>
+          <p className="text-white/70 mb-4">Não transmitir NF. Preparar completamente: XML, Payload, Validação, CFOP, NCM, CSOSN, CST, Tributos, Numeração, Logs, DANFE, Preview.</p>
+          <p className="text-blue-400 font-bold">A única pendência permitida será: Configuração das credenciais da Focus NFe. Jamais simular autorização.</p>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-white uppercase"># DASHBOARD EXECUTIVO</h2>
+          <p className="text-white/70">Todos os KPIs deverão utilizar dados reais. Para cada KPI informar: Tabela, Consulta, Campos, Filtros, RPC, Serviço, Frequência, Permissão.</p>
+          <p className="text-red-400 font-bold">Nenhum KPI poderá utilizar: Mocks, Arrays, Placeholders, Dados simulados.</p>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-white uppercase"># SEGURANÇA</h2>
+          <p className="text-white/70">Executar auditoria completa. Validar: RBAC, RLS, Policies, Permissões, Buckets, Secrets, Tokens, Frontend, Backend, Banco.</p>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-white uppercase"># TESTES</h2>
+          <p className="text-red-500 font-black italic underline uppercase text-lg">Nesta Sprint o Testing Agent é obrigatório.</p>
+          <p className="text-white/70">Não aceitar: "Testing Agent não necessário". Executar: Typecheck, Lint, Unit Tests, Integration Tests, Concurrency Tests, Smoke Tests, Build. Corrigir todas as falhas.</p>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-2xl font-black text-white uppercase"># CRITÉRIOS DE ACEITE</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+            {[
+              "Comercial funcionando", "Compras funcionando", "Estoque funcionando", "Engenharia funcionando",
+              "BOM funcionando", "MRP funcionando", "APS funcionando", "PCP funcionando", "Produção funcionando",
+              "MES funcionando", "Qualidade funcionando", "Industrialização funcionando", "Custos funcionando",
+              "Financeiro funcionando", "Dashboard utilizando dados reais", "RBAC validado", "RLS validada",
+              "Auditoria funcionando", "Testes aprovados", "Build aprovado", "Nenhum mock restante",
+              "Nenhum botão sem ação", "Nenhuma página demonstrativa", "Nenhum KPI fictício",
+              "Home preservada como Dashboard Executivo", "Documentação mantida apenas em áreas protegidas",
+              "Módulo Fiscal totalmente preparado"
+            ].map(item => (
+              <div key={item} className="flex items-center gap-2">
+                <span className="text-green-500 font-bold">✓</span>
+                <span className="text-white/80">{item}</span>
               </div>
-              <div className="h-1 w-full bg-blue-500/20 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500 w-[100%]" />
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 
-        {/* MODULOS CRÍTICOS */}
-        <section className="space-y-8">
-           <h2 className="text-2xl font-black uppercase tracking-tighter border-l-4 border-blue-500 pl-4">Homologação por Contexto</h2>
-           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <ModuleCard title="Comercial & Reservas" desc="Orçamentos, limites de crédito, bloqueios e reservas físicas vs fiscais." />
-              <ModuleCard title="MRP & Engenharia" desc="BOM, estoques de segurança, cálculo de demanda e explosão de materiais." />
-              <ModuleCard title="APS & Planejamento" desc="Capacidade, carga, turnos e algoritmo de sequenciamento determinístico." />
-              <ModuleCard title="PCP & Produção" desc="OPs, apontamentos, perdas, setups e consumo real de materiais." />
-              <ModuleCard title="Estoque & Lotes" desc="Saldos físicos/disponíveis, genealogia de lotes e rastreabilidade de rolos." />
-              <ModuleCard title="Qualidade & RNC" desc="Inspeção, bloqueios, liberação comercial e fluxos de retrabalho." />
-              <ModuleCard title="Industrialização" desc="Controle de remessa e retorno em terceiros com apuração de custos." />
-              <ModuleCard title="Financeiro & DRE" desc="Contas a pagar/receber, fluxo de caixa e integração automática MES." />
-              <ModuleCard title="Fiscal & Focus NFe" desc="Regras tributárias, CFOP/CST e prontidão para transmissão real." />
-           </div>
+        <section className="p-8 bg-red-900/20 border-2 border-red-500/40 rounded-xl text-center">
+          <h2 className="text-2xl font-black text-red-500 uppercase mb-4"># PROIBIDO DECLARAR SUCESSO</h2>
+          <p className="text-white font-bold italic">É proibido responder "Implementado com sucesso" caso existam apenas alterações visuais. Uma Sprint somente poderá ser encerrada caso existam evidências técnicas reais.</p>
         </section>
 
-        {/* TESTES E QUALIDADE */}
-        <section className="bg-gradient-to-br from-blue-600/20 to-indigo-900/20 border border-blue-500/30 rounded-3xl p-8 md:p-12 relative overflow-hidden">
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
-            <div className="lg:col-span-2 space-y-6">
-              <h2 className="text-4xl font-black uppercase tracking-tighter">Testing Agent Obrigatório</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <CheckItem text="Typecheck & Lint" />
-                <CheckItem text="Testes Unitários & Integração" />
-                <CheckItem text="Testes de Concorrência" />
-                <CheckItem text="Smoke Tests & Build Prod" />
-              </div>
-            </div>
-            <div className="bg-black/60 backdrop-blur-xl p-8 rounded-3xl border border-white/10 text-center space-y-4 shadow-2xl">
-               <div className="inline-flex p-3 bg-blue-500/20 rounded-2xl mb-2">
-                 <Zap className="w-8 h-8 text-blue-400" />
-               </div>
-               <div className="text-3xl font-black text-white uppercase tracking-tighter italic">Status: Auditando</div>
-               <p className="text-[10px] uppercase tracking-widest text-white/40">Garantia de Qualidade Industrial</p>
-            </div>
-          </div>
+        <section className="space-y-4 pb-20">
+          <h2 className="text-2xl font-black text-white uppercase"># RELATÓRIO FINAL OBRIGATÓRIO</h2>
+          <p className="text-white/60">Ao concluir, apresentar obrigatoriamente auditoria inicial, banco, backend, frontend, integrações, testes (números reais), fluxos homologados e pendências.</p>
+          <h3 className="text-xl font-bold text-blue-500 uppercase tracking-tighter">## DECLARAÇÃO FINAL</h3>
+          <p className="text-white/90">Não declarar o ERP concluído sem comprovação técnica. Cada afirmação deverá ser sustentada por evidências concretas. O objetivo desta Sprint é entregar um ERP industrial pronto para operação real.</p>
         </section>
-
-        {/* CRITÉRIOS DE ACEITE */}
-        <section className="space-y-8">
-          <h2 className="text-2xl font-black uppercase tracking-tighter text-blue-400">Critérios de Aceite</h2>
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-12">
-              <AcceptanceItem text="Todo o fluxo comercial e de reservas funcionar ponta a ponta." />
-              <AcceptanceItem text="MRP e APS validado com algoritmos determinísticos reais." />
-              <AcceptanceItem text="Produção e MES com apontamentos integrados ao estoque." />
-              <AcceptanceItem text="Rastreabilidade total de lotes e rolos homologada." />
-              <AcceptanceItem text="Dashboard Executivo 100% livre de dados mockados." />
-              <AcceptanceItem text="RBAC e RLS auditados em todas as rotas e RPCs." />
-              <AcceptanceItem text="Build e Bateria de Testes com 100% de aprovação." />
-              <AcceptanceItem text="Fiscal pronto para Focus NFe (pendência apenas credenciais)." />
-            </div>
-          </div>
-        </section>
-
-        <footer className="pt-12 border-t border-white/10 text-center pb-24">
-          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-white/20">
-            Relatório Final Obrigatório — Engenharia Digitale Têxtil — 2026
-          </p>
-        </footer>
       </div>
     </div>
   );
 }
+
 
 function FlowItem({ label, icon: Icon, delay }: { label: string; icon: any; delay: string }) {
   return (
