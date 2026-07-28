@@ -105,19 +105,7 @@ export function AppSidebar() {
                               <span className="font-semibold">{item.title}</span>
                             </div>
                           </div>
-                          {item.helpId && !collapsed && (
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                openHelp(item.helpId!);
-                              }}
-                              className="p-1 rounded-md hover:bg-accent/10 text-muted-foreground ring-1 ring-border opacity-0 group-hover/item:opacity-100 transition-opacity"
-                              title="Explicação do Menu"
-                            >
-                              <CircleHelp className="h-3.5 w-3.5" />
-                            </button>
-                          )}
+                          {/* Help icon removed as per user request */}
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -159,19 +147,7 @@ export function AppSidebar() {
                                           <span className="font-semibold">{item.title}</span>
                                         </div>
                                       </div>
-                                      {item.helpId && (
-                                        <button
-                                          onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            openHelp(item.helpId!);
-                                          }}
-                                          className="p-1 rounded-md hover:bg-accent/10 text-muted-foreground ring-1 ring-border opacity-0 group-hover/item:opacity-100 transition-opacity"
-                                          title="Explicação do Menu"
-                                        >
-                                          <CircleHelp className="h-3.5 w-3.5" />
-                                        </button>
-                                      )}
+                                      {/* Help icon removed as per user request */}
                                     </Link>
                                 </SidebarMenuSubButton>
                               </SidebarMenuSubItem>
