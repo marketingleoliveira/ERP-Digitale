@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { 
@@ -22,6 +22,9 @@ import { getHomeDashboardData } from "@/services/dashboard/home.functions";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
+  beforeLoad: () => {
+    throw redirect({ to: "/dashboard/industrial" });
+  },
   component: DashboardHome,
 });
 
