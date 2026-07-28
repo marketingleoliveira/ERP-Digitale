@@ -21,7 +21,7 @@ const MaquinaSubstituicaoSchema = z.object({
 });
 
 export const getOperacaoParametros = createServerFn({ method: "GET" })
-  .inputValidator((data) => z.object({ operacaoId: z.string() }).parse(data))
+  .validator((data) => z.object({ operacaoId: z.string() }).parse(data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const { supabase } = context;
@@ -35,7 +35,7 @@ export const getOperacaoParametros = createServerFn({ method: "GET" })
   });
 
 export const saveOperacaoParametro = createServerFn({ method: "POST" })
-  .inputValidator((data) => ParametroSchema.parse(data))
+  .validator((data) => ParametroSchema.parse(data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const { supabase } = context;
@@ -51,7 +51,7 @@ export const saveOperacaoParametro = createServerFn({ method: "POST" })
   });
 
 export const getMaquinasSubstituicao = createServerFn({ method: "GET" })
-  .inputValidator((data) => z.object({ maquinaPrincipalId: z.string().optional() }).parse(data))
+  .validator((data) => z.object({ maquinaPrincipalId: z.string().optional() }).parse(data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const { supabase } = context;
@@ -63,7 +63,7 @@ export const getMaquinasSubstituicao = createServerFn({ method: "GET" })
   });
 
 export const saveMaquinaSubstituicao = createServerFn({ method: "POST" })
-  .inputValidator((data) => MaquinaSubstituicaoSchema.parse(data))
+  .validator((data) => MaquinaSubstituicaoSchema.parse(data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const { supabase } = context;

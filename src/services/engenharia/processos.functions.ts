@@ -34,7 +34,7 @@ export const getProcessos = createServerFn({ method: "GET" })
 
 export const saveProcesso = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => processoSchema.parse(d))
+  .validator((d) => processoSchema.parse(d))
   .handler(async ({ context, data }) => {
     const { supabase } = context;
     const { error } = await supabase

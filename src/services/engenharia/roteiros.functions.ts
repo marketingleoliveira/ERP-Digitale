@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export const getRoteirosByArtigo = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.string().uuid().parse(d))
+  .validator((d) => z.string().uuid().parse(d))
   .handler(async ({ context, data }) => {
     const { supabase } = context;
     const { data: roteiros, error } = await supabase
