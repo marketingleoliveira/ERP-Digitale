@@ -112,8 +112,8 @@ export function AppSidebar() {
                                 e.stopPropagation();
                                 openHelp(item.helpId!);
                               }}
-                              className="p-1 rounded-md hover:bg-blue-500/20 text-blue-500 opacity-0 group-hover/item:opacity-100 transition-opacity"
-                              title="Ajuda detalhada"
+                              className="p-1 rounded-md hover:bg-destructive/10 text-destructive animate-pulse ring-1 ring-destructive/20 opacity-0 group-hover/item:opacity-100 transition-opacity"
+                              title="Explicação do Menu"
                             >
                               <CircleHelp className="h-3.5 w-3.5" />
                             </button>
@@ -166,8 +166,8 @@ export function AppSidebar() {
                                             e.stopPropagation();
                                             openHelp(item.helpId!);
                                           }}
-                                          className="p-1 rounded-md hover:bg-blue-500/20 text-blue-500 opacity-0 group-hover/item:opacity-100 transition-opacity"
-                                          title="Ajuda detalhada"
+                                          className="p-1 rounded-md hover:bg-destructive/10 text-destructive animate-pulse ring-1 ring-destructive/20 opacity-0 group-hover/item:opacity-100 transition-opacity"
+                                          title="Explicação do Menu"
                                         >
                                           <CircleHelp className="h-3.5 w-3.5" />
                                         </button>
