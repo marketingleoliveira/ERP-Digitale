@@ -81,6 +81,7 @@ function UsuariosPage() {
   const rows = useMemo(() => {
     const q = applied.toLowerCase();
     return profiles
+      .filter((p) => p.ativo)
       .map((p) => ({ ...p, tipo: cargoByUser.get(p.id) ?? p.cargo ?? "—" }))
       .filter((p) => !q || p.email.toLowerCase().includes(q));
   }, [profiles, cargoByUser, applied]);
