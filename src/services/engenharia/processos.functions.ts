@@ -17,7 +17,7 @@ const processoSchema = z.object({
 
 export const getProcessos = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }: { context: any }) => {
+  .handler(async ({ context }) => {
     const { supabase } = context;
     const { data, error } = await supabase
       .from("processos_industriais")
@@ -34,11 +34,11 @@ export const getProcessos = createServerFn({ method: "GET" })
 export const saveProcesso = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => processoSchema.parse(d))
-  .handler(async ({ context, input }: { context: any, input: any }) => {
+  .handler(async ({ context, data }) => {
     const { supabase } = context;
     const { error } = await supabase
       .from("processos_industriais")
-      .upsert(input, { onConflict: "codigo" });
+      .upsert(data, { onConflict: "codigo" });
     if (error) throw error;
     return { success: true };
   });
