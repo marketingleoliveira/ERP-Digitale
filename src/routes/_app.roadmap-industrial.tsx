@@ -62,7 +62,7 @@ function RoadmapIndustrialPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <PhaseStatus phase="Fase 1: Modelo Industrial" status="Concluída" progress={100} />
             <PhaseStatus phase="Sprint 2: Eng. de Produto" status="Concluída" progress={100} />
-            <PhaseStatus phase="Sprint 2.5: Consolidação" status="Em Progresso" progress={90} />
+            <PhaseStatus phase="Sprint 2.5: Consolidação" status="Concluída" progress={100} />
             <PhaseStatus phase="Fase 3: APS (PCP Avançado)" status="Pendente" progress={0} />
           </div>
         </section>
