@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MesAgentRouteImport } from './routes/mes-agent'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
@@ -123,6 +124,11 @@ import { Route as AppComprasRecebimentosIdRouteImport } from './routes/_app.comp
 import { Route as AppComprasPedidosIdRouteImport } from './routes/_app.compras.pedidos.$id'
 import { Route as AppComprasCotacoesIdRouteImport } from './routes/_app.compras.cotacoes.$id'
 
+const MesAgentRoute = MesAgentRouteImport.update({
+  id: '/mes-agent',
+  path: '/mes-agent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -707,6 +713,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
+  '/mes-agent': typeof MesAgentRoute
   '/agulha': typeof AppAgulhaRoute
   '/artigos': typeof AppArtigosRoute
   '/cliente-artigo': typeof AppClienteArtigoRouteWithChildren
@@ -821,6 +828,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
+  '/mes-agent': typeof MesAgentRoute
   '/agulha': typeof AppAgulhaRoute
   '/artigos': typeof AppArtigosRoute
   '/cliente-artigo': typeof AppClienteArtigoRouteWithChildren
@@ -937,6 +945,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
+  '/mes-agent': typeof MesAgentRoute
   '/_app/agulha': typeof AppAgulhaRoute
   '/_app/artigos': typeof AppArtigosRoute
   '/_app/cliente-artigo': typeof AppClienteArtigoRouteWithChildren
@@ -1053,6 +1062,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/login'
+    | '/mes-agent'
     | '/agulha'
     | '/artigos'
     | '/cliente-artigo'
@@ -1167,6 +1177,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/login'
+    | '/mes-agent'
     | '/agulha'
     | '/artigos'
     | '/cliente-artigo'
@@ -1282,6 +1293,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/auth'
     | '/login'
+    | '/mes-agent'
     | '/_app/agulha'
     | '/_app/artigos'
     | '/_app/cliente-artigo'
@@ -1398,10 +1410,18 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   LoginRoute: typeof LoginRoute
+  MesAgentRoute: typeof MesAgentRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/mes-agent': {
+      id: '/mes-agent'
+      path: '/mes-agent'
+      fullPath: '/mes-agent'
+      preLoaderRoute: typeof MesAgentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -2538,6 +2558,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   LoginRoute: LoginRoute,
+  MesAgentRoute: MesAgentRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
