@@ -11,6 +11,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
+import { HelpProvider } from "@/components/help/HelpProvider";
+import { HelpDialog } from "@/components/help/HelpDialog";
 
 function NotFoundComponent() {
   return (
@@ -96,7 +98,10 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <HelpProvider>
+        <Outlet />
+        <HelpDialog />
+      </HelpProvider>
       <Toaster richColors position="top-right" />
     </QueryClientProvider>
   );
