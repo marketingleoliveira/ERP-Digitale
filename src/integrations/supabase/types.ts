@@ -488,6 +488,45 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_engenharia: {
+        Row: {
+          created_at: string | null
+          dados_anteriores: Json | null
+          dados_novos: Json | null
+          entidade_id: string
+          entidade_tipo: string
+          id: string
+          motivo: string | null
+          operacao: string
+          revisao: string
+          usuario_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          dados_anteriores?: Json | null
+          dados_novos?: Json | null
+          entidade_id: string
+          entidade_tipo: string
+          id?: string
+          motivo?: string | null
+          operacao: string
+          revisao: string
+          usuario_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          dados_anteriores?: Json | null
+          dados_novos?: Json | null
+          entidade_id?: string
+          entidade_tipo?: string
+          id?: string
+          motivo?: string | null
+          operacao?: string
+          revisao?: string
+          usuario_id?: string | null
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           acao: string
@@ -663,6 +702,65 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      centros_trabalho: {
+        Row: {
+          capacidade_nominal: number | null
+          codigo: string
+          created_at: string | null
+          custo_hora: number | null
+          eficiencia_padrao: number | null
+          id: string
+          max_operacoes_simultaneas: number | null
+          nome: string
+          permite_simultaneo: boolean | null
+          setor_id: string | null
+          status: string
+          tipo_processo: string | null
+          unidade_capacidade: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          capacidade_nominal?: number | null
+          codigo: string
+          created_at?: string | null
+          custo_hora?: number | null
+          eficiencia_padrao?: number | null
+          id?: string
+          max_operacoes_simultaneas?: number | null
+          nome: string
+          permite_simultaneo?: boolean | null
+          setor_id?: string | null
+          status?: string
+          tipo_processo?: string | null
+          unidade_capacidade?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          capacidade_nominal?: number | null
+          codigo?: string
+          created_at?: string | null
+          custo_hora?: number | null
+          eficiencia_padrao?: number | null
+          id?: string
+          max_operacoes_simultaneas?: number | null
+          nome?: string
+          permite_simultaneo?: boolean | null
+          setor_id?: string | null
+          status?: string
+          tipo_processo?: string | null
+          unidade_capacidade?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "centros_trabalho_setor_id_fkey"
+            columns: ["setor_id"]
+            isOneToOne: false
+            referencedRelation: "setores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       certificados_digitais: {
         Row: {
@@ -3187,6 +3285,90 @@ export type Database = {
           },
         ]
       }
+      maquina_substituicao: {
+        Row: {
+          created_at: string | null
+          id: string
+          maquina_principal_id: string | null
+          maquina_reserva_id: string | null
+          motivo_uso: string | null
+          prioridade: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          maquina_principal_id?: string | null
+          maquina_reserva_id?: string | null
+          motivo_uso?: string | null
+          prioridade?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          maquina_principal_id?: string | null
+          maquina_reserva_id?: string | null
+          motivo_uso?: string | null
+          prioridade?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maquina_substituicao_maquina_principal_id_fkey"
+            columns: ["maquina_principal_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maquina_substituicao_maquina_principal_id_fkey"
+            columns: ["maquina_principal_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "maquina_substituicao_maquina_principal_id_fkey"
+            columns: ["maquina_principal_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "maquina_substituicao_maquina_principal_id_fkey"
+            columns: ["maquina_principal_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "maquina_substituicao_maquina_reserva_id_fkey"
+            columns: ["maquina_reserva_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maquina_substituicao_maquina_reserva_id_fkey"
+            columns: ["maquina_reserva_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "maquina_substituicao_maquina_reserva_id_fkey"
+            columns: ["maquina_reserva_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "maquina_substituicao_maquina_reserva_id_fkey"
+            columns: ["maquina_reserva_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
+            referencedColumns: ["maquina_id"]
+          },
+        ]
+      }
       maquina_turnos: {
         Row: {
           created_at: string
@@ -3244,6 +3426,7 @@ export type Database = {
       maquinas: {
         Row: {
           carga_agulhas: Json
+          centro_trabalho_id: string | null
           correias: string[]
           created_at: string
           data_fabricacao: string | null
@@ -3258,11 +3441,13 @@ export type Database = {
           n_alimentadores: number | null
           numero: number
           producao_media: number | null
+          status_operacional: string | null
           tipo: string
           updated_at: string
         }
         Insert: {
           carga_agulhas?: Json
+          centro_trabalho_id?: string | null
           correias?: string[]
           created_at?: string
           data_fabricacao?: string | null
@@ -3277,11 +3462,13 @@ export type Database = {
           n_alimentadores?: number | null
           numero: number
           producao_media?: number | null
+          status_operacional?: string | null
           tipo: string
           updated_at?: string
         }
         Update: {
           carga_agulhas?: Json
+          centro_trabalho_id?: string | null
           correias?: string[]
           created_at?: string
           data_fabricacao?: string | null
@@ -3296,8 +3483,62 @@ export type Database = {
           n_alimentadores?: number | null
           numero?: number
           producao_media?: number | null
+          status_operacional?: string | null
           tipo?: string
           updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maquinas_centro_trabalho_id_fkey"
+            columns: ["centro_trabalho_id"]
+            isOneToOne: false
+            referencedRelation: "centros_trabalho"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      motivos_parada: {
+        Row: {
+          ativo: boolean | null
+          bloqueia_maquina: boolean | null
+          categoria: string
+          codigo: string
+          conta_como_parada_planejada: boolean | null
+          created_at: string | null
+          descricao: string
+          exige_aprovacao: boolean | null
+          exige_justificativa: boolean | null
+          gera_manutencao: boolean | null
+          id: string
+          impacta_oee: boolean | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          bloqueia_maquina?: boolean | null
+          categoria: string
+          codigo: string
+          conta_como_parada_planejada?: boolean | null
+          created_at?: string | null
+          descricao: string
+          exige_aprovacao?: boolean | null
+          exige_justificativa?: boolean | null
+          gera_manutencao?: boolean | null
+          id?: string
+          impacta_oee?: boolean | null
+        }
+        Update: {
+          ativo?: boolean | null
+          bloqueia_maquina?: boolean | null
+          categoria?: string
+          codigo?: string
+          conta_como_parada_planejada?: boolean | null
+          created_at?: string | null
+          descricao?: string
+          exige_aprovacao?: boolean | null
+          exige_justificativa?: boolean | null
+          gera_manutencao?: boolean | null
+          id?: string
+          impacta_oee?: boolean | null
         }
         Relationships: []
       }
@@ -6458,6 +6699,69 @@ export type Database = {
           },
         ]
       }
+      processos_industriais: {
+        Row: {
+          ativo: boolean | null
+          centro_trabalho_padrao_id: string | null
+          codigo: string
+          created_at: string | null
+          custo_padrao: number | null
+          descricao: string | null
+          duracao_padrao_minutos: number | null
+          id: string
+          nome: string
+          sequencia_sugerida: number | null
+          setor_id: string | null
+          tipo: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          centro_trabalho_padrao_id?: string | null
+          codigo: string
+          created_at?: string | null
+          custo_padrao?: number | null
+          descricao?: string | null
+          duracao_padrao_minutos?: number | null
+          id?: string
+          nome: string
+          sequencia_sugerida?: number | null
+          setor_id?: string | null
+          tipo?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          ativo?: boolean | null
+          centro_trabalho_padrao_id?: string | null
+          codigo?: string
+          created_at?: string | null
+          custo_padrao?: number | null
+          descricao?: string | null
+          duracao_padrao_minutos?: number | null
+          id?: string
+          nome?: string
+          sequencia_sugerida?: number | null
+          setor_id?: string | null
+          tipo?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "processos_industriais_centro_trabalho_padrao_id_fkey"
+            columns: ["centro_trabalho_padrao_id"]
+            isOneToOne: false
+            referencedRelation: "centros_trabalho"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "processos_industriais_setor_id_fkey"
+            columns: ["setor_id"]
+            isOneToOne: false
+            referencedRelation: "setores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_variants: {
         Row: {
           cor: string | null
@@ -7691,6 +7995,219 @@ export type Database = {
           },
         ]
       }
+      roteiro_operacao_maquinas: {
+        Row: {
+          capacidade_hora: number | null
+          created_at: string | null
+          custo_hora: number | null
+          eficiencia_esperada: number | null
+          gramatura_max: number | null
+          gramatura_min: number | null
+          id: string
+          largura_max: number | null
+          largura_min: number | null
+          maquina_id: string | null
+          operacao_id: string | null
+          preferencial: boolean | null
+          prioridade: number | null
+          restricoes: Json | null
+          velocidade_nominal: number | null
+        }
+        Insert: {
+          capacidade_hora?: number | null
+          created_at?: string | null
+          custo_hora?: number | null
+          eficiencia_esperada?: number | null
+          gramatura_max?: number | null
+          gramatura_min?: number | null
+          id?: string
+          largura_max?: number | null
+          largura_min?: number | null
+          maquina_id?: string | null
+          operacao_id?: string | null
+          preferencial?: boolean | null
+          prioridade?: number | null
+          restricoes?: Json | null
+          velocidade_nominal?: number | null
+        }
+        Update: {
+          capacidade_hora?: number | null
+          created_at?: string | null
+          custo_hora?: number | null
+          eficiencia_esperada?: number | null
+          gramatura_max?: number | null
+          gramatura_min?: number | null
+          id?: string
+          largura_max?: number | null
+          largura_min?: number | null
+          maquina_id?: string | null
+          operacao_id?: string | null
+          preferencial?: boolean | null
+          prioridade?: number | null
+          restricoes?: Json | null
+          velocidade_nominal?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roteiro_operacao_maquinas_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "maquinas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roteiro_operacao_maquinas_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_capacidade_semanal"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "roteiro_operacao_maquinas_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "roteiro_operacao_maquinas_maquina_id_fkey"
+            columns: ["maquina_id"]
+            isOneToOne: false
+            referencedRelation: "vw_oee_maquina_periodo"
+            referencedColumns: ["maquina_id"]
+          },
+          {
+            foreignKeyName: "roteiro_operacao_maquinas_operacao_id_fkey"
+            columns: ["operacao_id"]
+            isOneToOne: false
+            referencedRelation: "roteiro_operacoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roteiro_operacao_parametros: {
+        Row: {
+          created_at: string | null
+          id: string
+          nome: string
+          obrigatorio: boolean | null
+          operacao_id: string | null
+          tolerancia_max: string | null
+          tolerancia_min: string | null
+          valor_referencia: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          nome: string
+          obrigatorio?: boolean | null
+          operacao_id?: string | null
+          tolerancia_max?: string | null
+          tolerancia_min?: string | null
+          valor_referencia?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          nome?: string
+          obrigatorio?: boolean | null
+          operacao_id?: string | null
+          tolerancia_max?: string | null
+          tolerancia_min?: string | null
+          valor_referencia?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roteiro_operacao_parametros_operacao_id_fkey"
+            columns: ["operacao_id"]
+            isOneToOne: false
+            referencedRelation: "roteiro_operacoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roteiro_operacoes: {
+        Row: {
+          centro_trabalho_id: string | null
+          checklist_operacional: Json | null
+          created_at: string | null
+          custo_hora: number | null
+          id: string
+          obrigatoria: boolean | null
+          processo_id: string | null
+          roteiro_id: string | null
+          sequencia: number
+          tempo_adm_minutos: number | null
+          tempo_espera_minutos: number | null
+          tempo_inspecao_minutos: number | null
+          tempo_limpeza_minutos: number | null
+          tempo_operacao_minutos: number | null
+          tempo_setup_minutos: number | null
+          tempo_troca_minutos: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          centro_trabalho_id?: string | null
+          checklist_operacional?: Json | null
+          created_at?: string | null
+          custo_hora?: number | null
+          id?: string
+          obrigatoria?: boolean | null
+          processo_id?: string | null
+          roteiro_id?: string | null
+          sequencia: number
+          tempo_adm_minutos?: number | null
+          tempo_espera_minutos?: number | null
+          tempo_inspecao_minutos?: number | null
+          tempo_limpeza_minutos?: number | null
+          tempo_operacao_minutos?: number | null
+          tempo_setup_minutos?: number | null
+          tempo_troca_minutos?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          centro_trabalho_id?: string | null
+          checklist_operacional?: Json | null
+          created_at?: string | null
+          custo_hora?: number | null
+          id?: string
+          obrigatoria?: boolean | null
+          processo_id?: string | null
+          roteiro_id?: string | null
+          sequencia?: number
+          tempo_adm_minutos?: number | null
+          tempo_espera_minutos?: number | null
+          tempo_inspecao_minutos?: number | null
+          tempo_limpeza_minutos?: number | null
+          tempo_operacao_minutos?: number | null
+          tempo_setup_minutos?: number | null
+          tempo_troca_minutos?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roteiro_operacoes_centro_trabalho_id_fkey"
+            columns: ["centro_trabalho_id"]
+            isOneToOne: false
+            referencedRelation: "centros_trabalho"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roteiro_operacoes_processo_id_fkey"
+            columns: ["processo_id"]
+            isOneToOne: false
+            referencedRelation: "processos_industriais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roteiro_operacoes_roteiro_id_fkey"
+            columns: ["roteiro_id"]
+            isOneToOne: false
+            referencedRelation: "roteiros"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       roteiros: {
         Row: {
           article_id: string | null
@@ -7955,6 +8472,50 @@ export type Database = {
           },
         ]
       }
+      setores: {
+        Row: {
+          codigo: string
+          created_at: string | null
+          id: string
+          nome: string
+          ordem_exibicao: number | null
+          responsavel_id: string | null
+          status: string
+          unidade_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          codigo: string
+          created_at?: string | null
+          id?: string
+          nome: string
+          ordem_exibicao?: number | null
+          responsavel_id?: string | null
+          status?: string
+          unidade_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          codigo?: string
+          created_at?: string | null
+          id?: string
+          nome?: string
+          ordem_exibicao?: number | null
+          responsavel_id?: string | null
+          status?: string
+          unidade_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "setores_unidade_id_fkey"
+            columns: ["unidade_id"]
+            isOneToOne: false
+            referencedRelation: "unidades_industriais"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       solicitacoes_compra: {
         Row: {
           aprovada_em: string | null
@@ -8107,6 +8668,42 @@ export type Database = {
           telefone?: string | null
           unidade?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      tipos_setup: {
+        Row: {
+          ativo: boolean | null
+          checklist_obrigatorio: boolean | null
+          codigo: string
+          created_at: string | null
+          custo_estimado: number | null
+          duracao_padrao_minutos: number | null
+          exige_aprovacao: boolean | null
+          id: string
+          nome: string
+        }
+        Insert: {
+          ativo?: boolean | null
+          checklist_obrigatorio?: boolean | null
+          codigo: string
+          created_at?: string | null
+          custo_estimado?: number | null
+          duracao_padrao_minutos?: number | null
+          exige_aprovacao?: boolean | null
+          id?: string
+          nome: string
+        }
+        Update: {
+          ativo?: boolean | null
+          checklist_obrigatorio?: boolean | null
+          codigo?: string
+          created_at?: string | null
+          custo_estimado?: number | null
+          duracao_padrao_minutos?: number | null
+          exige_aprovacao?: boolean | null
+          id?: string
+          nome?: string
         }
         Relationships: []
       }
@@ -8281,6 +8878,57 @@ export type Database = {
           uf_destino?: string
           uf_origem?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      unidades_industriais: {
+        Row: {
+          cnpj: string | null
+          codigo: string
+          created_at: string | null
+          created_by: string | null
+          endereco: string | null
+          estado: string | null
+          id: string
+          municipio: string | null
+          nome: string
+          responsavel_id: string | null
+          status: string
+          timezone: string | null
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          cnpj?: string | null
+          codigo: string
+          created_at?: string | null
+          created_by?: string | null
+          endereco?: string | null
+          estado?: string | null
+          id?: string
+          municipio?: string | null
+          nome: string
+          responsavel_id?: string | null
+          status?: string
+          timezone?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          cnpj?: string | null
+          codigo?: string
+          created_at?: string | null
+          created_by?: string | null
+          endereco?: string | null
+          estado?: string | null
+          id?: string
+          municipio?: string | null
+          nome?: string
+          responsavel_id?: string | null
+          status?: string
+          timezone?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
         }
         Relationships: []
       }
