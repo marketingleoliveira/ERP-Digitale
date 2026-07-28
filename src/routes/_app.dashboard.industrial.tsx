@@ -18,8 +18,10 @@ import {
   CheckCircle2,
   Clock,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  Activity
 } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/dashboard/industrial")({
