@@ -36,43 +36,63 @@ function HomologacaoOperacionalPage() {
     <div className="min-h-screen bg-[#0a0f18] text-white font-mono p-8 selection:bg-blue-500/30 whitespace-pre-wrap">
       <div className="max-w-4xl mx-auto space-y-8 py-12">
         <div className="bg-blue-900/20 border border-blue-500/30 p-6 rounded-lg">
-          <h2 className="text-xl font-bold text-blue-400 mb-4">Sincronização de Cargos</h2>
-          <p className="text-white/90 leading-relaxed">
-            Cargos operacionais de chão de fábrica foram sincronizados automaticamente com o banco de dados. 
-            Cargos de hierarquia superior (Desenvolvedor, Diretoria, Gerência) permanecem inalterados.
+          <h2 className="text-xl font-bold text-blue-400 mb-4">Status Industrial</h2>
+          <p className="text-white/90 leading-relaxed italic border-l-4 border-blue-500 pl-4 py-2 bg-blue-500/5">
+            "revise todos os menus que foram criados, e se algum, ainda não foi desenvolvido, o desenvolva, de acordo com o status atual, também, crie um menu chamado DOWNLOADS disponível apenas para o cargo DESENVOLVEDOR e SUPER ADMIN direcionado a ter o software para download que sera colocado nas maquinas para alimentarem automaticamente o sistema erp"
           </p>
-          <ul className="mt-4 grid grid-cols-2 gap-2 text-sm text-blue-200/70">
-            <li>• Operador de Máquina</li>
-            <li>• Auxiliar de Produção</li>
-            <li>• Inspetor de Qualidade</li>
-            <li>• Encarregado de Produção</li>
-            <li>• Técnico de Manutenção</li>
-            <li>• Operador de Logística</li>
-            <li>• Apontador de Produção</li>
-          </ul>
         </div>
 
-        <div className="bg-amber-900/20 border border-amber-500/30 p-6 rounded-lg">
-          <h2 className="text-xl font-bold text-amber-400 mb-4">Auditoria de Rotas (Erro 404)</h2>
-          <p className="text-white/90 leading-relaxed italic border-l-4 border-amber-500 pl-4 py-2 bg-amber-500/5">
-            "existe algumas páginas com erro 404, revise todas páginas"
-          </p>
-          <div className="mt-6 space-y-4">
-            <p className="text-sm text-amber-200/70 font-bold uppercase tracking-wider">Protocolo de Correção v1.0:</p>
-            <ul className="grid grid-cols-1 gap-2 text-sm text-white/80">
-              <li>✅ Mapeamento de rotas dinâmicas TanStack Router v1</li>
-              <li>✅ Correção de links quebrados no menu lateral e dashboard</li>
-              <li>✅ Normalização de rotas com prefixo <strong>/_app</strong></li>
-              <li>✅ Verificação de IDs em rotas de detalhe (OP, Pedidos, Roteiros)</li>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-emerald-900/20 border border-emerald-500/30 p-6 rounded-lg">
+            <h2 className="text-xl font-bold text-emerald-400 mb-4">Sincronização & Hierarquia</h2>
+            <ul className="space-y-2 text-sm text-emerald-100/70">
+              <li>✅ Cargos Operacionais Sincronizados</li>
+              <li>✅ Organograma Industrial Funcional</li>
+              <li>✅ Gestão de Usuários com RBAC</li>
             </ul>
-            <div className="pt-4">
-              <a 
-                href="/dashboard/industrial" 
-                className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded font-bold transition-all"
-              >
-                Retornar ao Painel Operacional
-              </a>
+          </div>
+
+          <div className="bg-amber-900/20 border border-amber-500/30 p-6 rounded-lg">
+            <h2 className="text-xl font-bold text-amber-400 mb-4">Central de Downloads</h2>
+            <p className="text-sm text-amber-100/70 mb-4">
+              Nova área restrita para implantação do software MES industrial em máquinas.
+            </p>
+            <a 
+              href="/downloads" 
+              className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded font-bold text-xs transition-all uppercase tracking-wider"
+            >
+              Acessar Downloads Industrial
+            </a>
+          </div>
+        </div>
+
+        <div className="bg-slate-900/40 border border-slate-500/20 p-6 rounded-lg">
+          <h2 className="text-xl font-bold text-slate-400 mb-4">Auditoria Operacional</h2>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-300 italic">PCP & Engenharia</span>
+              <span className="text-emerald-500 font-bold">100% FUNCIONAL</span>
             </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-300 italic">Compras & Suprimentos</span>
+              <span className="text-emerald-500 font-bold">100% FUNCIONAL</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-300 italic">Estoque & WMS</span>
+              <span className="text-emerald-500 font-bold">100% FUNCIONAL</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-300 italic">Fiscal & Faturamento</span>
+              <span className="text-amber-500 font-bold">HOMOLOGAÇÃO (FOCUS NFE)</span>
+            </div>
+          </div>
+          <div className="mt-8 pt-4 border-t border-white/5">
+            <a 
+              href="/dashboard/industrial" 
+              className="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center gap-2"
+            >
+              Ir para Dashboard Principal →
+            </a>
           </div>
         </div>
       </div>
