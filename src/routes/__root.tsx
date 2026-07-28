@@ -33,20 +33,15 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold">Ocorreu um erro</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
-        <button
-          onClick={() => { router.invalidate(); reset(); }}
-          className="mt-6 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-        >
-          Tentar novamente
-        </button>
-      </div>
-    </div>
-  );
+
+  useEffect(() => {
+    // Redirecionamento de segurança para o dashboard operacional caso ocorra um erro na raiz
+    if (window.location.pathname === '/') {
+      window.location.href = '/dashboard/industrial';
+    }
+  }, []);
+
+  return null;
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
