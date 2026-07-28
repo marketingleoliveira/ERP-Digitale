@@ -35,24 +35,29 @@ function HomologacaoOperacionalPage() {
       <div className="max-w-4xl mx-auto space-y-8 py-12">
         <h1 className="text-4xl font-black text-blue-500 tracking-tighter uppercase mb-8">MISSÃO</h1>
         
-        <p className="text-xl font-bold text-white mb-6">Homologar exclusivamente o módulo de Qualidade.</p>
+        <p className="text-xl font-bold text-white mb-6">Homologar exclusivamente o WMS.</p>
         
         <div className="space-y-2 text-red-500 font-bold uppercase tracking-wide">
-          <p>Não alterar layout.</p>
+          <p>Não alterar Dashboard.</p>
+          <p>Não alterar interface.</p>
         </div>
 
         <hr className="border-white/10 my-10" />
 
         <section className="space-y-6">
-          <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Implementar:</h2>
+          <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Validar:</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              "inspeções",
-              "bloqueios",
-              "liberações",
-              "segunda qualidade",
-              "não conformidades",
-              "retrabalho"
+              "entrada",
+              "saída",
+              "transferência",
+              "inventário",
+              "kardex",
+              "localização",
+              "lotes",
+              "rolos",
+              "reservas",
+              "bloqueios"
             ].map(item => (
               <div key={item} className="flex items-center gap-3">
                 <span className="text-green-500 font-bold">✓</span>
@@ -63,9 +68,22 @@ function HomologacaoOperacionalPage() {
         </section>
 
         <section className="space-y-4 pt-6 text-white/80 font-bold">
-          <p>Integrar automaticamente com estoque.</p>
-          <p>Integrar automaticamente com produção.</p>
-          <p>Executar testes.</p>
+          <p>Executar reconciliação completa dos saldos.</p>
+          <h3 className="text-white uppercase pt-4">Validar:</h3>
+          <ul className="list-none space-y-1 pl-4 border-l border-blue-500/30">
+            <li>Saldo físico</li>
+            <li>Saldo disponível</li>
+            <li>Saldo reservado</li>
+            <li>Saldo produção</li>
+            <li>Saldo qualidade</li>
+          </ul>
+          <p className="pt-4">Executar testes.</p>
+        </section>
+
+        <hr className="border-white/10 my-10" />
+
+        <section className="space-y-6 pb-20 text-center">
+          <p className="text-blue-500 font-black text-xl uppercase tracking-widest">Apresentar somente backend.</p>
         </section>
 
         <hr className="border-white/10 my-10" />
