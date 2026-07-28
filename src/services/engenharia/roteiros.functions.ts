@@ -5,10 +5,10 @@ import { z } from "zod";
 export const getRoteirosByArtigo = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.string().uuid().parse(d))
-  .handler(async ({ context, input }: { context: any, input: string }) => {
+  .handler(async ({ context, data }) => {
     const { supabase } = context;
-    const { data, error } = await supabase
-      .from("roteiros")
+    const { data: roteiros, error } = await supabase
+      .from("roteiros" as any)
       .select(`
         *,
         operacoes:roteiro_operacoes(
@@ -20,8 +20,8 @@ export const getRoteirosByArtigo = createServerFn({ method: "GET" })
           )
         )
       `)
-      .eq("artigo_id", input)
+      .eq("artigo_id", data)
       .order("versao", { ascending: false });
     if (error) throw error;
-    return data;
+    return roteiros as any[];
   });
