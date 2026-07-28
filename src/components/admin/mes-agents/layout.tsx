@@ -113,9 +113,11 @@ export function AdminMesAgentsLayout() {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
               createCodeMutation.mutate({
-                name: formData.get("name") as string,
-                unidade: formData.get("unidade") as string,
-                authorized_machines: [] // Later can add machine selection
+                data: {
+                  name: formData.get("name") as string,
+                  unidade: formData.get("unidade") as string,
+                  authorized_machines: [] // Later can add machine selection
+                }
               });
             }} className="space-y-4 py-4">
               <div className="space-y-2">
@@ -198,13 +200,13 @@ export function AdminMesAgentsLayout() {
                           </TableCell>
                           <TableCell className="text-xs font-mono">{agent.version || lastHeartbeat?.version || 'n/a'}</TableCell>
                           <TableCell className="text-xs">
-                            {lastHeartbeat 
+                            {lastHeartbeat?.created_at 
                               ? formatDistanceToNow(new Date(lastHeartbeat.created_at), { addSuffix: true, locale: ptBR })
                               : 'Nunca'}
                           </TableCell>
                           <TableCell>
-                            <span className={lastHeartbeat?.pending_events_count > 0 ? "text-amber-500 font-bold" : ""}>
-                              {lastHeartbeat?.pending_events_count || 0}
+                            <span className={(lastHeartbeat?.pending_events_count ?? 0) > 0 ? "text-amber-500 font-bold" : ""}>
+                              {lastHeartbeat?.pending_events_count ?? 0}
                             </span>
                           </TableCell>
                           <TableCell>
@@ -228,8 +230,10 @@ export function AdminMesAgentsLayout() {
                                 onClick={() => {
                                   if(confirm("Deseja alterar o status deste agente?")) {
                                     updateStatusMutation.mutate({
-                                      agent_id: agent.id,
-                                      status: agent.status === 'active' ? 'blocked' : 'active'
+                                      data: {
+                                        agent_id: agent.id,
+                                        status: (agent.status === 'active' ? 'blocked' : 'active') as 'blocked' | 'active'
+                                      }
                                     });
                                   }
                                 }}
@@ -292,8 +296,8 @@ export function AdminMesAgentsLayout() {
                         </TableCell>
                         <TableCell className="text-xs">
                           <div className="flex flex-col">
-                            <span>OP: {event.payload?.op_id?.substring(0,8) || 'n/a'}</span>
-                            <span>Máq: {event.payload?.machine_id?.substring(0,8) || 'n/a'}</span>
+                            <span>OP: {typeof event.payload === 'object' && event.payload && 'op_id' in event.payload ? String(event.payload.op_id).substring(0,8) : 'n/a'}</span>
+                            <span>Máq: {typeof event.payload === 'object' && event.payload && 'machine_id' in event.payload ? String(event.payload.machine_id).substring(0,8) : 'n/a'}</span>
                           </div>
                         </TableCell>
                         <TableCell className="text-xs text-destructive max-w-xs truncate">
