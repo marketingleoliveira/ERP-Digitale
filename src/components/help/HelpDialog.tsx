@@ -79,6 +79,62 @@ export function HelpDialog() {
                 </ul>
               </section>
             )}
+
+            {activeHelp.media && activeHelp.media.length > 0 && (
+              <section>
+                <h4 className="flex items-center gap-2 text-sm font-bold text-blue-800 dark:text-blue-300 uppercase tracking-wider mb-4">
+                  <PlayCircle className="w-4 h-4" /> Tutoriais em Vídeo
+                </h4>
+                <div className="space-y-4">
+                  {activeHelp.media.map((media, i) => (
+                    <figure
+                      key={`${media.src}-${i}`}
+                      className="overflow-hidden rounded-xl border border-blue-500/15 bg-muted/40"
+                    >
+                      {media.type === "video" && (
+                        <video
+                          src={media.src}
+                          poster={media.poster}
+                          controls
+                          playsInline
+                          muted
+                          preload="metadata"
+                          className="w-full aspect-video bg-black"
+                          aria-label={media.title ?? media.caption ?? "Tutorial em vídeo"}
+                        />
+                      )}
+                      {media.type === "gif" && (
+                        <img
+                          src={media.src}
+                          alt={media.caption ?? media.title ?? "Tutorial animado do módulo"}
+                          loading="lazy"
+                          className="w-full aspect-video object-cover bg-black"
+                        />
+                      )}
+                      {media.type === "youtube" && (
+                        <iframe
+                          src={media.src}
+                          title={media.title ?? "Tutorial em vídeo"}
+                          loading="lazy"
+                          allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture"
+                          allowFullScreen
+                          className="w-full aspect-video border-0 bg-black"
+                        />
+                      )}
+                      {(media.title || media.caption) && (
+                        <figcaption className="px-3 py-2 text-xs text-muted-foreground leading-snug">
+                          {media.title && (
+                            <span className="font-semibold text-foreground">{media.title}. </span>
+                          )}
+                          {media.caption}
+                        </figcaption>
+                      )}
+                    </figure>
+                  ))}
+                </div>
+              </section>
+            )}
+
           </div>
         </ScrollArea>
 
