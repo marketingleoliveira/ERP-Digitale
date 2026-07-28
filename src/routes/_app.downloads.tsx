@@ -129,19 +129,68 @@ function DownloadsPage() {
         </Card>
       </div>
 
-      <div className="bg-blue-900/20 border border-blue-500/30 p-6 rounded-xl">
+      <div className="bg-blue-900/20 border border-blue-500/30 p-8 rounded-xl">
         <div className="flex items-start gap-4">
-          <AlertCircle className="w-6 h-6 text-blue-400 shrink-0 mt-1" />
-          <div>
-            <h3 className="text-xl font-bold text-white mb-2">Instruções de Instalação</h3>
-            <p className="text-white/70 mb-4">
-              Após a instalação, utilize o token de criptografia <strong>AES-256</strong> configurado no sistema para autenticar o nó industrial.
-              O software entrará automaticamente em modo de escuta 24h, armazenando dados localmente em caso de queda de conexão.
-            </p>
-            <div className="bg-black/40 p-4 rounded border border-white/10">
-              <code className="text-blue-300 text-sm">
-                digitale-mes configure --token "SUA_CHAVE_AQUI" --mode edge --sync real-time
-              </code>
+          <ShieldCheck className="w-8 h-8 text-blue-400 shrink-0 mt-1" />
+          <div className="w-full">
+            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+              Guia de Instalação e Configuração Industrial
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div className="relative pl-8 border-l-2 border-blue-500/30">
+                  <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-4 border-[#0a0f18]" />
+                  <h4 className="text-white font-bold mb-2">1. Preparação do Ambiente</h4>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    Certifique-se que a máquina possui acesso à rede industrial e que as portas 443 (HTTPS) e 1883 (MQTT - Opcional) estão liberadas no firewall.
+                  </p>
+                </div>
+
+                <div className="relative pl-8 border-l-2 border-blue-500/30">
+                  <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-4 border-[#0a0f18]" />
+                  <h4 className="text-white font-bold mb-2">2. Instalação do Agente</h4>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    Execute o instalador baixado acima. Em Linux, utilize <code className="text-blue-300">sudo dpkg -i mes-edge.deb</code>. Em Windows, siga o assistente MSI até a conclusão.
+                  </p>
+                </div>
+
+                <div className="relative pl-8 border-l-2 border-blue-500/30">
+                  <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-4 border-[#0a0f18]" />
+                  <h4 className="text-white font-bold mb-2">3. Vinculação Criptográfica</h4>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    O nó industrial exige uma chave de criptografia AES-256 (CERT_ENC_KEY) para assinar os registros enviados ao ERP.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-black/40 p-6 rounded-lg border border-white/10 space-y-4">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-blue-400">Terminal de Configuração</h4>
+                <div className="space-y-3">
+                  <p className="text-[11px] text-white/50 uppercase">Comando de Ativação:</p>
+                  <code className="block text-blue-300 text-xs bg-black/60 p-3 rounded border border-blue-500/20 leading-loose">
+                    digitale-mes configure \<br/>
+                    &nbsp;&nbsp;--token "SUA_CHAVE_AES_AQUI" \<br/>
+                    &nbsp;&nbsp;--endpoint "https://erp.digitale.têxtil" \<br/>
+                    &nbsp;&nbsp;--mode edge-offline-first
+                  </code>
+                </div>
+                
+                <div className="pt-4 space-y-2">
+                  <p className="text-[11px] text-white/50 uppercase">Verificação de Status:</p>
+                  <code className="block text-emerald-400 text-xs bg-black/60 p-3 rounded border border-emerald-500/20">
+                    digitale-mes status --check-sync
+                  </code>
+                </div>
+
+                <Alert className="bg-amber-500/10 border-amber-500/20 mt-4">
+                  <AlertCircle className="h-4 w-4 text-amber-500" />
+                  <AlertTitle className="text-amber-500 text-xs font-bold">Nota de Segurança</AlertTitle>
+                  <AlertDescription className="text-white/60 text-[10px]">
+                    Nunca compartilhe a CERT_ENC_KEY fora do ambiente seguro do chão de fábrica.
+                  </AlertDescription>
+                </Alert>
+              </div>
             </div>
           </div>
         </div>
