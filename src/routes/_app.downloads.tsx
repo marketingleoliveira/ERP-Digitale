@@ -44,13 +44,17 @@ function DownloadsPage() {
     setDownloading(true);
     setTimeout(() => {
       setDownloading(false);
+      // NOTE: The URL below is a placeholder that might return 404 if the repository/release doesn't exist yet.
+      // To resolve, ensure the 'lovable-dev/industrial-agent' repository is public and contains the specified release.
       const link = document.createElement("a");
       link.href = "https://github.com/lovable-dev/industrial-agent/releases/download/v2.4.0/DigitaleMES_Setup.exe";
       link.setAttribute("download", `MES_Digitale_${platform}_v2.4.0.exe`);
+      link.target = "_blank"; // Open in new tab to avoid unloading app if it fails
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      toast.success(`Download do instalador (${platform}) iniciado.`);
+      toast.success(`Tentativa de download (${platform}) iniciada.`);
+      toast.info("Nota: O link depende da existência da release no GitHub.", { duration: 5000 });
     }, 1500);
   };
 
