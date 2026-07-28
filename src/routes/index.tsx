@@ -91,6 +91,10 @@ function HomologacaoOperacionalPage() {
             <p className="text-slate-400 text-xs font-medium italic">
               Hospedar os binários finais (Linux/Docker) em um CDN ou repositório oficial para atualizar os links de download.
             </p>
+            <p className="text-slate-500 text-[10px] uppercase font-bold tracking-widest mt-2">Próximo Passo:</p>
+            <p className="text-slate-400 text-xs font-medium italic">
+              Validar se os links reais de CDN já estão disponíveis para substituição nos botões de download.
+            </p>
             <a 
               href="/dashboard/industrial" 
               className="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center gap-2 pt-2"
