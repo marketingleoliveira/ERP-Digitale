@@ -9,7 +9,7 @@ export const getRoteirosByArtigo = createServerFn({ method: "GET" })
     const { supabase } = context;
     const { data: roteiros, error } = await supabase
       .from("roteiros" as any)
-      .select(\`
+      .select(`
         *,
         operacoes:roteiro_operacoes(
           *,
@@ -19,7 +19,7 @@ export const getRoteirosByArtigo = createServerFn({ method: "GET" })
             maquina:maquinas(*)
           )
         )
-      \`)
+      `)
       .eq("artigo_id", data)
       .order("versao", { ascending: false });
     if (error) throw error;
