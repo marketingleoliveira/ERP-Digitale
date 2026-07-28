@@ -3670,9 +3670,47 @@ export type Database = {
           },
         ]
       }
+      mes_agent_logs: {
+        Row: {
+          action: string
+          agent_id: string | null
+          created_at: string | null
+          id: string
+          payload: Json | null
+          performed_by: string | null
+        }
+        Insert: {
+          action: string
+          agent_id?: string | null
+          created_at?: string | null
+          id?: string
+          payload?: Json | null
+          performed_by?: string | null
+        }
+        Update: {
+          action?: string
+          agent_id?: string | null
+          created_at?: string | null
+          id?: string
+          payload?: Json | null
+          performed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mes_agent_logs_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "mes_agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mes_agents: {
         Row: {
+          activated_at: string | null
           activation_code: string
+          activation_code_expires_at: string | null
+          authorized_machines: string[] | null
           created_at: string | null
           equipment_id: string | null
           id: string
@@ -3680,12 +3718,16 @@ export type Database = {
           name: string
           status: Database["public"]["Enums"]["mes_agent_status"] | null
           token_hash: string | null
+          unidade: string | null
           unit: string | null
           updated_at: string | null
           version: string | null
         }
         Insert: {
+          activated_at?: string | null
           activation_code: string
+          activation_code_expires_at?: string | null
+          authorized_machines?: string[] | null
           created_at?: string | null
           equipment_id?: string | null
           id?: string
@@ -3693,12 +3735,16 @@ export type Database = {
           name: string
           status?: Database["public"]["Enums"]["mes_agent_status"] | null
           token_hash?: string | null
+          unidade?: string | null
           unit?: string | null
           updated_at?: string | null
           version?: string | null
         }
         Update: {
+          activated_at?: string | null
           activation_code?: string
+          activation_code_expires_at?: string | null
+          authorized_machines?: string[] | null
           created_at?: string | null
           equipment_id?: string | null
           id?: string
@@ -3706,6 +3752,7 @@ export type Database = {
           name?: string
           status?: Database["public"]["Enums"]["mes_agent_status"] | null
           token_hash?: string | null
+          unidade?: string | null
           unit?: string | null
           updated_at?: string | null
           version?: string | null

@@ -102,6 +102,7 @@ const RAW_MENU_ITEMS: MenuItem[] = [
   { title: "Regras Tributárias", url: "/fiscal/regras-tributarias", icon: Receipt, group: "Fiscal" },
   { title: "Benefícios Fiscais", url: "/fiscal/beneficios", icon: Receipt, group: "Fiscal" },
   { title: "Simulador Fiscal", url: "/fiscal/simulador", icon: FlaskConical, group: "Fiscal" },
+  { title: "Gerenciar Agentes MES", url: "/admin/mes-agents", icon: Cpu, group: "Administração", locked: true },
   { title: "Gerenciar Menus", url: "/menus", icon: SlidersHorizontal, group: "Administração", locked: true },
   { title: "Certificados A1", url: "/fiscal/certificados", icon: ShieldCheck, group: "Fiscal" },
   { title: "Processos Industriais", url: "/pcp/processos", icon: SlidersHorizontal, group: "Produção (PCP)" },
