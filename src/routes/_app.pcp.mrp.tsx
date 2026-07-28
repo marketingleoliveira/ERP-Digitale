@@ -100,7 +100,7 @@ function Page() {
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold"><AcronymTooltip>MRP</AcronymTooltip> — Necessidades de Materiais</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-foreground font-medium">
           Explosão da <AcronymTooltip>BOM</AcronymTooltip> · Necessidade Bruta → Estoque → Trânsito → Necessidade Líquida · Sugestão de compra.
         </p>
       </div>
@@ -218,7 +218,7 @@ function Page() {
                         </TableCell>
                         <TableCell>
                           <div className="font-medium">{l.descricao}</div>
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-xs text-foreground font-medium">
                             {l.origem_articles.map(o => `${o.codigo} (${num(o.qtd_kg, 0)}kg)`).join(", ")}
                           </div>
                         </TableCell>
