@@ -33,60 +33,64 @@ function HomologacaoOperacionalPage() {
   return (
     <div className="min-h-screen bg-[#0a0f18] text-white font-mono p-8 selection:bg-blue-500/30 whitespace-pre-wrap">
       <div className="max-w-4xl mx-auto space-y-8 py-12">
-        <div className="bg-rose-900/20 border border-rose-500/30 p-6 rounded-lg mb-8">
-          <h2 className="text-xl font-bold text-rose-400 mb-4 tracking-tighter uppercase">REGRAS OBRIGATÓRIAS (AUDITORIA MES AGENT)</h2>
-          <div className="text-sm text-rose-100 font-bold space-y-4">
-            <p className="text-rose-300">Esta tarefa é uma auditoria técnica específica para preparar a integração do Digitale MES Agent.</p>
+        <div className="bg-blue-900/20 border border-blue-500/30 p-6 rounded-lg mb-8">
+          <h2 className="text-xl font-bold text-blue-400 mb-4 tracking-tighter uppercase">REGRAS OBRIGATÓRIAS (BACKEND MES AGENT)</h2>
+          <div className="text-sm text-blue-100 font-bold space-y-4">
+            <p className="text-blue-200">Implemente o backend mínimo para receber dados do Digitale MES Agent.</p>
             
-            <div className="bg-rose-950/40 p-4 border-l-4 border-rose-500 rounded">
-              <p className="text-rose-400 font-black mb-2 uppercase tracking-widest text-xs">Restrições de Execução:</p>
+            <div className="bg-blue-950/40 p-4 border-l-4 border-blue-500 rounded">
+              <p className="text-blue-400 font-black mb-2 uppercase tracking-widest text-xs">Restrições de Execução:</p>
               <ul className="list-disc list-inside space-y-1 ml-2 opacity-90 text-xs">
-                <li>Não modificar nenhum arquivo.</li>
-                <li>Não criar páginas.</li>
                 <li>Não modificar a Home (exceto este aviso).</li>
-                <li>Responder somente no chat.</li>
+                <li>Não criar dashboard ou página de documentação.</li>
+                <li>Não alterar index.tsx (além do conteúdo informativo).</li>
+                <li>Reutilize estruturas identificadas na auditoria anterior.</li>
               </ul>
             </div>
 
-            <div>
-              <p className="text-rose-400 underline decoration-rose-500/50 underline-offset-4 mb-2 text-xs">Analise o código e o banco atualmente existentes relacionados a:</p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-[10px] opacity-80">
-                {["máquinas", "operadores", "funcionários", "turnos", "ordens de produção", "itens das ordens de produção", "apontamentos de produção", "consumos", "perdas", "refugos", "paradas", "motivos de parada", "entrada de produção", "lotes", "qualidade", "estoque", "autenticação", "RBAC", "RLS", "APIs", "Edge Functions", "RPCs PostgreSQL"].map(item => (
-                  <span key={item} className="flex items-center gap-1">• {item}</span>
-                ))}
+            <div className="space-y-4">
+              <h3 className="text-emerald-400 font-black uppercase text-xs tracking-widest">OBJETIVO E SEGURANÇA</h3>
+              <p className="text-[10px] opacity-80 leading-relaxed">
+                Criar uma camada segura para o agente enviar apontamentos ao ERP sem acesso direto às tabelas internas. 
+                O agente <span className="text-rose-400">nunca deve possuir service_role</span> e nunca deve executar INSERT direto nas tabelas operacionais.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div className="space-y-4">
+                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
+                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">1. AUTENTICAÇÃO E HEARTBEAT</h4>
+                  <p className="text-[10px] opacity-70 mb-2">Estrutura de registro de instalação (token seguro) e endpoint de status (versão, eventos pendentes).</p>
+                </div>
+                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
+                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">2. SINCRONIZAÇÃO E IDEMPOTÊNCIA</h4>
+                  <p className="text-[10px] opacity-70">Endpoint para lotes de eventos. Mesmos event_id nunca processados duas vezes.</p>
+                </div>
+                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
+                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">3. EVENTOS SUPORTADOS</h4>
+                  <p className="text-[10px] opacity-70 italic text-emerald-300">Started, Paused, Resumed, Quantity, Loss, Downtime, Finished.</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
+                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">4. VALIDAÇÃO E TRANSATIVIDADE</h4>
+                  <p className="text-[10px] opacity-70">Validar Agente/Máquina/OP/Operador. Processamento via Função PostgreSQL (Rollback total em falhas).</p>
+                </div>
+                <div className="bg-slate-900/40 p-4 rounded border border-blue-500/20">
+                  <h4 className="text-blue-400 font-bold uppercase text-[10px] mb-2 tracking-widest">5. TESTES OBRIGATÓRIOS</h4>
+                  <p className="text-[10px] opacity-70">Duplicados, inválidos, fora de sequência, lote parcial, rollback.</p>
+                </div>
+                <div className="bg-blue-500/10 p-3 border border-blue-500/20 rounded">
+                  <p className="text-blue-400 font-black uppercase tracking-widest text-[9px] mb-1">ENTREGÁVEIS:</p>
+                  <p className="text-[9px] opacity-80 uppercase">Migration, Funções PG, Endpoint/Edge, Validações, Build.</p>
+                </div>
               </div>
             </div>
 
-            <p className="text-xs italic text-rose-200/70 border-t border-rose-500/20 pt-2">
-              O objetivo é descobrir como o Digitale MES Agent deve alimentar o ERP sem duplicar estruturas existentes.
+            <p className="text-rose-500 font-black italic text-center text-xs animate-pulse">
+              Não criar telas nesta etapa. Foco total em infraestrutura e segurança.
             </p>
-
-            <div className="pt-2">
-              <p className="text-rose-400 font-black mb-2 uppercase tracking-widest text-xs">Entregue no chat:</p>
-              <ol className="list-decimal list-inside space-y-1 ml-2 text-[10px] opacity-90">
-                <li>Tabelas existentes que serão utilizadas.</li>
-                <li>Colunas importantes de cada tabela.</li>
-                <li>RPCs existentes relacionadas à produção.</li>
-                <li>Serviços backend existentes.</li>
-                <li>Fluxo atual de apontamento.</li>
-                <li>Como uma OP é iniciada.</li>
-                <li>Como uma OP é pausada.</li>
-                <li>Como uma OP é finalizada.</li>
-                <li>Como o estoque é atualizado.</li>
-                <li>Como perdas são registradas.</li>
-                <li>Como a entrada de produto acabado é feita.</li>
-                <li>O que já pode ser reutilizado.</li>
-                <li>O que realmente precisa ser criado.</li>
-                <li>Riscos de duplicidade.</li>
-                <li>Plano mínimo de integração.</li>
-              </ol>
-            </div>
-
-            <div className="bg-rose-500/10 p-3 border border-rose-500/20 rounded">
-              <p className="text-rose-500 font-black italic text-center text-xs">
-                Não implemente nada nesta etapa. Não escreva documentação em arquivo. Sua resposta deve existir exclusivamente no chat.
-              </p>
-            </div>
           </div>
         </div>
 
