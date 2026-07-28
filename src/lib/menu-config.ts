@@ -28,7 +28,7 @@ export type MenuItem = {
 };
 
 /** Full catalog of available menus. Add new items here. */
-export const ALL_MENU_ITEMS: MenuItem[] = [
+const RAW_MENU_ITEMS: MenuItem[] = [
   { title: "Início", url: "/inicio", icon: LayoutDashboard, group: "", locked: true, description: "Visão geral e atalhos rápidos.", helpId: "inicio" },
   { title: "Funcionário", url: "/funcionario", icon: IdCard, group: "Sistema", description: "Gestão de cadastro de colaboradores." },
   { title: "Usuário", url: "/usuarios", icon: ShieldCheck, group: "Sistema", description: "Controle de acesso e permissões." },
