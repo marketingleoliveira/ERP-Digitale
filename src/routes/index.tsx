@@ -2,8 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
 import { Loader2, ShieldAlert } from "lucide-react";
 
+import { redirect } from "@tanstack/react-router";
+
 export const Route = createFileRoute("/")({
-  component: HomologacaoOperacionalPage,
+  beforeLoad: () => {
+    throw redirect({ to: "/dashboard/industrial" });
+  },
 });
 
 function HomologacaoOperacionalPage() {
