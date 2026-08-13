@@ -36,20 +36,27 @@ async function fetchOpts(table: string, mapper: (r: Record<string, unknown>) => 
   return (data ?? []).map(mapper as never);
 }
 
-export function NotaFiscalList({ tipo, title, emoji }: { tipo: NF["tipo"]; title: string; emoji: string }) {
-  const qc = useQueryClient();
-  const key = ["notas_fiscais", tipo];
-  const { data = [], isLoading } = useQuery({
-    queryKey: key,
-    queryFn: async () => {
-      const { data, error } = await supabase.from("notas_fiscais" as never)
-        .select("*").eq("tipo", tipo).order("data_emissao", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as unknown as NF[];
-    },
-  });
-  const [open, setOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+export function NotaFiscalList({ tipo, title, emoji, initialEditingId }: { tipo: NF["tipo"]; title: string; emoji: string; initialEditingId?: string }) {
+   const qc = useQueryClient();
+   const key = ["notas_fiscais", tipo];
+   const { data = [], isLoading } = useQuery({
+     queryKey: key,
+     queryFn: async () => {
+       const { data, error } = await supabase.from("notas_fiscais" as never)
+         .select("*").eq("tipo", tipo).order("data_emissao", { ascending: false });
+       if (error) throw error;
+       return (data ?? []) as unknown as NF[];
+     },
+   });
+   const [open, setOpen] = useState(!!initialEditingId);
+   const [editingId, setEditingId] = useState<string | null>(initialEditingId || null);
+
+   // Sincroniza o URL param quando a dialog é aberta/fechada
+   useEffect(() => {
+     if (!open) {
+       setEditingId(null);
+     }
+   }, [open]);
 
   const del = useMutation({
     mutationFn: async (id: string) => {
