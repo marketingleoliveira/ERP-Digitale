@@ -32,7 +32,7 @@ export function OpFaturarDialog({ opId, opNumero, disabled }: OpFaturarDialogPro
       const res = await gerar({ data: { opId } });
       toast.success("Pré-faturamento gerado.");
       setOpen(false);
-      navigate({ to: "/fiscal", search: { nf: res.nota_fiscal_id } as never });
+      navigate({ to: "/fiscal/nota-fiscal", search: { nf: res.nota_fiscal_id } as never });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Falha ao gerar pré-faturamento.");
     } finally {

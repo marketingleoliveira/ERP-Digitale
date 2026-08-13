@@ -66,7 +66,7 @@ function Page() {
     onSuccess: (r) => {
       toast.success(`OP #${r.numero} criada${reservar ? " (materiais reservados)" : ""}.`);
       setAberta(null);
-      navigate({ to: "/pcp/ordens-producao" });
+      navigate({ to: "/producao/op" });
     },
     onError: (e: Error) => toast.error(e.message),
   });
