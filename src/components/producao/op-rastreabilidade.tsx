@@ -60,7 +60,7 @@ export function OpRastreabilidade({ opId }: Props) {
       <Step title="Notas Fiscais" count={data.notas.length}>
         {(data.notas as NotaRow[]).map((n) => (
           <div key={n.id} className="flex justify-between">
-            <Link to="/fiscal" search={{ nf: n.id } as never} className="underline">
+            <Link to="/fiscal/nota-fiscal" search={{ nf: n.id } as never} className="underline">
               NF {n.numero}/{n.serie}
             </Link>
             <span>{fmt(n.valor_total)} · <Badge variant="secondary">{n.status_sefaz ?? "—"}</Badge></span>
