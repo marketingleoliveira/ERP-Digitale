@@ -11,7 +11,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowDown } from "lucide-react";
 import { getRastreabilidadeOp } from "@/services/producao/rastreabilidade.functions";
 
-interface Props { opId: string; }
+interface Props {
+  opId: string;
+}
 
 const fmt = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(n));
@@ -26,13 +28,32 @@ export function OpRastreabilidade({ opId }: Props) {
   if (isLoading || !data) return <Skeleton className="h-64 w-full" />;
 
   type EventoRow = { id: string; created_at: string; tipo: string; para_status: string | null };
-  type NotaRow = { id: string; numero: string; serie: string; status_sefaz: string | null; valor_total: number };
+  type NotaRow = {
+    id: string;
+    numero: string;
+    serie: string;
+    status_sefaz: string | null;
+    valor_total: number;
+  };
   type ContaRow = { id: string; valor: number; vencimento: string | null; status: string };
-  type LoteRow = { id: string; numero_lote: string | null; quantidade: number; classificacao: string | null };
+  type LoteRow = {
+    id: string;
+    numero_lote: string | null;
+    quantidade: number;
+    classificacao: string | null;
+  };
   type ExpRow = { id: string; created_at: string; transportadora?: string | null };
   type EntradaRow = { id: string; data_entrada: string; quantidade: number; lote_id: string };
 
-  const Step = ({ title, count, children }: { title: string; count: number; children?: React.ReactNode }) => (
+  const Step = ({
+    title,
+    count,
+    children,
+  }: {
+    title: string;
+    count: number;
+    children?: React.ReactNode;
+  }) => (
     <>
       <Card>
         <CardHeader className="py-3 flex flex-row items-center justify-between">
@@ -41,14 +62,18 @@ export function OpRastreabilidade({ opId }: Props) {
         </CardHeader>
         {children && <CardContent className="pt-0 text-sm space-y-1">{children}</CardContent>}
       </Card>
-      <div className="flex justify-center text-muted-foreground"><ArrowDown className="h-4 w-4" /></div>
+      <div className="flex justify-center text-muted-foreground">
+        <ArrowDown className="h-4 w-4" />
+      </div>
     </>
   );
 
   return (
     <div className="space-y-2">
       <Step title="OP" count={1}>
-        <div>#{data.op?.numero} — {data.op?.status}</div>
+        <div>
+          #{data.op?.numero} — {data.op?.status}
+        </div>
       </Step>
       <Step title="Apontamentos" count={data.apontamentos.length} />
       <Step title="Consumos de matéria-prima" count={data.consumos.length} />
@@ -66,7 +91,9 @@ export function OpRastreabilidade({ opId }: Props) {
           <div key={l.id} className="space-y-0.5 border-b pb-1 mb-1 last:border-0">
             <div className="flex justify-between items-center">
               <span className="font-mono font-bold">Lote {l.numero_lote}</span>
-              <Badge variant="secondary" className="text-[10px]">{l.classificacao || 'S/C'}</Badge>
+              <Badge variant="secondary" className="text-[10px]">
+                {l.classificacao || "S/C"}
+              </Badge>
             </div>
             <div className="text-[10px] text-muted-foreground">Qtd Total: {l.quantidade} un</div>
           </div>
@@ -75,14 +102,12 @@ export function OpRastreabilidade({ opId }: Props) {
       <Step title="Notas Fiscais" count={data.notas.length}>
         {(data.notas as NotaRow[]).map((n) => (
           <div key={n.id} className="flex justify-between">
-            <Link
-              to="/fiscal/nota-fiscal"
-              search={{ nf: n.id } as never}
-              className="underline"
-            >
+            <Link to="/fiscal/nota-fiscal" search={{ nf: n.id } as never} className="underline">
               NF {n.numero}/{n.serie}
             </Link>
-            <span>{fmt(n.valor_total)} · <Badge variant="secondary">{n.status_sefaz ?? "—"}</Badge></span>
+            <span>
+              {fmt(n.valor_total)} · <Badge variant="secondary">{n.status_sefaz ?? "—"}</Badge>
+            </span>
           </div>
         ))}
       </Step>
@@ -90,18 +115,27 @@ export function OpRastreabilidade({ opId }: Props) {
         {(data.contas as ContaRow[]).map((c) => (
           <div key={c.id} className="flex justify-between">
             <span>Venc. {c.vencimento ?? "—"}</span>
-            <span>{fmt(c.valor)} · <Badge>{c.status}</Badge></span>
+            <span>
+              {fmt(c.valor)} · <Badge>{c.status}</Badge>
+            </span>
           </div>
         ))}
       </Step>
       <Step title="Expedições" count={data.expedicoes.length} />
       <Card>
-        <CardHeader className="py-3"><CardTitle className="text-sm">Auditoria / Eventos</CardTitle></CardHeader>
+        <CardHeader className="py-3">
+          <CardTitle className="text-sm">Auditoria / Eventos</CardTitle>
+        </CardHeader>
         <CardContent className="text-xs space-y-1 max-h-64 overflow-y-auto">
           {(data.eventos as EventoRow[]).map((e) => (
             <div key={e.id} className="flex justify-between border-b py-1">
-              <span>{e.tipo}{e.para_status ? ` → ${e.para_status}` : ""}</span>
-              <span className="text-muted-foreground">{new Date(e.created_at).toLocaleString("pt-BR")}</span>
+              <span>
+                {e.tipo}
+                {e.para_status ? ` → ${e.para_status}` : ""}
+              </span>
+              <span className="text-muted-foreground">
+                {new Date(e.created_at).toLocaleString("pt-BR")}
+              </span>
             </div>
           ))}
         </CardContent>
