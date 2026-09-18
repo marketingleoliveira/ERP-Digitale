@@ -4,6 +4,8 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
+DECLARE
+  is_first BOOLEAN;
 BEGIN
   INSERT INTO public.profiles (id, nome, email, cargo, ativo)
   VALUES (
@@ -22,6 +24,12 @@ BEGIN
     nome = COALESCE(NULLIF(BTRIM(public.profiles.nome), ''), EXCLUDED.nome),
     ativo = TRUE,
     updated_at = now();
+
+
+  SELECT NOT EXISTS (SELECT 1 FROM public.user_roles) INTO is_first;
+  INSERT INTO public.user_roles (user_id, role)
+  VALUES (NEW.id, CASE WHEN is_first THEN 'desenvolvedor'::public.app_role ELSE 'vendedor'::public.app_role END)
+  ON CONFLICT (user_id, role) DO NOTHING;
 
   RETURN NEW;
 END;
@@ -51,3 +59,9 @@ FROM auth.users u
 LEFT JOIN public.profiles p ON p.id = u.id
 WHERE p.id IS NULL
 ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.user_roles (user_id, role)
+SELECT u.id, 'vendedor'::public.app_role
+FROM auth.users u
+WHERE NOT EXISTS (SELECT 1 FROM public.user_roles ur WHERE ur.user_id = u.id)
+ON CONFLICT (user_id, role) DO NOTHING;
