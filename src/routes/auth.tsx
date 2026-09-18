@@ -43,8 +43,29 @@ function AuthPage() {
 
   const dataFormatada = useMemo(() => {
     const d = new Date();
-    const dias = ["Domingo","Segunda-Feira","Terça-Feira","Quarta-Feira","Quinta-Feira","Sexta-Feira","Sábado"];
-    const meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+    const dias = [
+      "Domingo",
+      "Segunda-Feira",
+      "Terça-Feira",
+      "Quarta-Feira",
+      "Quinta-Feira",
+      "Sexta-Feira",
+      "Sábado",
+    ];
+    const meses = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+    ];
     return `${dias[d.getDay()]} dia ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
   }, []);
 
@@ -77,7 +98,8 @@ function AuthPage() {
 
       navigate({ to: "/inicio" });
     } catch (error) {
-      const isNetworkError = error instanceof TypeError ||
+      const isNetworkError =
+        error instanceof TypeError ||
         (error instanceof Error && /failed to fetch|network|fetch failed/i.test(error.message));
 
       toast.error(
@@ -114,17 +136,47 @@ function AuthPage() {
       {/* Barra "Acesso ao Sistema" com form inline */}
       <section className="bg-sidebar-accent text-sidebar-foreground border-b border-sidebar-border">
         <div className="mx-auto max-w-6xl px-6 py-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <h1 className="text-sm font-semibold tracking-wide whitespace-nowrap">Acesso ao Sistema</h1>
+          <h1 className="text-sm font-semibold tracking-wide whitespace-nowrap">
+            Acesso ao Sistema
+          </h1>
           <form onSubmit={handleLogin} className="flex flex-wrap items-center gap-2">
-            <label htmlFor="login-email" className="text-xs opacity-80">Usuário</label>
-            <Input id="login-email" name="email" type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)}
-              className="h-8 w-56 rounded-none bg-white text-black text-xs border-0" />
-            <label htmlFor="login-password" className="text-xs opacity-80">Senha</label>
-            <Input id="login-password" name="password" type="password" autoComplete="current-password" required value={senha} onChange={(e) => setSenha(e.target.value)}
-              className="h-8 w-40 rounded-none bg-white text-black text-xs border-0" />
-            <Button type="submit" size="icon" disabled={loading}
-              className="h-8 w-8 rounded-none bg-accent hover:bg-accent/90 text-accent-foreground">
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4" />}
+            <label htmlFor="login-email" className="text-xs opacity-80">
+              Usuário
+            </label>
+            <Input
+              id="login-email"
+              name="email"
+              type="email"
+              autoComplete="username"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-8 w-56 rounded-none bg-white text-black text-xs border-0"
+            />
+            <label htmlFor="login-password" className="text-xs opacity-80">
+              Senha
+            </label>
+            <Input
+              id="login-password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              className="h-8 w-40 rounded-none bg-white text-black text-xs border-0"
+            />
+            <Button
+              type="submit"
+              size="icon"
+              disabled={loading}
+              className="h-8 w-8 rounded-none bg-accent hover:bg-accent/90 text-accent-foreground"
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
             </Button>
           </form>
         </div>
@@ -148,11 +200,17 @@ function AuthPage() {
               <h2 className="text-sm font-semibold">Bem Vindo!</h2>
             </div>
             <div className="flex flex-col items-center justify-center gap-6 px-6 py-16 bg-background">
-              <img src={logoAsset.url} alt="Digitale Têxtil - Tecidos de Alta Tecnologia" className="h-56 w-auto" />
-              <div className="text-2xl font-light tracking-[0.35em] text-primary">TECIDOS DE ALTA TECNOLOGIA</div>
+              <img
+                src={logoAsset.url}
+                alt="Digitale Têxtil - Tecidos de Alta Tecnologia"
+                className="h-56 w-auto"
+              />
+              <div className="text-2xl font-light tracking-[0.35em] text-primary">
+                TECIDOS DE ALTA TECNOLOGIA
+              </div>
               <p className="text-xs text-muted-foreground max-w-md text-center">
-                Novos acessos são criados exclusivamente pelo administrador do sistema.
-                Solicite ao setor responsável para obter suas credenciais.
+                Novos acessos são criados exclusivamente pelo administrador do sistema. Solicite ao
+                setor responsável para obter suas credenciais.
               </p>
             </div>
           </div>
