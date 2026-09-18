@@ -8,7 +8,19 @@ import { toast } from "sonner";
 import logoAsset from "@/assets/digitale-logo.png.asset.json";
 import logoWhiteAsset from "@/assets/digitale-logo-white.png.asset.json";
 
-export const Route = createFileRoute("/auth")({ component: AuthPage });
+export const Route = createFileRoute("/auth")({
+  head: () => ({
+    meta: [
+      { title: "Acesso | ERP Digitale Têxtil" },
+      { name: "description", content: "Acesso seguro ao sistema ERP da Digitale Têxtil." },
+      { property: "og:title", content: "Acesso | ERP Digitale Têxtil" },
+      { property: "og:description", content: "Acesso seguro ao sistema ERP da Digitale Têxtil." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
+  component: AuthPage,
+});
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -38,32 +50,45 @@ function AuthPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
+
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
-    setLoading(false);
-    if (error) { 
-      console.error("Login Error Full Object:", JSON.stringify(error, null, 2));
-      
-      let friendlyMessage = "Credenciais inválidas ou conta não autorizada";
-      
-      // Mapeamento de erros conhecidos para mensagens amigáveis
-      if (error.message === "Invalid login credentials") {
-        friendlyMessage = "E-mail ou senha incorretos. Verifique suas credenciais.";
-      } else if (error.message.includes("Email not confirmed")) {
-        friendlyMessage = "Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada.";
-      } else if (Object.keys(error).length === 0 || error.message === "") {
-        friendlyMessage = "Erro técnico de sessão ({}). Por favor, limpe o cache do navegador ou tente em uma aba anônima.";
-      } else {
-        friendlyMessage = error.message;
+    try {
+      const normalizedEmail = email.trim().toLowerCase();
+      const { error } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password: senha,
+      });
+
+      if (error) {
+        let friendlyMessage = "Não foi possível acessar sua conta.";
+        if (error.code === "invalid_credentials") {
+          friendlyMessage = "E-mail ou senha incorretos. Verifique suas credenciais.";
+        } else if (error.message.includes("Email not confirmed")) {
+          friendlyMessage = "Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada.";
+        }
+
+        toast.error(friendlyMessage, {
+          description: "Se o problema persistir, contate o administrador.",
+          duration: 5000,
+        });
+        return;
       }
 
-      toast.error(friendlyMessage, {
-        description: "Se o problema persistir, contate o administrador.",
-        duration: 5000,
-      }); 
-      return; 
+      navigate({ to: "/inicio" });
+    } catch (error) {
+      const isNetworkError = error instanceof TypeError ||
+        (error instanceof Error && /failed to fetch|network|fetch failed/i.test(error.message));
+
+      toast.error(
+        isNetworkError
+          ? "Não foi possível conectar ao serviço de acesso. Verifique sua internet e tente novamente."
+          : "Ocorreu um erro inesperado ao entrar.",
+        { description: "Se o problema persistir, contate o administrador.", duration: 5000 },
+      );
+    } finally {
+      setLoading(false);
     }
-    navigate({ to: "/inicio" });
   };
 
   return (
@@ -91,11 +116,11 @@ function AuthPage() {
         <div className="mx-auto max-w-6xl px-6 py-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <h1 className="text-sm font-semibold tracking-wide whitespace-nowrap">Acesso ao Sistema</h1>
           <form onSubmit={handleLogin} className="flex flex-wrap items-center gap-2">
-            <label className="text-xs opacity-80">Usuário</label>
-            <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+            <label htmlFor="login-email" className="text-xs opacity-80">Usuário</label>
+            <Input id="login-email" name="email" type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)}
               className="h-8 w-56 rounded-none bg-white text-black text-xs border-0" />
-            <label className="text-xs opacity-80">Senha</label>
-            <Input type="password" required value={senha} onChange={(e) => setSenha(e.target.value)}
+            <label htmlFor="login-password" className="text-xs opacity-80">Senha</label>
+            <Input id="login-password" name="password" type="password" autoComplete="current-password" required value={senha} onChange={(e) => setSenha(e.target.value)}
               className="h-8 w-40 rounded-none bg-white text-black text-xs border-0" />
             <Button type="submit" size="icon" disabled={loading}
               className="h-8 w-8 rounded-none bg-accent hover:bg-accent/90 text-accent-foreground">

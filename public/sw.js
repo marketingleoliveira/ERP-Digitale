@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mes-agent-v1';
+const CACHE_NAME = 'mes-agent-v2';
 const ASSETS_TO_CACHE = [
   '/mes-agent',
   '/manifest.json',
@@ -13,8 +13,23 @@ self.addEventListener('install', (event) => {
   );
 });
 
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => Promise.all(
+      keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+    )).then(() => self.clients.claim())
+  );
+});
+
 self.addEventListener('fetch', (event) => {
-  // Offline-first strategy for defined assets
+  const requestUrl = new URL(event.request.url);
+
+  // Never intercept authentication, API calls, cross-origin traffic, or writes.
+  if (event.request.method !== 'GET' || requestUrl.origin !== self.location.origin) {
+    return;
+  }
+
+  // Offline-first is restricted to the MES shell and its static assets.
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);
