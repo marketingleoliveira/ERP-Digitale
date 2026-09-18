@@ -8,8 +8,13 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter,
-  DialogHeader, DialogTitle, DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Receipt, Loader2 } from "lucide-react";
 import { gerarPreFaturamento } from "@/services/fiscal/pre-faturamento.functions";
@@ -32,7 +37,10 @@ export function OpFaturarDialog({ opId, opNumero, disabled }: OpFaturarDialogPro
       const res = await gerar({ data: { opId } });
       toast.success("Pré-faturamento gerado.");
       setOpen(false);
-      navigate({ to: "/fiscal", search: { nf: res.nota_fiscal_id } as never });
+      navigate({
+        to: "/fiscal/nota-fiscal",
+        search: { nf: res.nota_fiscal_id } as never,
+      });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Falha ao gerar pré-faturamento.");
     } finally {
