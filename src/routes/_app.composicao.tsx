@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +23,13 @@ import { useAuth, useUserRoles } from "@/hooks/use-auth";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { StatusDot } from "@/components/status-dot";
+import {
+  createComposicaoMariaDb,
+  deleteComposicaoMariaDb,
+  listComposicoesMariaDb,
+  toggleComposicaoMariaDb,
+  updateComposicaoMariaDb,
+} from "@/lib/composicoes-mariadb.functions";
 
 export const Route = createFileRoute("/_app/composicao")({
   ssr: false,
@@ -56,14 +62,7 @@ function ComposicaoPage() {
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["composicoes"],
-    queryFn: async () => {
-      const { data, error } = await (supabase.from("composicoes" as any) as any)
-        .select("id, tipo, codigo, ncm, composicao, habilitado")
-        .order("tipo", { ascending: true })
-        .order("codigo", { ascending: true });
-      if (error) throw error;
-      return (data ?? []) as Composicao[];
-    },
+    queryFn: async () => (await listComposicoesMariaDb()) as Composicao[],
   });
 
   const filtered = useMemo(() => {
@@ -80,12 +79,20 @@ function ComposicaoPage() {
 
   const saveMut = useMutation({
     mutationFn: async (payload: Partial<Composicao>) => {
+      const normalized = {
+        tipo: payload.tipo ?? "Artigo",
+        codigo: payload.codigo ?? "",
+        ncm: payload.ncm ?? null,
+        composicao: payload.composicao ?? "",
+        habilitado: payload.habilitado ?? true,
+      };
+
       if (editing?.id) {
-        const { error } = await (supabase.from("composicoes" as any) as any).update(payload).eq("id", editing.id);
-        if (error) throw error;
+        await updateComposicaoMariaDb({
+          data: { id: editing.id, ...normalized },
+        });
       } else {
-        const { error } = await (supabase.from("composicoes" as any) as any).insert({ ...payload, owner_id: user?.id });
-        if (error) throw error;
+        await createComposicaoMariaDb({ data: normalized });
       }
     },
     onSuccess: () => {
@@ -98,8 +105,7 @@ function ComposicaoPage() {
 
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase.from("composicoes" as any) as any).delete().eq("id", id);
-      if (error) throw error;
+      await deleteComposicaoMariaDb({ data: { id } });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["composicoes"] });
@@ -111,8 +117,7 @@ function ComposicaoPage() {
 
   const toggleHabMut = useMutation({
     mutationFn: async ({ id, habilitado }: { id: string; habilitado: boolean }) => {
-      const { error } = await (supabase.from("composicoes" as any) as any).update({ habilitado }).eq("id", id);
-      if (error) throw error;
+      await toggleComposicaoMariaDb({ data: { id, habilitado } });
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["composicoes"] }),
     onError: (e: any) => toast.error(e.message ?? "Erro ao atualizar"),
