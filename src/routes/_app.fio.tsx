@@ -23,7 +23,6 @@ import { Plus, Pencil, Trash2, Printer, Scissors } from "lucide-react";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import logoAsset from "@/assets/digitale-logo.png.asset.json";
 import { StatusDot } from "@/components/status-dot";
 
 export const Route = createFileRoute("/_app/fio")({
@@ -142,7 +141,7 @@ function FioPage() {
   const handlePrint = async () => {
     const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
     try {
-      const res = await fetch(logoAsset.url);
+      const res = await fetch("/assets/logo_azul.png");
       const blob = await res.blob();
       const dataUrl = await new Promise<string>((resolve, reject) => {
         const r = new FileReader();

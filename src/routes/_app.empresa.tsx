@@ -20,7 +20,6 @@ import { Plus, Pencil, Trash2, Printer, Building2 } from "lucide-react";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import logoAsset from "@/assets/digitale-logo.png.asset.json";
 import { StatusDot } from "@/components/status-dot";
 import { maskCPF, maskCNPJ, maskRG, maskCEP, maskPhone } from "@/lib/masks";
 
@@ -191,7 +190,7 @@ function EmpresaPage() {
     const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
     // logo
     try {
-      const res = await fetch(logoAsset.url);
+      const res = await fetch("/assets/logo_azul.png");
       const blob = await res.blob();
       const dataUrl = await new Promise<string>((resolve, reject) => {
         const r = new FileReader();

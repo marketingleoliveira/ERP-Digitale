@@ -6,8 +6,6 @@ import { useEffect, useMemo, useState } from "react";
 import { getCurrentAppUser, loginApp } from "@/lib/auth.functions";
 import { refreshAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
-import logoAsset from "@/assets/digitale-logo.png.asset.json";
-import logoWhiteAsset from "@/assets/digitale-logo-white.png.asset.json";
 
 export const Route = createFileRoute("/auth")({ component: AuthPage });
 
@@ -78,7 +76,7 @@ function AuthPage() {
       <header className="bg-sidebar text-sidebar-foreground border-b border-sidebar-border">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <img src={logoWhiteAsset.url} alt="Digitale Têxtil" className="h-12 w-auto" />
+            <img src={"/assets/logo_branco.png"} alt="Digitale Têxtil" className="h-12 w-auto" />
             <div className="hidden sm:block">
               <div className="text-[10px] uppercase tracking-[0.25em] opacity-60">Sistema ERP</div>
               <div className="text-sm font-semibold">Digitale Têxtil</div>
@@ -129,7 +127,7 @@ function AuthPage() {
               <h2 className="text-sm font-semibold">Bem Vindo!</h2>
             </div>
             <div className="flex flex-col items-center justify-center gap-6 px-6 py-16 bg-background">
-              <img src={logoAsset.url} alt="Digitale Têxtil - Tecidos de Alta Tecnologia" className="h-56 w-auto" />
+              <img src={"/assets/logo_azul.png"} alt="Digitale Têxtil - Tecidos de Alta Tecnologia" className="h-56 w-auto" />
               <div className="text-2xl font-light tracking-[0.35em] text-primary">TECIDOS DE ALTA TECNOLOGIA</div>
               <p className="text-xs text-muted-foreground max-w-md text-center">
                 Novos acessos são criados exclusivamente pelo administrador do sistema.
