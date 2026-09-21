@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,10 +12,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, FilePlus2, Loader2, Pencil } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 import { useMultiSelection } from "@/hooks/use-multi-selection";
-import { adminCreateUser } from "@/lib/admin-users.functions";
+import {
+  adminCreateUserMariaDb,
+  adminListUsersMariaDb,
+  adminUpdateUserMariaDb,
+} from "@/lib/admin-users-mariadb.functions";
+import { adminListCargosMariaDb } from "@/lib/cargos-mariadb.functions";
 import { friendlyDbError } from "@/lib/db-errors";
 
 
@@ -29,48 +32,36 @@ type Profile = {
   id: string;
   nome: string;
   email: string;
-  cargo: string | null;
   telefone: string | null;
   ativo: boolean;
+  roles: string[];
+  isSuperuser: boolean;
+  cargos: Array<{ id: string; nome: string }>;
 };
 
 type Cargo = { id: string; nome: string };
-type UserCargo = { user_id: string; cargo_id: string };
 
 const PAGE_SIZE = 20;
-const sb = supabase as unknown as { from: (t: string) => any };
 
 async function fetchProfiles(): Promise<Profile[]> {
-  const { data, error } = await sb.from("profiles").select("id,nome,email,cargo,telefone,ativo").order("nome");
-  if (error) throw error;
-  return (data ?? []) as Profile[];
+  return (await adminListUsersMariaDb()) as Profile[];
 }
+
 async function fetchCargos(): Promise<Cargo[]> {
-  const { data, error } = await sb.from("cargos").select("id,nome").order("nome");
-  if (error) throw error;
-  return (data ?? []) as Cargo[];
-}
-async function fetchUserCargos(): Promise<UserCargo[]> {
-  const { data, error } = await sb.from("user_cargos").select("user_id,cargo_id");
-  if (error) return [];
-  return (data ?? []) as UserCargo[];
+  return (await adminListCargosMariaDb()) as Cargo[];
 }
 
 function UsuariosPage() {
   const qc = useQueryClient();
-  const { data: profiles = [], isLoading } = useQuery({ queryKey: ["profiles"], queryFn: fetchProfiles });
-  const { data: cargos = [] } = useQuery({ queryKey: ["cargos"], queryFn: fetchCargos });
-  const { data: userCargos = [] } = useQuery({ queryKey: ["user_cargos"], queryFn: fetchUserCargos });
+  const { data: profiles = [], isLoading } = useQuery({
+    queryKey: ["mariadb-users"],
+    queryFn: fetchProfiles,
+  });
 
-  const cargoById = useMemo(() => new Map(cargos.map((c) => [c.id, c.nome])), [cargos]);
-  const cargoByUser = useMemo(() => {
-    const m = new Map<string, string>();
-    for (const uc of userCargos) {
-      const nome = cargoById.get(uc.cargo_id);
-      if (nome) m.set(uc.user_id, nome);
-    }
-    return m;
-  }, [userCargos, cargoById]);
+  const { data: cargos = [] } = useQuery({
+    queryKey: ["cargos"],
+    queryFn: fetchCargos,
+  });
 
   const [filter, setFilter] = useState("");
   const [applied, setApplied] = useState("");
@@ -81,9 +72,12 @@ function UsuariosPage() {
   const rows = useMemo(() => {
     const q = applied.toLowerCase();
     return profiles
-      .map((p) => ({ ...p, tipo: cargoByUser.get(p.id) ?? p.cargo ?? "—" }))
+      .map((p) => ({
+        ...p,
+        tipo: p.cargos.length ? p.cargos.map((c) => c.nome).join(", ") : "—",
+      }))
       .filter((p) => !q || p.email.toLowerCase().includes(q));
-  }, [profiles, cargoByUser, applied]);
+  }, [profiles, applied]);
 
   const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   const paged = rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -99,7 +93,16 @@ function UsuariosPage() {
           <Button size="sm" variant="outline" onClick={() => { setEditing(null); setDialogOpen(true); }}>
             <FilePlus2 className="h-4 w-4 mr-1.5" />CADASTRAR
           </Button>
-          <Button size="sm" variant="outline" disabled={!singleRow} onClick={() => { setEditing(singleRow); setDialogOpen(true); }}>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={!singleRow || singleRow.isSuperuser}
+            onClick={() => {
+              if (!singleRow) return;
+              setEditing(singleRow);
+              setDialogOpen(true);
+            }}
+          >
             <Pencil className="h-4 w-4 mr-1.5" />ALTERAR
           </Button>
         </div>
@@ -162,17 +165,26 @@ function UsuariosPage() {
         onOpenChange={setDialogOpen}
         editing={editing}
         cargos={cargos}
-        currentCargoId={editing ? userCargos.find((uc) => uc.user_id === editing.id)?.cargo_id ?? null : null}
-        onSaved={() => { qc.invalidateQueries({ queryKey: ["profiles"] }); qc.invalidateQueries({ queryKey: ["user_cargos"] }); sel.clear(); }}
+        currentCargoId={editing?.cargos[0]?.id ?? null}
+        onSaved={() => {
+          qc.invalidateQueries({ queryKey: ["mariadb-users"] });
+          sel.clear();
+        }}
       />
     </div>
   );
 }
 
-type FuncOpt = { id: string; nome: string; email: string | null };
-type RepOpt = { id: string; nome: string; email: string | null };
 
-function Field({ label, req, children }: { label: string; req?: 1 | 2; children: React.ReactNode }) {
+function Field({
+  label,
+  req,
+  children,
+}: {
+  label: string;
+  req?: 1 | 2;
+  children: React.ReactNode;
+}) {
   return (
     <div className="grid grid-cols-[140px_1fr] items-center gap-3">
       <Label className="text-right text-sm">
@@ -185,7 +197,12 @@ function Field({ label, req, children }: { label: string; req?: 1 | 2; children:
 }
 
 function UsuarioDialog({
-  open, onOpenChange, editing, cargos, currentCargoId, onSaved,
+  open,
+  onOpenChange,
+  editing,
+  cargos,
+  currentCargoId,
+  onSaved,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
@@ -194,184 +211,195 @@ function UsuarioDialog({
   currentCargoId: string | null;
   onSaved: () => void;
 }) {
-  const { data: funcionarios = [] } = useQuery<FuncOpt[]>({
-    queryKey: ["funcionarios-opts"],
-    queryFn: async () => {
-      const { data, error } = await sb.from("funcionarios").select("id,nome,email").eq("habilitado", true).order("nome");
-      if (error) throw error;
-      return data ?? [];
-    },
-    enabled: open,
-  });
-  const { data: representantes = [] } = useQuery<RepOpt[]>({
-    queryKey: ["sales-reps-opts"],
-    queryFn: async () => {
-      const { data, error } = await sb.from("sales_reps").select("id,nome,email").eq("ativo", true).order("nome");
-      if (error) throw error;
-      return data ?? [];
-    },
-    enabled: open,
-  });
-
-  const [cargoId, setCargoId] = useState<string>("");
-  const [funcionarioId, setFuncionarioId] = useState<string>("");
-  const [representanteId, setRepresentanteId] = useState<string>("");
+  const [nome, setNome] = useState("");
+  const [cargoId, setCargoId] = useState("");
   const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
   const [senha, setSenha] = useState("");
   const [confirma, setConfirma] = useState("");
   const [ativo, setAtivo] = useState(true);
-
-  useMemo(() => {
-    if (open) {
-      setCargoId(currentCargoId ?? "");
-      setFuncionarioId("");
-      setRepresentanteId("");
-      setEmail(editing?.email ?? "");
-      setSenha("");
-      setConfirma("");
-      setAtivo(editing?.ativo ?? true);
-    }
-  }, [open, editing, currentCargoId]);
-
-  // Auto-preencher email quando escolher funcionário/representante
-  const onSelectFuncionario = (id: string) => {
-    setFuncionarioId(id);
-    const f = funcionarios.find((x) => x.id === id);
-    if (f?.email && !editing) setEmail(f.email);
-  };
-  const onSelectRepresentante = (id: string) => {
-    setRepresentanteId(id);
-    const r = representantes.find((x) => x.id === id);
-    if (r?.email && !editing) setEmail(r.email);
-  };
-
-  const nomeSelecionado = useMemo(() => {
-    const f = funcionarios.find((x) => x.id === funcionarioId);
-    if (f) return f.nome;
-    const r = representantes.find((x) => x.id === representanteId);
-    if (r) return r.nome;
-    return editing?.nome ?? "";
-  }, [funcionarioId, representanteId, funcionarios, representantes, editing]);
-
-  const createUser = useServerFn(adminCreateUser);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Pré-checagem de email duplicado enquanto digita
-  const emailTrim = email.trim().toLowerCase();
-  const { data: dupCheck } = useQuery({
-    queryKey: ["profile-email-check", emailTrim],
-    enabled: !editing && open && emailTrim.length > 3 && emailTrim.includes("@"),
-    queryFn: async () => {
-      const { data } = await sb.from("profiles").select("id").ilike("email", emailTrim).maybeSingle();
-      return !!data;
-    },
-  });
-  const emailJaExiste = !editing && dupCheck === true;
+  useMemo(() => {
+    if (!open) return;
+
+    setNome(editing?.nome ?? "");
+    setCargoId(currentCargoId ?? "");
+    setEmail(editing?.email ?? "");
+    setTelefone(editing?.telefone ?? "");
+    setSenha("");
+    setConfirma("");
+    setAtivo(editing?.ativo ?? true);
+    setErrorMsg(null);
+  }, [open, editing, currentCargoId]);
 
   const saveMut = useMutation({
     mutationFn: async () => {
       setErrorMsg(null);
+
+      const cleanNome = nome.trim();
+      const cleanEmail = email.trim().toLowerCase();
+
+      if (!cleanNome) throw new Error("Informe o nome.");
+      if (!cleanEmail) throw new Error("Informe o e-mail.");
       if (!cargoId) throw new Error("Selecione o Tipo (cargo).");
+
       if (editing) {
-        const { error } = await sb.from("profiles").update({ nome: nomeSelecionado.trim() || editing.nome, ativo }).eq("id", editing.id);
-        if (error) throw error;
-        await sb.from("user_cargos").delete().eq("user_id", editing.id);
-        const { error: e2 } = await sb.from("user_cargos").insert({ user_id: editing.id, cargo_id: cargoId });
-        if (e2) throw e2;
+        await adminUpdateUserMariaDb({
+          data: {
+            id: editing.id,
+            email: cleanEmail,
+            nome: cleanNome,
+            telefone: telefone.trim() || null,
+            ativo,
+            cargo_ids: [cargoId],
+          },
+        });
+
         return "Usuário atualizado.";
       }
-      if (!funcionarioId && !representanteId) throw new Error("Selecione um Funcionário ou Representante.");
-      if (!email || !senha) throw new Error("E-mail e senha são obrigatórios.");
-      if (senha.length < 6) throw new Error("A senha deve ter ao menos 6 caracteres.");
-      if (senha !== confirma) throw new Error("As senhas não conferem.");
-      if (emailJaExiste) throw new Error("Já existe um usuário cadastrado com este e-mail.");
-      await createUser({
+
+      if (senha.length < 8) {
+        throw new Error("A senha deve ter ao menos 8 caracteres.");
+      }
+
+      if (senha !== confirma) {
+        throw new Error("As senhas não conferem.");
+      }
+
+      await adminCreateUserMariaDb({
         data: {
-          email: email.trim(),
+          email: cleanEmail,
           password: senha,
-          nome: nomeSelecionado.trim(),
+          nome: cleanNome,
           cargo_id: cargoId,
         },
       });
+
       return "Usuário cadastrado.";
     },
-    onSuccess: (msg) => { toast.success(msg); onOpenChange(false); onSaved(); },
-    onError: (e: Error) => { const m = friendlyDbError(e); setErrorMsg(m); toast.error(m); },
-  });
 
+    onSuccess: (msg) => {
+      toast.success(msg);
+      onOpenChange(false);
+      onSaved();
+    },
+
+    onError: (e: Error) => {
+      const msg = friendlyDbError(e);
+      setErrorMsg(msg);
+      toast.error(msg);
+    },
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle>{editing ? "Alterar Usuário" : "Cadastro Usuário"}</DialogTitle>
+          <DialogTitle>
+            {editing ? "Alterar Usuário" : "Cadastro Usuário"}
+          </DialogTitle>
         </DialogHeader>
+
         {errorMsg && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{errorMsg}</AlertDescription>
           </Alert>
         )}
-        <div className="space-y-3 rounded-md bg-muted/40 p-4">
 
+        <div className="space-y-3 rounded-md bg-muted/40 p-4">
           <Field label="Tipo" req={1}>
             <Select value={cargoId} onValueChange={setCargoId}>
-              <SelectTrigger className="h-8"><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
+              <SelectTrigger className="h-8">
+                <SelectValue placeholder="[SELECIONE]" />
+              </SelectTrigger>
               <SelectContent>
-                {cargos.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
+                {cargos.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.nome}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </Field>
 
-          <Field label="Funcionário" req={2}>
-            <Select value={funcionarioId} onValueChange={onSelectFuncionario} disabled={!!editing}>
-              <SelectTrigger className="h-8"><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-              <SelectContent>
-                {funcionarios.map((f) => <SelectItem key={f.id} value={f.id}>{f.nome}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </Field>
-
-          <Field label="Representante" req={2}>
-            <Select value={representanteId} onValueChange={onSelectRepresentante} disabled={!!editing}>
-              <SelectTrigger className="h-8"><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-              <SelectContent>
-                {representantes.map((r) => <SelectItem key={r.id} value={r.id}>{r.nome}</SelectItem>)}
-              </SelectContent>
-            </Select>
+          <Field label="Nome" req={1}>
+            <Input
+              className="h-8"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+            />
           </Field>
 
           <Field label="Email" req={1}>
-            <div className="space-y-1">
-              <Input className="h-8" type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={!!editing} />
-              {emailJaExiste && (
-                <p className="text-xs text-destructive">Este e-mail já está cadastrado.</p>
-              )}
-            </div>
+            <Input
+              className="h-8"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </Field>
 
+          {editing && (
+            <Field label="Telefone">
+              <Input
+                className="h-8"
+                value={telefone}
+                onChange={(e) => setTelefone(e.target.value)}
+              />
+            </Field>
+          )}
 
           {!editing && (
             <>
               <Field label="Senha" req={1}>
-                <Input className="h-8 w-40" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
+                <Input
+                  className="h-8 w-40"
+                  type="password"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                />
               </Field>
+
               <Field label="Confirme Senha" req={1}>
-                <Input className="h-8 w-40" type="password" value={confirma} onChange={(e) => setConfirma(e.target.value)} />
+                <Input
+                  className="h-8 w-40"
+                  type="password"
+                  value={confirma}
+                  onChange={(e) => setConfirma(e.target.value)}
+                />
               </Field>
             </>
           )}
 
           {editing && (
             <Field label="Habilitado">
-              <Checkbox checked={ativo} onCheckedChange={(v) => setAtivo(!!v)} />
+              <Checkbox
+                checked={ativo}
+                onCheckedChange={(v) => setAtivo(!!v)}
+              />
             </Field>
           )}
         </div>
+
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
-            {saveMut.isPending && <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />}Salvar
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={saveMut.isPending}
+          >
+            CANCELAR
+          </Button>
+
+          <Button
+            onClick={() => saveMut.mutate()}
+            disabled={saveMut.isPending}
+          >
+            {saveMut.isPending && (
+              <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+            )}
+            SALVAR
           </Button>
         </DialogFooter>
       </DialogContent>
