@@ -10,12 +10,13 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, FilePlus2, Loader2, Pencil } from "lucide-react";
+import { AlertCircle, FilePlus2, Loader2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { useMultiSelection } from "@/hooks/use-multi-selection";
 import {
   adminCreateUserMariaDb,
+  adminDeleteUsersMariaDb,
   adminListUsersMariaDb,
   adminUpdateUserMariaDb,
 } from "@/lib/admin-users-mariadb.functions";
@@ -81,8 +82,41 @@ function UsuariosPage() {
 
   const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   const paged = rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const sel = useMultiSelection(paged);
+  const selectablePaged = paged.filter((profile) => !profile.isSuperuser);
+  const sel = useMultiSelection(selectablePaged);
   const singleRow = sel.singleSelected;
+
+  const deleteMut = useMutation({
+    mutationFn: async (ids: string[]) =>
+      adminDeleteUsersMariaDb({ data: { ids } }),
+    onSuccess: (result) => {
+      const deleted = (result as { deleted: number }).deleted;
+      toast.success(
+        deleted === 1
+          ? "Usuário excluído."
+          : `${deleted} usuários excluídos.`,
+      );
+      qc.invalidateQueries({ queryKey: ["mariadb-users"] });
+      sel.clear();
+    },
+    onError: (error: Error) => {
+      toast.error(friendlyDbError(error));
+    },
+  });
+
+  const askDelete = () => {
+    const selected = sel.selectedRows;
+    if (!selected.length) return;
+
+    const label =
+      selected.length === 1
+        ? `Excluir o usuário "${selected[0].nome}"?`
+        : `Excluir ${selected.length} usuários selecionados?`;
+
+    if (!confirm(`${label} Esta ação é permanente.`)) return;
+
+    deleteMut.mutate(selected.map((profile) => profile.id));
+  };
 
   return (
     <div className="space-y-4">
@@ -96,7 +130,7 @@ function UsuariosPage() {
           <Button
             size="sm"
             variant="outline"
-            disabled={!singleRow || singleRow.isSuperuser}
+            disabled={!singleRow}
             onClick={() => {
               if (!singleRow) return;
               setEditing(singleRow);
@@ -104,6 +138,19 @@ function UsuariosPage() {
             }}
           >
             <Pencil className="h-4 w-4 mr-1.5" />ALTERAR
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={sel.count === 0 || deleteMut.isPending}
+            onClick={askDelete}
+          >
+            {deleteMut.isPending ? (
+              <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+            ) : (
+              <Trash2 className="h-4 w-4 mr-1.5" />
+            )}
+            EXCLUIR{sel.count > 1 ? ` (${sel.count})` : ""}
           </Button>
         </div>
 
@@ -129,7 +176,11 @@ function UsuariosPage() {
                 paged.map((p) => (
                   <TableRow key={p.id}>
                     <TableCell>
-                      <Checkbox checked={sel.selectedIds.has(p.id)} onCheckedChange={(v) => sel.toggleOne(p.id, !!v)} />
+                      <Checkbox
+                        checked={sel.selectedIds.has(p.id)}
+                        disabled={p.isSuperuser}
+                        onCheckedChange={(v) => sel.toggleOne(p.id, !!v)}
+                      />
                     </TableCell>
                     <TableCell className="text-primary font-medium">{p.tipo}</TableCell>
                     <TableCell>{p.nome}</TableCell>

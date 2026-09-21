@@ -24,6 +24,11 @@ type RoleRow = RowDataPacket & {
   id: number;
 };
 
+type UserDeleteTargetRow = RowDataPacket & {
+  id: string;
+  is_superuser: number;
+};
+
 function isDuplicateEntry(error: unknown): boolean {
   return (
     typeof error === "object" &&
@@ -147,18 +152,28 @@ const updateUserSchema = z.object({
   cargo_ids: z.array(z.string().uuid()).max(50),
 });
 
-function requireUserAdmin(context: unknown): void {
-  const auth = context as
-    | { isSuperuser: boolean; roles: string[] }
-    | undefined;
+const deleteUsersSchema = z.object({
+  ids: z.array(z.string().uuid()).min(1).max(50),
+});
 
-  if (!auth) {
+type UserAdminContext = {
+  userId: string;
+  isSuperuser: boolean;
+  roles: string[];
+};
+
+function requireUserAdmin(context: unknown): UserAdminContext {
+  const auth = context as UserAdminContext | undefined;
+
+  if (!auth?.userId) {
     throw new Error("Sessão inválida.");
   }
 
   if (!auth.isSuperuser && !auth.roles.includes("desenvolvedor")) {
     throw new Error("Apenas desenvolvedores podem gerenciar usuários.");
   }
+
+  return auth;
 }
 
 function normalizeCargoIds(values: string[]): string[] {
@@ -326,6 +341,66 @@ export const adminUpdateUserMariaDb = createServerFn({ method: "POST" })
         throw new Error("Já existe um usuário cadastrado com este e-mail.");
       }
 
+      throw error;
+    } finally {
+      connection.release();
+    }
+  });
+
+export const adminDeleteUsersMariaDb = createServerFn({ method: "POST" })
+  .middleware([requireAppAuth])
+  .inputValidator((data: unknown) => deleteUsersSchema.parse(data))
+  .handler(async ({ data, context }) => {
+    const auth = requireUserAdmin(context);
+    const ids = normalizeCargoIds(data.ids);
+
+    if (ids.includes(auth.userId)) {
+      throw new Error("Você não pode excluir o usuário da sessão atual.");
+    }
+
+    const placeholders = ids.map(() => "?").join(",");
+    const connection = await getDb().getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      const [targets] = await connection.execute<UserDeleteTargetRow[]>(
+        `SELECT u.id,
+                EXISTS (
+                  SELECT 1
+                  FROM user_roles ur
+                  INNER JOIN roles r ON r.id = ur.role_id
+                  WHERE ur.user_id = u.id
+                    AND r.is_superuser = 1
+                ) AS is_superuser
+         FROM users u
+         WHERE u.id IN (${placeholders})
+         FOR UPDATE`,
+        ids,
+      );
+
+      if (targets.length !== ids.length) {
+        throw new Error("Um ou mais usuários selecionados não existem.");
+      }
+
+      if (targets.some((target) => Boolean(target.is_superuser))) {
+        throw new Error("Usuário master/superusuário não pode ser excluído.");
+      }
+
+      const [result] = await connection.execute<ResultSetHeader>(
+        `DELETE FROM users WHERE id IN (${placeholders})`,
+        ids,
+      );
+
+      if (result.affectedRows !== ids.length) {
+        throw new Error("Não foi possível excluir todos os usuários selecionados.");
+      }
+
+      await connection.commit();
+
+      return { deleted: result.affectedRows };
+    } catch (error) {
+      await connection.rollback();
       throw error;
     } finally {
       connection.release();
