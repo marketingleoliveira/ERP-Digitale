@@ -45,7 +45,7 @@ export function AppSidebar() {
       <SidebarHeader className="border-b border-sidebar-border">
         <Link to="/inicio" className="flex items-center gap-2 px-2 py-3">
           <img
-            src={"/assets/logo_azul.png"}
+            src={"/assets/logo_branco.png"}
             alt="Digitale Têxtil"
             className={collapsed ? "h-8 w-8 object-contain" : "h-12 w-auto object-contain"}
           />
