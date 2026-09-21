@@ -13,7 +13,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FilePlus2, Loader2, Pencil, Trash2, Briefcase } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  adminCreateCargoMariaDb,
+  adminDeleteCargoMariaDb,
+  adminListCargosMariaDb,
+  adminUpdateCargoMariaDb,
+} from "@/lib/cargos-mariadb.functions";
+import {
+  adminListUsersMariaDb,
+  adminUpdateUserMariaDb,
+} from "@/lib/admin-users-mariadb.functions";
 import { ALL_MENU_ITEMS, GROUP_ORDER } from "@/lib/menu-config";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
 
@@ -29,27 +38,23 @@ type Cargo = {
   permissoes: string[];
 };
 
-type Profile = { id: string; nome: string | null; email: string | null };
-type UserCargo = { id: string; user_id: string; cargo_id: string };
-
-const sb = supabase as unknown as {
-  from: (t: string) => any;
+type UserRow = {
+  id: string;
+  email: string;
+  nome: string;
+  telefone: string | null;
+  ativo: boolean;
+  roles: string[];
+  isSuperuser: boolean;
+  cargos: Array<{ id: string; nome: string }>;
 };
 
 async function fetchCargos(): Promise<Cargo[]> {
-  const { data, error } = await sb.from("cargos").select("*").order("nome", { ascending: true });
-  if (error) throw error;
-  return (data ?? []) as Cargo[];
+  return (await adminListCargosMariaDb()) as Cargo[];
 }
-async function fetchProfiles(): Promise<Profile[]> {
-  const { data, error } = await sb.from("profiles").select("id,nome,email").order("nome", { ascending: true });
-  if (error) throw error;
-  return (data ?? []) as Profile[];
-}
-async function fetchUserCargos(): Promise<UserCargo[]> {
-  const { data, error } = await sb.from("user_cargos").select("id,user_id,cargo_id");
-  if (error) throw error;
-  return (data ?? []) as UserCargo[];
+
+async function fetchUsers(): Promise<UserRow[]> {
+  return (await adminListUsersMariaDb()) as UserRow[];
 }
 
 function DevCargosPage() {
@@ -103,8 +108,7 @@ function CargosTab() {
 
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await sb.from("cargos").delete().eq("id", id);
-      if (error) throw error;
+      await adminDeleteCargoMariaDb({ data: { id } });
     },
     onSuccess: () => {
       toast.success("Cargo excluído.");
@@ -218,11 +222,16 @@ function CargoDialog({
         permissoes: Array.from(permissoes),
       };
       if (editing) {
-        const { error } = await sb.from("cargos").update(payload).eq("id", editing.id);
-        if (error) throw error;
+        await adminUpdateCargoMariaDb({
+          data: {
+            id: editing.id,
+            ...payload,
+          },
+        });
       } else {
-        const { error } = await sb.from("cargos").insert(payload);
-        if (error) throw error;
+        await adminCreateCargoMariaDb({
+          data: payload,
+        });
       }
     },
     onSuccess: () => {
@@ -319,35 +328,56 @@ function CargoDialog({
 
 function AtribuicoesTab() {
   const qc = useQueryClient();
-  const { data: profiles = [], isLoading: lp } = useQuery({ queryKey: ["profiles"], queryFn: fetchProfiles });
-  const { data: cargos = [], isLoading: lc } = useQuery({ queryKey: ["cargos"], queryFn: fetchCargos });
-  const { data: userCargos = [], isLoading: luc } = useQuery({ queryKey: ["user_cargos"], queryFn: fetchUserCargos });
 
-  const byUser = useMemo(() => {
-    const map = new Map<string, Set<string>>();
-    for (const uc of userCargos) {
-      if (!map.has(uc.user_id)) map.set(uc.user_id, new Set());
-      map.get(uc.user_id)!.add(uc.cargo_id);
-    }
-    return map;
-  }, [userCargos]);
+  const { data: users = [], isLoading: lu } = useQuery({
+    queryKey: ["mariadb-users"],
+    queryFn: fetchUsers,
+  });
+
+  const { data: cargos = [], isLoading: lc } = useQuery({
+    queryKey: ["cargos"],
+    queryFn: fetchCargos,
+  });
 
   const toggleMut = useMutation({
-    mutationFn: async ({ userId, cargoId, add }: { userId: string; cargoId: string; add: boolean }) => {
-      if (add) {
-        const { error } = await sb.from("user_cargos").insert({ user_id: userId, cargo_id: cargoId });
-        if (error) throw error;
-      } else {
-        const { error } = await sb.from("user_cargos").delete().eq("user_id", userId).eq("cargo_id", cargoId);
-        if (error) throw error;
-      }
+    mutationFn: async ({
+      user,
+      cargoId,
+      add,
+    }: {
+      user: UserRow;
+      cargoId: string;
+      add: boolean;
+    }) => {
+      const currentCargoIds = user.cargos.map((cargo) => cargo.id);
+
+      const cargoIds = add
+        ? [...new Set([...currentCargoIds, cargoId])]
+        : currentCargoIds.filter((id) => id !== cargoId);
+
+      await adminUpdateUserMariaDb({
+        data: {
+          id: user.id,
+          email: user.email,
+          nome: user.nome,
+          telefone: user.telefone,
+          ativo: user.ativo,
+          cargo_ids: cargoIds,
+        },
+      });
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["user_cargos"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["mariadb-users"] });
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (lp || lc || luc) {
-    return <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin" /></div>;
+  if (lu || lc) {
+    return (
+      <div className="flex justify-center py-8">
+        <Loader2 className="h-5 w-5 animate-spin" />
+      </div>
+    );
   }
 
   if (cargos.length === 0) {
@@ -363,40 +393,56 @@ function AtribuicoesTab() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Atribuir cargos a colaboradores</CardTitle>
-        <CardDescription>Marque os cargos de cada colaborador. Um colaborador pode ter vários cargos.</CardDescription>
+        <CardTitle className="text-base">
+          Atribuir cargos a usuários
+        </CardTitle>
+        <CardDescription>
+          Marque os cargos de cada usuário. Usuários master são protegidos contra alteração por esta operação.
+        </CardDescription>
       </CardHeader>
+
       <CardContent className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="min-w-[220px]">Colaborador</TableHead>
-              {cargos.map((c) => (
-                <TableHead key={c.id} className="text-center">{c.nome}</TableHead>
+              <TableHead className="min-w-[220px]">Usuário</TableHead>
+              {cargos.map((cargo) => (
+                <TableHead key={cargo.id} className="text-center">
+                  {cargo.nome}
+                </TableHead>
               ))}
             </TableRow>
           </TableHeader>
+
           <TableBody>
-            {profiles.map((p) => {
-              const assigned = byUser.get(p.id) ?? new Set<string>();
+            {users.map((user) => {
+              const assigned = new Set(user.cargos.map((cargo) => cargo.id));
+
               return (
-                <TableRow key={p.id}>
+                <TableRow key={user.id}>
                   <TableCell>
-                    <div className="font-medium">{p.nome ?? "—"}</div>
-                    <div className="text-xs text-muted-foreground">{p.email}</div>
+                    <div className="font-medium">{user.nome}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {user.email}
+                      {user.isSuperuser ? " · master protegido" : ""}
+                    </div>
                   </TableCell>
-                  {cargos.map((c) => {
-                    const checked = assigned.has(c.id);
-                    return (
-                      <TableCell key={c.id} className="text-center">
-                        <Checkbox
-                          checked={checked}
-                          disabled={toggleMut.isPending}
-                          onCheckedChange={(v) => toggleMut.mutate({ userId: p.id, cargoId: c.id, add: !!v })}
-                        />
-                      </TableCell>
-                    );
-                  })}
+
+                  {cargos.map((cargo) => (
+                    <TableCell key={cargo.id} className="text-center">
+                      <Checkbox
+                        checked={assigned.has(cargo.id)}
+                        disabled={user.isSuperuser || toggleMut.isPending}
+                        onCheckedChange={(value) =>
+                          toggleMut.mutate({
+                            user,
+                            cargoId: cargo.id,
+                            add: !!value,
+                          })
+                        }
+                      />
+                    </TableCell>
+                  ))}
                 </TableRow>
               );
             })}
