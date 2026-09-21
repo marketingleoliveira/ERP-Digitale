@@ -29,9 +29,10 @@ declare global {
   var __erpDigitaleDbPool: Pool | undefined;
 }
 
-export const db =
-  globalThis.__erpDigitaleDbPool ?? createDatabasePool();
+export function getDb(): Pool {
+  if (!globalThis.__erpDigitaleDbPool) {
+    globalThis.__erpDigitaleDbPool = createDatabasePool();
+  }
 
-if (process.env.NODE_ENV !== "production") {
-  globalThis.__erpDigitaleDbPool = db;
+  return globalThis.__erpDigitaleDbPool;
 }
