@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Zap, Loader2, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentAppUser, loginApp } from "@/lib/auth.functions";
+import { refreshAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import logoAsset from "@/assets/digitale-logo.png.asset.json";
 import logoWhiteAsset from "@/assets/digitale-logo-white.png.asset.json";
@@ -17,9 +18,17 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/inicio" });
-    });
+    let active = true;
+
+    getCurrentAppUser()
+      .then((user) => {
+        if (active && user) navigate({ to: "/inicio" });
+      })
+      .catch(() => {});
+
+    return () => {
+      active = false;
+    };
   }, [navigate]);
 
   const saudacao = useMemo(() => {
@@ -39,10 +48,28 @@ function AuthPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
-    setLoading(false);
-    if (error) { toast.error(error.message); return; }
-    navigate({ to: "/inicio" });
+
+    try {
+      const result = await loginApp({
+        data: {
+          email,
+          password: senha,
+        },
+      });
+
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+
+      await refreshAuth();
+      navigate({ to: "/inicio" });
+    } catch (error) {
+      console.error(error);
+      toast.error("Não foi possível entrar no sistema.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

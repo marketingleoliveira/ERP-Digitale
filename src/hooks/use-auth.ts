@@ -1,37 +1,121 @@
 import { useEffect, useState } from "react";
-import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentAppUser } from "@/lib/auth.functions";
 
-export type AppRole = "desenvolvedor" | "gerente" | "vendedor" | "producao" | "financeiro" | "logistica" | "qualidade";
+export type AppRole =
+  | "desenvolvedor"
+  | "admin"
+  | "gerente"
+  | "vendedor"
+  | "producao"
+  | "financeiro"
+  | "logistica"
+  | "qualidade";
 
-export function useAuth() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+export type AppUser = {
+  id: string;
+  email: string;
+  nome: string;
+  roles: string[];
+  isSuperuser: boolean;
+};
 
-  useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_evt, s) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-    });
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      setLoading(false);
-    });
-    return () => sub.subscription.unsubscribe();
-  }, []);
+type AuthSnapshot = {
+  user: AppUser | null;
+  loading: boolean;
+};
 
-  return { session, user, loading };
+let snapshot: AuthSnapshot = {
+  user: null,
+  loading: true,
+};
+
+let loaded = false;
+let inflight: Promise<AppUser | null> | null = null;
+
+const listeners = new Set<() => void>();
+
+function emit(): void {
+  for (const listener of listeners) listener();
 }
 
-export function useUserRoles(userId?: string) {
-  const [roles, setRoles] = useState<AppRole[]>([]);
-  useEffect(() => {
-    if (!userId) { setRoles([]); return; }
-    supabase.from("user_roles").select("role").eq("user_id", userId).then(({ data }) => {
-      setRoles((data ?? []).map((r) => r.role as AppRole));
+async function loadCurrentUser(force = false): Promise<AppUser | null> {
+  if (!force && loaded) return snapshot.user;
+  if (inflight) return inflight;
+
+  snapshot = {
+    ...snapshot,
+    loading: true,
+  };
+  emit();
+
+  inflight = getCurrentAppUser()
+    .then((user) => {
+      loaded = true;
+      snapshot = {
+        user: user as AppUser | null,
+        loading: false,
+      };
+      emit();
+      return snapshot.user;
+    })
+    .catch(() => {
+      loaded = true;
+      snapshot = {
+        user: null,
+        loading: false,
+      };
+      emit();
+      return null;
+    })
+    .finally(() => {
+      inflight = null;
     });
-  }, [userId]);
-  return roles;
+
+  return inflight;
+}
+
+export async function refreshAuth(): Promise<AppUser | null> {
+  loaded = false;
+  return loadCurrentUser(true);
+}
+
+export function clearAuthCache(): void {
+  loaded = true;
+  snapshot = {
+    user: null,
+    loading: false,
+  };
+  emit();
+}
+
+export function useAuth() {
+  const [state, setState] = useState<AuthSnapshot>(snapshot);
+
+  useEffect(() => {
+    const listener = () => setState({ ...snapshot });
+    listeners.add(listener);
+
+    if (!loaded) void loadCurrentUser();
+
+    return () => {
+      listeners.delete(listener);
+    };
+  }, []);
+
+  return {
+    session: state.user ? { user: state.user } : null,
+    user: state.user,
+    loading: state.loading,
+    refresh: refreshAuth,
+  };
+}
+
+export function useUserRoles(userId?: string): AppRole[] {
+  const { user } = useAuth();
+
+  if (!userId || !user || user.id !== userId) {
+    return [];
+  }
+
+  return user.roles as AppRole[];
 }

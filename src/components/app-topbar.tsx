@@ -8,8 +8,8 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/use-auth";
+import { logoutApp } from "@/lib/auth.functions";
+import { clearAuthCache, useAuth } from "@/hooks/use-auth";
 
 
 export function AppTopbar() {
@@ -18,11 +18,15 @@ export function AppTopbar() {
 
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    navigate({ to: "/auth" });
+    try {
+      await logoutApp();
+    } finally {
+      clearAuthCache();
+      navigate({ to: "/auth" });
+    }
   };
 
-  const initials = (user?.user_metadata?.nome ?? user?.email ?? "DT")
+  const initials = (user?.nome ?? user?.email ?? "DT")
     .toString().split(/\s+|@/).filter(Boolean).slice(0, 2).map((s: string) => s[0]?.toUpperCase()).join("");
 
 
@@ -61,7 +65,7 @@ export function AppTopbar() {
             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">
               {initials || "DT"}
             </div>
-            <span className="hidden text-sm md:inline max-w-[160px] truncate">{user?.user_metadata?.nome ?? user?.email ?? "Usuário"}</span>
+            <span className="hidden text-sm md:inline max-w-[160px] truncate">{user?.nome ?? user?.email ?? "Usuário"}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
