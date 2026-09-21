@@ -6,7 +6,6 @@ import {
   SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, useSidebar,
 } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import logoAsset from "@/assets/digitale-logo-white.png.asset.json";
 import { ALL_MENU_ITEMS, GROUP_ORDER, useMenuVisibility } from "@/lib/menu-config";
 import { useAuth, useUserRoles } from "@/hooks/use-auth";
 import { LayoutDashboard, Users, ShoppingCart, Factory, Wallet, ShieldCheck, Code2, Server, type LucideIcon } from "lucide-react";
