@@ -27,7 +27,7 @@ Header X-Signature: HMAC-SHA256(SEFAZ_BRIDGE_HMAC_SECRET, body)
 Body   { certificado_id, ambiente, nota_fiscal_id, xml, ... }
 ```
 
-Secrets já provisionados em Lovable Cloud:
+Secrets já provisionados em backend/VPS:
 - ✅ `CERT_ENC_KEY` (cifra do PFX)
 - ✅ `SEFAZ_BRIDGE_HMAC_SECRET` (assinatura das chamadas ao microserviço)
 - ⏳ `FISCAL_SERVICE_URL` — pendente (a fornecer quando microserviço estiver online)

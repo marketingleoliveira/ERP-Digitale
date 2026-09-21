@@ -1,6 +1,6 @@
 # BACKUP ERP DIGITALE
 
-Crie um sistema ERP 100% web chamado Sistema Digitale Têxtil, desenvolvido para atender a propria empresa, baseada no sistema @project:66a0086f-3a9f-4b49-95c6-10c5f61c45e0:"Portal Digitale Têxtil ( VENDAS ) " , atender os setores de estamparias digitais, confecções, private label e distribuidores de tecidos. O sistema deve possuir uma interface moderna, extremamente rápida, responsiva e intuitiva, utilizando React, TypeScript, Tailwind CSS e Supabase como banco de dados e autenticação. Toda a arquitetura deve ser modular, escalável e preparada para futuras integrações.
+Crie um sistema ERP 100% web chamado Sistema Digitale Têxtil, desenvolvido para atender a propria empresa, baseada no sistema @project:66a0086f-3a9f-4b49-95c6-10c5f61c45e0:"Portal Digitale Têxtil ( VENDAS ) " , atender os setores de estamparias digitais, confecções, private label e distribuidores de tecidos. O sistema deve possuir uma interface moderna, extremamente rápida, responsiva e intuitiva, utilizando React, TypeScript e Tailwind CSS. A infraestrutura alvo é VPS própria com MariaDB e autenticação própria; a migração de módulos legados do Supabase está em andamento. Toda a arquitetura deve ser modular, escalável e preparada para futuras integrações.
 
 O Sistema Digitale Têxtil deve iniciar com um Dashboard executivo contendo indicadores em tempo real, como faturamento do dia, faturamento do mês, pedidos em produção, pedidos atrasados, ordens de produção abertas, estoque disponível, produtos mais vendidos, clientes ativos, contas a receber, contas a pagar, gráficos financeiros, gráficos de vendas e indicadores de produtividade.
 
@@ -104,25 +104,24 @@ O nome Sistema Digitale Têxtil deve aparecer na tela de login, no cabeçalho, n
 
 Gerar também dados fictícios para demonstração, permitindo navegar por todas as telas imediatamente após a criação do projeto.
 
-This project was built with [Lovable](https://lovable.dev).
+## Infraestrutura atual
 
-**Live app**: https://erpdigitale.lovable.app
+- Frontend/full-stack: React + TypeScript + TanStack Start + Vite.
+- Runtime de produção: Node.js/Nitro atrás do Nginx na VPS.
+- Banco alvo: MariaDB.
+- Autenticação própria: sessões persistidas no MariaDB.
+- Migração em andamento: módulos operacionais legados ainda serão convertidos do Supabase para MariaDB por domínio.
 
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/2072e8ab-b568-4a03-8fef-3460893cfae5).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Desenvolvimento
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+npm ci
 npm run dev
+```
+
+Build de produção:
+
+```sh
+npm run build
+npm start
 ```

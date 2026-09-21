@@ -18,7 +18,7 @@ Arquitetura oficial: `ERP → FiscalService → Focus Adapter → Focus NFe → 
 
 ### 1.2 Token Focus NFe (produção)
 - [ ] Token **de produção** gerado no painel Focus (distinto do token de homologação).
-- [ ] Secret `FOCUS_NFE_TOKEN` provisionado no backend (Lovable Cloud).
+- [ ] Secret `FOCUS_NFE_TOKEN` provisionado no backend (backend/VPS).
 - [ ] Chamada de teste `GET /v2/empresas` autenticada retornando 200.
 - [ ] Nenhum token em `.env`, código-fonte ou logs.
 

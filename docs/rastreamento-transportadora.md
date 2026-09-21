@@ -31,6 +31,6 @@ interface TrackingEvent {
 
 ## Segurança
 
-- Tokens dos providers em secrets do Lovable Cloud (nunca no frontend).
+- Tokens dos providers em variáveis de ambiente seguras do backend/VPS (nunca no frontend).
 - Server function `atualizarRastreioRomaneio(romaneioId)` chama o provider via edge/server.
 - Nenhum PII do destinatário exposto no log.
