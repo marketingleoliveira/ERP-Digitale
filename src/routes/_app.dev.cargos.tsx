@@ -103,8 +103,9 @@ function DevCargosPage() {
 function CargosTab() {
   const qc = useQueryClient();
   const { data: cargos = [], isLoading } = useQuery({ queryKey: ["cargos"], queryFn: fetchCargos });
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editing, setEditing] = useState<Cargo | null>(null);
+  const [editor, setEditor] = useState<Cargo | "new" | null>(null);
+  const editing = editor === null || editor === "new" ? null : editor;
+  const dialogOpen = editor !== null;
 
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
@@ -124,7 +125,7 @@ function CargosTab() {
           <CardTitle className="text-base">Cargos cadastrados</CardTitle>
           <CardDescription>{cargos.length} cargo(s)</CardDescription>
         </div>
-        <Button size="sm" onClick={() => { setEditing(null); setDialogOpen(true); }}>
+        <Button type="button" size="sm" onClick={() => setEditor("new")}>
           <FilePlus2 className="h-4 w-4 mr-1.5" /> Novo cargo
         </Button>
       </CardHeader>
@@ -152,10 +153,16 @@ function CargosTab() {
                     <Badge variant="secondary">{c.permissoes.length}</Badge>
                   </TableCell>
                   <TableCell className="text-right space-x-1">
-                    <Button size="icon" variant="ghost" onClick={() => { setEditing(c); setDialogOpen(true); }}>
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => setEditor(c)}
+                    >
                       <Pencil className="h-4 w-4" />
                     </Button>
                     <Button
+                      type="button"
                       size="icon"
                       variant="ghost"
                       disabled={deleteMut.isPending}
@@ -172,10 +179,15 @@ function CargosTab() {
       </CardContent>
 
       <CargoDialog
+        key={editor === "new" ? "new" : editing?.id ?? "closed"}
         open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) setEditor(null);
+        }}
         editing={editing}
-        onSaved={() => qc.invalidateQueries({ queryKey: ["cargos"] })}
+        onSaved={() => {
+          qc.invalidateQueries({ queryKey: ["cargos"] });
+        }}
       />
     </Card>
   );
