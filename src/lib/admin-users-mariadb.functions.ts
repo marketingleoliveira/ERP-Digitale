@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { createServerFn } from "@tanstack/react-start";
-import type { RowDataPacket } from "mysql2";
+import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import { z } from "zod";
 import { requireAppAuth } from "./auth-middleware";
 import { getDb } from "./db.server";
@@ -105,6 +105,220 @@ export const adminCreateUserMariaDb = createServerFn({ method: "POST" })
         id: userId,
         email,
       };
+    } catch (error) {
+      await connection.rollback();
+
+      if (isDuplicateEntry(error)) {
+        throw new Error("Já existe um usuário cadastrado com este e-mail.");
+      }
+
+      throw error;
+    } finally {
+      connection.release();
+    }
+  });
+
+type UserListRow = RowDataPacket & {
+  id: string;
+  email: string;
+  nome: string;
+  telefone: string | null;
+  ativo: number;
+};
+
+type UserRoleListRow = RowDataPacket & {
+  user_id: string;
+  role: string;
+  is_superuser: number;
+};
+
+type UserCargoListRow = RowDataPacket & {
+  user_id: string;
+  cargo_id: string;
+  cargo_nome: string;
+};
+
+const updateUserSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().trim().email({ message: "E-mail inválido." }).max(255),
+  nome: z.string().trim().min(1).max(150),
+  telefone: z.string().trim().max(30).nullable().optional(),
+  ativo: z.boolean(),
+  cargo_ids: z.array(z.string().uuid()).max(50),
+});
+
+function requireUserAdmin(context: unknown): void {
+  const auth = context as
+    | { isSuperuser: boolean; roles: string[] }
+    | undefined;
+
+  if (!auth) {
+    throw new Error("Sessão inválida.");
+  }
+
+  if (!auth.isSuperuser && !auth.roles.includes("desenvolvedor")) {
+    throw new Error("Apenas desenvolvedores podem gerenciar usuários.");
+  }
+}
+
+function normalizeCargoIds(values: string[]): string[] {
+  return [...new Set(values)];
+}
+
+export const adminListUsersMariaDb = createServerFn({ method: "GET" })
+  .middleware([requireAppAuth])
+  .handler(async ({ context }) => {
+    requireUserAdmin(context);
+
+    const db = getDb();
+
+    const [users] = await db.execute<UserListRow[]>(
+      `SELECT id, email, nome, telefone, ativo
+       FROM users
+       ORDER BY nome, email`,
+    );
+
+    const [roles] = await db.execute<UserRoleListRow[]>(
+      `SELECT ur.user_id, r.slug AS role, r.is_superuser
+       FROM user_roles ur
+       INNER JOIN roles r ON r.id = ur.role_id
+       ORDER BY r.slug`,
+    );
+
+    const [cargos] = await db.execute<UserCargoListRow[]>(
+      `SELECT uc.user_id, c.id AS cargo_id, c.nome AS cargo_nome
+       FROM user_cargos uc
+       INNER JOIN cargos c ON c.id = uc.cargo_id
+       ORDER BY c.nome`,
+    );
+
+    const rolesByUser = new Map<string, string[]>();
+    const superusers = new Set<string>();
+    const cargosByUser = new Map<
+      string,
+      Array<{ id: string; nome: string }>
+    >();
+
+    for (const row of roles) {
+      const current = rolesByUser.get(row.user_id) ?? [];
+      current.push(row.role);
+      rolesByUser.set(row.user_id, current);
+
+      if (row.is_superuser) {
+        superusers.add(row.user_id);
+      }
+    }
+
+    for (const row of cargos) {
+      const current = cargosByUser.get(row.user_id) ?? [];
+      current.push({
+        id: row.cargo_id,
+        nome: row.cargo_nome,
+      });
+      cargosByUser.set(row.user_id, current);
+    }
+
+    return users.map((user) => ({
+      id: user.id,
+      email: user.email,
+      nome: user.nome,
+      telefone: user.telefone,
+      ativo: Boolean(user.ativo),
+      roles: rolesByUser.get(user.id) ?? [],
+      cargos: cargosByUser.get(user.id) ?? [],
+      isSuperuser: superusers.has(user.id),
+    }));
+  });
+
+export const adminUpdateUserMariaDb = createServerFn({ method: "POST" })
+  .middleware([requireAppAuth])
+  .inputValidator((data: unknown) => updateUserSchema.parse(data))
+  .handler(async ({ data, context }) => {
+    requireUserAdmin(context);
+
+    const email = data.email.toLowerCase();
+    const cargoIds = normalizeCargoIds(data.cargo_ids);
+    const connection = await getDb().getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      const [target] = await connection.execute<IdRow[]>(
+        "SELECT id FROM users WHERE id = ? FOR UPDATE",
+        [data.id],
+      );
+
+      if (!target.length) {
+        throw new Error("Usuário não encontrado.");
+      }
+
+      const [superuser] = await connection.execute<IdRow[]>(
+        `SELECT ur.user_id AS id
+         FROM user_roles ur
+         INNER JOIN roles r ON r.id = ur.role_id
+         WHERE ur.user_id = ?
+           AND r.is_superuser = 1
+         LIMIT 1`,
+        [data.id],
+      );
+
+      if (superuser.length) {
+        throw new Error(
+          "Usuário master/superusuário não pode ser alterado por esta operação.",
+        );
+      }
+
+      if (cargoIds.length) {
+        const placeholders = cargoIds.map(() => "?").join(",");
+
+        const [existingCargos] = await connection.execute<IdRow[]>(
+          `SELECT id
+           FROM cargos
+           WHERE id IN (${placeholders})`,
+          cargoIds,
+        );
+
+        if (existingCargos.length !== cargoIds.length) {
+          throw new Error("Um ou mais cargos selecionados não existem.");
+        }
+      }
+
+      const [result] = await connection.execute<ResultSetHeader>(
+        `UPDATE users
+         SET email = ?,
+             nome = ?,
+             telefone = ?,
+             ativo = ?
+         WHERE id = ?`,
+        [
+          email,
+          data.nome,
+          data.telefone?.trim() || null,
+          data.ativo ? 1 : 0,
+          data.id,
+        ],
+      );
+
+      if (result.affectedRows !== 1) {
+        throw new Error("Usuário não encontrado.");
+      }
+
+      await connection.execute(
+        "DELETE FROM user_cargos WHERE user_id = ?",
+        [data.id],
+      );
+
+      for (const cargoId of cargoIds) {
+        await connection.execute(
+          `INSERT INTO user_cargos (id, user_id, cargo_id)
+           VALUES (?, ?, ?)`,
+          [randomUUID(), data.id, cargoId],
+        );
+      }
+
+      await connection.commit();
+
+      return { ok: true as const };
     } catch (error) {
       await connection.rollback();
 
