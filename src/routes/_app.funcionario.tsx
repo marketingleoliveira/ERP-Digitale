@@ -31,9 +31,13 @@ import {
 } from "@/components/ui/table";
 import { FilePlus2, Loader2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useMultiSelection } from "@/hooks/use-multi-selection";
 import { maskCPF, maskRG, maskCEP, maskPhone } from "@/lib/masks";
+import {
+  deleteFuncionarios,
+  listFuncionarios,
+  saveFuncionario,
+} from "@/lib/funcionarios.functions";
 
 import { adminListCargosMariaDb } from "@/lib/cargos-mariadb.functions";
 export const Route = createFileRoute("/_app/funcionario")({
@@ -95,15 +99,8 @@ const UFS = [
 
 const PAGE_SIZE = 20;
 
-const sb = supabase as unknown as { from: (t: string) => any };
-
 async function fetchFuncionarios(): Promise<Funcionario[]> {
-  const { data, error } = await sb
-    .from("funcionarios")
-    .select("*, cargo:cargos(id,nome)")
-    .order("nome", { ascending: true });
-  if (error) throw error;
-  return (data ?? []) as Funcionario[];
+  return (await listFuncionarios()) as Funcionario[];
 }
 
 function FuncionarioPage() {
@@ -130,9 +127,8 @@ function FuncionarioPage() {
 
   const deleteMut = useMutation({
     mutationFn: async (ids: string[]) => {
-      const { error } = await sb.from("funcionarios").delete().in("id", ids);
-      if (error) throw error;
-      return ids.length;
+      const result = await deleteFuncionarios({ data: { ids } });
+      return result.deleted;
     },
     onSuccess: (n) => {
       toast.success(`${n} funcionário(s) excluído(s).`);
@@ -406,13 +402,12 @@ function FuncionarioDialog({
         observacao: clean(f.observacao),
         habilitado: f.habilitado,
       };
-      if (editing) {
-        const { error } = await sb.from("funcionarios").update(payload).eq("id", editing.id);
-        if (error) throw error;
-      } else {
-        const { error } = await sb.from("funcionarios").insert(payload);
-        if (error) throw error;
-      }
+      await saveFuncionario({
+        data: {
+          ...payload,
+          id: editing?.id,
+        },
+      });
     },
     onSuccess: () => {
       toast.success(editing ? "Funcionário atualizado." : "Funcionário cadastrado.");
