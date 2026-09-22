@@ -7,16 +7,35 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { FilePlus2, Loader2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMultiSelection } from "@/hooks/use-multi-selection";
 import { maskCPF, maskRG, maskCEP, maskPhone } from "@/lib/masks";
 
-
+import { adminListCargosMariaDb } from "@/lib/cargos-mariadb.functions";
 export const Route = createFileRoute("/_app/funcionario")({
   ssr: false,
   component: FuncionarioPage,
@@ -44,11 +63,35 @@ type Funcionario = {
   habilitado: boolean;
 };
 
-
 const UFS = [
-  "AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO",
+  "AC",
+  "AL",
+  "AM",
+  "AP",
+  "BA",
+  "CE",
+  "DF",
+  "ES",
+  "GO",
+  "MA",
+  "MG",
+  "MS",
+  "MT",
+  "PA",
+  "PB",
+  "PE",
+  "PI",
+  "PR",
+  "RJ",
+  "RN",
+  "RO",
+  "RR",
+  "RS",
+  "SC",
+  "SE",
+  "SP",
+  "TO",
 ];
-
 
 const PAGE_SIZE = 20;
 
@@ -63,10 +106,12 @@ async function fetchFuncionarios(): Promise<Funcionario[]> {
   return (data ?? []) as Funcionario[];
 }
 
-
 function FuncionarioPage() {
   const qc = useQueryClient();
-  const { data = [], isLoading } = useQuery({ queryKey: ["funcionarios"], queryFn: fetchFuncionarios });
+  const { data = [], isLoading } = useQuery({
+    queryKey: ["funcionarios"],
+    queryFn: fetchFuncionarios,
+  });
 
   const [filter, setFilter] = useState("");
   const [applied, setApplied] = useState("");
@@ -103,14 +148,37 @@ function FuncionarioPage() {
 
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center justify-end gap-2 border-b border-border bg-muted/30 p-2">
-          <Button size="sm" variant="outline" onClick={() => { setEditing(null); setDialogOpen(true); }}>
-            <FilePlus2 className="h-4 w-4 mr-1.5" />CADASTRAR
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setEditing(null);
+              setDialogOpen(true);
+            }}
+          >
+            <FilePlus2 className="h-4 w-4 mr-1.5" />
+            CADASTRAR
           </Button>
-          <Button size="sm" variant="outline" disabled={!singleRow} onClick={() => { setEditing(singleRow); setDialogOpen(true); }}>
-            <Pencil className="h-4 w-4 mr-1.5" />ALTERAR
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={!singleRow}
+            onClick={() => {
+              setEditing(singleRow);
+              setDialogOpen(true);
+            }}
+          >
+            <Pencil className="h-4 w-4 mr-1.5" />
+            ALTERAR
           </Button>
-          <Button size="sm" variant="outline" disabled={sel.count === 0 || deleteMut.isPending} onClick={() => deleteMut.mutate([...sel.selectedIds])}>
-            <Trash2 className="h-4 w-4 mr-1.5" />EXCLUIR{sel.count > 1 ? ` (${sel.count})` : ""}
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={sel.count === 0 || deleteMut.isPending}
+            onClick={() => deleteMut.mutate([...sel.selectedIds])}
+          >
+            <Trash2 className="h-4 w-4 mr-1.5" />
+            EXCLUIR{sel.count > 1 ? ` (${sel.count})` : ""}
           </Button>
         </div>
 
@@ -119,78 +187,153 @@ function FuncionarioPage() {
             <TableHeader>
               <TableRow className="bg-primary hover:bg-primary">
                 <TableHead className="w-10 text-center">
-                  <Checkbox checked={sel.allSelected} onCheckedChange={(c) => sel.toggleAll(!!c)} aria-label="Selecionar todos" />
+                  <Checkbox
+                    checked={sel.allSelected}
+                    onCheckedChange={(c) => sel.toggleAll(!!c)}
+                    aria-label="Selecionar todos"
+                  />
                 </TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Nome</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Tipo</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">CPF</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Telefone</TableHead>
                 <TableHead className="text-primary-foreground font-semibold">Celular</TableHead>
-                <TableHead className="text-primary-foreground font-semibold text-center w-14">Hab</TableHead>
+                <TableHead className="text-primary-foreground font-semibold text-center w-14">
+                  Hab
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-10"><Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" /></TableCell></TableRow>
-              ) : paged.length === 0 ? (
-                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-10">Nenhum registro encontrado.</TableCell></TableRow>
-              ) : paged.map((f) => (
-                <TableRow key={f.id}>
-                  <TableCell>
-                    <Checkbox checked={sel.isSelected(f.id)} onCheckedChange={(c) => sel.toggleOne(f.id, !!c)} />
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-10">
+                    <Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" />
                   </TableCell>
-                  <TableCell><span className="text-primary font-medium">{f.nome}</span></TableCell>
-                  <TableCell>{f.cargo?.nome ?? f.tipo ?? "—"}</TableCell>
-                  <TableCell>{f.cpf ?? ""}</TableCell>
-                  <TableCell>{f.telefone ?? ""}</TableCell>
-                  <TableCell>{f.celular ?? ""}</TableCell>
-                  <TableCell className="text-center"><Checkbox checked={f.habilitado} disabled /></TableCell>
                 </TableRow>
-              ))}
+              ) : paged.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
+                    Nenhum registro encontrado.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                paged.map((f) => (
+                  <TableRow key={f.id}>
+                    <TableCell>
+                      <Checkbox
+                        checked={sel.isSelected(f.id)}
+                        onCheckedChange={(c) => sel.toggleOne(f.id, !!c)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-primary font-medium">{f.nome}</span>
+                    </TableCell>
+                    <TableCell>{f.cargo?.nome ?? f.tipo ?? "—"}</TableCell>
+                    <TableCell>{f.cpf ?? ""}</TableCell>
+                    <TableCell>{f.telefone ?? ""}</TableCell>
+                    <TableCell>{f.celular ?? ""}</TableCell>
+                    <TableCell className="text-center">
+                      <Checkbox checked={f.habilitado} disabled />
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>
 
         <div className="border-t border-border p-3 bg-muted/30">
           <div className="flex flex-wrap items-center gap-4 text-sm">
-            <span className="text-muted-foreground">Página: {page} / {totalPages}</span>
+            <span className="text-muted-foreground">
+              Página: {page} / {totalPages}
+            </span>
             <div className="mx-auto flex items-center gap-2">
-              <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>◀ ANTERIOR</Button>
-              <Button size="sm" variant="outline" disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>PRÓXIMO ▶</Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                ◀ ANTERIOR
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                PRÓXIMO ▶
+              </Button>
             </div>
             <div className="flex items-center gap-2">
               <span>Página:</span>
-              <select className="h-8 rounded border border-input bg-background px-2 text-sm" value={page} onChange={(ev) => setPage(Number(ev.target.value))}>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => <option key={n} value={n}>{n}</option>)}
+              <select
+                className="h-8 rounded border border-input bg-background px-2 text-sm"
+                value={page}
+                onChange={(ev) => setPage(Number(ev.target.value))}
+              >
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
               </select>
             </div>
-            <span className="ml-auto text-muted-foreground">Total de Registros: {filtered.length}</span>
+            <span className="ml-auto text-muted-foreground">
+              Total de Registros: {filtered.length}
+            </span>
           </div>
           <div className="mt-3 flex flex-wrap items-end gap-3">
             <div className="flex-1 min-w-[240px]">
               <Label className="text-xs text-muted-foreground">Nome:</Label>
-              <Input value={filter} onChange={(e) => setFilter(e.target.value)} className="h-9" maxLength={100} />
+              <Input
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                className="h-9"
+                maxLength={100}
+              />
             </div>
-            <Button variant="secondary" onClick={() => { setApplied(filter); setPage(1); }}>FILTRAR</Button>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setApplied(filter);
+                setPage(1);
+              }}
+            >
+              FILTRAR
+            </Button>
           </div>
         </div>
       </Card>
 
-      <FuncionarioDialog open={dialogOpen} onOpenChange={setDialogOpen} editing={editing} onSaved={() => qc.invalidateQueries({ queryKey: ["funcionarios"] })} />
+      <FuncionarioDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        editing={editing}
+        onSaved={() => qc.invalidateQueries({ queryKey: ["funcionarios"] })}
+      />
     </div>
   );
 }
 
 function FuncionarioDialog({
-  open, onOpenChange, editing, onSaved,
-}: { open: boolean; onOpenChange: (v: boolean) => void; editing: Funcionario | null; onSaved: () => void }) {
+  open,
+  onOpenChange,
+  editing,
+  onSaved,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  editing: Funcionario | null;
+  onSaved: () => void;
+}) {
   const { data: cargos = [] } = useQuery<{ id: string; nome: string }[]>({
     queryKey: ["cargos-opts"],
-    queryFn: async () => {
-      const { data, error } = await sb.from("cargos").select("id,nome").order("nome");
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: async () =>
+      (await adminListCargosMariaDb()) as Array<{
+        id: string;
+        nome: string;
+      }>,
     enabled: open,
     staleTime: 0,
     refetchOnMount: "always",
@@ -198,9 +341,21 @@ function FuncionarioDialog({
   });
 
   const [f, setF] = useState({
-    cargo_id: "", nome: "", cpf: "", rg: "", cep: "", uf: "",
-    endereco: "", numero: "", complemento: "", bairro: "", cidade: "",
-    telefone: "", celular: "", email: "", observacao: "",
+    cargo_id: "",
+    nome: "",
+    cpf: "",
+    rg: "",
+    cep: "",
+    uf: "",
+    endereco: "",
+    numero: "",
+    complemento: "",
+    bairro: "",
+    cidade: "",
+    telefone: "",
+    celular: "",
+    email: "",
+    observacao: "",
     habilitado: true,
   });
 
@@ -268,27 +423,42 @@ function FuncionarioDialog({
   });
 
   const submit = () => {
-    if (!f.cargo_id) { toast.error("Selecione o cargo."); return; }
-    if (!f.nome.trim()) { toast.error("Informe o nome."); return; }
+    if (!f.cargo_id) {
+      toast.error("Selecione o cargo.");
+      return;
+    }
+    if (!f.nome.trim()) {
+      toast.error("Informe o nome.");
+      return;
+    }
     mut.mutate();
   };
-
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-primary"> {editing ? "Alterar" : "Cadastro"} Funcionário</DialogTitle>
+          <DialogTitle className="text-primary">
+            {" "}
+            {editing ? "Alterar" : "Cadastro"} Funcionário
+          </DialogTitle>
         </DialogHeader>
 
         <div className="rounded bg-muted/40 p-5 space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Field label="Cargo" required>
               <Select value={f.cargo_id} onValueChange={(v) => upd("cargo_id", v)}>
-                <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-                <SelectContent>{cargos.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent>
+                <SelectTrigger>
+                  <SelectValue placeholder="[SELECIONE]" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cargos.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.nome}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
-
             </Field>
             <Field label="Habilitado">
               <div className="h-9 flex items-center">
@@ -302,47 +472,138 @@ function FuncionarioDialog({
           </Field>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Field label="CPF"><Input value={f.cpf} onChange={(e) => upd("cpf", maskCPF(e.target.value))} maxLength={14} inputMode="numeric" placeholder="000.000.000-00" /></Field>
-            <Field label="RG"><Input value={f.rg} onChange={(e) => upd("rg", maskRG(e.target.value))} maxLength={12} placeholder="00.000.000-0" /></Field>
+            <Field label="CPF">
+              <Input
+                value={f.cpf}
+                onChange={(e) => upd("cpf", maskCPF(e.target.value))}
+                maxLength={14}
+                inputMode="numeric"
+                placeholder="000.000.000-00"
+              />
+            </Field>
+            <Field label="RG">
+              <Input
+                value={f.rg}
+                onChange={(e) => upd("rg", maskRG(e.target.value))}
+                maxLength={12}
+                placeholder="00.000.000-0"
+              />
+            </Field>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Field label="CEP"><Input value={f.cep} onChange={(e) => upd("cep", maskCEP(e.target.value))} maxLength={9} inputMode="numeric" placeholder="00000-000" /></Field>
+            <Field label="CEP">
+              <Input
+                value={f.cep}
+                onChange={(e) => upd("cep", maskCEP(e.target.value))}
+                maxLength={9}
+                inputMode="numeric"
+                placeholder="00000-000"
+              />
+            </Field>
             <Field label="UF">
               <Select value={f.uf} onValueChange={(v) => upd("uf", v)}>
-                <SelectTrigger><SelectValue placeholder="[SELECIONE]" /></SelectTrigger>
-                <SelectContent>{UFS.map((u) => <SelectItem key={u} value={u}>{u}</SelectItem>)}</SelectContent>
+                <SelectTrigger>
+                  <SelectValue placeholder="[SELECIONE]" />
+                </SelectTrigger>
+                <SelectContent>
+                  {UFS.map((u) => (
+                    <SelectItem key={u} value={u}>
+                      {u}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </Field>
           </div>
 
-          <Field label="Endereço"><Input value={f.endereco} onChange={(e) => upd("endereco", e.target.value)} maxLength={200} /></Field>
+          <Field label="Endereço">
+            <Input
+              value={f.endereco}
+              onChange={(e) => upd("endereco", e.target.value)}
+              maxLength={200}
+            />
+          </Field>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Field label="Número"><Input value={f.numero} onChange={(e) => upd("numero", e.target.value)} maxLength={20} /></Field>
-            <Field label="Complemento"><Input value={f.complemento} onChange={(e) => upd("complemento", e.target.value)} maxLength={80} /></Field>
+            <Field label="Número">
+              <Input
+                value={f.numero}
+                onChange={(e) => upd("numero", e.target.value)}
+                maxLength={20}
+              />
+            </Field>
+            <Field label="Complemento">
+              <Input
+                value={f.complemento}
+                onChange={(e) => upd("complemento", e.target.value)}
+                maxLength={80}
+              />
+            </Field>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Field label="Bairro"><Input value={f.bairro} onChange={(e) => upd("bairro", e.target.value)} maxLength={100} /></Field>
-            <Field label="Cidade"><Input value={f.cidade} onChange={(e) => upd("cidade", e.target.value)} maxLength={100} /></Field>
+            <Field label="Bairro">
+              <Input
+                value={f.bairro}
+                onChange={(e) => upd("bairro", e.target.value)}
+                maxLength={100}
+              />
+            </Field>
+            <Field label="Cidade">
+              <Input
+                value={f.cidade}
+                onChange={(e) => upd("cidade", e.target.value)}
+                maxLength={100}
+              />
+            </Field>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Field label="Telefone"><Input value={f.telefone} onChange={(e) => upd("telefone", maskPhone(e.target.value))} maxLength={15} inputMode="tel" placeholder="(00) 0000-0000" /></Field>
-            <Field label="Celular"><Input value={f.celular} onChange={(e) => upd("celular", maskPhone(e.target.value))} maxLength={15} inputMode="tel" placeholder="(00) 00000-0000" /></Field>
+            <Field label="Telefone">
+              <Input
+                value={f.telefone}
+                onChange={(e) => upd("telefone", maskPhone(e.target.value))}
+                maxLength={15}
+                inputMode="tel"
+                placeholder="(00) 0000-0000"
+              />
+            </Field>
+            <Field label="Celular">
+              <Input
+                value={f.celular}
+                onChange={(e) => upd("celular", maskPhone(e.target.value))}
+                maxLength={15}
+                inputMode="tel"
+                placeholder="(00) 00000-0000"
+              />
+            </Field>
           </div>
 
-          <Field label="Email"><Input type="email" value={f.email} onChange={(e) => upd("email", e.target.value)} maxLength={150} /></Field>
+          <Field label="Email">
+            <Input
+              type="email"
+              value={f.email}
+              onChange={(e) => upd("email", e.target.value)}
+              maxLength={150}
+            />
+          </Field>
 
           <Field label="Observação">
-            <Textarea value={f.observacao} onChange={(e) => upd("observacao", e.target.value)} rows={4} maxLength={1000} />
+            <Textarea
+              value={f.observacao}
+              onChange={(e) => upd("observacao", e.target.value)}
+              rows={4}
+              maxLength={1000}
+            />
           </Field>
         </div>
 
         <p className="text-center text-sm text-destructive">* Campo Obrigatório</p>
         <DialogFooter className="sm:justify-center">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={mut.isPending}>Cancelar</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={mut.isPending}>
+            Cancelar
+          </Button>
           <Button onClick={submit} disabled={mut.isPending}>
             {mut.isPending && <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />}
             {editing ? "SALVAR" : "CADASTRAR"}
@@ -353,11 +614,22 @@ function FuncionarioDialog({
   );
 }
 
-function Field({ label, required, children, className }: { label: string; required?: boolean; children: React.ReactNode; className?: string }) {
+function Field({
+  label,
+  required,
+  children,
+  className,
+}: {
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <div className={className}>
       <Label className="text-xs font-semibold">
-        {required && <span className="text-destructive mr-1">*</span>}{label}:
+        {required && <span className="text-destructive mr-1">*</span>}
+        {label}:
       </Label>
       <div className="mt-1">{children}</div>
     </div>
