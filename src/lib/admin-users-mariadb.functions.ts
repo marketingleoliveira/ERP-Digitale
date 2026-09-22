@@ -15,6 +15,7 @@ const createUserSchema = z.object({
     .max(200),
   nome: z.string().trim().min(1).max(150),
   cargo_id: z.string().uuid(),
+  funcionario_id: z.string().uuid(),
 });
 
 type IdRow = RowDataPacket & {
@@ -46,6 +47,7 @@ export const adminCreateUserMariaDb = createServerFn({ method: "POST" })
     await requireAppPermission(context, "/dev/cargos");
 
     const email = data.email.toLowerCase();
+    await getFuncionario(data.funcionario_id);
     const passwordHash = await hashPassword(data.password);
     const connection = await getDb().getConnection();
 
@@ -59,6 +61,14 @@ export const adminCreateUserMariaDb = createServerFn({ method: "POST" })
 
       if (existing.length) {
         throw new Error("Já existe um usuário cadastrado com este e-mail.");
+      }
+
+      const [linkedFuncionario] = await connection.execute<IdRow[]>(
+        "SELECT id FROM users WHERE funcionario_id = ? LIMIT 1",
+        [data.funcionario_id],
+      );
+      if (linkedFuncionario.length) {
+        throw new Error("Este funcionário já possui um usuário de acesso.");
       }
 
       const [cargo] = await connection.execute<IdRow[]>(
@@ -82,9 +92,9 @@ export const adminCreateUserMariaDb = createServerFn({ method: "POST" })
 
       await connection.execute(
         `INSERT INTO users
-          (id, email, password_hash, nome, ativo, email_verified_at)
-         VALUES (?, ?, ?, ?, 1, UTC_TIMESTAMP())`,
-        [userId, email, passwordHash, data.nome],
+          (id, email, password_hash, nome, funcionario_id, ativo, email_verified_at)
+         VALUES (?, ?, ?, ?, ?, 1, UTC_TIMESTAMP())`,
+        [userId, email, passwordHash, data.nome, data.funcionario_id],
       );
 
       await connection.execute(
@@ -123,6 +133,7 @@ type UserListRow = RowDataPacket & {
   nome: string;
   telefone: string | null;
   ativo: number;
+  funcionario_id: string | null;
 };
 
 type UserRoleListRow = RowDataPacket & {
@@ -137,6 +148,41 @@ type UserCargoListRow = RowDataPacket & {
   cargo_nome: string;
 };
 
+type FuncionarioRow = {
+  id: string;
+  nome: string;
+  cargo_id: string | null;
+  habilitado: boolean;
+};
+
+async function getFuncionario(funcionarioId: string): Promise<FuncionarioRow> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin
+    .from("funcionarios")
+    .select("id, nome, cargo_id, habilitado")
+    .eq("id", funcionarioId)
+    .maybeSingle();
+
+  if (error) throw new Error(`Não foi possível validar o funcionário: ${error.message}`);
+  if (!data) throw new Error("Cadastre o funcionário antes de criar o usuário.");
+  if (!data.habilitado) throw new Error("O funcionário selecionado está desabilitado.");
+  return data as FuncionarioRow;
+}
+
+export const adminListFuncionariosMariaDb = createServerFn({ method: "GET" })
+  .middleware([requireAppAuth])
+  .handler(async ({ context }) => {
+    await requireAppPermission(context, "/dev/cargos");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("funcionarios")
+      .select("id, nome, cargo_id, habilitado")
+      .eq("habilitado", true)
+      .order("nome");
+    if (error) throw new Error(`Não foi possível listar funcionários: ${error.message}`);
+    return (data ?? []) as FuncionarioRow[];
+  });
+
 const updateUserSchema = z.object({
   id: z.string().uuid(),
   email: z.string().trim().email({ message: "E-mail inválido." }).max(255),
@@ -144,6 +190,7 @@ const updateUserSchema = z.object({
   telefone: z.string().trim().max(30).nullable().optional(),
   ativo: z.boolean(),
   cargo_ids: z.array(z.string().uuid()).max(50),
+  funcionario_id: z.string().uuid(),
 });
 
 const deleteUsersSchema = z.object({
@@ -182,7 +229,7 @@ export const adminListUsersMariaDb = createServerFn({ method: "GET" })
     const db = getDb();
 
     const [users] = await db.execute<UserListRow[]>(
-      `SELECT id, email, nome, telefone, ativo
+      `SELECT id, email, nome, telefone, ativo, funcionario_id
        FROM users
        ORDER BY nome, email`,
     );
@@ -232,6 +279,7 @@ export const adminListUsersMariaDb = createServerFn({ method: "GET" })
       email: user.email,
       nome: user.nome,
       telefone: user.telefone,
+      funcionario_id: user.funcionario_id,
       ativo: Boolean(user.ativo),
       roles: rolesByUser.get(user.id) ?? [],
       cargos: cargosByUser.get(user.id) ?? [],
@@ -246,6 +294,7 @@ export const adminUpdateUserMariaDb = createServerFn({ method: "POST" })
     await requireAppPermission(context, "/dev/cargos");
 
     const email = data.email.toLowerCase();
+    await getFuncionario(data.funcionario_id);
     const cargoIds = normalizeCargoIds(data.cargo_ids);
     const connection = await getDb().getConnection();
 
@@ -259,6 +308,14 @@ export const adminUpdateUserMariaDb = createServerFn({ method: "POST" })
 
       if (!target.length) {
         throw new Error("Usuário não encontrado.");
+      }
+
+      const [linkedFuncionario] = await connection.execute<IdRow[]>(
+        "SELECT id FROM users WHERE funcionario_id = ? AND id <> ? LIMIT 1",
+        [data.funcionario_id, data.id],
+      );
+      if (linkedFuncionario.length) {
+        throw new Error("Este funcionário já possui outro usuário de acesso.");
       }
 
       const [superuser] = await connection.execute<IdRow[]>(
@@ -297,13 +354,15 @@ export const adminUpdateUserMariaDb = createServerFn({ method: "POST" })
          SET email = ?,
              nome = ?,
              telefone = ?,
-             ativo = ?
+             ativo = ?,
+             funcionario_id = ?
          WHERE id = ?`,
         [
           email,
           data.nome,
           data.telefone?.trim() || null,
           data.ativo ? 1 : 0,
+          data.funcionario_id,
           data.id,
         ],
       );

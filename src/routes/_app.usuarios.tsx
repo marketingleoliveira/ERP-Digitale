@@ -18,6 +18,7 @@ import {
   adminCreateUserMariaDb,
   adminDeleteUsersMariaDb,
   adminListUsersMariaDb,
+  adminListFuncionariosMariaDb,
   adminUpdateUserMariaDb,
 } from "@/lib/admin-users-mariadb.functions";
 import { adminListCargosMariaDb } from "@/lib/cargos-mariadb.functions";
@@ -38,9 +39,11 @@ type Profile = {
   roles: string[];
   isSuperuser: boolean;
   cargos: Array<{ id: string; nome: string }>;
+  funcionario_id: string | null;
 };
 
 type Cargo = { id: string; nome: string };
+type Funcionario = { id: string; nome: string; cargo_id: string | null; habilitado: boolean };
 
 const PAGE_SIZE = 20;
 
@@ -54,7 +57,7 @@ async function fetchCargos(): Promise<Cargo[]> {
 
 function UsuariosPage() {
   const qc = useQueryClient();
-  const { data: profiles = [], isLoading } = useQuery({
+  const { data: profiles = [], isLoading, error: profilesError } = useQuery({
     queryKey: ["mariadb-users"],
     queryFn: fetchProfiles,
   });
@@ -62,6 +65,11 @@ function UsuariosPage() {
   const { data: cargos = [] } = useQuery({
     queryKey: ["cargos"],
     queryFn: fetchCargos,
+  });
+
+  const { data: funcionarios = [], error: funcionariosError } = useQuery({
+    queryKey: ["funcionarios-usuarios"],
+    queryFn: () => adminListFuncionariosMariaDb() as Promise<Funcionario[]>,
   });
 
   const [filter, setFilter] = useState("");
@@ -123,6 +131,22 @@ function UsuariosPage() {
       <h1 className="text-xl font-semibold text-primary"> Listagem Usuário</h1>
 
       <Card className="overflow-hidden">
+        {profilesError && (
+          <Alert variant="destructive" className="m-2">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Não foi possível carregar os usuários: {(profilesError as Error).message}
+            </AlertDescription>
+          </Alert>
+        )}
+        {funcionariosError && (
+          <Alert variant="destructive" className="m-2">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Não foi possível carregar os funcionários cadastrados. Corrija a conexão com o cadastro de funcionários antes de criar um usuário.
+            </AlertDescription>
+          </Alert>
+        )}
         <div className="flex flex-wrap items-center justify-end gap-2 border-b border-border bg-muted/30 p-2">
           <Button size="sm" variant="outline" onClick={() => { setEditing(null); setDialogOpen(true); }}>
             <FilePlus2 className="h-4 w-4 mr-1.5" />CADASTRAR
@@ -216,7 +240,9 @@ function UsuariosPage() {
         onOpenChange={setDialogOpen}
         editing={editing}
         cargos={cargos}
+        funcionarios={funcionarios}
         currentCargoId={editing?.cargos[0]?.id ?? null}
+        currentFuncionarioId={editing?.funcionario_id ?? null}
         onSaved={() => {
           qc.invalidateQueries({ queryKey: ["mariadb-users"] });
           sel.clear();
@@ -252,18 +278,23 @@ function UsuarioDialog({
   onOpenChange,
   editing,
   cargos,
+  funcionarios,
   currentCargoId,
+  currentFuncionarioId,
   onSaved,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   editing: Profile | null;
   cargos: Cargo[];
+  funcionarios: Funcionario[];
   currentCargoId: string | null;
+  currentFuncionarioId: string | null;
   onSaved: () => void;
 }) {
   const [nome, setNome] = useState("");
   const [cargoId, setCargoId] = useState("");
+  const [funcionarioId, setFuncionarioId] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
   const [senha, setSenha] = useState("");
@@ -276,13 +307,14 @@ function UsuarioDialog({
 
     setNome(editing?.nome ?? "");
     setCargoId(currentCargoId ?? "");
+    setFuncionarioId(currentFuncionarioId ?? "");
     setEmail(editing?.email ?? "");
     setTelefone(editing?.telefone ?? "");
     setSenha("");
     setConfirma("");
     setAtivo(editing?.ativo ?? true);
     setErrorMsg(null);
-  }, [open, editing, currentCargoId]);
+  }, [open, editing, currentCargoId, currentFuncionarioId]);
 
   const saveMut = useMutation({
     mutationFn: async () => {
@@ -294,6 +326,7 @@ function UsuarioDialog({
       if (!cleanNome) throw new Error("Informe o nome.");
       if (!cleanEmail) throw new Error("Informe o e-mail.");
       if (!cargoId) throw new Error("Selecione o Tipo (cargo).");
+      if (!funcionarioId) throw new Error("Selecione um funcionário já cadastrado.");
 
       if (editing) {
         await adminUpdateUserMariaDb({
@@ -304,6 +337,7 @@ function UsuarioDialog({
             telefone: telefone.trim() || null,
             ativo,
             cargo_ids: [cargoId],
+            funcionario_id: funcionarioId,
           },
         });
 
@@ -324,6 +358,7 @@ function UsuarioDialog({
           password: senha,
           nome: cleanNome,
           cargo_id: cargoId,
+          funcionario_id: funcionarioId,
         },
       });
 
@@ -360,6 +395,21 @@ function UsuarioDialog({
         )}
 
         <div className="space-y-3 rounded-md bg-muted/40 p-4">
+          <Field label="Funcionário" req={1}>
+            <Select value={funcionarioId} onValueChange={setFuncionarioId}>
+              <SelectTrigger className="h-8">
+                <SelectValue placeholder="Selecione um funcionário já cadastrado" />
+              </SelectTrigger>
+              <SelectContent>
+                {funcionarios.map((funcionario) => (
+                  <SelectItem key={funcionario.id} value={funcionario.id}>
+                    {funcionario.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+
           <Field label="Tipo" req={1}>
             <Select value={cargoId} onValueChange={setCargoId}>
               <SelectTrigger className="h-8">
@@ -445,7 +495,7 @@ function UsuarioDialog({
 
           <Button
             onClick={() => saveMut.mutate()}
-            disabled={saveMut.isPending}
+            disabled={saveMut.isPending || funcionarios.length === 0}
           >
             {saveMut.isPending && (
               <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
