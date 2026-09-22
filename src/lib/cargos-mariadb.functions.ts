@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import { z } from "zod";
 import { requireAppAuth } from "./auth-middleware";
+import { requireAppPermission } from "./app-permissions.server";
 import { getDb } from "./db.server";
 
 type AuthContext = {
@@ -84,7 +85,7 @@ function isDuplicateEntry(error: unknown): boolean {
 export const adminListCargosMariaDb = createServerFn({ method: "GET" })
   .middleware([requireAppAuth])
   .handler(async ({ context }) => {
-    requireDeveloper(context);
+    await requireAppPermission(context, "/dev/cargos");
 
     const [rows] = await getDb().execute<CargoRow[]>(
       `SELECT id, nome, descricao, permissoes
@@ -102,7 +103,7 @@ export const adminCreateCargoMariaDb = createServerFn({ method: "POST" })
   .middleware([requireAppAuth])
   .inputValidator((data: unknown) => cargoSchema.parse(data))
   .handler(async ({ data, context }) => {
-    requireDeveloper(context);
+    await requireAppPermission(context, "/dev/cargos");
 
     const id = randomUUID();
     const permissoes = normalizePermissions(data.permissoes);
@@ -127,7 +128,7 @@ export const adminUpdateCargoMariaDb = createServerFn({ method: "POST" })
   .middleware([requireAppAuth])
   .inputValidator((data: unknown) => updateCargoSchema.parse(data))
   .handler(async ({ data, context }) => {
-    requireDeveloper(context);
+    await requireAppPermission(context, "/dev/cargos");
 
     const permissoes = normalizePermissions(data.permissoes);
 
@@ -161,7 +162,7 @@ export const adminDeleteCargoMariaDb = createServerFn({ method: "POST" })
   .middleware([requireAppAuth])
   .inputValidator((data: unknown) => deleteCargoSchema.parse(data))
   .handler(async ({ data, context }) => {
-    requireDeveloper(context);
+    await requireAppPermission(context, "/dev/cargos");
 
     const [result] = await getDb().execute<ResultSetHeader>(
       "DELETE FROM cargos WHERE id = ?",

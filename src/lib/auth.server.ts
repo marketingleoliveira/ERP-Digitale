@@ -18,6 +18,7 @@ export type AppAuthUser = {
   nome: string;
   roles: string[];
   isSuperuser: boolean;
+  permissions: string[];
 };
 
 type LoginRow = RowDataPacket & {
@@ -49,6 +50,7 @@ function toAuthUser(row: LoginRow | SessionRow): AppAuthUser {
     nome: row.nome,
     roles: parseRoles(row.roles),
     isSuperuser: Boolean(row.is_superuser),
+    permissions: [],
   };
 }
 
@@ -282,7 +284,26 @@ export async function getCurrentUserFromRequest(): Promise<AppAuthUser | null> {
     [hashSessionToken(token)],
   );
 
-  return toAuthUser(row);
+  const user = toAuthUser(row);
+  const [cargoRows] = await db.execute<Array<RowDataPacket & { permissoes: string | string[] | null }>>(
+    `SELECT c.permissoes
+     FROM user_cargos uc
+     INNER JOIN cargos c ON c.id = uc.cargo_id
+     WHERE uc.user_id = ?`,
+    [user.id],
+  );
+  const permissions = cargoRows.flatMap((cargo) => {
+    if (Array.isArray(cargo.permissoes)) return cargo.permissoes;
+    if (!cargo.permissoes) return [];
+    try {
+      const parsed = JSON.parse(cargo.permissoes);
+      return Array.isArray(parsed) ? parsed.filter((value): value is string => typeof value === "string") : [];
+    } catch {
+      return [];
+    }
+  });
+
+  return { ...user, permissions: [...new Set(permissions)] };
 }
 
 export async function destroyCurrentSession(): Promise<void> {

@@ -24,7 +24,7 @@ import {
   adminUpdateUserMariaDb,
 } from "@/lib/admin-users-mariadb.functions";
 import { ALL_MENU_ITEMS, GROUP_ORDER } from "@/lib/menu-config";
-import { useAuth, useUserRoles } from "@/hooks/use-auth";
+import { useAuth, useHasAppPermission } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_app/dev/cargos")({
   ssr: false,
@@ -59,12 +59,12 @@ async function fetchUsers(): Promise<UserRow[]> {
 
 function DevCargosPage() {
   const { user, loading } = useAuth();
-  const roles = useUserRoles(user?.id);
+  const canManage = useHasAppPermission("/dev/cargos");
 
   if (loading) {
     return <div className="flex items-center justify-center p-8"><Loader2 className="h-5 w-5 animate-spin" /></div>;
   }
-  if (!roles.includes("desenvolvedor")) {
+  if (!canManage) {
     return (
       <Card>
         <CardHeader>

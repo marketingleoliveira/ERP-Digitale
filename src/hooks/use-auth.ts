@@ -17,6 +17,7 @@ export type AppUser = {
   nome: string;
   roles: string[];
   isSuperuser: boolean;
+  permissions: string[];
 };
 
 type AuthSnapshot = {
@@ -118,4 +119,14 @@ export function useUserRoles(userId?: string): AppRole[] {
   }
 
   return user.roles as AppRole[];
+}
+
+export function useHasAppPermission(permission: string): boolean {
+  const { user } = useAuth();
+  return Boolean(
+    user &&
+      (user.isSuperuser ||
+        user.roles.includes("desenvolvedor") ||
+        user.permissions.includes(permission)),
+  );
 }

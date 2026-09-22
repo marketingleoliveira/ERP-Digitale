@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import { z } from "zod";
 import { requireAppAuth } from "./auth-middleware";
+import { requireAppPermission } from "./app-permissions.server";
 import { getDb } from "./db.server";
 import { hashPassword } from "./password.server";
 
@@ -42,14 +43,7 @@ export const adminCreateUserMariaDb = createServerFn({ method: "POST" })
   .middleware([requireAppAuth])
   .inputValidator((data: unknown) => createUserSchema.parse(data))
   .handler(async ({ data, context }) => {
-    const auth = context as unknown as { isSuperuser: boolean; roles: string[] } | undefined;
-    if (!auth) throw new Error("Sessão inválida.");
-    if (
-      !auth.isSuperuser &&
-      !auth.roles.includes("desenvolvedor")
-    ) {
-      throw new Error("Apenas desenvolvedores podem cadastrar usuários.");
-    }
+    await requireAppPermission(context, "/dev/cargos");
 
     const email = data.email.toLowerCase();
     const passwordHash = await hashPassword(data.password);
@@ -183,7 +177,7 @@ function normalizeCargoIds(values: string[]): string[] {
 export const adminListUsersMariaDb = createServerFn({ method: "GET" })
   .middleware([requireAppAuth])
   .handler(async ({ context }) => {
-    requireUserAdmin(context);
+    await requireAppPermission(context, "/dev/cargos");
 
     const db = getDb();
 
@@ -249,7 +243,7 @@ export const adminUpdateUserMariaDb = createServerFn({ method: "POST" })
   .middleware([requireAppAuth])
   .inputValidator((data: unknown) => updateUserSchema.parse(data))
   .handler(async ({ data, context }) => {
-    requireUserAdmin(context);
+    await requireAppPermission(context, "/dev/cargos");
 
     const email = data.email.toLowerCase();
     const cargoIds = normalizeCargoIds(data.cargo_ids);
@@ -351,7 +345,7 @@ export const adminDeleteUsersMariaDb = createServerFn({ method: "POST" })
   .middleware([requireAppAuth])
   .inputValidator((data: unknown) => deleteUsersSchema.parse(data))
   .handler(async ({ data, context }) => {
-    const auth = requireUserAdmin(context);
+    const auth = await requireAppPermission(context, "/dev/cargos");
     const ids = normalizeCargoIds(data.ids);
 
     if (ids.includes(auth.userId)) {
