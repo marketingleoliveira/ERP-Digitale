@@ -3,7 +3,7 @@
  * Consulta agregada a partir das tabelas fonte — sem duplicidade de dados.
  */
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireAppAuth } from "@/lib/auth-middleware";
 
 const QUERY_TIMEOUT_MS = 10_000;
 
@@ -25,9 +25,9 @@ async function withQueryTimeout<T>(query: PromiseLike<T>, label: string): Promis
 }
 
 export const getDashboardIndicadores = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAppAuth])
   .handler(async ({ context }) => {
-    const { supabase } = context;
+    const { supabaseAdmin: supabase } = await import("@/integrations/supabase/client.server");
     const count = async (table: string, filter?: (q: ReturnType<typeof supabase.from>) => unknown) => {
       let q = supabase.from(table as never).select("*", { count: "exact", head: true });
       if (filter) q = filter(q as never) as typeof q;
