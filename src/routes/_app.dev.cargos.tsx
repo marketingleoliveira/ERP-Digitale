@@ -69,7 +69,7 @@ function DevCargosPage() {
       <Card>
         <CardHeader>
           <CardTitle>Acesso restrito</CardTitle>
-          <CardDescription>Apenas o cargo Desenvolvedor pode gerenciar cargos.</CardDescription>
+          <CardDescription>É necessário um cargo com permissão para gerenciar cargos.</CardDescription>
         </CardHeader>
       </Card>
     );
