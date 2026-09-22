@@ -14,7 +14,6 @@ const createUserSchema = z.object({
     .min(8, { message: "Senha deve ter ao menos 8 caracteres." })
     .max(200),
   nome: z.string().trim().min(1).max(150),
-  cargo_id: z.string().uuid(),
   funcionario_id: z.string().uuid(),
 });
 
@@ -47,7 +46,10 @@ export const adminCreateUserMariaDb = createServerFn({ method: "POST" })
     await requireAppPermission(context, "/dev/cargos");
 
     const email = data.email.toLowerCase();
-    await getFuncionario(data.funcionario_id);
+    const funcionario = await getFuncionario(data.funcionario_id);
+    if (!funcionario.cargo_id) {
+      throw new Error("Atribua um cargo ao funcionário antes de criar o usuário.");
+    }
     const passwordHash = await hashPassword(data.password);
     const connection = await getDb().getConnection();
 
@@ -69,15 +71,6 @@ export const adminCreateUserMariaDb = createServerFn({ method: "POST" })
       );
       if (linkedFuncionario.length) {
         throw new Error("Este funcionário já possui um usuário de acesso.");
-      }
-
-      const [cargo] = await connection.execute<IdRow[]>(
-        "SELECT id FROM cargos WHERE id = ? LIMIT 1",
-        [data.cargo_id],
-      );
-
-      if (!cargo.length) {
-        throw new Error("Cargo selecionado não existe.");
       }
 
       const [role] = await connection.execute<RoleRow[]>(
@@ -105,7 +98,7 @@ export const adminCreateUserMariaDb = createServerFn({ method: "POST" })
       await connection.execute(
         `INSERT INTO user_cargos (id, user_id, cargo_id)
          VALUES (?, ?, ?)`,
-        [randomUUID(), userId, data.cargo_id],
+        [randomUUID(), userId, funcionario.cargo_id],
       );
 
       await connection.commit();
@@ -189,7 +182,6 @@ const updateUserSchema = z.object({
   nome: z.string().trim().min(1).max(150),
   telefone: z.string().trim().max(30).nullable().optional(),
   ativo: z.boolean(),
-  cargo_ids: z.array(z.string().uuid()).max(50),
   funcionario_id: z.string().uuid(),
 });
 
@@ -215,10 +207,6 @@ function requireUserAdmin(context: unknown): UserAdminContext {
   }
 
   return auth;
-}
-
-function normalizeCargoIds(values: string[]): string[] {
-  return [...new Set(values)];
 }
 
 export const adminListUsersMariaDb = createServerFn({ method: "GET" })
@@ -294,8 +282,10 @@ export const adminUpdateUserMariaDb = createServerFn({ method: "POST" })
     await requireAppPermission(context, "/dev/cargos");
 
     const email = data.email.toLowerCase();
-    await getFuncionario(data.funcionario_id);
-    const cargoIds = normalizeCargoIds(data.cargo_ids);
+    const funcionario = await getFuncionario(data.funcionario_id);
+    if (!funcionario.cargo_id) {
+      throw new Error("Atribua um cargo ao funcionário antes de vincular o usuário.");
+    }
     const connection = await getDb().getConnection();
 
     try {
@@ -334,21 +324,6 @@ export const adminUpdateUserMariaDb = createServerFn({ method: "POST" })
         );
       }
 
-      if (cargoIds.length) {
-        const placeholders = cargoIds.map(() => "?").join(",");
-
-        const [existingCargos] = await connection.execute<IdRow[]>(
-          `SELECT id
-           FROM cargos
-           WHERE id IN (${placeholders})`,
-          cargoIds,
-        );
-
-        if (existingCargos.length !== cargoIds.length) {
-          throw new Error("Um ou mais cargos selecionados não existem.");
-        }
-      }
-
       const [result] = await connection.execute<ResultSetHeader>(
         `UPDATE users
          SET email = ?,
@@ -376,13 +351,11 @@ export const adminUpdateUserMariaDb = createServerFn({ method: "POST" })
         [data.id],
       );
 
-      for (const cargoId of cargoIds) {
-        await connection.execute(
-          `INSERT INTO user_cargos (id, user_id, cargo_id)
-           VALUES (?, ?, ?)`,
-          [randomUUID(), data.id, cargoId],
-        );
-      }
+      await connection.execute(
+        `INSERT INTO user_cargos (id, user_id, cargo_id)
+         VALUES (?, ?, ?)`,
+        [randomUUID(), data.id, funcionario.cargo_id],
+      );
 
       await connection.commit();
 
@@ -405,7 +378,7 @@ export const adminDeleteUsersMariaDb = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => deleteUsersSchema.parse(data))
   .handler(async ({ data, context }) => {
     const auth = await requireAppPermission(context, "/dev/cargos");
-    const ids = normalizeCargoIds(data.ids);
+    const ids = [...new Set(data.ids)];
 
     if (ids.includes(auth.userId)) {
       throw new Error("Você não pode excluir o usuário da sessão atual.");

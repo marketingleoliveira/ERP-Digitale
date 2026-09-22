@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -21,7 +21,6 @@ import {
   adminListFuncionariosMariaDb,
   adminUpdateUserMariaDb,
 } from "@/lib/admin-users-mariadb.functions";
-import { adminListCargosMariaDb } from "@/lib/cargos-mariadb.functions";
 import { friendlyDbError } from "@/lib/db-errors";
 
 
@@ -42,7 +41,6 @@ type Profile = {
   funcionario_id: string | null;
 };
 
-type Cargo = { id: string; nome: string };
 type Funcionario = { id: string; nome: string; cargo_id: string | null; habilitado: boolean };
 
 const PAGE_SIZE = 20;
@@ -51,20 +49,11 @@ async function fetchProfiles(): Promise<Profile[]> {
   return (await adminListUsersMariaDb()) as Profile[];
 }
 
-async function fetchCargos(): Promise<Cargo[]> {
-  return (await adminListCargosMariaDb()) as Cargo[];
-}
-
 function UsuariosPage() {
   const qc = useQueryClient();
   const { data: profiles = [], isLoading, error: profilesError } = useQuery({
     queryKey: ["mariadb-users"],
     queryFn: fetchProfiles,
-  });
-
-  const { data: cargos = [] } = useQuery({
-    queryKey: ["cargos"],
-    queryFn: fetchCargos,
   });
 
   const { data: funcionarios = [], error: funcionariosError } = useQuery({
@@ -239,9 +228,14 @@ function UsuariosPage() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         editing={editing}
-        cargos={cargos}
-        funcionarios={funcionarios}
-        currentCargoId={editing?.cargos[0]?.id ?? null}
+        funcionarios={funcionarios.filter(
+          (funcionario) =>
+            !profiles.some(
+              (profile) =>
+                profile.funcionario_id === funcionario.id &&
+                profile.id !== editing?.id,
+            ),
+        )}
         currentFuncionarioId={editing?.funcionario_id ?? null}
         onSaved={() => {
           qc.invalidateQueries({ queryKey: ["mariadb-users"] });
@@ -277,23 +271,18 @@ function UsuarioDialog({
   open,
   onOpenChange,
   editing,
-  cargos,
   funcionarios,
-  currentCargoId,
   currentFuncionarioId,
   onSaved,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   editing: Profile | null;
-  cargos: Cargo[];
   funcionarios: Funcionario[];
-  currentCargoId: string | null;
   currentFuncionarioId: string | null;
   onSaved: () => void;
 }) {
   const [nome, setNome] = useState("");
-  const [cargoId, setCargoId] = useState("");
   const [funcionarioId, setFuncionarioId] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -302,11 +291,10 @@ function UsuarioDialog({
   const [ativo, setAtivo] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  useMemo(() => {
+  useEffect(() => {
     if (!open) return;
 
     setNome(editing?.nome ?? "");
-    setCargoId(currentCargoId ?? "");
     setFuncionarioId(currentFuncionarioId ?? "");
     setEmail(editing?.email ?? "");
     setTelefone(editing?.telefone ?? "");
@@ -314,7 +302,7 @@ function UsuarioDialog({
     setConfirma("");
     setAtivo(editing?.ativo ?? true);
     setErrorMsg(null);
-  }, [open, editing, currentCargoId, currentFuncionarioId]);
+  }, [open, editing, currentFuncionarioId]);
 
   const saveMut = useMutation({
     mutationFn: async () => {
@@ -325,7 +313,6 @@ function UsuarioDialog({
 
       if (!cleanNome) throw new Error("Informe o nome.");
       if (!cleanEmail) throw new Error("Informe o e-mail.");
-      if (!cargoId) throw new Error("Selecione o Tipo (cargo).");
       if (!funcionarioId) throw new Error("Selecione um funcionário já cadastrado.");
 
       if (editing) {
@@ -336,7 +323,6 @@ function UsuarioDialog({
             nome: cleanNome,
             telefone: telefone.trim() || null,
             ativo,
-            cargo_ids: [cargoId],
             funcionario_id: funcionarioId,
           },
         });
@@ -357,7 +343,6 @@ function UsuarioDialog({
           email: cleanEmail,
           password: senha,
           nome: cleanNome,
-          cargo_id: cargoId,
           funcionario_id: funcionarioId,
         },
       });
@@ -410,20 +395,7 @@ function UsuarioDialog({
             </Select>
           </Field>
 
-          <Field label="Tipo" req={1}>
-            <Select value={cargoId} onValueChange={setCargoId}>
-              <SelectTrigger className="h-8">
-                <SelectValue placeholder="[SELECIONE]" />
-              </SelectTrigger>
-              <SelectContent>
-                {cargos.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.nome}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+
 
           <Field label="Nome" req={1}>
             <Input
