@@ -30,9 +30,30 @@ function KpiCard({ label, value }: { label: string; value: string | number }) {
 
 function DashIndustrial() {
   const fn = useServerFn(getDashboardIndicadores);
-  const { data, isLoading } = useQuery({ queryKey: ["dash-industrial"], queryFn: () => fn() });
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["dash-industrial"],
+    queryFn: () => fn(),
+  });
 
-  if (isLoading || !data) return <div className="p-6"><Skeleton className="h-96 w-full" /></div>;
+  if (isLoading) return <div className="p-6"><Skeleton className="h-96 w-full" /></div>;
+
+  if (isError || !data) {
+    return (
+      <div className="flex min-h-96 flex-col items-center justify-center gap-3 p-6 text-center">
+        <h1 className="text-lg font-semibold">Não foi possível carregar o dashboard</h1>
+        <p className="max-w-lg text-sm text-muted-foreground">
+          {error instanceof Error ? error.message : "Ocorreu um erro ao consultar os indicadores."}
+        </p>
+        <button
+          type="button"
+          onClick={() => refetch()}
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+        >
+          Tentar novamente
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
