@@ -92,6 +92,46 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    const recoveryKey = "digitale:chunk-recovery-at";
+    const isChunkLoadError = (message: string) =>
+      /failed to fetch dynamically imported module|importing a module script failed|loading chunk .* failed/i.test(
+        message,
+      );
+
+    const recoverFromStaleChunk = (message: string) => {
+      if (!isChunkLoadError(message)) return;
+
+      const lastRecovery = Number(sessionStorage.getItem(recoveryKey));
+      if (Number.isFinite(lastRecovery) && Date.now() - lastRecovery < 30_000) {
+        return;
+      }
+
+      sessionStorage.setItem(recoveryKey, String(Date.now()));
+      window.location.reload();
+    };
+
+    const handleError = (event: ErrorEvent) => {
+      recoverFromStaleChunk(event.message);
+    };
+    const handleRejection = (event: PromiseRejectionEvent) => {
+      const message =
+        event.reason instanceof Error
+          ? event.reason.message
+          : String(event.reason);
+      recoverFromStaleChunk(message);
+    };
+
+    window.addEventListener("error", handleError);
+    window.addEventListener("unhandledrejection", handleRejection);
+
+    return () => {
+      window.removeEventListener("error", handleError);
+      window.removeEventListener("unhandledrejection", handleRejection);
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
