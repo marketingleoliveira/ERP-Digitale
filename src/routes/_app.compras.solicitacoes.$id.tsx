@@ -57,7 +57,7 @@ function Page() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-primary">📋 Solicitação #{sc.numero}</h1>
+        <h1 className="text-xl font-semibold text-primary"> Solicitação #{sc.numero}</h1>
         <div className="flex gap-2">
           {sc.status === "rascunho" && <Button size="sm" onClick={() => setStatus.mutate("aprovada")}><CheckCircle2 className="h-4 w-4 mr-1.5" />Aprovar</Button>}
           {sc.status === "aprovada" && <Button size="sm" onClick={() => gerarCotacao.mutate()}><Receipt className="h-4 w-4 mr-1.5" />Iniciar Cotação</Button>}

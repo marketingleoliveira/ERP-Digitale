@@ -64,7 +64,7 @@ function UploadNFPage() {
 
   return (
     <div className="space-y-4 max-w-2xl">
-      <h1 className="text-xl font-semibold text-primary">📎 Nota Fiscal Upload</h1>
+      <h1 className="text-xl font-semibold text-primary"> Nota Fiscal Upload</h1>
       <Card className="p-6 space-y-4">
         <div>
           <Label>Arquivo XML da NF-e</Label>

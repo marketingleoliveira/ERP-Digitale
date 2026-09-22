@@ -69,7 +69,7 @@ function Dashboard() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-primary">📊 Dashboard Fiscal — últimos 90 dias</h1>
+      <h1 className="text-xl font-semibold text-primary"> Dashboard Fiscal — últimos 90 dias</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <Kpi icon={CheckCircle2} label="Autorizadas" value={String(emitidas)} tone="success" />

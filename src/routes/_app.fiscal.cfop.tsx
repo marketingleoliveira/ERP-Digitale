@@ -45,7 +45,7 @@ function CfopPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-primary">📄 CFOP</h1>
+      <h1 className="text-xl font-semibold text-primary"> CFOP</h1>
       <Card className="p-3 flex flex-wrap gap-2">
         <Input placeholder="Buscar código ou descrição…" value={filter} onChange={e => setFilter(e.target.value)} className="max-w-sm" />
         <Button size="sm" onClick={() => { setEditing(null); setOpen(true); }}><FilePlus2 className="h-4 w-4 mr-1.5" />Novo CFOP</Button>

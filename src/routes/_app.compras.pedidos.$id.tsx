@@ -72,7 +72,7 @@ function Page() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-primary">🛒 Pedido de Compra #{p.numero}</h1>
+          <h1 className="text-xl font-semibold text-primary"> Pedido de Compra #{p.numero}</h1>
           <div className="text-sm text-muted-foreground">{p.fornecedores?.razao_social}</div>
         </div>
         <div className="flex gap-2">

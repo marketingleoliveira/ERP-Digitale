@@ -212,7 +212,7 @@ function ConferenciaTab({ expedicaoId, itensLote, onChange }: { expedicaoId: str
         </div>
         {divergencias.length > 0 && (
           <ul className="text-sm">
-            {divergencias.map((d, i) => <li key={i}>⚠️ {d.item}: esperado {d.esperado} / encontrado {d.encontrado}</li>)}
+            {divergencias.map((d, i) => <li key={i}> {d.item}: esperado {d.esperado} / encontrado {d.encontrado}</li>)}
           </ul>
         )}
       </Card>

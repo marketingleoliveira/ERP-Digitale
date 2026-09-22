@@ -54,7 +54,7 @@ function Page() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-primary">📋 Nova Solicitação de Compra</h1>
+      <h1 className="text-xl font-semibold text-primary"> Nova Solicitação de Compra</h1>
       <Card className="p-4 grid grid-cols-1 md:grid-cols-4 gap-3">
         <div><Label>Setor</Label><Input value={setor} onChange={(e) => setSetor(e.target.value)} /></div>
         <div>

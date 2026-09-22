@@ -28,9 +28,9 @@ export const Route = createFileRoute("/_app/pcp/mrp")({
 const num = (n: number, d = 2) => n.toLocaleString("pt-BR", { minimumFractionDigits: d, maximumFractionDigits: d });
 
 function UrgenciaBadge({ u }: { u: MrpLinha["urgencia"] }) {
-  if (u === "vermelho") return <Badge variant="destructive">🔴 Urgente</Badge>;
-  if (u === "amarelo") return <Badge className="bg-yellow-500">🟡 Atenção</Badge>;
-  return <Badge className="bg-green-600">🟢 OK</Badge>;
+  if (u === "vermelho") return <Badge variant="destructive"> Urgente</Badge>;
+  if (u === "amarelo") return <Badge className="bg-yellow-500"> Atenção</Badge>;
+  return <Badge className="bg-green-600"> OK</Badge>;
 }
 
 function Page() {
@@ -157,8 +157,8 @@ function Page() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card><CardHeader><CardTitle className="text-sm">Componentes</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{kpis.itens}</CardContent></Card>
-            <Card><CardHeader><CardTitle className="text-sm">🔴 Urgentes</CardTitle></CardHeader><CardContent className="text-2xl font-semibold text-destructive">{kpis.urgentes}</CardContent></Card>
-            <Card><CardHeader><CardTitle className="text-sm">🟡 Atenção</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{kpis.atencao}</CardContent></Card>
+            <Card><CardHeader><CardTitle className="text-sm"> Urgentes</CardTitle></CardHeader><CardContent className="text-2xl font-semibold text-destructive">{kpis.urgentes}</CardContent></Card>
+            <Card><CardHeader><CardTitle className="text-sm"> Atenção</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{kpis.atencao}</CardContent></Card>
             <Card><CardHeader><CardTitle className="text-sm">Necessidade líquida</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{num(kpis.liquidaTotal, 1)}</CardContent></Card>
           </div>
 

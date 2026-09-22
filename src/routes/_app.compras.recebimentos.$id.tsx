@@ -68,7 +68,7 @@ function Page() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-primary">📦 Recebimento #{rec.numero}</h1>
+          <h1 className="text-xl font-semibold text-primary"> Recebimento #{rec.numero}</h1>
           <div className="text-sm text-muted-foreground">PC #{rec.pedidos_compra?.numero} · {rec.pedidos_compra?.fornecedores?.razao_social}</div>
         </div>
         {rec.status === "em_conferencia" && (

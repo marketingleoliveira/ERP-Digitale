@@ -24,7 +24,7 @@ function Page() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-primary">📋 Solicitações de Compra</h1>
+        <h1 className="text-xl font-semibold text-primary"> Solicitações de Compra</h1>
         <Link to="/compras/solicitacoes/nova"><Button size="sm"><FilePlus2 className="h-4 w-4 mr-1.5" />Nova Solicitação</Button></Link>
       </div>
       <Card className="overflow-hidden">

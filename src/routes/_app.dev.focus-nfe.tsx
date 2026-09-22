@@ -132,7 +132,7 @@ function FocusNfeConfigPage() {
       )}
 
       <Card className="p-4 space-y-4">
-        <h3 className="font-semibold text-primary">🔑 Credencial</h3>
+        <h3 className="font-semibold text-primary"> Credencial</h3>
         <div>
           <Label>Token Focus NFe {cfg.data?.token_configurado && <span className="text-xs text-muted-foreground">(deixe em branco para manter o atual)</span>}</Label>
           <Input
@@ -154,7 +154,7 @@ function FocusNfeConfigPage() {
       </Card>
 
       <Card className="p-4 space-y-4">
-        <h3 className="font-semibold text-primary">⚙️ Provedor e Ambiente</h3>
+        <h3 className="font-semibold text-primary"> Provedor e Ambiente</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <Label>Provedor NF-e</Label>
@@ -181,7 +181,7 @@ function FocusNfeConfigPage() {
       </Card>
 
       <Card className="p-4 space-y-4">
-        <h3 className="font-semibold text-primary">🔢 Numeração NF-e</h3>
+        <h3 className="font-semibold text-primary"> Numeração NF-e</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <Label>Série NF-e</Label>
@@ -216,7 +216,7 @@ function FocusNfeConfigPage() {
       </div>
 
       <Card className="p-4 bg-muted/40">
-        <h4 className="font-semibold text-sm mb-2">📋 Checklist pré-emissão</h4>
+        <h4 className="font-semibold text-sm mb-2"> Checklist pré-emissão</h4>
         <ul className="text-sm space-y-1 list-disc pl-5 text-muted-foreground">
           <li>Token salvo e teste de conexão OK</li>
           <li>CNPJ, IE, CRT e endereço da empresa preenchidos em <a href="/configuracoes" className="underline">Configurações → Empresa</a></li>

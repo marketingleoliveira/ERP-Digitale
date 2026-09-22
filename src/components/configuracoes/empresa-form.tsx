@@ -81,7 +81,7 @@ export function EmpresaForm() {
   return (
     <div className="space-y-4">
       <Card className="p-4 space-y-3">
-        <h3 className="font-semibold text-primary">🏢 Dados da Empresa (Emissor NF-e)</h3>
+        <h3 className="font-semibold text-primary"> Dados da Empresa (Emissor NF-e)</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div className="md:col-span-2"><Label>Razão Social *</Label><Input value={form.razao_social} onChange={e => set("razao_social", e.target.value)} /></div>
           <div><Label>Nome Fantasia</Label><Input value={form.nome_fantasia} onChange={e => set("nome_fantasia", e.target.value)} /></div>
@@ -105,7 +105,7 @@ export function EmpresaForm() {
       </Card>
 
       <Card className="p-4 space-y-3">
-        <h3 className="font-semibold text-primary">📍 Endereço</h3>
+        <h3 className="font-semibold text-primary"> Endereço</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div className="md:col-span-2"><Label>Logradouro</Label><Input value={form.logradouro} onChange={e => set("logradouro", e.target.value)} /></div>
           <div><Label>Número</Label><Input value={form.numero} onChange={e => set("numero", e.target.value)} /></div>
@@ -121,7 +121,7 @@ export function EmpresaForm() {
       </Card>
 
       <Card className="p-4 space-y-3">
-        <h3 className="font-semibold text-primary">⚙️ Configuração NF-e / SEFAZ</h3>
+        <h3 className="font-semibold text-primary"> Configuração NF-e / SEFAZ</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div>
             <Label>Ambiente</Label>
@@ -148,7 +148,7 @@ export function EmpresaForm() {
           <div><Label>Próximo Nº</Label><Input type="number" value={form.proximo_numero_nfe} onChange={e => set("proximo_numero_nfe", Number(e.target.value))} /></div>
         </div>
         <p className="text-xs text-muted-foreground">
-          ℹ️ Ao selecionar Focus NFe ou PlugNotas, é necessário cadastrar o token (FOCUS_NFE_TOKEN ou PLUGNOTAS_TOKEN)
+          ℹ Ao selecionar Focus NFe ou PlugNotas, é necessário cadastrar o token (FOCUS_NFE_TOKEN ou PLUGNOTAS_TOKEN)
           nas configurações de secrets do projeto. Certificado A1 é registrado no painel do provedor.
         </p>
       </Card>

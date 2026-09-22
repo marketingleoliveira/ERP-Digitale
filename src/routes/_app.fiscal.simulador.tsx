@@ -72,7 +72,7 @@ function SimuladorPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-primary">🧮 Simulador Tributário</h1>
+      <h1 className="text-xl font-semibold text-primary"> Simulador Tributário</h1>
 
       <Card className="p-4 space-y-4">
         <div className="grid grid-cols-4 gap-3">
@@ -151,7 +151,7 @@ function SimuladorPage() {
               : <Badge variant="destructive">Sem regra compatível</Badge>}
           </div>
           {resultado.itens[0].avisos.map((a, i) => (
-            <p key={i} className="text-sm text-destructive">⚠ {a}</p>
+            <p key={i} className="text-sm text-destructive"> {a}</p>
           ))}
           <Table>
             <TableHeader><TableRow>

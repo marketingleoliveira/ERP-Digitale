@@ -74,7 +74,7 @@ function CorreiaPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-primary">⚙️ Listagem Correias</h1>
+      <h1 className="text-xl font-semibold text-primary"> Listagem Correias</h1>
 
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center justify-end gap-2 border-b border-border bg-muted/30 p-2">
@@ -204,7 +204,7 @@ function CorreiaDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-primary">⚙️ {editing ? "Alterar" : "Cadastro"} Correia</DialogTitle>
+          <DialogTitle className="text-primary"> {editing ? "Alterar" : "Cadastro"} Correia</DialogTitle>
         </DialogHeader>
         <div className="rounded bg-muted/50 p-5 space-y-3">
           <Row label="Correia" required>

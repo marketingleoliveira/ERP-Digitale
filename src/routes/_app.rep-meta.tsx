@@ -110,7 +110,7 @@ function RepMetaPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-primary">🌸 Listagem Representantes</h1>
+      <h1 className="text-xl font-semibold text-primary"> Listagem Representantes</h1>
 
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center justify-end gap-2 border-b border-border bg-muted/30 p-2">
@@ -262,7 +262,7 @@ function RepDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-primary">🌸 Cadastro Representante</DialogTitle>
+          <DialogTitle className="text-primary"> Cadastro Representante</DialogTitle>
         </DialogHeader>
         <div className="rounded bg-muted/50 p-5 space-y-3">
           <Row label="Nome Fantasia" required>

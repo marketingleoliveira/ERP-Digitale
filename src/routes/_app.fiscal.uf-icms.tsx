@@ -73,7 +73,7 @@ function UfIcmsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-primary">🧾 Listagem UF ICMS</h1>
+        <h1 className="text-xl font-semibold text-primary"> Listagem UF ICMS</h1>
         <Button size="sm" onClick={() => save.mutate()} disabled={!dirty || save.isPending}>
           {save.isPending ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Save className="h-4 w-4 mr-1.5" />}
           Salvar {dirty > 0 && `(${dirty})`}

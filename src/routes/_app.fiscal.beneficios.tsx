@@ -50,7 +50,7 @@ function BeneficiosPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-primary">🎁 Benefícios Fiscais</h1>
+        <h1 className="text-xl font-semibold text-primary"> Benefícios Fiscais</h1>
         <Button size="sm" onClick={() => { setEditing(null); setOpen(true); }}><FilePlus2 className="h-4 w-4 mr-1.5" />Novo benefício</Button>
       </div>
       <Card className="overflow-hidden">

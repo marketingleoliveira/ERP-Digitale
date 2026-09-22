@@ -47,7 +47,7 @@ function Page() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-primary">📒 Kardex — Livro Razão do Estoque</h1>
+        <h1 className="text-xl font-semibold text-primary"> Kardex — Livro Razão do Estoque</h1>
         <div className="text-sm text-muted-foreground">{filtered.length} movimento(s)</div>
       </div>
 

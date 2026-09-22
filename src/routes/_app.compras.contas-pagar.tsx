@@ -34,7 +34,7 @@ function Page() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-primary">💰 Contas a Pagar</h1>
+        <h1 className="text-xl font-semibold text-primary"> Contas a Pagar</h1>
         <div className="text-sm">Total em aberto: <span className="font-semibold">R$ {total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span></div>
       </div>
       <Card className="overflow-hidden">

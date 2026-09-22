@@ -27,7 +27,7 @@ function PainelOP() {
   });
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-2xl font-bold">🏭 Painel de Ordens de Produção</h1>
+      <h1 className="text-2xl font-bold"> Painel de Ordens de Produção</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {STATUS_COLS.map(s => {
           const ops = data.filter(o => o.status === s);

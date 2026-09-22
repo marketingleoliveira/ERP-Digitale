@@ -108,7 +108,7 @@ function TinturariasPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-primary">🎨 Listagem Fornecedores</h1>
+      <h1 className="text-xl font-semibold text-primary"> Listagem Fornecedores</h1>
 
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center justify-end gap-2 border-b border-border bg-muted/30 p-2">
@@ -341,7 +341,7 @@ function TinturariaDialog({
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-primary">
-            {isInsumo ? "📦" : "🏭"} {editing ? "Alterar" : "Cadastro"} {isInsumo ? "Insumo" : "Fornecedor"}
+            {isInsumo ? "" : ""} {editing ? "Alterar" : "Cadastro"} {isInsumo ? "Insumo" : "Fornecedor"}
           </DialogTitle>
         </DialogHeader>
 

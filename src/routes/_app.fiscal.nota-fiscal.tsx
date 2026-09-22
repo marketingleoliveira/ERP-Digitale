@@ -19,6 +19,6 @@ export const Route = createFileRoute("/_app/fiscal/nota-fiscal")({
   validateSearch: (search) => notaFiscalSearchSchema.parse(search),
   component: () => {
     const search = Route.useSearch();
-    return <NotaFiscalList tipo="saida" title="Nota Fiscal" emoji="📤" initialEditingId={search.nf} />;
+    return <NotaFiscalList tipo="saida" title="Nota Fiscal" initialEditingId={search.nf} />;
   },
 });

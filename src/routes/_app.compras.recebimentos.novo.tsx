@@ -75,7 +75,7 @@ function Page() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-primary">📦 Novo Recebimento</h1>
+      <h1 className="text-xl font-semibold text-primary"> Novo Recebimento</h1>
       <Card className="p-4 grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="md:col-span-3"><Label>Pedido de Compra (ID)</Label><Input value={pedidoId} onChange={(e) => setPedidoId(e.target.value)} placeholder="Cole o ID do pedido" /></div>
         <div><Label>Nº da Nota do Fornecedor</Label><Input value={nota} onChange={(e) => setNota(e.target.value)} /></div>

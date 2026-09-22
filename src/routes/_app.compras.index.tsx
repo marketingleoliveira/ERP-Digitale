@@ -45,7 +45,7 @@ function Page() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-primary">🛒 Compras — Dashboard</h1>
+      <h1 className="text-xl font-semibold text-primary"> Compras — Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         <KPI label="Fornecedores" value={forn.data ?? "…"} href="/compras/fornecedores" icon={Handshake} />
         <KPI label="Solicitações aprovadas" value={sc.data ?? "…"} href="/compras/solicitacoes" icon={FileText} />

@@ -67,7 +67,7 @@ function CertificadosPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-primary">🔐 Certificados Digitais A1</h1>
+          <h1 className="text-xl font-semibold text-primary"> Certificados Digitais A1</h1>
           <p className="text-sm text-muted-foreground">
             Gestão dos certificados A1 usados para emissão de NF-e junto à SEFAZ.
           </p>
@@ -136,7 +136,7 @@ function CertificadosPage() {
       </Card>
 
       <Card className="p-4 bg-muted/30 text-sm space-y-1">
-        <p className="font-medium text-primary">📖 Sobre esta tela</p>
+        <p className="font-medium text-primary"> Sobre esta tela</p>
         <p className="text-muted-foreground">
           Esta é a Fase 1a: cadastro e validação de certificado A1. A transmissão para a SEFAZ
           será habilitada em fase futura pelo microserviço fiscal Node.js. O arquivo .pfx é

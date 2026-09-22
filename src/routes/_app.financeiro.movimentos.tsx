@@ -48,7 +48,7 @@ function Page() {
                   <TableCell>{m.forma_pagamento ?? "—"}</TableCell>
                   <TableCell>{m.descricao ?? "—"}</TableCell>
                   <TableCell className={`text-right ${m.tipo==="entrada"?"text-emerald-600":"text-red-600"}`}>{fmt(Number(m.valor))}</TableCell>
-                  <TableCell>{m.conciliado ? "✓" : "—"}</TableCell>
+                  <TableCell>{m.conciliado ? "" : "—"}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

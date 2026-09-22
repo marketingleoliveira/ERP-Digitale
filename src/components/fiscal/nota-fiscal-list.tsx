@@ -36,7 +36,7 @@ async function fetchOpts(table: string, mapper: (r: Record<string, unknown>) => 
   return (data ?? []).map(mapper as never);
 }
 
-export function NotaFiscalList({ tipo, title, emoji, initialEditingId }: { tipo: NF["tipo"]; title: string; emoji: string; initialEditingId?: string }) {
+export function NotaFiscalList({ tipo, title, initialEditingId }: { tipo: NF["tipo"]; title: string; initialEditingId?: string }) {
    const qc = useQueryClient();
    const key = ["notas_fiscais", tipo];
    const { data = [], isLoading } = useQuery({
@@ -69,7 +69,7 @@ export function NotaFiscalList({ tipo, title, emoji, initialEditingId }: { tipo:
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-primary">{emoji} {title}</h1>
+      <h1 className="text-xl font-semibold text-primary">{title}</h1>
       <Card className="p-3">
         <Button size="sm" onClick={() => { setEditingId(null); setOpen(true); }}>
           <FilePlus2 className="h-4 w-4 mr-1.5" />Nova nota

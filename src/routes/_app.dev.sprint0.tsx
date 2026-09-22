@@ -90,7 +90,7 @@ function Sprint0Page() {
             <div className="text-sm text-muted-foreground mt-1">{ok} de {total} itens completos</div>
           </div>
           <Badge variant={pronto ? "default" : "secondary"} className="text-base px-4 py-2">
-            {pronto ? "✅ Pronto para Fase 1" : "🔴 Pendências"}
+            {pronto ? " Pronto para Fase 1" : " Pendências"}
           </Badge>
         </div>
         <div className="h-2 bg-muted rounded mt-4 overflow-hidden">

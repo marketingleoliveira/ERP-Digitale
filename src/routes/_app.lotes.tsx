@@ -127,7 +127,7 @@ function LotesPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-primary">🏷️ Controle de Lotes</h1>
+      <h1 className="text-xl font-semibold text-primary"> Controle de Lotes</h1>
 
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center justify-end gap-2 border-b border-border bg-muted/30 p-2">
@@ -296,7 +296,7 @@ function LoteDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle className="text-primary">🏷️ {editing ? "Alterar" : "Cadastro"} de Lote</DialogTitle>
+          <DialogTitle className="text-primary"> {editing ? "Alterar" : "Cadastro"} de Lote</DialogTitle>
         </DialogHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded bg-muted/50 p-5">
           <div className="space-y-1.5">

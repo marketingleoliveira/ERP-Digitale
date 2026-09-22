@@ -26,9 +26,9 @@ export const Route = createFileRoute("/_app/pcp/mrp-op")({
 const num = (n: number, d = 2) => n.toLocaleString("pt-BR", { minimumFractionDigits: d, maximumFractionDigits: d });
 
 function RiscoBadge({ r }: { r: OpSugestao["risco_atraso"] }) {
-  if (r === "vermelho") return <Badge variant="destructive">🔴 Alto</Badge>;
-  if (r === "amarelo") return <Badge className="bg-yellow-500">🟡 Médio</Badge>;
-  return <Badge className="bg-green-600">🟢 Baixo</Badge>;
+  if (r === "vermelho") return <Badge variant="destructive"> Alto</Badge>;
+  if (r === "amarelo") return <Badge className="bg-yellow-500"> Médio</Badge>;
+  return <Badge className="bg-green-600"> Baixo</Badge>;
 }
 
 function Page() {
@@ -105,7 +105,7 @@ function Page() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card><CardHeader><CardTitle className="text-sm">Sugestões</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{kpis.total}</CardContent></Card>
-            <Card><CardHeader><CardTitle className="text-sm">🔴 Risco alto</CardTitle></CardHeader><CardContent className="text-2xl font-semibold text-destructive">{kpis.urgentes}</CardContent></Card>
+            <Card><CardHeader><CardTitle className="text-sm"> Risco alto</CardTitle></CardHeader><CardContent className="text-2xl font-semibold text-destructive">{kpis.urgentes}</CardContent></Card>
             <Card><CardHeader><CardTitle className="text-sm">Falta MP</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{kpis.faltamMp}</CardContent></Card>
             <Card><CardHeader><CardTitle className="text-sm">Sem roteiro</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{kpis.semRoteiro}</CardContent></Card>
           </div>
