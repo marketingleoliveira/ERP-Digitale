@@ -14,7 +14,7 @@ type CargoRow = RowDataPacket & {
   id: string;
   nome: string;
   descricao: string | null;
-  permissoes: string;
+  permissoes: string | string[] | null;
 };
 
 const permissionSchema = z
@@ -54,7 +54,13 @@ function normalizePermissions(values: string[]): string[] {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
 
-function parsePermissions(value: string): string[] {
+function parsePermissions(value: string | string[] | null): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((item): item is string => typeof item === "string");
+  }
+
+  if (!value) return [];
+
   try {
     const parsed = JSON.parse(value);
 
