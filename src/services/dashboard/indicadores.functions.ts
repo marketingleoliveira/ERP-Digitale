@@ -5,6 +5,25 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+const QUERY_TIMEOUT_MS = 10_000;
+
+async function withQueryTimeout<T>(query: PromiseLike<T>, label: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      Promise.resolve(query),
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(
+          () => reject(new Error(`Consulta do dashboard excedeu o tempo limite: ${label}`)),
+          QUERY_TIMEOUT_MS,
+        );
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 export const getDashboardIndicadores = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -12,7 +31,8 @@ export const getDashboardIndicadores = createServerFn({ method: "GET" })
     const count = async (table: string, filter?: (q: ReturnType<typeof supabase.from>) => unknown) => {
       let q = supabase.from(table as never).select("*", { count: "exact", head: true });
       if (filter) q = filter(q as never) as typeof q;
-      const { count: c } = await q;
+      const { count: c, error } = await withQueryTimeout(q, table);
+      if (error) throw new Error(`Falha ao consultar ${table}: ${error.message}`);
       return c ?? 0;
     };
 
@@ -31,8 +51,11 @@ export const getDashboardIndicadores = createServerFn({ method: "GET" })
     ]);
 
     // Financeiro
-    const { data: crRows } = await supabase
-      .from("contas_receber").select("valor, valor_pago, status");
+    const { data: crRows, error: crError } = await withQueryTimeout(
+      supabase.from("contas_receber").select("valor, valor_pago, status"),
+      "contas_receber",
+    );
+    if (crError) throw new Error(`Falha ao consultar contas_receber: ${crError.message}`);
     const cr = (crRows ?? []) as { valor: number; valor_pago: number; status: string }[];
     const totalFaturado = cr.reduce((s, r) => s + Number(r.valor), 0);
     const totalRecebido = cr.reduce((s, r) => s + Number(r.valor_pago), 0);
@@ -40,10 +63,14 @@ export const getDashboardIndicadores = createServerFn({ method: "GET" })
       .reduce((s, r) => s + (Number(r.valor) - Number(r.valor_pago)), 0);
 
     // Leadtimes (via op_eventos)
-    const { data: evRows } = await supabase
-      .from("op_eventos")
-      .select("op_id, tipo, para_status, created_at")
-      .in("tipo", ["status_change","nfe_autorizada"]);
+    const { data: evRows, error: evError } = await withQueryTimeout(
+      supabase
+        .from("op_eventos")
+        .select("op_id, tipo, para_status, created_at")
+        .in("tipo", ["status_change", "nfe_autorizada"]),
+      "op_eventos",
+    );
+    if (evError) throw new Error(`Falha ao consultar op_eventos: ${evError.message}`);
     const byOp = new Map<string, { t: string; s: string | null; created: string }[]>();
     for (const e of (evRows ?? []) as { op_id: string; tipo: string; para_status: string | null; created_at: string }[]) {
       const arr = byOp.get(e.op_id) ?? [];
