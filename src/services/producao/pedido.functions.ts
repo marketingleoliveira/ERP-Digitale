@@ -397,7 +397,7 @@ export function derivarStatusPedido(input: {
     && input.expedicoes.every(e => e.status === "entregue");
   if (todasEntregues) return "entregue";
 
-  const algumaExpSaiu = input.expedicoes.some(e => e.status === "saiu" || e.status === "entregue");
+  const algumaExpSaiu = input.expedicoes.some(e => e.status === "saiu" || e.status === "em_transito" || e.status === "entregue");
   if (algumaExpSaiu) return "expedido";
 
   const todasFaturadas = input.notas.length >= input.ops.length

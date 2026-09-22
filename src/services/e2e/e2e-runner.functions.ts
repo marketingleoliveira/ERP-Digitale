@@ -7,7 +7,7 @@
  * ficam registradas no retorno e devem ser exibidas na UI /_app/dev/e2e.
  */
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireE2eAuth } from "./auth-middleware";
 
 export type StepStatus = "PASS" | "FAIL" | "BLOCKED" | "SKIPPED";
 
@@ -26,13 +26,27 @@ export interface StepResult {
   erro?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function guard(context: { supabase: any; userId: string }): Promise<void> {
-  const env = (process.env.APP_ENV ?? process.env.NODE_ENV ?? "development").toLowerCase();
-  if (env === "production") throw new Error("Runner E2E bloqueado em produção");
-  const { data: isDev } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "desenvolvedor" });
-  const { data: isGer } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "gerente" });
-  if (!isDev && !isGer) throw new Error("Acesso restrito");
+async function guard(context: {
+  roles: string[];
+  isSuperuser: boolean;
+}): Promise<void> {
+  const env = (
+    process.env.APP_ENV ??
+    process.env.NODE_ENV ??
+    ""
+  ).toLowerCase();
+
+  if (!["staging", "test", "e2e"].includes(env)) {
+    throw new Error("Runner E2E bloqueado fora do ambiente isolado");
+  }
+
+  if (
+    !context.isSuperuser &&
+    !context.roles.includes("desenvolvedor") &&
+    !context.roles.includes("gerente")
+  ) {
+    throw new Error("Acesso restrito");
+  }
 }
 
 /** Executa um step com try/catch, retornando BLOCKED em exceção. */
@@ -58,7 +72,7 @@ async function runStep(
 const SEED = "SEED-";
 
 export const runE2eSuite = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireE2eAuth])
   .handler(async ({ context }) => {
     await guard(context);
     const { supabase } = context;
@@ -291,8 +305,8 @@ export const runE2eSuite = createServerFn({ method: "POST" })
  * e de expedição em ambiente de teste.
  */
 export const mockAutorizarNfeE2e = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((i: { notaFiscalId: string }) => i)
+  .middleware([requireE2eAuth])
+  .validator((i: { notaFiscalId: string }) => i)
   .handler(async ({ data, context }) => {
     await guard(context);
     const env = (process.env.APP_ENV ?? process.env.NODE_ENV ?? "development").toLowerCase();

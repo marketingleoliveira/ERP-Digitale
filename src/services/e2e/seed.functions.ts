@@ -9,37 +9,35 @@
  *   sempre as regras normais (upsert idempotente de configuração base).
  */
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireE2eAuth } from "./auth-middleware";
 
 const SEED_PREFIX = "SEED-";
 
 async function assertDevAndRole(context: {
-  supabase: ReturnType<typeof requireSupabaseAuth extends never ? never : never> extends never
-    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      any
-    : never;
-  userId: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-} & { supabase: any; userId: string }): Promise<void> {
-  const env = (process.env.APP_ENV ?? process.env.NODE_ENV ?? "development").toLowerCase();
-  if (env === "production") {
-    throw new Error("Harness E2E SEED bloqueado em produção");
+  roles: string[];
+  isSuperuser: boolean;
+}): Promise<void> {
+  const env = (
+    process.env.APP_ENV ??
+    process.env.NODE_ENV ??
+    ""
+  ).toLowerCase();
+
+  if (!["staging", "test", "e2e"].includes(env)) {
+    throw new Error("Harness E2E SEED bloqueado fora do ambiente isolado");
   }
-  const { data: isDev } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "desenvolvedor",
-  });
-  const { data: isGer } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "gerente",
-  });
-  if (!isDev && !isGer) {
+
+  if (
+    !context.isSuperuser &&
+    !context.roles.includes("desenvolvedor") &&
+    !context.roles.includes("gerente")
+  ) {
     throw new Error("Acesso restrito: cargo desenvolvedor ou gerente");
   }
 }
 
 export const seedRollback = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireE2eAuth])
   .handler(async ({ context }) => {
     await assertDevAndRole(context);
     const { data, error } = await context.supabase.rpc("seed_rollback");
@@ -54,7 +52,7 @@ export const seedRollback = createServerFn({ method: "POST" })
  * pelos cadastros normais do sistema, pois envolvem escolhas de negócio.
  */
 export const seedDiagnostico = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireE2eAuth])
   .handler(async ({ context }) => {
     await assertDevAndRole(context);
     const { supabase } = context;
@@ -81,7 +79,7 @@ export const seedDiagnostico = createServerFn({ method: "POST" })
  * Idempotente: usa upsert por (cliente, artigo, produto, variante).
  */
 export const seedEnsureClienteArtigo = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireE2eAuth])
   .handler(async ({ context }) => {
     await assertDevAndRole(context);
     const { supabase, userId } = context;
