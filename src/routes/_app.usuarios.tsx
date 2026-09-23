@@ -414,6 +414,9 @@ function UsuarioDialog({
             <Input
               className="h-8"
               value={nome}
+              readOnly
+              aria-readonly="true"
+              title="O nome é definido pelo funcionário selecionado"
               onChange={(e) => setNome(e.target.value)}
             />
           </Field>
