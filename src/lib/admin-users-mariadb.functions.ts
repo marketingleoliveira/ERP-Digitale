@@ -141,39 +141,55 @@ type UserCargoListRow = RowDataPacket & {
   cargo_nome: string;
 };
 
-type FuncionarioRow = {
+type FuncionarioRow = RowDataPacket & {
   id: string;
   nome: string;
   cargo_id: string | null;
-  habilitado: boolean;
+  habilitado: number | boolean;
 };
 
-async function getFuncionario(funcionarioId: string): Promise<FuncionarioRow> {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin
-    .from("funcionarios")
-    .select("id, nome, cargo_id, habilitado")
-    .eq("id", funcionarioId)
-    .maybeSingle();
+async function getFuncionario(
+  funcionarioId: string,
+): Promise<FuncionarioRow> {
+  const [rows] = await getDb().execute<FuncionarioRow[]>(
+    `SELECT id, nome, cargo_id, habilitado
+     FROM funcionarios
+     WHERE id = ?
+     LIMIT 1`,
+    [funcionarioId],
+  );
 
-  if (error) throw new Error(`Não foi possível validar o funcionário: ${error.message}`);
-  if (!data) throw new Error("Cadastre o funcionário antes de criar o usuário.");
-  if (!data.habilitado) throw new Error("O funcionário selecionado está desabilitado.");
-  return data as FuncionarioRow;
+  if (!rows.length) {
+    throw new Error("Cadastre o funcionário antes de criar o usuário.");
+  }
+
+  const funcionario = rows[0];
+
+  if (!Boolean(funcionario.habilitado)) {
+    throw new Error("O funcionário selecionado está desabilitado.");
+  }
+
+  return funcionario;
 }
 
 export const adminListFuncionariosMariaDb = createServerFn({ method: "GET" })
   .middleware([requireAppAuth])
   .handler(async ({ context }) => {
     await requireAppPermission(context, "/dev/cargos");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin
-      .from("funcionarios")
-      .select("id, nome, cargo_id, habilitado")
-      .eq("habilitado", true)
-      .order("nome");
-    if (error) throw new Error(`Não foi possível listar funcionários: ${error.message}`);
-    return (data ?? []) as FuncionarioRow[];
+
+    const [rows] = await getDb().execute<FuncionarioRow[]>(
+      `SELECT id, nome, cargo_id, habilitado
+       FROM funcionarios
+       WHERE habilitado = 1
+       ORDER BY nome ASC`,
+    );
+
+    return rows.map((funcionario) => ({
+      id: funcionario.id,
+      nome: funcionario.nome,
+      cargo_id: funcionario.cargo_id,
+      habilitado: Boolean(funcionario.habilitado),
+    }));
   });
 
 const updateUserSchema = z.object({
