@@ -381,7 +381,20 @@ function UsuarioDialog({
 
         <div className="space-y-3 rounded-md bg-muted/40 p-4">
           <Field label="Funcionário" req={1}>
-            <Select value={funcionarioId} onValueChange={setFuncionarioId}>
+            <Select
+              value={funcionarioId}
+              onValueChange={(selectedId) => {
+                setFuncionarioId(selectedId);
+
+                const funcionarioSelecionado = funcionarios.find(
+                  (funcionario) => funcionario.id === selectedId,
+                );
+
+                if (funcionarioSelecionado) {
+                  setNome(funcionarioSelecionado.nome);
+                }
+              }}
+            >
               <SelectTrigger className="h-8">
                 <SelectValue placeholder="Selecione um funcionário já cadastrado" />
               </SelectTrigger>
