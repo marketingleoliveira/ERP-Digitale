@@ -18,11 +18,11 @@ import {
   adminDeleteCargoMariaDb,
   adminListCargosMariaDb,
   adminUpdateCargoMariaDb,
-} from "@/lib/cargos-mariadb.functions";
+} from "@/lib/cargos.functions";
 import {
   adminListUsersMariaDb,
   adminUpdateUserMariaDb,
-} from "@/lib/admin-users-mariadb.functions";
+} from "@/lib/admin-users-management.functions";
 import { ALL_MENU_ITEMS, GROUP_ORDER } from "@/lib/menu-config";
 import { useAuth, useHasAppPermission } from "@/hooks/use-auth";
 

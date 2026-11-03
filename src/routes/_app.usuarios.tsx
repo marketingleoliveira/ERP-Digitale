@@ -20,7 +20,7 @@ import {
   adminListUsersMariaDb,
   adminListFuncionariosMariaDb,
   adminUpdateUserMariaDb,
-} from "@/lib/admin-users-mariadb.functions";
+} from "@/lib/admin-users-management.functions";
 import { friendlyDbError } from "@/lib/db-errors";
 
 

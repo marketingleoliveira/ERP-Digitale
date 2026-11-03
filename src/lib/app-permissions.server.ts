@@ -1,51 +1,67 @@
-import type { RowDataPacket } from "mysql2";
-import { getDb } from "./db.server";
-
 export type AppAuthContext = {
-  appUser?: {
-    id: string;
-  };
   userId: string;
-  roles: string[];
-  isSuperuser: boolean;
+
+  supabase: {
+    rpc: (
+      name: string,
+      args: Record<string, unknown>,
+    ) => Promise<{
+      data: unknown;
+      error: {
+        message: string;
+      } | null;
+    }>;
+  };
 };
 
-type CargoPermissionRow = RowDataPacket & {
-  permissoes: string | string[] | null;
-};
+function getAuthContext(
+  context: unknown,
+): AppAuthContext {
+  const auth =
+    context as AppAuthContext;
 
-function getAuthContext(context: unknown): AppAuthContext {
-  const auth = context as AppAuthContext | undefined;
-
-  if (!auth?.userId) {
-    throw new Error("Sessão inválida.");
+  if (
+    !auth?.userId ||
+    !auth?.supabase
+  ) {
+    throw new Error(
+      "Sessão inválida.",
+    );
   }
 
   return auth;
 }
 
-function parsePermissions(value: string | string[] | null): string[] {
-  if (Array.isArray(value)) {
-    return value.filter((item): item is string => typeof item === "string");
+export async function requireDeveloper(
+  context: unknown,
+) {
+  const auth =
+    getAuthContext(context);
+
+  const {
+    data,
+    error,
+  } = await auth.supabase.rpc(
+    "has_role",
+    {
+      _user_id:
+        auth.userId,
+
+      _role:
+        "desenvolvedor",
+    },
+  );
+
+  if (error) {
+    throw new Error(
+      error.message,
+    );
   }
 
-  if (!value) return [];
-
-  try {
-    const parsed = JSON.parse(value);
-    return Array.isArray(parsed)
-      ? parsed.filter((item): item is string => typeof item === "string")
-      : [];
-  } catch {
-    return [];
-  }
-}
-
-export function requireDeveloper(context: unknown): AppAuthContext {
-  const auth = getAuthContext(context);
-
-  if (!auth.isSuperuser && !auth.roles.includes("desenvolvedor")) {
-    throw new Error("Apenas o Desenvolvedor pode executar esta operação.");
+  if (!data) {
+    throw new Error(
+      "Apenas o Desenvolvedor pode executar esta operação.",
+    );
   }
 
   return auth;
@@ -54,27 +70,34 @@ export function requireDeveloper(context: unknown): AppAuthContext {
 export async function requireAppPermission(
   context: unknown,
   permission: string,
-): Promise<AppAuthContext> {
-  const auth = getAuthContext(context);
+) {
+  const auth =
+    getAuthContext(context);
 
-  if (auth.isSuperuser || auth.roles.includes("desenvolvedor")) {
-    return auth;
+  const {
+    data,
+    error,
+  } = await auth.supabase.rpc(
+    "user_has_menu_permission",
+    {
+      _user_id:
+        auth.userId,
+
+      _url:
+        permission,
+    },
+  );
+
+  if (error) {
+    throw new Error(
+      error.message,
+    );
   }
 
-  const [rows] = await getDb().execute<CargoPermissionRow[]>(
-    `SELECT c.permissoes
-     FROM user_cargos uc
-     INNER JOIN cargos c ON c.id = uc.cargo_id
-     WHERE uc.user_id = ?`,
-    [auth.userId],
-  );
-
-  const allowed = rows.some((row) =>
-    parsePermissions(row.permissoes).includes(permission),
-  );
-
-  if (!allowed) {
-    throw new Error("Usuário sem permissão para acessar este recurso.");
+  if (!data) {
+    throw new Error(
+      "Usuário sem permissão para acessar este recurso.",
+    );
   }
 
   return auth;

@@ -39,7 +39,7 @@ import {
   saveFuncionario,
 } from "@/lib/funcionarios.functions";
 
-import { adminListCargosMariaDb } from "@/lib/cargos-mariadb.functions";
+import { adminListCargosMariaDb } from "@/lib/cargos.functions";
 export const Route = createFileRoute("/_app/funcionario")({
   ssr: false,
   component: FuncionarioPage,

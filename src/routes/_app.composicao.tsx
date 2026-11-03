@@ -29,7 +29,7 @@ import {
   listComposicoesMariaDb,
   toggleComposicaoMariaDb,
   updateComposicaoMariaDb,
-} from "@/lib/composicoes-mariadb.functions";
+} from "@/lib/composicoes.functions";
 
 export const Route = createFileRoute("/_app/composicao")({
   ssr: false,
