@@ -1,3 +1,4 @@
+import { localAuth, localUser } from "@/lib/local-auth";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,8 +22,7 @@ function AuthPage() {
   useEffect(() => {
     let active = true;
 
-    supabase.auth
-      .getSession()
+    localAuth.getSession()
       .then(({ data }) => {
         if (active && data.session) {
           navigate({ to: "/inicio" });
@@ -85,7 +85,7 @@ function AuthPage() {
 
     try {
       const { data, error } =
-        await supabase.auth.signInWithPassword({
+        await localAuth.signInWithPassword({
           email: email.trim().toLowerCase(),
           password: senha,
         });

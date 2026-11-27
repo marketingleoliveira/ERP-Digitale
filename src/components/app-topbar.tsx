@@ -1,3 +1,4 @@
+import { localAuth, localUser } from "@/lib/local-auth";
 import {
   Bell,
   Search,
@@ -49,7 +50,7 @@ export function AppTopbar() {
   const { user } = useAuth();
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await localAuth.signOut();
     clearAuthCache();
 
     navigate({

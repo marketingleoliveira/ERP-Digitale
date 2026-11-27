@@ -1,5 +1,5 @@
+import { localAuth, localUser } from "@/lib/local-auth";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 export type AppRole =
   | "desenvolvedor"
@@ -42,149 +42,8 @@ function emit() {
   }
 }
 
-async function resolveUser():
-  Promise<AppUser | null> {
-
-  const {
-    data: { session },
-    error,
-  } = await supabase.auth.getSession();
-
-  if (error) {
-    throw error;
-  }
-
-  if (!session?.user) {
-    return null;
-  }
-
-  const authUser = session.user;
-
-  const db = supabase as any;
-
-  const [
-    profileResult,
-    rolesResult,
-    cargosResult,
-  ] = await Promise.all([
-    db
-      .from("profiles")
-      .select(
-        "id,nome,email,ativo",
-      )
-      .eq("id", authUser.id)
-      .maybeSingle(),
-
-    db
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", authUser.id),
-
-    db
-      .from("user_cargos")
-      .select("cargo_id")
-      .eq("user_id", authUser.id),
-  ]);
-
-  if (profileResult.error) {
-    throw new Error(
-      profileResult.error.message,
-    );
-  }
-
-  if (rolesResult.error) {
-    throw new Error(
-      rolesResult.error.message,
-    );
-  }
-
-  if (cargosResult.error) {
-    throw new Error(
-      cargosResult.error.message,
-    );
-  }
-
-  if (profileResult.data?.ativo === false) {
-    await supabase.auth.signOut();
-    return null;
-  }
-
-  const roles = [
-    ...new Set(
-      (rolesResult.data ?? [])
-        .map(
-          (row: { role?: string }) =>
-            row.role,
-        )
-        .filter(Boolean),
-    ),
-  ] as string[];
-
-  const isSuperuser =
-    roles.includes("desenvolvedor");
-
-  const cargoIds = [
-    ...new Set(
-      (cargosResult.data ?? [])
-        .map(
-          (row: { cargo_id?: string }) =>
-            row.cargo_id,
-        )
-        .filter(Boolean),
-    ),
-  ] as string[];
-
-  let permissions: string[] = [];
-
-  if (
-    !isSuperuser &&
-    cargoIds.length > 0
-  ) {
-    const result = await db
-      .from("cargos")
-      .select("permissoes")
-      .in("id", cargoIds);
-
-    if (result.error) {
-      throw new Error(
-        result.error.message,
-      );
-    }
-
-    permissions = [
-      ...new Set(
-        (result.data ?? []).flatMap(
-          (
-            row: {
-              permissoes?: string[] | null;
-            },
-          ) =>
-            Array.isArray(row.permissoes)
-              ? row.permissoes
-              : [],
-        ),
-      ),
-    ];
-  }
-
-  return {
-    id: authUser.id,
-
-    email:
-      profileResult.data?.email ??
-      authUser.email ??
-      "",
-
-    nome:
-      profileResult.data?.nome ??
-      authUser.user_metadata?.nome ??
-      authUser.email?.split("@")[0] ??
-      "Usuário",
-
-    roles,
-    isSuperuser,
-    permissions,
-  };
+async function resolveUser(): Promise<AppUser | null> {
+  return await localUser();
 }
 
 async function loadCurrentUser(
@@ -274,7 +133,7 @@ export function useAuth() {
     const {
       data: { subscription },
     } =
-      supabase.auth.onAuthStateChange(
+      localAuth.onAuthStateChange(
         (event) => {
           if (
             event === "SIGNED_OUT"
